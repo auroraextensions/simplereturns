@@ -24,6 +24,12 @@ use AuroraExtensions\Returns\Controller\{
 
 interface DictionaryInterface
 {
+    /** @constant string ATTRIBUTE_CODE_RETURN_LABEL_ALLOWED */
+    const ATTRIBUTE_CODE_RETURN_LABEL_ALLOWED = 'return_label_allowed';
+
+    /** @constant string ATTRIBUTE_LABEL_RETURN_LABEL_ALLOWED */
+    const ATTRIBUTE_LABEL_RETURN_LABEL_ALLOWED = 'Return Label Allowed';
+
     /** @constant string BLOCK_RETURNS_LABEL_INDEX */
     const BLOCK_RETURNS_LABEL_INDEX = 'returns_label_index';
 
@@ -32,6 +38,12 @@ interface DictionaryInterface
 
     /** @constant string DATA_PERSISTOR_KEY */
     const DATA_PERSISTOR_KEY = 'auroraextensions_returns_data';
+
+    /** @constant string DEFAULT_FRONT_NAME */
+    const DEFAULT_FRONT_NAME = 'returns';
+
+    /** @constant string DEFAULT_SCRIPT_NAME */
+    const DEFAULT_SCRIPT_NAME = 'index.php';
 
     /** @constant string ERROR_INVALID_TRAIT_CONTEXT */
     const ERROR_INVALID_TRAIT_CONTEXT = '%1 can only be used when extending or implementing %2';
@@ -50,6 +62,21 @@ interface DictionaryInterface
 
     /** @constant string FULLACTION_RETURNS_LABEL_ORDERSPOST */
     const FULLACTION_RETURNS_LABEL_ORDERSPOST = 'returns_label_ordersPost';
+
+    /** @constant string PARAM_EMAIL */
+    const PARAM_EMAIL = 'email';
+
+    /** @constant string PARAM_ORDER_ID */
+    const PARAM_ORDER_ID = 'order_id';
+
+    /** @constant string PARAM_PROTECT_CODE */
+    const PARAM_PROTECT_CODE = 'code';
+
+    /** @constant string PARAM_ZIP_CODE */
+    const PARAM_ZIP_CODE = 'zip_code';
+
+    /** @constant string PATH_INDEX_DELIMITER */
+    const PATH_INDEX_DELIMITER = '/';
 
     /** @constant string ROUTE_RETURNS_LABEL_ORDERS */
     const ROUTE_RETURNS_LABEL_ORDERS = 'returns/label/orders';
