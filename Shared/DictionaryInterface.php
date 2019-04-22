@@ -2,6 +2,8 @@
 /**
  * DictionaryInterface.php
  *
+ * Module shared dictionary interface.
+ *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Aurora Extensions EULA,
@@ -48,11 +50,32 @@ interface DictionaryInterface
     /** @constant string DEFAULT_SCRIPT_NAME */
     const DEFAULT_SCRIPT_NAME = 'index.php';
 
+    /** @constant string ERROR_INVALID_CARRIER_CODE */
+    const ERROR_INVALID_CARRIER_CODE = 'Unable to create carrier model. Invalid carrier code was given.';
+
+    /** @constant string ERROR_INVALID_RETURN_LABEL_URL */
+    const ERROR_INVALID_RETURN_LABEL_URL = 'The requested return label URL was invalid. Please verify and try again.';
+
     /** @constant string ERROR_INVALID_TRAIT_CONTEXT */
     const ERROR_INVALID_TRAIT_CONTEXT = '%1 can only be used when extending or implementing %2';
 
     /** @constant string ERROR_MISSING_URL_PARAMS */
     const ERROR_MISSING_URL_PARAMS = 'Please provide an email address or order ID and billing/shipping zip code.';
+
+    /** @constant string ERROR_NO_SUCH_ENTITY_FOUND_FOR_EMAIL */
+    const ERROR_NO_SUCH_ENTITY_FOUND_FOR_EMAIL = 'Could not find any orders associated with email: %1';
+
+    /** @constant string ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE */
+    const ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE = 'Could not find an order #%1 with billing or shipping zip code: %2';
+
+    /** @constant string FIELD_CUSTOMER_ID */
+    const FIELD_CUSTOMER_ID = 'customer_id';
+
+    /** @constant string FIELD_INCREMENT_ID */
+    const FIELD_INCREMENT_ID = 'increment_id';
+
+    /** @constant string FIELD_PROTECT_CODE */
+    const FIELD_PROTECT_CODE = 'protect_code';
 
     /** @constant string FULLACTION_DELIMITER */
     const FULLACTION_DELIMITER = '_';
@@ -65,6 +88,9 @@ interface DictionaryInterface
 
     /** @constant string FULLACTION_RETURNS_LABEL_ORDERSPOST */
     const FULLACTION_RETURNS_LABEL_ORDERSPOST = 'returns_label_ordersPost';
+
+    /** @constant string LABEL_CACHE_ID */
+    const LABEL_CACHE_ID = 'RETURN_LABEL_CONTENT_PER_ORDER';
 
     /** @constant string PARAM_EMAIL */
     const PARAM_EMAIL = 'email';
@@ -95,6 +121,12 @@ interface DictionaryInterface
 
     /** @constant string XML_LAYOUT_HANDLE_NOROUTE */
     const XML_LAYOUT_HANDLE_NOROUTE = 'returns_noroute';
+
+    /** @constant int ZIP_CODE_INDEX */
+    const ZIP_CODE_INDEX = 0;
+
+    /** @constant int ZIP_CODE_LENGTH */
+    const ZIP_CODE_LENGTH = 5;
 
     /** @constant array DICT_ACTION_CONTROLLER_DISPATCH */
     const DICT_ACTION_CONTROLLER_DISPATCH = [
