@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
-<!--
 /**
- * module.xml
+ * requirejs-config.js
  *
  * NOTICE OF LICENSE
  *
@@ -15,7 +13,18 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="AuroraExtensions_Returns" setup_version="1.0.0"></module>
-</config>
+var config = {
+    paths: {
+        'jquery.print': 'AuroraExtensions_Returns/js/plugins/jquery.print'
+    },
+    shim: {
+        'jquery.print': {
+            'deps': ['jquery']
+        }
+    },
+    map: {
+        '*': {
+            printLabel: 'AuroraExtensions_Returns/js/print'
+        }
+    }
+};
