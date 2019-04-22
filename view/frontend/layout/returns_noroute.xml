@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * returns_noroute.xml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/returns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_Returns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Text" name="returns.noroute">
+                <action method="setText">
+                    <argument translate="true" name="text" xsi:type="string"><![CDATA[<h1 class="page-heading">404 Error</h1><p>Page not found.</p>]]></argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
