@@ -8,13 +8,13 @@
  * which is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
- * https://docs.auroraextensions.com/magento/extensions/2.x/returnlabels/LICENSE.txt
+ * https://docs.auroraextensions.com/magento/extensions/2.x/returns/LICENSE.txt
  *
- * @package       AuroraExtensions_ReturnLabels
+ * @package       AuroraExtensions_Returns
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
-namespace AuroraExtensions\ReturnLabels\Shared;
+namespace AuroraExtensions\Returns\Shared;
 
 interface DictionaryInterface
 {
