@@ -1,0 +1,94 @@
+<?php
+/**
+ * recent.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/returns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_Returns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+
+/**
+ * @see Magento_Sales::order/recent.phtml
+ */
+use Magento\{
+    Framework\Data\Helper\PostHelper,
+    Sales\Helper\Reorder as ReorderHelper
+};
+
+/** @var Bedrock\Returns\ViewModel\Orders */
+$viewModel = $block->getViewModel();
+
+/** @var OrderInterface[] $orders */
+$orders = $block->getOrders();
+
+/** @var int $count */
+$count = count($orders);
+?>
+<div class="block block-dashboard-orders">
+    <div class="block-title order">
+        <strong><?php echo __('Recent Orders') ?></strong>
+        <?php if ($count > 0): ?>
+            <a class="action view" href="<?php echo $block->getUrl('sales/order/history') ?>">
+                <span><?php echo __('View All') ?></span>
+            </a>
+        <?php endif ?>
+    </div>
+    <div class="block-content">
+        <?php echo $block->getChildHtml() ?>
+        <?php if ($count > 0): ?>
+            <div class="table-wrapper orders-recent">
+                <table class="data table table-order-items recent" id="my-orders-table">
+                    <caption class="table-caption"><?php echo __('Recent Orders') ?></caption>
+                    <thead>
+                        <tr>
+                            <th class="col id" scope="col"><?php echo __('Order #') ?></th>
+                            <th class="col date" scope="col"><?php echo __('Date') ?></th>
+                            <th class="col shipping" scope="col"><?php echo __('Ship To') ?></th>
+                            <th class="col total" scope="col"><?php echo __('Order Total') ?></th>
+                            <th class="col status" scope="col"><?php echo __('Status') ?></th>
+                            <th class="col actions" scope="col"><?php echo __('Actions') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($orders as $order): ?>
+                            <tr>
+                                <td data-th="<?php echo $block->escapeHtml(__('Order #')) ?>" class="col id"><?php echo $order->getRealOrderId() ?></td>
+                                <td data-th="<?php echo $block->escapeHtml(__('Date')) ?>" class="col date"><?php echo $block->formatDate($order->getCreatedAt()) ?></td>
+                                <td data-th="<?php echo $block->escapeHtml(__('Ship To')) ?>" class="col shipping"><?php echo $order->getShippingAddress() ? $block->escapeHtml($order->getShippingAddress()->getName()) : '&nbsp;' ?></td>
+                                <td data-th="<?php echo $block->escapeHtml(__('Order Total')) ?>" class="col total"><?php echo $order->formatPrice($order->getGrandTotal()) ?></td>
+                                <td data-th="<?php echo $block->escapeHtml(__('Status')) ?>" class="col status"><?php echo $order->getStatusLabel() ?></td>
+                                <td data-th="<?php echo $block->escapeHtml(__('Actions')) ?>" class="col actions">
+                                    <a href="<?php echo $block->getViewUrl($order) ?>" class="action view">
+                                        <span><?php echo __('View Order') ?></span>
+                                    </a>
+                                    <?php if ($this->helper(ReorderHelper::class)->canReorder($order->getEntityId())): ?>
+                                        <a class="action order" href="#" data-post="<?php echo $this->helper(PostHelper::class)->getPostData($block->getReorderUrl($order)) ?>">
+                                            <span><?php echo __('Reorder') ?></span>
+                                        </a>
+                                    <?php endif ?>
+                                    <?php if ($viewModel->isOrderPrepaidEligible($order)): ?>
+                                        <a class="action print-return-label" href="<?php echo $viewModel->getReturnLabelUrl($order) ?>" target="_blank">
+                                            <span><?php echo __('Print Return Label') ?></span>
+                                        </a>
+                                    <?php endif ?>
+                                </td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <div class="message info empty">
+                <span><?php echo __('You have placed no orders.') ?></span>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
