@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * config.xml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/returns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_Returns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <auroraextensions_returns>
+            <general>
+                <enable>0</enable>
+            </general>
+            <returns>
+                <shipping_carrier>ups</shipping_carrier>
+                <shipping_method>03</shipping_method>
+                <order_amount_minimum>50</order_amount_minimum>
+                <order_amount_maximum></order_amount_maximum>
+                <order_age_maximum>30</order_age_maximum>
+                <package_weight>5</package_weight>
+                <recipient_first_name>Customer</recipient_first_name>
+                <recipient_last_name>Service</recipient_last_name>
+                <return_form_url></return_form_url>
+            </returns>
+        </auroraextensions_returns>
+    </default>
+</config>
