@@ -36,6 +36,9 @@ interface DictionaryInterface
     /** @constant string BLOCK_RETURNS_LABEL_ORDERS */
     const BLOCK_RETURNS_LABEL_ORDERS = 'returns_label_orders';
 
+    /** @constant string COLUMN_HEADERS_KEY */
+    const COLUMN_HEADERS_KEY = 'column_headers';
+
     /** @constant string DATA_PERSISTOR_KEY */
     const DATA_PERSISTOR_KEY = 'auroraextensions_returns_data';
 
@@ -78,8 +81,17 @@ interface DictionaryInterface
     /** @constant string PATH_INDEX_DELIMITER */
     const PATH_INDEX_DELIMITER = '/';
 
+    /** @constant string PREFIX_DATAURI */
+    const PREFIX_DATAURI = 'data:image/jpeg;base64,';
+
+    /** @constant string ROUTE_RETURNS_LABEL_INDEX */
+    const ROUTE_RETURNS_LABEL_INDEX = 'returns/label/index';
+
     /** @constant string ROUTE_RETURNS_LABEL_ORDERS */
     const ROUTE_RETURNS_LABEL_ORDERS = 'returns/label/orders';
+
+    /** @constant string ROUTE_RETURNS_LABEL_ORDERSPOST */
+    const ROUTE_RETURNS_LABEL_ORDERSPOST = 'returns/label/ordersPost';
 
     /** @constant string XML_LAYOUT_HANDLE_NOROUTE */
     const XML_LAYOUT_HANDLE_NOROUTE = 'returns_noroute';
