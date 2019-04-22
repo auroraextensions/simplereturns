@@ -22,7 +22,7 @@
     </head>
     <body>
         <referenceContainer name="content">
-            <block class="Magento\Framework\View\Element\Template" name="returns_label_index" template="AuroraExtensions_Returns::returns/label.phtml" cacheable="false"/>
+            <block class="Magento\Framework\View\Element\Template" name="returns_label_index" template="AuroraExtensions_Returns::returns/label/index.phtml" cacheable="false"/>
         </referenceContainer>
     </body>
 </page>
