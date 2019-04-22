@@ -1,0 +1,119 @@
+<?php
+/**
+ * orders.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/returns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_Returns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+
+/** @var Magento\Framework\View\Element\Template $block */
+/** @var AuroraExtensions\Returns\ViewModel\Orders $viewModel */
+$viewModel = $block->getViewModel();
+
+/** @var string $email The email address, as provided by user. */
+/** @var string $orderId The order ID, as provided by user. */
+/** @var string $zipCode The zip code, as provided by user. */
+$email = $viewModel->getEmail();
+$orderId = $viewModel->getOrderId();
+$zipCode = $viewModel->getZipCode();
+?>
+<div class="block page-returns">
+    <div class="block-title page-title">
+        <h1><?php echo $block->escapeHtml(__('Print Return Label')) ?></h1>
+    </div>
+
+    <?php if (!$viewModel->getIsChecked()): ?>
+        <div class="returns-form">
+            <div class="container-form">
+                <form method="POST" action="<?php echo $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="returns-label-form">
+                    <?php echo $block->getBlockHtml('formkey') ?>
+                    <fieldset class="fieldset returns" data-hasrequired="<?php echo $block->escapeHtml(__('* Required Fields')) ?>">
+                        <div class="field zip_code required">
+                            <label class="label zip_code" for="zip_code"><span><?php echo $block->escapeHtml(__('Billing or Shipping Zip Code')) ?></span></label>
+                            <input name="returns[zip_code]"
+                                   value="<?php echo $block->escapeHtmlAttr($zipCode) ?>"
+                                   id="zip_code"
+                                   type="text"
+                                   class="form-input input-text"
+                                   title="<?php echo $block->escapeHtmlAttr(__('Billing or Shipping Zip Code')) ?>"
+                                   data-mage-init='{"mage/trim-input":{}}'>
+                        </div>
+                        <div class="field note"><span>AND</span></div>
+                        <div class="field email required">
+                            <label class="label email" for="email"><span><?php echo $block->escapeHtml(__('Email Address')) ?></span></label>
+                            <input name="returns[email]"
+                                   value="<?php echo $block->escapeHtmlAttr($email) ?>"
+                                   id="email"
+                                   type="email"
+                                   class="form-input input-text"
+                                   title="<?php echo $block->escapeHtmlAttr(__('Email')) ?>"
+                                   data-mage-init='{"mage/trim-input":{}}'
+                                   data-validate="{'validate-email':true}">
+                        </div>
+                        <div class="field note"><span>OR</span></div>
+                        <div class="field order_id required">
+                            <label class="label order_id" for="order_id"><span><?php echo $block->escapeHtml(__('Order ID')) ?></span></label>
+                            <input name="returns[order_id]"
+                                   value="<?php echo $block->escapeHtmlAttr($orderId) ?>"
+                                   id="order_id"
+                                   type="text"
+                                   class="form-input input-text"
+                                   title="<?php echo $block->escapeHtmlAttr(__('Order ID')) ?>"
+                                   data-mage-init='{"mage/trim-input":{}}'>
+                        </div>
+                        <div class="actions-toolbar">
+                            <div class="primary">
+                                <button type="submit" class="action print-returns-label primary" name="send" id="send2">
+                                    <span><?php echo $block->escapeHtml(__('Submit')) ?></span>
+                                </button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    <?php else: ?>
+        <div class="returns-orders">
+            <?php if ($viewModel->hasOrders()): ?>
+                <div class="orders-table">
+                    <div class="orders-header">
+                        <?php foreach ($block->getColumnHeaders() as $key => $value): ?>
+                            <li name="<?php echo $block->escapeHtmlAttr(__($key)) ?>"><?php echo $block->escapeHtml(__($value)) ?></li>
+                        <?php endforeach ?>
+                    </div>
+                    <div class="orders-body">
+                        <?php foreach ($viewModel->getOrders() as $order): ?>
+                            <ul>
+                                <li><?php echo $block->escapeHtml($order->getRealOrderId()) ?></li>
+                                <li><?php echo $block->escapeHtml($order->getCreatedAt()) ?></li>
+                                <li><?php echo $block->escapeHtml($order->getGrandTotal()) ?></li>
+                                <li><em><?php echo $block->escapeHtml($order->getStatusLabel()) ?></em></li>
+                                <?php if ($viewModel->isOrderPrepaidEligible($order)): ?>
+                                    <li>
+                                        <a href="<?php echo $block->escapeHtmlAttr($viewModel->getReturnLabelUrl($order)) ?>" target="_blank"><?php echo $block->escapeHtml(__('Print Return Label')) ?></a>
+                                    </li>
+                                <?php endif ?>
+                            </ul>
+                        <?php endforeach ?>
+                    </div>
+                </div>
+            <?php else: ?>
+                <?php /** @var string $searchMethod */ ?>
+                <?php $searchMethod = $email !== null ? 'email address and zip code' : 'order ID and zip code' ?>
+                <p><?php echo $block->escapeHtml(__('Sorry, no orders were found for the specified ' . $searchMethod . '.')) ?></p>
+                <button type="button" title="Go Back" class="button back" onclick="window.history.back();">
+                    <span><?php echo $block->escapeHtml(__('Back')) ?></span>
+                </button>
+            <?php endif ?>
+        </div>
+    <?php endif ?>
+</div>
