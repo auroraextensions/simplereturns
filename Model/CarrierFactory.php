@@ -5,6 +5,8 @@
  * Factory for creating shipping carrier models, which
  * requires the ObjectManager for instance generation.
  *
+ * @link https://devdocs.magento.com/guides/v2.3/extension-dev-guide/factories.html
+ *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Aurora Extensions EULA,
@@ -16,7 +18,6 @@
  * @package       AuroraExtensions_Returns
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
- * @link          https://devdocs.magento.com/guides/v2.3/extension-dev-guide/factories.html
  */
 namespace AuroraExtensions\Returns\Model;
 
