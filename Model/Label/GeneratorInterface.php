@@ -1,7 +1,8 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
- * module.xml
+ * GeneratorInterface.php
+ *
+ * Return label generation interface.
  *
  * NOTICE OF LICENSE
  *
@@ -15,11 +16,17 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="AuroraExtensions_Returns" setup_version="1.0.0">
-        <sequence>
-            <module name="AuroraExtensions_Cache"/>
-        </sequence>
-    </module>
-</config>
+namespace AuroraExtensions\Returns\Model\Label;
+
+use Magento\Sales\Api\Data\OrderInterface;
+
+interface GeneratorInterface
+{
+    /**
+     * Create package(s) for shipment.
+     *
+     * @param OrderInterface $order
+     * @return array
+     */
+    public function createShipmentPackages(OrderInterface $order): array;
+}

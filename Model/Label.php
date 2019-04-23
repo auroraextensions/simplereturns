@@ -18,9 +18,9 @@
  */
 namespace AuroraExtensions\Returns\Model;
 
-use AuroraExtensions\Returns\{
-    Model\Cache\Type as LabelCache,
-    Shared\DictionaryInterface
+use AuroraExtensions\{
+    Cache\Model\Type as LabelCache,
+    Returns\Shared\DictionaryInterface
 };
 
 use Magento\{
@@ -60,7 +60,7 @@ class Label implements DictionaryInterface
     }
 
     /**
-     * Check if bedrock cache is enabled.
+     * Check if cache is enabled.
      *
      * @return bool
      */

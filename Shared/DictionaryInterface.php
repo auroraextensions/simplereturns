@@ -26,6 +26,9 @@ use AuroraExtensions\Returns\Controller\{
 
 interface DictionaryInterface
 {
+    /** @constant string ADDRESS_FIELD_DELIMITER */
+    const ADDRESS_FIELD_DELIMITER = ',';
+
     /** @constant string ATTRIBUTE_CODE_RETURN_LABEL_ALLOWED */
     const ATTRIBUTE_CODE_RETURN_LABEL_ALLOWED = 'return_label_allowed';
 
@@ -68,6 +71,15 @@ interface DictionaryInterface
     /** @constant string ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE */
     const ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE = 'Could not find an order #%1 with billing or shipping zip code: %2';
 
+    /** @constant string ERROR_ORDER_EXCEEDS_AGE_THRESHOLD */
+    const ERROR_ORDER_EXCEEDS_AGE_THRESHOLD = 'Return labels are not available for orders more than %1 days old.';
+
+    /** @constant string ERROR_ORDER_HAS_INELIGIBLE_ITEMS */
+    const ERROR_ORDER_HAS_INELIGIBLE_ITEMS = 'The selected order has items that do not permit online return label generation.<br><br>Please contact <a href="%1">%2</a> for assistance.';
+
+    /** @constant string ERROR_ORDER_SUBTOTAL_BELOW_MINIMUM */
+    const ERROR_ORDER_SUBTOTAL_BELOW_MINIMUM = 'Return labels are not available for orders under %1';
+
     /** @constant string FIELD_CUSTOMER_ID */
     const FIELD_CUSTOMER_ID = 'customer_id';
 
@@ -76,6 +88,12 @@ interface DictionaryInterface
 
     /** @constant string FIELD_PROTECT_CODE */
     const FIELD_PROTECT_CODE = 'protect_code';
+
+    /** @constant string FORMAT_RMA_ORDER_REFERENCE */
+    const FORMAT_RMA_ORDER_REFERENCE = 'RMA: Order #%1';
+
+    /** @constant string FORMAT_RMA_REQUEST_COMMENT */
+    const FORMAT_RMA_REQUEST_COMMENT = 'A return label was generated from [%1] with tracking number %2';
 
     /** @constant string FULLACTION_DELIMITER */
     const FULLACTION_DELIMITER = '_';
