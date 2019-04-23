@@ -18,7 +18,7 @@ namespace AuroraExtensions\Returns\Shared\Action;
 
 use AuroraExtensions\Returns\{
     Exception\TraitException,
-    Shared\DictionaryInterface
+    Shared\ModuleComponentInterface
 };
 
 use Magento\Framework\{
@@ -40,7 +40,7 @@ trait Redirector
         if (!is_subclass_of(static::class, Base::class)) {
             throw new TraitException(
                 __(
-                    DictionaryInterface::ERROR_INVALID_TRAIT_CONTEXT,
+                    ModuleComponentInterface::ERROR_INVALID_TRAIT_CONTEXT,
                     __TRAIT__,
                     Base::class
                 )

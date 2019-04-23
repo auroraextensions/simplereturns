@@ -19,7 +19,7 @@ namespace AuroraExtensions\Returns\ViewModel;
 use AuroraExtensions\Returns\{
     Helper\Config as ConfigHelper,
     Model\Label as LabelModel,
-    Shared\DictionaryInterface
+    Shared\ModuleComponentInterface
 };
 
 use Magento\Framework\{
@@ -27,7 +27,7 @@ use Magento\Framework\{
     View\Element\Block\ArgumentInterface
 };
 
-class Label extends DataObject implements ArgumentInterface, DictionaryInterface
+class Label extends DataObject implements ArgumentInterface, ModuleComponentInterface
 {
     /** @property ConfigHelper $configHelper */
     protected $configHelper;
