@@ -1,6 +1,6 @@
 <?php
 /**
- * DictionaryInterface.php
+ * ModuleComponentInterface.php
  *
  * Module shared dictionary interface.
  *
@@ -24,7 +24,7 @@ use AuroraExtensions\Returns\Controller\{
     Label\OrdersPost as OrdersPostController
 };
 
-interface DictionaryInterface
+interface ModuleComponentInterface
 {
     /** @constant string ADDRESS_FIELD_DELIMITER */
     const ADDRESS_FIELD_DELIMITER = ',';
