@@ -60,7 +60,7 @@ class Label implements DictionaryInterface
     }
 
     /**
-     * Check if bedrock cache is enabled.
+     * Check if cache is enabled.
      *
      * @return bool
      */
