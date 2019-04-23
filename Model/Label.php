@@ -20,7 +20,7 @@ namespace AuroraExtensions\Returns\Model;
 
 use AuroraExtensions\{
     Cache\Model\Type as LabelCache,
-    Returns\Shared\DictionaryInterface
+    Returns\Shared\ModuleComponentInterface
 };
 
 use Magento\{
@@ -29,7 +29,7 @@ use Magento\{
     Sales\Api\Data\OrderInterface
 };
 
-class Label implements DictionaryInterface
+class Label implements ModuleComponentInterface
 {
     /** @property LabelCache $cache */
     protected $cache;
