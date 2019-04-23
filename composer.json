@@ -13,7 +13,8 @@
     "email": "support@auroraextensions.com"
   },
   "require": {
-    "php": ">=7.2"
+    "php": ">=7.2",
+    "auroraextensions/cache": "~1.0.0"
   },
   "autoload": {
     "files": [
