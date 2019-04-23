@@ -23,7 +23,7 @@ namespace AuroraExtensions\Returns\Model;
 
 use AuroraExtensions\Returns\{
     Helper\Config as ConfigHelper,
-    Shared\DictionaryInterface
+    Shared\ModuleComponentInterface
 };
 
 use Magento\{
@@ -31,7 +31,7 @@ use Magento\{
     Shipping\Model\Carrier\CarrierInterface
 };
 
-class CarrierFactory implements DictionaryInterface
+class CarrierFactory implements ModuleComponentInterface
 {
     /** @property ObjectManagerInterface $objectManager */
     protected $objectManager;

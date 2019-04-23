@@ -18,7 +18,7 @@
  */
 namespace AuroraExtensions\Returns\Model;
 
-use AuroraExtensions\Returns\Shared\DictionaryInterface;
+use AuroraExtensions\Returns\Shared\ModuleComponentInterface;
 use Magento\{
     Customer\Api\CustomerRepositoryInterface,
     Framework\Api\FilterBuilder,
@@ -28,7 +28,7 @@ use Magento\{
     Sales\Api\OrderRepositoryInterface
 };
 
-class Orders implements DictionaryInterface
+class Orders implements ModuleComponentInterface
 {
     /** @property CustomerRepositoryInterface $customerRepository */
     protected $customerRepository;
