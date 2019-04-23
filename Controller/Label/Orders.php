@@ -19,7 +19,7 @@ namespace AuroraExtensions\Returns\Controller\Label;
 use AuroraExtensions\Returns\{
     Helper\Action as ActionHelper,
     Model\Orders as OrdersModel,
-    Shared\DictionaryInterface,
+    Shared\ModuleComponentInterface,
     ViewModel\Orders as ViewModel
 };
 
@@ -31,7 +31,7 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Orders extends Action implements HttpGetActionInterface, DictionaryInterface
+class Orders extends Action implements HttpGetActionInterface, ModuleComponentInterface
 {
     /** @property DataPersistorInterface $dataPersistor */
     protected $dataPersistor;

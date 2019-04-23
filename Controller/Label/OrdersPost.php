@@ -19,7 +19,7 @@ namespace AuroraExtensions\Returns\Controller\Label;
 use AuroraExtensions\Returns\{
     Model\Orders as OrdersModel,
     Shared\Action\Redirector,
-    Shared\DictionaryInterface,
+    Shared\ModuleComponentInterface,
     ViewModel\Orders as ViewModel
 };
 
@@ -35,7 +35,7 @@ use Magento\{
     Sales\Model\OrderRepository
 };
 
-class OrdersPost extends Action implements HttpPostActionInterface, DictionaryInterface
+class OrdersPost extends Action implements HttpPostActionInterface, ModuleComponentInterface
 {
     /** @see AuroraExtensions\Returns\Shared\Action\Redirector */
     use Redirector {

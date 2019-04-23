@@ -18,7 +18,7 @@
  */
 namespace AuroraExtensions\Returns\Setup\Patch\Data;
 
-use AuroraExtensions\Returns\Shared\DictionaryInterface;
+use AuroraExtensions\Returns\Shared\ModuleComponentInterface;
 use Magento\{
     Catalog\Model\Product,
     Eav\Model\Entity\Attribute\ScopedAttributeInterface,
@@ -30,7 +30,7 @@ use Magento\{
 };
 
 class AddReturnLabelAllowedProductAttribute
-    implements DataPatchInterface, PatchRevertableInterface, DictionaryInterface
+    implements DataPatchInterface, PatchRevertableInterface, ModuleComponentInterface
 {
     /** @property EavSetupFactory $eavSetupFactory */
     protected $eavSetupFactory;

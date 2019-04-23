@@ -19,7 +19,7 @@ namespace AuroraExtensions\Returns\ViewModel;
 use AuroraExtensions\Returns\{
     Helper\Action as ActionHelper,
     Model\Label\Processor,
-    Shared\DictionaryInterface
+    Shared\ModuleComponentInterface
 };
 
 use Magento\{
@@ -30,7 +30,7 @@ use Magento\{
     Sales\Api\Data\OrderInterface
 };
 
-class Orders extends DataObject implements ArgumentInterface, DictionaryInterface
+class Orders extends DataObject implements ArgumentInterface, ModuleComponentInterface
 {
     /** @property Processor $processor */
     protected $processor;

@@ -19,7 +19,7 @@ namespace AuroraExtensions\Returns\Controller;
 use AuroraExtensions\Returns\{
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
-    Shared\DictionaryInterface
+    Shared\ModuleComponentInterface
 };
 
 use Magento\{
@@ -30,7 +30,7 @@ use Magento\{
     Store\Model\StoreManagerInterface
 };
 
-class Router implements RouterInterface, DictionaryInterface
+class Router implements RouterInterface, ModuleComponentInterface
 {
     /** @property ActionFactory $actionFactory */
     protected $actionFactory;

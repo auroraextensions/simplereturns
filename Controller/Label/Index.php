@@ -22,7 +22,7 @@ use AuroraExtensions\Returns\{
     Model\Label as LabelModel,
     Model\Orders as OrdersModel,
     Shared\Action\Redirector,
-    Shared\DictionaryInterface,
+    Shared\ModuleComponentInterface,
     ViewModel\Label as ViewModel
 };
 
@@ -35,7 +35,7 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Index extends Action implements HttpGetActionInterface, DictionaryInterface
+class Index extends Action implements HttpGetActionInterface, ModuleComponentInterface
 {
     /** @see AuroraExtensions\Returns\Shared\Action\Redirector */
     use Redirector {

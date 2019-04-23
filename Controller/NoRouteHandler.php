@@ -16,7 +16,7 @@
  */
 namespace AuroraExtensions\Returns\Controller;
 
-use AuroraExtensions\Returns\Shared\DictionaryInterface;
+use AuroraExtensions\Returns\Shared\ModuleComponentInterface;
 use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
@@ -24,7 +24,7 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class NoRouteHandler extends Action implements HttpGetActionInterface, DictionaryInterface
+class NoRouteHandler extends Action implements HttpGetActionInterface, ModuleComponentInterface
 {
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
