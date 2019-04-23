@@ -18,9 +18,9 @@
  */
 namespace AuroraExtensions\Returns\Model;
 
-use AuroraExtensions\Returns\{
-    Model\Cache\Type as LabelCache,
-    Shared\DictionaryInterface
+use AuroraExtensions\{
+    Cache\Model\Type as LabelCache,
+    Returns\Shared\DictionaryInterface
 };
 
 use Magento\{
