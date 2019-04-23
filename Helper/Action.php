@@ -18,9 +18,9 @@
  */
 namespace AuroraExtensions\Returns\Helper;
 
-use AuroraExtensions\Returns\Shared\DictionaryInterface;
+use AuroraExtensions\Returns\Shared\ModuleComponentInterface;
 
-class Action implements DictionaryInterface
+class Action implements ModuleComponentInterface
 {
     /** @constant int DEFAULT_LENGTH */
     const DEFAULT_LENGTH = 4;
