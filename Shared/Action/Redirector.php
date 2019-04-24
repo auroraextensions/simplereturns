@@ -17,12 +17,12 @@
 namespace AuroraExtensions\Returns\Shared\Action;
 
 use AuroraExtensions\Returns\{
-    Exception\TraitException,
+    Exception\TraitContextException,
     Shared\ModuleComponentInterface
 };
 
 use Magento\Framework\{
-    App\Action\AbstractAction as Base,
+    App\Action\AbstractAction,
     Controller\Result\Redirect
 };
 
@@ -33,12 +33,12 @@ trait Redirector
      * by classes extending AbstractAction.
      *
      * @return void
-     * @throws TraitException
+     * @throws TraitContextException
      */
     public function __initialize()
     {
-        if (!is_subclass_of(static::class, Base::class)) {
-            throw new TraitException(
+        if (!is_subclass_of(static::class, AbstractAction::class)) {
+            throw new TraitContextException(
                 __(
                     ModuleComponentInterface::ERROR_INVALID_TRAIT_CONTEXT,
                     __TRAIT__,
