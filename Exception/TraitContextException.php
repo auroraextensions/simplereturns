@@ -1,6 +1,6 @@
 <?php
 /**
- * TraitException.php
+ * TraitContextException.php
  *
  * Exception class specific to invalid trait usage.
  *
@@ -18,6 +18,6 @@
  */
 namespace AuroraExtensions\Returns\Exception;
 
-class TraitException extends \Exception
+class TraitContextException extends \Exception
 {
 }
