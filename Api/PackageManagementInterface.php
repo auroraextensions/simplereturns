@@ -1,6 +1,6 @@
 <?php
 /**
- * LabelManagementInterface.php
+ * PackageManagementInterface.php
  *
  * NOTICE OF LICENSE
  *
@@ -18,13 +18,13 @@ namespace AuroraExtensions\SimpleReturns\Api;
 
 use Magento\Sales\Api\Data\OrderInterface;
 
-interface LabelManagementInterface
+interface PackageManagementInterface
 {
     /**
-     * Request prepaid return shipment label.
+     * Create package(s) for return shipment.
      *
      * @param OrderInterface $order
-     * @return bool
+     * @return array
      */
-    public function createReturnShipmentLabel(OrderInterface $order): bool;
+    public function createShipmentPackages(OrderInterface $order): array;
 }
