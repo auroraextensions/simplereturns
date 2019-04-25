@@ -1,8 +1,6 @@
 <?php
 /**
- * GeneratorInterface.php
- *
- * Return label generation interface.
+ * PackageManagementInterface.php
  *
  * NOTICE OF LICENSE
  *
@@ -12,18 +10,18 @@
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       Aurora Extensions EULA
+ * @package        AuroraExtensions_SimpleReturns
+ * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license        Aurora Extensions EULA
  */
-namespace AuroraExtensions\SimpleReturns\Model\Label;
+namespace AuroraExtensions\SimpleReturns\Api;
 
 use Magento\Sales\Api\Data\OrderInterface;
 
-interface GeneratorInterface
+interface PackageManagementInterface
 {
     /**
-     * Create package(s) for shipment.
+     * Create package(s) for return shipment.
      *
      * @param OrderInterface $order
      * @return array
