@@ -19,6 +19,7 @@
 namespace AuroraExtensions\SimpleReturns\Model\Label;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\PackageManagementInterface,
     Helper\Config as ConfigHelper,
     Model\CarrierFactory,
     Shared\ModuleComponentInterface
@@ -31,7 +32,7 @@ use Magento\{
     Ups\Model\Carrier as UpsCarrier
 };
 
-class Generator implements GeneratorInterface, ModuleComponentInterface
+class Generator implements PackageManagementInterface, ModuleComponentInterface
 {
     /** @property CarrierFactory $carrierFactory */
     protected $carrierFactory;

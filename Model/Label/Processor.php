@@ -19,6 +19,7 @@
 namespace AuroraExtensions\SimpleReturns\Model\Label;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\LabelManagementInterface,
     Helper\Config as ConfigHelper,
     Model\CarrierFactory,
     Model\Label as LabelModel,
@@ -43,7 +44,7 @@ use Magento\{
     Store\Model\StoreManagerInterface
 };
 
-class Processor implements ProcessorInterface, ModuleComponentInterface
+class Processor implements LabelManagementInterface, ModuleComponentInterface
 {
     /** @property CarrierFactory $carrierFactory */
     protected $carrierFactory;
@@ -143,12 +144,12 @@ class Processor implements ProcessorInterface, ModuleComponentInterface
     }
 
     /**
-     * Request prepaid return label.
+     * Request prepaid return shipment label.
      *
      * @param OrderInterface $order
      * @return bool
      */
-    public function requestReturnLabel(OrderInterface $order): bool
+    public function createShipmentLabel(OrderInterface $order): bool
     {
         if (!$this->isOrderPrepaidEligible($order, true)) {
             return false;
@@ -271,6 +272,7 @@ class Processor implements ProcessorInterface, ModuleComponentInterface
 
         if (in_array(true, $conditions)) {
             $this->messageManager->addError('Insufficient information to create shipping label(s).');
+
             return false;
         }
 
@@ -360,7 +362,7 @@ class Processor implements ProcessorInterface, ModuleComponentInterface
                         ->setImage($labelImage)
                         ->setCachedImage($cacheKey, $labelImage);
 
-                    /** @var string $trackingNumber */
+                    /** @var string|null $trackingNumber */
                     $trackingNumber = $shipmentInfo['tracking_number'] ?? null;
 
                     $order->addStatusHistoryComment($this->generator->getRmaRequestComment($trackingNumber));
