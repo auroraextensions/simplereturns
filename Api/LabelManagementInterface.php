@@ -26,5 +26,5 @@ interface LabelManagementInterface
      * @param OrderInterface $order
      * @return bool
      */
-    public function createReturnShipmentLabel(OrderInterface $order): bool;
+    public function createShipmentLabel(OrderInterface $order): bool;
 }
