@@ -9,9 +9,9 @@
  * which is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
- * https://docs.auroraextensions.com/magento/extensions/2.x/returns/LICENSE.txt
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_Returns
+ * @package       AuroraExtensions_SimpleReturns
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
@@ -21,10 +21,10 @@
         <referenceBlock name="customer_account_dashboard_top">
             <!-- @see https://github.com/magento/magento2/issues/3356 -->
             <action method="setTemplate">
-                <argument name="template" xsi:type="string">AuroraExtensions_Returns::customer/account/recent.phtml</argument>
+                <argument name="template" xsi:type="string">AuroraExtensions_SimpleReturns::customer/account/recent.phtml</argument>
             </action>
             <arguments>
-                <argument name="view_model" xsi:type="object">AuroraExtensions\Returns\ViewModel\Orders</argument>
+                <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\ViewModel\Orders</argument>
             </arguments>
         </referenceBlock>
     </body>

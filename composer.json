@@ -1,6 +1,6 @@
 {
-  "name": "auroraextensions/returns",
-  "description": "Enable customers to generate return labels.",
+  "name": "auroraextensions/simplereturns",
+  "description": "Basic RMA module for Magento 2.",
   "type": "magento2-module",
   "license": "Aurora Extensions EULA",
   "authors": [
@@ -21,7 +21,7 @@
       "registration.php"
     ],
     "psr-4": {
-      "AuroraExtensions\\Returns\\": ""
+      "AuroraExtensions\\SimpleReturns\\": ""
     }
   }
 }
