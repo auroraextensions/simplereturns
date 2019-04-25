@@ -8,15 +8,15 @@
  * which is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
- * https://docs.auroraextensions.com/magento/extensions/2.x/returns/LICENSE.txt
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_Returns
+ * @package       AuroraExtensions_SimpleReturns
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
-namespace AuroraExtensions\Returns\Controller\Label;
+namespace AuroraExtensions\SimpleReturns\Controller\Label;
 
-use AuroraExtensions\Returns\{
+use AuroraExtensions\SimpleReturns\{
     Helper\Action as ActionHelper,
     Model\Label\Processor,
     Model\Label as LabelModel,
@@ -37,7 +37,7 @@ use Magento\Framework\{
 
 class Index extends Action implements HttpGetActionInterface, ModuleComponentInterface
 {
-    /** @see AuroraExtensions\Returns\Shared\Action\Redirector */
+    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
     use Redirector {
         Redirector::__initialize as protected;
     }

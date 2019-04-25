@@ -9,9 +9,9 @@
  * which is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
- * https://docs.auroraextensions.com/magento/extensions/2.x/returns/LICENSE.txt
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_Returns
+ * @package       AuroraExtensions_SimpleReturns
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
@@ -19,9 +19,9 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Magento\Framework\View\Element\Template" name="returns_label_orders" template="AuroraExtensions_Returns::returns/label/orders.phtml" cacheable="false">
+            <block class="Magento\Framework\View\Element\Template" name="returns_label_orders" template="AuroraExtensions_SimpleReturns::returns/label/orders.phtml" cacheable="false">
                 <arguments>
-                    <argument name="view_model" xsi:type="object">AuroraExtensions\Returns\ViewModel\Orders</argument>
+                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\ViewModel\Orders</argument>
                     <argument name="column_headers" xsi:type="array">
                         <item name="order_number" xsi:type="string">Order #</item>
                         <item name="order_date" xsi:type="string">Date</item>

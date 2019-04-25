@@ -9,15 +9,15 @@
  * which is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
- * https://docs.auroraextensions.com/magento/extensions/2.x/returns/LICENSE.txt
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_Returns
+ * @package       AuroraExtensions_SimpleReturns
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="AuroraExtensions_Returns" setup_version="1.0.0">
+    <module name="AuroraExtensions_SimpleReturns" setup_version="1.0.0">
         <sequence>
             <module name="AuroraExtensions_Cache"/>
         </sequence>
