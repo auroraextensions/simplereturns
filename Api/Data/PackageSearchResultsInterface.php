@@ -1,6 +1,6 @@
 <?php
 /**
- * PackageManagementInterface.php
+ * PackageSearchResultsInterface.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,15 +16,20 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Api;
+namespace AuroraExtensions\SimpleReturns\Api\Data;
 
-interface PackageManagementInterface
+use Magento\Framework\Api\SearchResultsInterface;
+
+interface PackageSearchResultsInterface extends SearchResultsInterface
 {
     /**
-     * Create package label.
-     *
-     * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
-     * @return array
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface[]
      */
-    public function createLabel(Data\PackageInterface $package): Data\LabelInterface;
+    public function getItems();
+
+    /**
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface[] $items
+     * @return $this
+     */
+    public function setItems(array $items);
 }
