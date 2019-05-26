@@ -14,6 +14,8 @@
  * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license        Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Api\Data;
 
 interface LabelInterface
@@ -41,17 +43,6 @@ interface LabelInterface
     public function setCreatedAt($createdAt);
 
     /**
-     * @return string
-     */
-    public function getCarrierCode();
-
-    /**
-     * @param string $code
-     * @return $this
-     */
-    public function setCarrierCode($code);
-
-    /**
      * @return string|null
      */
     public function getImage();
@@ -60,7 +51,7 @@ interface LabelInterface
      * @param string|null $image
      * @return $this
      */
-    public function setImage($image);
+    public function setImage(?string $image): LabelInterface;
 
     /**
      * @return string
@@ -71,5 +62,5 @@ interface LabelInterface
      * @param string $trackingNumber
      * @return $this
      */
-    public function setTrackingNumber($trackingNumber);
+    public function setTrackingNumber(string $trackingNumber): LabelInterface;
 }

@@ -14,6 +14,8 @@
  * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license        Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Api\Data;
 
 use Magento\Framework\Api\SearchResultsInterface;
