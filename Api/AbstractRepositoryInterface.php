@@ -29,5 +29,5 @@ interface AbstractRepositoryInterface
      * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
      * @return \Magento\Framework\Api\SearchResultsInterface
      */
-    public function getList(SearchCriteriaInterface $criteria): SearchResultsInterface;
+    public function getList(SearchCriteriaInterface $criteria);
 }
