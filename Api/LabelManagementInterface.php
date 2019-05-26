@@ -14,17 +14,16 @@
  * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license        Aurora Extensions EULA
  */
-namespace AuroraExtensions\SimpleReturns\Api;
+declare(strict_types=1);
 
-use Magento\Sales\Api\Data\OrderInterface;
+namespace AuroraExtensions\SimpleReturns\Api;
 
 interface LabelManagementInterface
 {
     /**
-     * Request prepaid return shipment label.
+     * Create data URI from image.
      *
-     * @param OrderInterface $order
-     * @return bool
+     * @return string
      */
-    public function createShipmentLabel(OrderInterface $order): bool;
+    public function createImageDataUri(): string;
 }

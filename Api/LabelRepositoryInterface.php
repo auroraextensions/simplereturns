@@ -14,28 +14,27 @@
  * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license        Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Api;
 
-use Magento\{
-    Framework\Api\SearchCriteriaInterface,
-    Sales\Api\Data\OrderInterface
-};
+use Magento\Framework\Api\SearchCriteriaInterface;
 
 interface LabelRepositoryInterface
 {
     /**
-     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
      * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function get(OrderInterface $order): Data\LabelInterface;
+    public function get(Data\PackageInterface $package): Data\LabelInterface;
 
     /**
      * @param int $id
      * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getById($id): Data\LabelInterface;
+    public function getById(int $id): Data\LabelInterface;
 
     /**
      * @param \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface $label
@@ -44,16 +43,16 @@ interface LabelRepositoryInterface
     public function save(Data\LabelInterface $label): int;
 
     /**
-     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface $label
      * @return bool
      */
-    public function delete(OrderInterface $order): bool;
+    public function delete(Data\LabelInterface $label): bool;
 
     /**
      * @param int $id
      * @return bool
      */
-    public function deleteById($id): bool;
+    public function deleteById(int $id): bool;
 
     /**
      * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
