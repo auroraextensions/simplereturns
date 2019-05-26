@@ -49,15 +49,18 @@ class ExceptionFactory implements ModuleComponentInterface
      */
     public function create(string $type)
     {
-        if ($type !== \Exception::class && !is_subclass_of($type, \Exception::class)) {
+        /** @var string $baseType */
+        $baseType = \Exception::class;
+
+        if ($type !== $baseType && !is_subclass_of($type, $baseType)) {
             throw new \Exception(
                 __(
                     self::ERROR_INVALID_EXCEPTION_TYPE,
-                    $exceptionType
+                    $type
                 )
             );
         }
 
-        return $this->objectManager->create($exceptionType);
+        return $this->objectManager->create($type);
     }
 }
