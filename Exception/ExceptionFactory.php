@@ -1,6 +1,11 @@
 <?php
 /**
- * ExceptionInterface.php
+ * ExceptionFactory.php
+ *
+ * Factory for creating exceptions, which requires
+ * the ObjectManager for instance generation.
+ *
+ * @link https://devdocs.magento.com/guides/v2.3/extension-dev-guide/factories.html
  *
  * NOTICE OF LICENSE
  *
@@ -14,8 +19,45 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Exception;
 
-interface ExceptionInterface
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use Magento\Framework\ObjectManagerInterface;
+
+class ExceptionFactory implements ModuleComponentInterface
 {
+    /** @property ObjectManagerInterface $objectManager */
+    protected $objectManager;
+
+    /**
+     * @param ObjectManagerInterface $objectManager
+     * @return void
+     */
+    public function __construct(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
+
+    /**
+     * Create exception from type given.
+     *
+     * @param string $type
+     * @return mixed
+     * @throws Exception
+     */
+    public function create(string $type)
+    {
+        if ($type !== \Exception::class && !is_subclass_of($type, \Exception::class)) {
+            throw new \Exception(
+                __(
+                    self::ERROR_INVALID_EXCEPTION_TYPE,
+                    $exceptionType
+                )
+            );
+        }
+
+        return $this->objectManager->create($exceptionType);
+    }
 }
