@@ -1,6 +1,6 @@
 <?php
 /**
- * LabelInterface.php
+ * SimpleReturnInterface.php
  *
  * NOTICE OF LICENSE
  *
@@ -18,7 +18,9 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api\Data;
 
-interface LabelInterface
+use Magento\Sales\Api\Data\OrderInterface;
+
+interface SimpleReturnInterface
 {
     /**
      * @return int
@@ -43,24 +45,24 @@ interface LabelInterface
     public function setCreatedAt($createdAt);
 
     /**
-     * @return string|null
+     * @return OrderInterface
      */
-    public function getImage();
+    public function getOrder(): OrderInterface;
 
     /**
-     * @param string|null $image
-     * @return $this
+     * @param OrderInterface $order
+     * @return SimpleReturnInterface
      */
-    public function setImage(?string $image): LabelInterface;
+    public function setOrder(OrderInterface $order): SimpleReturnInterface;
 
     /**
-     * @return string
+     * @return PackageInterface[]
      */
-    public function getTrackingNumber();
+    public function getPackages(): array;
 
     /**
-     * @param string $trackingNumber
-     * @return $this
+     * @param array $packages
+     * @return SimpleReturnInterface
      */
-    public function setTrackingNumber(string $trackingNumber): LabelInterface;
+    public function setPackages(array $packages): SimpleReturnInterface;
 }

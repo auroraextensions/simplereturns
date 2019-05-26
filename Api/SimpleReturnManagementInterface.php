@@ -1,6 +1,6 @@
 <?php
 /**
- * LabelManagementInterface.php
+ * SimpleReturnManagementInterface.php
  *
  * NOTICE OF LICENSE
  *
@@ -18,12 +18,23 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api;
 
-interface LabelManagementInterface
+use Magento\Sales\Api\Data\OrderInterface;
+
+interface SimpleReturnManagementInterface
 {
     /**
-     * Create data URI from image.
+     * Add status update comment to return.
      *
-     * @return string
+     * @param string $comment
+     * @return bool
      */
-    public function createImageDataUri(): string;
+    public function addComment(string $comment): bool;
+
+    /**
+     * Create shipment package.
+     *
+     * @param OrderInterface $order
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
+     */
+    public function createPackage(OrderInterface $order): Data\PackageInterface;
 }

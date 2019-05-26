@@ -14,17 +14,17 @@
  * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license        Aurora Extensions EULA
  */
-namespace AuroraExtensions\SimpleReturns\Api;
+declare(strict_types=1);
 
-use Magento\Sales\Api\Data\OrderInterface;
+namespace AuroraExtensions\SimpleReturns\Api;
 
 interface PackageManagementInterface
 {
     /**
-     * Create package(s) for return shipment.
+     * Create package label.
      *
-     * @param OrderInterface $order
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
      * @return array
      */
-    public function createShipmentPackages(OrderInterface $order): array;
+    public function createLabel(Data\PackageInterface $package): Data\LabelInterface;
 }

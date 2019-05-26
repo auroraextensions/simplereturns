@@ -1,6 +1,6 @@
 <?php
 /**
- * LabelManagementInterface.php
+ * PackageSearchResultsInterface.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,14 +16,20 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Api;
+namespace AuroraExtensions\SimpleReturns\Api\Data;
 
-interface LabelManagementInterface
+use Magento\Framework\Api\SearchResultsInterface;
+
+interface PackageSearchResultsInterface extends SearchResultsInterface
 {
     /**
-     * Create data URI from image.
-     *
-     * @return string
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface[]
      */
-    public function createImageDataUri(): string;
+    public function getItems();
+
+    /**
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface[] $items
+     * @return $this
+     */
+    public function setItems(array $items);
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * LabelRepositoryInterface.php
+ * SimpleReturnRepositoryInterface.php
  *
  * NOTICE OF LICENSE
  *
@@ -18,35 +18,38 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api;
 
-use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\{
+    Framework\Api\SearchCriteriaInterface,
+    Sales\Api\Data\OrderInterface
+};
 
-interface LabelRepositoryInterface
+interface SimpleReturnRepositoryInterface
 {
     /**
-     * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
+     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function get(Data\PackageInterface $package): Data\LabelInterface;
+    public function get(OrderInterface $order): Data\SimpleReturnInterface;
 
     /**
      * @param int $id
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getById(int $id): Data\LabelInterface;
+    public function getById(int $id): Data\SimpleReturnInterface;
 
     /**
-     * @param \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface $label
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma
      * @return int
      */
-    public function save(Data\LabelInterface $label): int;
+    public function save(Data\SimpleReturnInterface $rma): int;
 
     /**
-     * @param \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface $label
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma
      * @return bool
      */
-    public function delete(Data\LabelInterface $label): bool;
+    public function delete(Data\SimpleReturnInterface $rma): bool;
 
     /**
      * @param int $id
@@ -56,7 +59,7 @@ interface LabelRepositoryInterface
 
     /**
      * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface
      */
-    public function getList(SearchCriteriaInterface $criteria): Data\LabelSearchResultsInterface;
+    public function getList(SearchCriteriaInterface $criteria): Data\SimpleReturnSearchResultsInterface;
 }

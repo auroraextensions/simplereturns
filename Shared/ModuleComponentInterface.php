@@ -56,6 +56,9 @@ interface ModuleComponentInterface
     /** @constant string ERROR_INVALID_CARRIER_CODE */
     const ERROR_INVALID_CARRIER_CODE = 'Unable to create carrier model. Invalid carrier code was given.';
 
+    /** @constant string ERROR_INVALID_EXCEPTION_TYPE */
+    const ERROR_INVALID_EXCEPTION_TYPE = 'Invalid exception class type %s was given.';
+
     /** @constant string ERROR_INVALID_RETURN_LABEL_URL */
     const ERROR_INVALID_RETURN_LABEL_URL = 'The requested return label URL was invalid. Please verify and try again.';
 
@@ -136,6 +139,9 @@ interface ModuleComponentInterface
 
     /** @constant string ROUTE_RETURNS_LABEL_ORDERSPOST */
     const ROUTE_RETURNS_LABEL_ORDERSPOST = 'returns/label/ordersPost';
+
+    /** @constant string SQL_COLUMN_SIMPLERETURN_ORDER_ID_FIELD */
+    const SQL_COLUMN_SIMPLERETURN_ORDER_ID_FIELD = 'order_id';
 
     /** @constant string XML_LAYOUT_HANDLE_NOROUTE */
     const XML_LAYOUT_HANDLE_NOROUTE = 'returns_noroute';

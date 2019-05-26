@@ -1,6 +1,6 @@
 <?php
 /**
- * LabelRepositoryInterface.php
+ * PackageRepositoryInterface.php
  *
  * NOTICE OF LICENSE
  *
@@ -20,33 +20,33 @@ namespace AuroraExtensions\SimpleReturns\Api;
 
 use Magento\Framework\Api\SearchCriteriaInterface;
 
-interface LabelRepositoryInterface
+interface PackageRepositoryInterface
 {
     /**
-     * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma
      * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function get(Data\PackageInterface $package): Data\LabelInterface;
+    public function get(Data\SimpleReturnInterface $rma): Data\PackageInterface;
 
     /**
      * @param int $id
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getById(int $id): Data\LabelInterface;
+    public function getById(int $id): Data\PackageInterface;
 
     /**
-     * @param \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface $label
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
      * @return int
      */
-    public function save(Data\LabelInterface $label): int;
+    public function save(Data\PackageInterface $package): int;
 
     /**
-     * @param \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface $label
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
      * @return bool
      */
-    public function delete(Data\LabelInterface $label): bool;
+    public function delete(Data\PackageInterface $package): bool;
 
     /**
      * @param int $id
@@ -56,7 +56,7 @@ interface LabelRepositoryInterface
 
     /**
      * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterface
      */
-    public function getList(SearchCriteriaInterface $criteria): Data\LabelSearchResultsInterface;
+    public function getList(SearchCriteriaInterface $criteria): Data\PackageSearchResultsInterface;
 }
