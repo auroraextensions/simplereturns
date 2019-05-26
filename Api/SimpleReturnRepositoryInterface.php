@@ -20,10 +20,11 @@ namespace AuroraExtensions\SimpleReturns\Api;
 
 use Magento\{
     Framework\Api\SearchCriteriaInterface,
+    Framework\Api\SearchResultsInterface,
     Sales\Api\Data\OrderInterface
 };
 
-interface SimpleReturnRepositoryInterface
+interface SimpleReturnRepositoryInterface extends AbstractRepositoryInterface
 {
     /**
      * @param \Magento\Sales\Api\Data\OrderInterface $order
@@ -56,10 +57,4 @@ interface SimpleReturnRepositoryInterface
      * @return bool
      */
     public function deleteById(int $id): bool;
-
-    /**
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface
-     */
-    public function getList(SearchCriteriaInterface $criteria): Data\SimpleReturnSearchResultsInterface;
 }

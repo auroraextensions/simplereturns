@@ -38,7 +38,9 @@ use Magento\{
     Sales\Api\Data\OrderInterface
 };
 
-class SimpleReturnRepository implements SimpleReturnRepositoryInterface, ModuleComponentInterface
+class SimpleReturnRepository extends AbstractRepository implements
+    SimpleReturnRepositoryInterface,
+    ModuleComponentInterface
 {
     /** @property SimpleReturn\CollectionFactory $collectionFactory */
     protected $collectionFactory;
@@ -85,20 +87,94 @@ class SimpleReturnRepository implements SimpleReturnRepositoryInterface, ModuleC
      */
     public function get(OrderInterface $order): SimpleReturnInterface
     {
-        /** @var SimpleReturnAdapter $simpleReturn */
-        $simpleReturn = $this->simpleReturnFactory->create();
+        /** @var SimpleReturnAdapter $rma */
+        $rma = $this->simpleReturnFactory->create();
         $this->simpleReturnResource->load(
-            $simpleReturn,
+            $rma,
             $order->getId(),
             self::SQL_COLUMN_SIMPLERETURN_ORDER_ID_FIELD
         );
 
-        if (!$simpleReturn->getId()) {
+        if (!$rma->getId()) {
             throw $this->exceptionFactory->create(
                 __('Unable to locate RMA information for the requested order.')
             );
         }
 
-        return $simpleReturn;
+        return $rma;
+    }
+
+    /**
+     * Get SimpleReturn RMA by ID.
+     *
+     * @param int $id
+     * @return SimpleReturnInterface
+     */
+    public function getById(int $id): SimpleReturnInterface
+    {
+        /** @var SimpleReturnAdapter $rma */
+        $rma = $this->simpleReturnFactory->create();
+        $this->simpleReturnResource->load($rma, $id);
+
+        if (!$rma->getId()) {
+            throw $this->exceptionFactory->create(
+                __('Unable to locate RMA information for the requested order.')
+            );
+        }
+
+        return $rma;
+    }
+
+    /**
+     * Save SimpleReturn RMA object.
+     *
+     * @param SimpleReturnInterface $rma
+     * @return int
+     */
+    public function save(SimpleReturnInterface $rma): int
+    {
+        $this->simpleReturnResource->save($rma);
+        return $rma->getId();
+    }
+
+    /**
+     * @param SearchCriteriaInterface $criteria
+     * @return SimpleReturnSearchResultsInterface
+     * @todo: Move this to AbstractRepository
+     */
+    public function getList(SearchCriteriaInterface $criteria)
+    {
+        /** @var SimpleReturn\Collection $collection */
+        $collection = $this->collectionFactory->create();
+
+        foreach ($criteria->getFilterGroups() as $group) {
+            $this->addFilterGroupToCollection($group, $collection);
+        }
+
+        foreach ((array) $criteria->getSortOrders() as $sortOrder) {
+            $field = $sortOrder->getField();
+            $collection->addOrder(
+                $field,
+                $this->getDirection($sortOrder->getDirection())
+            );
+        }
+
+        $collection->setCurPage($criteria->getCurrentPage());
+        $collection->setPageSize($criteria->getPageSize());
+        $collection->load();
+
+        $results = $this->searchResultsFactory->create();
+        $results->setSearchCriteria($criteria);
+
+        $returns = [];
+
+        foreach ($collection as $rma) {
+            $returns[] = $rma;
+        }
+
+        $results->setItems($returns);
+        $results->setTotalCount($collection->getSize());
+
+        return $results;
     }
 }

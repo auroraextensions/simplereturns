@@ -18,7 +18,10 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api;
 
-use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\{
+    SearchCriteriaInterface,
+    SearchResultsInterface
+};
 
 interface LabelRepositoryInterface
 {
@@ -56,7 +59,7 @@ interface LabelRepositoryInterface
 
     /**
      * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface
+     * @return \Magento\Framework\Api\SearchResultsInterface
      */
-    public function getList(SearchCriteriaInterface $criteria): Data\LabelSearchResultsInterface;
+    public function getList(SearchCriteriaInterface $criteria): SearchResultsInterface;
 }
