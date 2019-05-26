@@ -19,7 +19,9 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
-namespace AuroraExtensions\SimpleReturns\Model;
+declare(strict_types=1);
+
+namespace AuroraExtensions\SimpleReturns\Model\Carrier;
 
 use AuroraExtensions\SimpleReturns\{
     Helper\Config as ConfigHelper,
