@@ -26,8 +26,21 @@ use Magento\Framework\Api\{
 interface AbstractRepositoryInterface
 {
     /**
+     * @param int $id
+     * @return mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getById(int $id);
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function deleteById(int $id): bool;
+
+    /**
      * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
      * @return \Magento\Framework\Api\SearchResultsInterface
      */
-    public function getList(SearchCriteriaInterface $criteria);
+    public function getList(SearchCriteriaInterface $criteria): SearchResultsInterface;
 }
