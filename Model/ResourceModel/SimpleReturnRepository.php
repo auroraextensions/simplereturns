@@ -136,45 +136,4 @@ class SimpleReturnRepository extends AbstractRepository implements
         $this->simpleReturnResource->save($rma);
         return $rma->getId();
     }
-
-    /**
-     * @param SearchCriteriaInterface $criteria
-     * @return SimpleReturnSearchResultsInterface
-     * @todo: Move this to AbstractRepository
-     */
-    public function getList(SearchCriteriaInterface $criteria)
-    {
-        /** @var SimpleReturn\Collection $collection */
-        $collection = $this->collectionFactory->create();
-
-        foreach ($criteria->getFilterGroups() as $group) {
-            $this->addFilterGroupToCollection($group, $collection);
-        }
-
-        foreach ((array) $criteria->getSortOrders() as $sortOrder) {
-            $field = $sortOrder->getField();
-            $collection->addOrder(
-                $field,
-                $this->getDirection($sortOrder->getDirection())
-            );
-        }
-
-        $collection->setCurPage($criteria->getCurrentPage());
-        $collection->setPageSize($criteria->getPageSize());
-        $collection->load();
-
-        $results = $this->searchResultsFactory->create();
-        $results->setSearchCriteria($criteria);
-
-        $returns = [];
-
-        foreach ($collection as $rma) {
-            $returns[] = $rma;
-        }
-
-        $results->setItems($returns);
-        $results->setTotalCount($collection->getSize());
-
-        return $results;
-    }
 }
