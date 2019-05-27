@@ -18,12 +18,7 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api;
 
-use Magento\Framework\Api\{
-    SearchCriteriaInterface,
-    SearchResultsInterface
-};
-
-interface PackageRepositoryInterface
+interface PackageRepositoryInterface extends AbstractRepositoryInterface
 {
     /**
      * @param \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma
@@ -50,16 +45,4 @@ interface PackageRepositoryInterface
      * @return bool
      */
     public function delete(Data\PackageInterface $package): bool;
-
-    /**
-     * @param int $id
-     * @return bool
-     */
-    public function deleteById(int $id): bool;
-
-    /**
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
-     * @return \Magento\Framework\Api\SearchResultsInterface
-     */
-    public function getList(SearchCriteriaInterface $criteria): SearchResultsInterface;
 }

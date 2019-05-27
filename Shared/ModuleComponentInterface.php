@@ -45,7 +45,7 @@ interface ModuleComponentInterface
     const COLUMN_HEADERS_KEY = 'column_headers';
 
     /** @constant string DATA_PERSISTOR_KEY */
-    const DATA_PERSISTOR_KEY = 'auroraextensions_returns_data';
+    const DATA_PERSISTOR_KEY = 'simplereturns_data';
 
     /** @constant string DEFAULT_FRONT_NAME */
     const DEFAULT_FRONT_NAME = 'returns';
@@ -142,6 +142,12 @@ interface ModuleComponentInterface
 
     /** @constant string SQL_COLUMN_SIMPLERETURN_ORDER_ID_FIELD */
     const SQL_COLUMN_SIMPLERETURN_ORDER_ID_FIELD = 'order_id';
+
+    /** @constant string SQL_COLUMN_RMA_PRIMARY_FIELD */
+    const SQL_COLUMN_RMA_PRIMARY_FIELD = 'rma_id';
+
+    /** @constant string SQL_TABLE_ENTITY_RMA */
+    const SQL_TABLE_ENTITY_RMA = 'simplereturns_rma';
 
     /** @constant string XML_LAYOUT_HANDLE_NOROUTE */
     const XML_LAYOUT_HANDLE_NOROUTE = 'returns_noroute';

@@ -18,11 +18,7 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api;
 
-use Magento\{
-    Framework\Api\SearchCriteriaInterface,
-    Framework\Api\SearchResultsInterface,
-    Sales\Api\Data\OrderInterface
-};
+use Magento\Sales\Api\Data\OrderInterface;
 
 interface SimpleReturnRepositoryInterface extends AbstractRepositoryInterface
 {
@@ -51,10 +47,4 @@ interface SimpleReturnRepositoryInterface extends AbstractRepositoryInterface
      * @return bool
      */
     public function delete(Data\SimpleReturnInterface $rma): bool;
-
-    /**
-     * @param int $id
-     * @return bool
-     */
-    public function deleteById(int $id): bool;
 }
