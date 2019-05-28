@@ -1,6 +1,6 @@
 <?php
 /**
- * SimpleReturn.php
+ * Collection.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,23 +16,25 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ResourceModel;
+namespace AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn;
 
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
-use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use AuroraExtensions\SimpleReturns\{
+    Api\AbstractCollectionInterface,
+    Model\SimpleReturn as SimpleReturnAdapter,
+    Model\ResourceModel\SimpleReturn as SimpleReturnResource
+};
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
-class SimpleReturn extends AbstractDb implements ModuleComponentInterface
+class Collection extends AbstractCollection implements AbstractCollectionInterface
 {
     /**
-     * Initialize SimpleReturn resource model.
-     *
      * @return void
      */
     protected function _construct()
     {
         $this->_init(
-            self::SQL_TABLE_ENTITY_RMA,
-            self::SQL_COLUMN_RMA_PRIMARY_FIELD
+            SimpleReturnAdapter::class,
+            SimpleReturnResource::class
         );
     }
 }

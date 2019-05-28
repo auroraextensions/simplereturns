@@ -2,8 +2,6 @@
 /**
  * SimpleReturnRepository.php
  *
- * RMA repository model.
- *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Aurora Extensions EULA,
@@ -21,6 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ResourceModel;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\AbstractCollectionInterfaceFactory,
     Api\SimpleReturnRepositoryInterface,
     Api\Data\SimpleReturnInterface,
     Api\Data\SimpleReturnInterfaceFactory,
@@ -32,8 +31,8 @@ use AuroraExtensions\SimpleReturns\{
 };
 
 use Magento\{
-    Framework\Api\SearchCriteriaInterface,
-    Framework\Api\SortOrder,
+    Framework\Api\SearchResultsInterface,
+    Framework\Api\SearchResultsInterfaceFactory,
     Framework\Exception\NoSuchEntityException,
     Sales\Api\Data\OrderInterface
 };
@@ -42,14 +41,8 @@ class SimpleReturnRepository extends AbstractRepository implements
     SimpleReturnRepositoryInterface,
     ModuleComponentInterface
 {
-    /** @property SimpleReturn\CollectionFactory $collectionFactory */
-    protected $collectionFactory;
-
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
-
-    /** @property SimpleReturnSearchResultsInterfaceFactory $searchResultsFactory */
-    protected $searchResultsFactory;
 
     /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
     protected $simpleReturnFactory;
@@ -58,30 +51,31 @@ class SimpleReturnRepository extends AbstractRepository implements
     protected $simpleReturnResource;
 
     /**
+     * @param AbstractCollectionInterfaceFactory $collectionFactory
+     * @param SearchResultsInterfaceFactory $searchResultsFactory
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnResource $simpleReturnResource
-     * @param SimpleReturn\CollectionFactory $collectionFactory
-     * @param SimpleReturnSearchResultsInterfaceFactory $searchResultsFactory
      * @param ExceptionFactory $exceptionFactory
      * @return void
      */
     public function __construct(
+        AbstractCollectionInterfaceFactory $collectionFactory,
+        SearchResultsInterfaceFactory $searchResultsFactory,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnResource $simpleReturnResource,
-        SimpleReturn\CollectionFactory $collectionFactory,
-        SimpleReturnSearchResultsInterfaceFactory $searchResultsFactory,
         ExceptionFactory $exceptionFactory
     ) {
+        parent::__construct(
+            $collectionFactory,
+            $searchResultsFactory
+        );
+
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnResource = $simpleReturnResource;
-        $this->collectionFactory = $collectionFactory;
-        $this->searchResultsFactory = $searchResultsFactory;
         $this->exceptionFactory = $exceptionFactory;
     }
 
     /**
-     * Get SimpleReturn RMA for order.
-     *
      * @param OrderInterface $order
      * @return SimpleReturnInterface
      */
@@ -105,8 +99,6 @@ class SimpleReturnRepository extends AbstractRepository implements
     }
 
     /**
-     * Get SimpleReturn RMA by ID.
-     *
      * @param int $id
      * @return SimpleReturnInterface
      */
@@ -126,8 +118,6 @@ class SimpleReturnRepository extends AbstractRepository implements
     }
 
     /**
-     * Save SimpleReturn RMA object.
-     *
      * @param SimpleReturnInterface $rma
      * @return int
      */
@@ -135,5 +125,27 @@ class SimpleReturnRepository extends AbstractRepository implements
     {
         $this->simpleReturnResource->save($rma);
         return $rma->getId();
+    }
+
+    /**
+     * @param SimpleReturnInterface $rma
+     * @return bool
+     */
+    public function delete(SimpleReturnInterface $rma): bool
+    {
+        return $this->deleteById($rma->getId());
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function deleteById(int $id): bool
+    {
+        /** @var SimpleReturnAdapter $rma */
+        $rma = $this->simpleReturnFactory->create();
+        $rma->setId($id);
+
+        return (bool) $this->simpleReturnResource->delete($rma);
     }
 }

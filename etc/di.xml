@@ -17,15 +17,25 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface" type="AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturnRepository"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface"
+                type="AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturnRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface" type="AuroraExtensions\SimpleReturns\Model\SimpleReturn"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
 
-    <preference for="AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface" type="AuroraExtensions\SimpleReturns\Model\ResourceModel\PackageRepository"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface"
+                type="AuroraExtensions\SimpleReturns\Model\ResourceModel\PackageRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageInterface" type="AuroraExtensions\SimpleReturns\Model\Package"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
 
-    <preference for="AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface" type="AuroraExtensions\SimpleReturns\Model\ResourceModel\LabelRepository"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface"
+                type="AuroraExtensions\SimpleReturns\Model\ResourceModel\LabelRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface" type="AuroraExtensions\SimpleReturns\Model\Label"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
+    <type name="AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturnRepository">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\CollectionFactory</argument>
+            <argument name="searchResultsFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterfaceFactory</argument>
+        </arguments>
+    </type>
 </config>
