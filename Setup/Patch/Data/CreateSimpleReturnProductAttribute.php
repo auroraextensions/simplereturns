@@ -1,8 +1,8 @@
 <?php
 /**
- * AddReturnLabelAllowedProductAttribute.php
+ * CreateSimpleReturnProductAttribute.php
  *
- * Add return_label_allowed product attribute.
+ * Add simple_return product attribute.
  *
  * NOTICE OF LICENSE
  *
@@ -29,8 +29,10 @@ use Magento\{
     Framework\Setup\Patch\PatchRevertableInterface
 };
 
-class AddReturnLabelAllowedProductAttribute
-    implements DataPatchInterface, PatchRevertableInterface, ModuleComponentInterface
+class CreateSimpleReturnProductAttribute implements
+    DataPatchInterface,
+    PatchRevertableInterface,
+    ModuleComponentInterface
 {
     /** @property EavSetupFactory $eavSetupFactory */
     protected $eavSetupFactory;
@@ -76,11 +78,11 @@ class AddReturnLabelAllowedProductAttribute
 
         $eavSetup->addAttribute(
             Product::ENTITY,
-            self::ATTRIBUTE_CODE_RETURN_LABEL_ALLOWED,
+            self::ATTRIBUTE_CODE_SIMPLE_RETURN,
             [
                 'type'             => 'int',
                 'input'            => 'boolean',
-                'label'            => self::ATTRIBUTE_LABEL_RETURN_LABEL_ALLOWED,
+                'label'            => self::ATTRIBUTE_LABEL_SIMPLE_RETURN,
                 'global'           => ScopedAttributeInterface::SCOPE_GLOBAL,
                 'frontend'         => '',
                 'source'           => SourceBoolean::class,
@@ -107,7 +109,7 @@ class AddReturnLabelAllowedProductAttribute
 
         $eavSetup->removeAttribute(
             Product::ENTITY,
-            self::ATTRIBUTE_CODE_RETURN_LABEL_ALLOWED
+            self::ATTRIBUTE_CODE_SIMPLE_RETURN
         );
     }
 }
