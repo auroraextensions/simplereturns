@@ -20,23 +20,27 @@ namespace AuroraExtensions\SimpleReturns\Api;
 
 use Magento\Framework\Api\{
     SearchCriteriaInterface,
-    SearchResultsInterface
+    SearchResultsInterface,
+    Search\FilterGroup
 };
 
 interface AbstractRepositoryInterface
 {
     /**
-     * @param int $id
-     * @return mixed
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @param FilterGroup $group
+     * @param AbstractCollectionInterface $collection
+     * @return void
      */
-    public function getById(int $id);
+    public function addFilterGroupToCollection(
+        FilterGroup $group,
+        AbstractCollectionInterface $collection
+    ): void;
 
     /**
-     * @param int $id
-     * @return bool
+     * @param string $direction
+     * @return string
      */
-    public function deleteById(int $id): bool;
+    public function getDirection(string $direction): string;
 
     /**
      * @param \Magento\Framework\Api\SearchCriteriaInterface $criteria
