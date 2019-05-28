@@ -29,11 +29,11 @@ interface ModuleComponentInterface
     /** @constant string ADDRESS_FIELD_DELIMITER */
     const ADDRESS_FIELD_DELIMITER = ',';
 
-    /** @constant string ATTRIBUTE_CODE_RETURN_LABEL_ALLOWED */
-    const ATTRIBUTE_CODE_RETURN_LABEL_ALLOWED = 'return_label_allowed';
+    /** @constant string ATTRIBUTE_CODE_SIMPLE_RETURN */
+    const ATTRIBUTE_CODE_SIMPLE_RETURN = 'simple_return';
 
-    /** @constant string ATTRIBUTE_LABEL_RETURN_LABEL_ALLOWED */
-    const ATTRIBUTE_LABEL_RETURN_LABEL_ALLOWED = 'Return Label Allowed';
+    /** @constant string ATTRIBUTE_LABEL_SIMPLE_RETURN */
+    const ATTRIBUTE_LABEL_SIMPLE_RETURN = 'Returnable';
 
     /** @constant string BLOCK_RETURNS_LABEL_INDEX */
     const BLOCK_RETURNS_LABEL_INDEX = 'returns_label_index';
