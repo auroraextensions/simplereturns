@@ -47,4 +47,10 @@ interface SimpleReturnRepositoryInterface extends AbstractRepositoryInterface
      * @return bool
      */
     public function delete(Data\SimpleReturnInterface $rma): bool;
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function deleteById(int $id): bool;
 }
