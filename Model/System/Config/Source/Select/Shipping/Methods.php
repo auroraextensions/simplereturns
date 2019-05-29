@@ -25,8 +25,8 @@ class Methods implements ArrayInterface
     /** @property array $options */
     protected static $options = [];
 
-    /** @property array $methods */
-    protected static $methods = [
+    /** @property array $values */
+    protected static $values = [
         'UPS Ground' => '03',
     ];
 
@@ -35,7 +35,7 @@ class Methods implements ArrayInterface
      */
     public function __construct()
     {
-        array_walk(self::$methods, [$this, 'setOption']);
+        array_walk(self::$values, [$this, 'setOption']);
     }
 
     /**
