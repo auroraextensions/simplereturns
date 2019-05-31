@@ -86,7 +86,7 @@ class SimpleReturnRepository extends AbstractRepository implements
         $this->simpleReturnResource->load(
             $rma,
             $order->getId(),
-            self::SQL_COLUMN_SIMPLERETURN_ORDER_ID_FIELD
+            self::SQL_COLUMN_RMA_ORDER_ID_FIELD
         );
 
         if (!$rma->getId()) {
