@@ -117,14 +117,18 @@ interface ModuleComponentInterface
     const ROUTE_RETURNS_LABEL_ORDERS = 'returns/label/orders';
     const ROUTE_RETURNS_LABEL_ORDERSPOST = 'returns/label/ordersPost';
 
-    /** @constant string SQL_COLUMN_RMA_ORDER_ID_FIELD */
+    /** @constant string SQL_COLUMN_LABEL_PRIMARY_FIELD */
     /** @constant string SQL_COLUMN_PKG_PRIMARY_FIELD */
     /** @constant string SQL_COLUMN_RMA_PRIMARY_FIELD */
+    /** @constant string SQL_COLUMN_RMA_ORDER_ID_FIELD */
+    /** @constant string SQL_TABLE_ENTITY_LABEL */
     /** @constant string SQL_TABLE_ENTITY_PKG */
     /** @constant string SQL_TABLE_ENTITY_RMA */
-    const SQL_COLUMN_RMA_ORDER_ID_FIELD = 'order_id';
+    const SQL_COLUMN_LABEL_PRIMARY_FIELD = 'label_id';
     const SQL_COLUMN_PKG_PRIMARY_FIELD = 'package_id';
     const SQL_COLUMN_RMA_PRIMARY_FIELD = 'rma_id';
+    const SQL_COLUMN_RMA_ORDER_ID_FIELD = 'order_id';
+    const SQL_TABLE_ENTITY_LABEL = 'simplereturns_label';
     const SQL_TABLE_ENTITY_PKG = 'simplereturns_package';
     const SQL_TABLE_ENTITY_RMA = 'simplereturns_rma';
 
