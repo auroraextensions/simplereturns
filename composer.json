@@ -14,6 +14,15 @@
   },
   "require": {
     "php": ">=7.2",
+    "magento/module-catalog": "101.*.*",
+    "magento/module-customer": "101.*.*",
+    "magento/module-directory": "101.*.*",
+    "magento/module-eav": "101.*.*",
+    "magento/module-sales": "101.*.*",
+    "magento/module-shipping": "101.*.*",
+    "magento/module-store": "101.*.*",
+    "magento/module-ups": "101.*.*",
+    "magento/framework": "100.*.*",
     "auroraextensions/cache": "~1.0.0"
   },
   "autoload": {
