@@ -17,3 +17,4 @@
 "The recipient last name on the return label.","The recipient last name on the return label."
 "The URL to the store return form.","The URL to the store return form."
 "Unable to locate RMA information for the requested order.","Unable to locate RMA information for the requested order."
+"Unable to locate package(s) for the requested RMA.","Unable to locate package(s) for the requested RMA."
