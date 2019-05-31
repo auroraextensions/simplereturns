@@ -30,15 +30,13 @@ interface ModuleComponentInterface
     const ADDRESS_FIELD_DELIMITER = ',';
 
     /** @constant string ATTRIBUTE_CODE_SIMPLE_RETURN */
-    const ATTRIBUTE_CODE_SIMPLE_RETURN = 'simple_return';
-
     /** @constant string ATTRIBUTE_LABEL_SIMPLE_RETURN */
+    const ATTRIBUTE_CODE_SIMPLE_RETURN = 'simple_return';
     const ATTRIBUTE_LABEL_SIMPLE_RETURN = 'Returnable';
 
     /** @constant string BLOCK_RETURNS_LABEL_INDEX */
-    const BLOCK_RETURNS_LABEL_INDEX = 'returns_label_index';
-
     /** @constant string BLOCK_RETURNS_LABEL_ORDERS */
+    const BLOCK_RETURNS_LABEL_INDEX = 'returns_label_index';
     const BLOCK_RETURNS_LABEL_ORDERS = 'returns_label_orders';
 
     /** @constant string COLUMN_HEADERS_KEY */
@@ -48,81 +46,62 @@ interface ModuleComponentInterface
     const DATA_PERSISTOR_KEY = 'simplereturns_data';
 
     /** @constant string DEFAULT_FRONT_NAME */
-    const DEFAULT_FRONT_NAME = 'returns';
-
     /** @constant string DEFAULT_SCRIPT_NAME */
+    const DEFAULT_FRONT_NAME = 'returns';
     const DEFAULT_SCRIPT_NAME = 'index.php';
 
     /** @constant string ERROR_INVALID_CARRIER_CODE */
-    const ERROR_INVALID_CARRIER_CODE = 'Unable to create carrier model. Invalid carrier code was given.';
-
     /** @constant string ERROR_INVALID_EXCEPTION_TYPE */
-    const ERROR_INVALID_EXCEPTION_TYPE = 'Invalid exception class type %s was given.';
-
     /** @constant string ERROR_INVALID_RETURN_LABEL_URL */
-    const ERROR_INVALID_RETURN_LABEL_URL = 'The requested return label URL was invalid. Please verify and try again.';
-
     /** @constant string ERROR_INVALID_TRAIT_CONTEXT */
-    const ERROR_INVALID_TRAIT_CONTEXT = '%1 can only be used when extending or implementing %2';
-
     /** @constant string ERROR_MISSING_URL_PARAMS */
-    const ERROR_MISSING_URL_PARAMS = 'Please provide an email address or order ID and billing/shipping zip code.';
-
     /** @constant string ERROR_NO_SUCH_ENTITY_FOUND_FOR_EMAIL */
-    const ERROR_NO_SUCH_ENTITY_FOUND_FOR_EMAIL = 'Could not find any orders associated with email: %1';
-
     /** @constant string ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE */
-    const ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE = 'Could not find an order #%1 with billing or shipping zip code: %2';
-
     /** @constant string ERROR_ORDER_EXCEEDS_AGE_THRESHOLD */
-    const ERROR_ORDER_EXCEEDS_AGE_THRESHOLD = 'Return labels are not available for orders more than %1 days old.';
-
     /** @constant string ERROR_ORDER_HAS_INELIGIBLE_ITEMS */
-    const ERROR_ORDER_HAS_INELIGIBLE_ITEMS = 'The selected order has items that do not permit online return label generation.<br><br>Please contact <a href="%1">%2</a> for assistance.';
-
     /** @constant string ERROR_ORDER_SUBTOTAL_BELOW_MINIMUM */
+    const ERROR_INVALID_CARRIER_CODE = 'Unable to create carrier model. Invalid carrier code was given.';
+    const ERROR_INVALID_EXCEPTION_TYPE = 'Invalid exception class type %s was given.';
+    const ERROR_INVALID_RETURN_LABEL_URL = 'The requested return label URL was invalid. Please verify and try again.';
+    const ERROR_INVALID_TRAIT_CONTEXT = '%1 can only be used when extending or implementing %2';
+    const ERROR_MISSING_URL_PARAMS = 'Please provide an email address or order ID and billing/shipping zip code.';
+    const ERROR_NO_SUCH_ENTITY_FOUND_FOR_EMAIL = 'Could not find any orders associated with email: %1';
+    const ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE = 'Could not find an order #%1 with billing or shipping zip code: %2';
+    const ERROR_ORDER_EXCEEDS_AGE_THRESHOLD = 'Return labels are not available for orders more than %1 days old.';
+    const ERROR_ORDER_HAS_INELIGIBLE_ITEMS = 'The selected order has items that do not permit online return label generation.<br><br>Please contact <a href="%1">%2</a> for assistance.';
     const ERROR_ORDER_SUBTOTAL_BELOW_MINIMUM = 'Return labels are not available for orders under %1';
 
     /** @constant string FIELD_CUSTOMER_ID */
-    const FIELD_CUSTOMER_ID = 'customer_id';
-
     /** @constant string FIELD_INCREMENT_ID */
-    const FIELD_INCREMENT_ID = 'increment_id';
-
     /** @constant string FIELD_PROTECT_CODE */
+    const FIELD_CUSTOMER_ID = 'customer_id';
+    const FIELD_INCREMENT_ID = 'increment_id';
     const FIELD_PROTECT_CODE = 'protect_code';
 
     /** @constant string FORMAT_RMA_ORDER_REFERENCE */
-    const FORMAT_RMA_ORDER_REFERENCE = 'RMA: Order #%1';
-
     /** @constant string FORMAT_RMA_REQUEST_COMMENT */
+    const FORMAT_RMA_ORDER_REFERENCE = 'RMA: Order #%1';
     const FORMAT_RMA_REQUEST_COMMENT = 'A return label was generated from [%1] with tracking number %2';
 
     /** @constant string FULLACTION_DELIMITER */
-    const FULLACTION_DELIMITER = '_';
-
     /** @constant string FULLACTION_RETURNS_LABEL_INDEX */
-    const FULLACTION_RETURNS_LABEL_INDEX = 'returns_label_index';
-
     /** @constant string FULLACTION_RETURNS_LABEL_ORDERS */
-    const FULLACTION_RETURNS_LABEL_ORDERS = 'returns_label_orders';
-
     /** @constant string FULLACTION_RETURNS_LABEL_ORDERSPOST */
+    const FULLACTION_DELIMITER = '_';
+    const FULLACTION_RETURNS_LABEL_INDEX = 'returns_label_index';
+    const FULLACTION_RETURNS_LABEL_ORDERS = 'returns_label_orders';
     const FULLACTION_RETURNS_LABEL_ORDERSPOST = 'returns_label_ordersPost';
 
     /** @constant string LABEL_CACHE_ID */
     const LABEL_CACHE_ID = 'RETURN_LABEL_CONTENT_PER_ORDER';
 
     /** @constant string PARAM_EMAIL */
-    const PARAM_EMAIL = 'email';
-
     /** @constant string PARAM_ORDER_ID */
-    const PARAM_ORDER_ID = 'order_id';
-
     /** @constant string PARAM_PROTECT_CODE */
-    const PARAM_PROTECT_CODE = 'code';
-
     /** @constant string PARAM_ZIP_CODE */
+    const PARAM_EMAIL = 'email';
+    const PARAM_ORDER_ID = 'order_id';
+    const PARAM_PROTECT_CODE = 'code';
     const PARAM_ZIP_CODE = 'zip_code';
 
     /** @constant string PATH_INDEX_DELIMITER */
@@ -132,30 +111,29 @@ interface ModuleComponentInterface
     const PREFIX_DATAURI = 'data:image/jpeg;base64,';
 
     /** @constant string ROUTE_RETURNS_LABEL_INDEX */
-    const ROUTE_RETURNS_LABEL_INDEX = 'returns/label/index';
-
     /** @constant string ROUTE_RETURNS_LABEL_ORDERS */
-    const ROUTE_RETURNS_LABEL_ORDERS = 'returns/label/orders';
-
     /** @constant string ROUTE_RETURNS_LABEL_ORDERSPOST */
+    const ROUTE_RETURNS_LABEL_INDEX = 'returns/label/index';
+    const ROUTE_RETURNS_LABEL_ORDERS = 'returns/label/orders';
     const ROUTE_RETURNS_LABEL_ORDERSPOST = 'returns/label/ordersPost';
 
-    /** @constant string SQL_COLUMN_SIMPLERETURN_ORDER_ID_FIELD */
-    const SQL_COLUMN_SIMPLERETURN_ORDER_ID_FIELD = 'order_id';
-
+    /** @constant string SQL_COLUMN_RMA_ORDER_ID_FIELD */
+    /** @constant string SQL_COLUMN_PKG_PRIMARY_FIELD */
     /** @constant string SQL_COLUMN_RMA_PRIMARY_FIELD */
-    const SQL_COLUMN_RMA_PRIMARY_FIELD = 'rma_id';
-
+    /** @constant string SQL_TABLE_ENTITY_PKG */
     /** @constant string SQL_TABLE_ENTITY_RMA */
+    const SQL_COLUMN_RMA_ORDER_ID_FIELD = 'order_id';
+    const SQL_COLUMN_PKG_PRIMARY_FIELD = 'package_id';
+    const SQL_COLUMN_RMA_PRIMARY_FIELD = 'rma_id';
+    const SQL_TABLE_ENTITY_PKG = 'simplereturns_package';
     const SQL_TABLE_ENTITY_RMA = 'simplereturns_rma';
 
     /** @constant string XML_LAYOUT_HANDLE_NOROUTE */
     const XML_LAYOUT_HANDLE_NOROUTE = 'returns_noroute';
 
     /** @constant int ZIP_CODE_INDEX */
-    const ZIP_CODE_INDEX = 0;
-
     /** @constant int ZIP_CODE_LENGTH */
+    const ZIP_CODE_INDEX = 0;
     const ZIP_CODE_LENGTH = 5;
 
     /** @constant array DICT_ACTION_CONTROLLER_DISPATCH */
