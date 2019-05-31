@@ -45,7 +45,7 @@ interface LabelInterface
     /**
      * @return string|null
      */
-    public function getImage();
+    public function getImage(): ?string;
 
     /**
      * @param string|null $image
@@ -56,7 +56,7 @@ interface LabelInterface
     /**
      * @return string
      */
-    public function getTrackingNumber();
+    public function getTrackingNumber(): string;
 
     /**
      * @param string $trackingNumber
