@@ -2,8 +2,6 @@
 /**
  * SimpleReturn.php
  *
- * Return labels adapter model.
- *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Aurora Extensions EULA,
