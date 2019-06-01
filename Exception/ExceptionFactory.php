@@ -2,8 +2,8 @@
 /**
  * ExceptionFactory.php
  *
- * Factory for creating exceptions, which requires
- * the ObjectManager for instance generation.
+ * Factory for generating various exception types.
+ * Requires ObjectManager for instance generation.
  *
  * @link https://devdocs.magento.com/guides/v2.3/extension-dev-guide/factories.html
  *
