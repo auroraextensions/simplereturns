@@ -16,11 +16,12 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model;
+namespace AuroraExtensions\SimpleReturns\Model\DataModel;
 
 use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterface,
     Api\Data\PackageInterface,
+    Model\ResourceModel\Package as PackageResourceModel,
     Shared\ModuleComponentInterface
 };
 
@@ -38,7 +39,7 @@ class Package extends AbstractModel implements
      */
     public function _construct()
     {
-        $this->_init(ResourceModel\Package::class);
+        $this->_init(PackageResourceModel::class);
     }
 
     /**
