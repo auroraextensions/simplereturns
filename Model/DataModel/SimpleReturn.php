@@ -16,10 +16,11 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model;
+namespace AuroraExtensions\SimpleReturns\Model\DataModel;
 
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
+    Model\ResourceModel\SimpleReturn as SimpleReturnResourceModel,
     Shared\ModuleComponentInterface
 };
 
@@ -37,7 +38,7 @@ class SimpleReturn extends AbstractModel implements
      */
     public function _construct()
     {
-        $this->_init(ResourceModel\SimpleReturn::class);
+        $this->_init(SimpleReturnResourceModel::class);
     }
 
     /**
