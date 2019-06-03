@@ -14,7 +14,7 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */ 
-namespace AuroraExtensions\SimpleReturns\ViewModel;
+namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
 
 use AuroraExtensions\SimpleReturns\{
     Helper\Action as ActionHelper,
