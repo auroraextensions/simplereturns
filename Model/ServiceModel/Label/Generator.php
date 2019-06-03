@@ -2,7 +2,7 @@
 /**
  * Generator.php
  *
- * Return label generation model.
+ * Return label generation service model.
  *
  * NOTICE OF LICENSE
  *
@@ -16,7 +16,7 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
-namespace AuroraExtensions\SimpleReturns\Model\Label;
+namespace AuroraExtensions\SimpleReturns\Model\ServiceModel\Label;
 
 use AuroraExtensions\SimpleReturns\{
     Api\PackageManagementInterface,
