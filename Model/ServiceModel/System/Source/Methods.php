@@ -16,7 +16,7 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
-namespace AuroraExtensions\SimpleReturns\Model\System\Config\Source\Select\Shipping;
+namespace AuroraExtensions\SimpleReturns\Model\ServiceModel\System\Source;
 
 use Magento\Framework\Option\ArrayInterface;
 

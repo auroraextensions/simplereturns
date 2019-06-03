@@ -16,7 +16,7 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
-namespace AuroraExtensions\SimpleReturns\Model\Adapter;
+namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales;
 
 use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\{
