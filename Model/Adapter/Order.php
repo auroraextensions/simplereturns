@@ -1,6 +1,6 @@
 <?php
 /**
- * Orders.php
+ * Order.php
  *
  * Customer orders adapter model.
  *
@@ -28,7 +28,7 @@ use Magento\{
     Sales\Api\OrderRepositoryInterface
 };
 
-class Orders implements ModuleComponentInterface
+class Order implements ModuleComponentInterface
 {
     /** @property CustomerRepositoryInterface $customerRepository */
     protected $customerRepository;
