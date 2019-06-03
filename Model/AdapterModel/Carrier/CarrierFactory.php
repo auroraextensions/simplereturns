@@ -21,7 +21,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\Adapter\Carrier;
+namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Carrier;
 
 use AuroraExtensions\SimpleReturns\{
     Helper\Config as ConfigHelper,
