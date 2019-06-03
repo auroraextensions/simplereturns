@@ -16,10 +16,11 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model;
+namespace AuroraExtensions\SimpleReturns\Model\DataModel;
 
 use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterface,
+    Model\ResourceModel\Label as LabelResourceModel,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\Model\AbstractModel;
@@ -33,7 +34,7 @@ class Label extends AbstractModel implements
      */
     public function _construct()
     {
-        $this->_init(ResourceModel\Label::class);
+        $this->_init(LabelResourceModel::class);
     }
 
     /**
