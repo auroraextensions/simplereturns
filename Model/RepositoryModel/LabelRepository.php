@@ -16,7 +16,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ResourceModel;
+namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
 use AuroraExtensions\SimpleReturns\{
     Api\AbstractCollectionInterfaceFactory,
