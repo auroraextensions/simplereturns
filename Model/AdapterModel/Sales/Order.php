@@ -16,9 +16,15 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales;
 
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use AuroraExtensions\SimpleReturns\{
+    Exception\ExceptionFactory,
+    Shared\ModuleComponentInterface
+};
+
 use Magento\{
     Customer\Api\CustomerRepositoryInterface,
     Framework\Api\FilterBuilder,
@@ -32,6 +38,9 @@ class Order implements ModuleComponentInterface
 {
     /** @property CustomerRepositoryInterface $customerRepository */
     protected $customerRepository;
+
+    /** @property ExceptionFactory $exceptionFactory */
+    protected $exceptionFactory;
 
     /** @property FilterBuilder $filterBuilder */
     protected $filterBuilder;
@@ -47,6 +56,7 @@ class Order implements ModuleComponentInterface
 
     /**
      * @param CustomerRepositoryInterface $customerRepository
+     * @param ExceptionFactory $exceptionFactory
      * @param FilterBuilder $filterBuilder
      * @param MessageManagerInterface $messageManager
      * @param OrderRepositoryInterface $orderRepository
@@ -55,12 +65,14 @@ class Order implements ModuleComponentInterface
      */
     public function __construct(
         CustomerRepositoryInterface $customerRepository,
+        ExceptionFactory $exceptionFactory,
         FilterBuilder $filterBuilder,
         MessageManagerInterface $messageManager,
         OrderRepositoryInterface $orderRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->customerRepository = $customerRepository;
+        $this->exceptionFactory = $exceptionFactory;
         $this->filterBuilder = $filterBuilder;
         $this->messageManager = $messageManager;
         $this->orderRepository = $orderRepository;
@@ -75,7 +87,10 @@ class Order implements ModuleComponentInterface
      * @return OrderInterface[]
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getOrdersByCustomerEmailAndZipCode(string $email, string $zipCode): array
+    public function getOrdersByCustomerEmailAndZipCode(
+        string $email,
+        string $zipCode
+    ): array
     {
         try {
             /** @var CustomerInterface $customer */
@@ -84,7 +99,8 @@ class Order implements ModuleComponentInterface
             if ($customer && $customer->getId()) {
                 /** @var array $filters */
                 $filters = [
-                    $this->filterBuilder->setField(self::FIELD_CUSTOMER_ID)
+                    $this->filterBuilder
+                        ->setField(self::FIELD_CUSTOMER_ID)
                         ->setValue($customer->getId())
                         ->create()
                 ];
@@ -110,7 +126,10 @@ class Order implements ModuleComponentInterface
      * @param string $zipCode
      * @return OrderInterface[]
      */
-    public function getOrdersByIncrementIdAndZipCode(string $incrementId, string $zipCode): array
+    public function getOrdersByIncrementIdAndZipCode(
+        string $incrementId,
+        string $zipCode
+    ): array
     {
         /** @var array $orders */
         $orders = [];
@@ -118,7 +137,8 @@ class Order implements ModuleComponentInterface
         try {
             /** @var array $filters */
             $filters = [
-                $this->filterBuilder->setField(self::FIELD_INCREMENT_ID)
+                $this->filterBuilder
+                ->setField(self::FIELD_INCREMENT_ID)
                 ->setValue($incrementId)
                 ->create()
             ];
@@ -127,12 +147,13 @@ class Order implements ModuleComponentInterface
             $orders = $this->getOrdersByFilters($filters);
 
             if (empty($orders)) {
-                throw new NoSuchEntityException(
+                throw $this->exceptionFactory->create(
                     __(
                         self::ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE,
                         $incrementId,
                         $zipCode
-                    )
+                    ),
+                    NoSuchEntityException::class
                 );
             }
         } catch (NoSuchEntityException $e) {
@@ -149,7 +170,10 @@ class Order implements ModuleComponentInterface
      * @param string $protectCode
      * @return OrderInterface[]
      */
-    public function getOrdersByIncrementIdAndProtectCode(string $incrementId, string $protectCode): array
+    public function getOrdersByIncrementIdAndProtectCode(
+        string $incrementId,
+        string $protectCode
+    ): array
     {
         /** @var array $data */
         $data = [];
@@ -175,8 +199,11 @@ class Order implements ModuleComponentInterface
             }
 
             if (empty($data)) {
-                throw new NoSuchEntityException(
-                    __(self::ERROR_INVALID_RETURN_LABEL_URL)
+                throw $this->exceptionFactory->create(
+                    __(
+                        self::ERROR_INVALID_RETURN_LABEL_URL
+                    ),
+                    NoSuchEntityException::class
                 );
             }
         } catch (NoSuchEntityException $e) {
@@ -206,7 +233,7 @@ class Order implements ModuleComponentInterface
      * @param string $zipCode
      * @return string
      */
-    public static function truncateZipCode(string $zipCode)
+    public static function truncateZipCode(string $zipCode): string
     {
         return substr($zipCode, self::ZIP_CODE_INDEX, self::ZIP_CODE_LENGTH);
     }
