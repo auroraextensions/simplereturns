@@ -20,7 +20,7 @@
     <type name="Magento\Framework\App\RouterList">
         <arguments>
             <argument name="routerList" xsi:type="array">
-                <item name="auroraextensions_returns_router" xsi:type="array">
+                <item name="auroraextensions_simplereturns_router" xsi:type="array">
                     <item name="class" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Router</item>
                     <item name="disable" xsi:type="boolean">false</item>
                     <item name="sortOrder" xsi:type="string">10</item>
