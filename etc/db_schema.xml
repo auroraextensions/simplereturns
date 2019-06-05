@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * db_schema.xml
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="simplereturns_rma" resource="default" engine="innodb" comment="Simple Returns RMAs">
+        <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="false" identity="true"
+                comment="RMA ID"/>
+        <column xsi:type="smallint" name="order_id" padding="5" unsigned="true" nullable="false" comment="Order ID"/>
+        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" comment="Package ID"/>
+        <column xsi:type="varchar" name="remote_ip" nullable="true" length="256" comment="Remote IP Address"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rma_id"/>
+        </constraint>
+    </table>
+    <table name="simplereturns_package" resource="default" engine="innodb" comment="Simple Returns Packages">
+        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" identity="true"
+                comment="Package ID"/>
+        <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="true" comment="Label ID"/>
+        <column xsi:type="varchar" name="carrier_code" nullable="true" length="32" comment="Shipping Carrier Code"/>
+        <column xsi:type="varchar" name="container_type" nullable="true" length="32" comment="Package Container Type"/>
+        <column xsi:type="varchar" name="description" nullable="true" length="32" comment="Package Description"/>
+        <column xsi:type="varchar" name="dimension_units" nullable="true" length="32" comment="Package Dimension Units"/>
+        <column xsi:type="varchar" name="weight_units" nullable="true" length="32" comment="Package Weight Units"/>
+        <column xsi:type="smallint" name="weight" padding="5" unsigned="true" nullable="true" comment="Package Weight"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="package_id"/>
+        </constraint>
+    </table>
+    <table name="simplereturns_label" resource="default" engine="innodb" comment="Simple Returns Labels">
+        <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="false" identity="true"
+                comment="Label ID"/>
+        <column xsi:type="blob" name="image" nullable="true" comment="Label Image"/>
+        <column xsi:type="varchar" name="tracking_number" nullable="true" length="128" comment="Label Tracking Number"/>
+    </table>
+</schema>
