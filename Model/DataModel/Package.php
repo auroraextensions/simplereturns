@@ -24,11 +24,8 @@ use AuroraExtensions\SimpleReturns\{
     Model\ResourceModel\Package as PackageResourceModel,
     Shared\ModuleComponentInterface
 };
-
-use Magento\{
-    Framework\Model\AbstractModel,
-    Shipping\Model\Carrier\CarrierInterface
-};
+use Magento\Framework\Model\AbstractModel;
+use Magento\Shipping\Model\Carrier\CarrierInterface;
 
 class Package extends AbstractModel implements
     PackageInterface,
@@ -45,7 +42,7 @@ class Package extends AbstractModel implements
     /**
      * @return CarrierInterface
      */
-    public function getCarrier(): CarrierInterface
+    public function getCarrier(): ?CarrierInterface
     {
         return $this->getData('carrier');
     }
