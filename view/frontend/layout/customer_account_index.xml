@@ -24,7 +24,7 @@
                 <argument name="template" xsi:type="string">AuroraExtensions_SimpleReturns::customer/account/recent.phtml</argument>
             </action>
             <arguments>
-                <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\ViewModel\Orders</argument>
+                <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Orders</argument>
             </arguments>
         </referenceBlock>
     </body>
