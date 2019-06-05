@@ -20,17 +20,17 @@ define([
 ], function ($) {
     'use strict';
 
-    $.widget('mage.printLabel', {
+    $.widget('mage.labelPrint', {
         options: {
-            labelContainer: ".content-label"
+            container: ".content-label"
         },
         _create: function () {
             this.element.on('click', $.proxy(this._print, this));
         },
         _print: function (clickEvent) {
-            $(this.options.labelContainer).print();
+            $(this.options.container).print();
         }
     });
 
-    return $.mage.printLabel;
+    return $.mage.labelPrint;
 });

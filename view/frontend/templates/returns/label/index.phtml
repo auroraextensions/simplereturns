@@ -29,7 +29,7 @@ $hasLabel = $viewModel->hasLabel();
     <div class="returns-label-content">
         <div class="content-buttons">
             <?php if ($hasLabel): ?>
-                <button class="button print" title="Print Label" type="button" data-mage-init='{"printLabel":{}}'><?php echo $block->escapeHtml(__('Print Label')) ?></button>
+                <button class="button print" title="Print Label" type="button" data-mage-init='{"labelPrint":{}}'><?php echo $block->escapeHtml(__('Print Label')) ?></button>
             <?php endif ?>
         </div>
         <div class="content-label">
