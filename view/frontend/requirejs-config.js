@@ -24,7 +24,7 @@ var config = {
     },
     map: {
         '*': {
-            printLabel: 'AuroraExtensions_SimpleReturns/js/print'
+            labelPrint: 'AuroraExtensions_SimpleReturns/js/print'
         }
     }
 };
