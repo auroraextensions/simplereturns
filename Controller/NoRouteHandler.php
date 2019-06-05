@@ -26,7 +26,9 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class NoRouteHandler extends Action implements HttpGetActionInterface, ModuleComponentInterface
+class NoRouteHandler extends Action implements
+    HttpGetActionInterface,
+    ModuleComponentInterface
 {
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
