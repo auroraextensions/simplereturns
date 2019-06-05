@@ -80,4 +80,23 @@ class SimpleReturn extends AbstractModel implements
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getRemoteIp(): string
+    {
+        return $this->getData('remote_ip');
+    }
+
+    /**
+     * @param string $remoteIp
+     * @return $this
+     */
+    public function setRemoteIp(string $remoteIp): SimpleReturnInterface
+    {
+        $this->setData('remote_ip', $remoteIp);
+
+        return $this;
+    }
 }
