@@ -14,6 +14,8 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Controller;
 
 use AuroraExtensions\SimpleReturns\{
@@ -21,14 +23,13 @@ use AuroraExtensions\SimpleReturns\{
     Helper\Config as ConfigHelper,
     Shared\ModuleComponentInterface
 };
-
-use Magento\{
-    Framework\App\ActionFactory,
-    Framework\App\RequestInterface,
-    Framework\App\ResponseInterface,
-    Framework\App\RouterInterface,
-    Store\Model\StoreManagerInterface
+use Magento\Framework\{
+    App\ActionFactory,
+    App\RequestInterface,
+    App\ResponseInterface,
+    App\RouterInterface
 };
+use Magento\Store\Model\StoreManagerInterface;
 
 class Router implements RouterInterface, ModuleComponentInterface
 {
@@ -89,7 +90,7 @@ class Router implements RouterInterface, ModuleComponentInterface
         $storeId = $this->storeManager->getStore()->getId();
 
         if (!$this->configHelper->isModuleEnabled($storeId)) {
-            return $this->actionFactory->create(NoRoute::class);
+            return $this->actionFactory->create(NoRouteHandler::class);
         }
 
         /** @var array $parts */

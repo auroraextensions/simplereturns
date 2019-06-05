@@ -16,16 +16,20 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Helper;
 
-use Magento\{
-    Framework\App\Config\ScopeConfigInterface,
-    Framework\DataObject,
-    Framework\DataObject\Factory as DataObjectFactory,
-    Store\Model\ScopeInterface as StoreScopeInterface,
-    Store\Model\Store,
-    Ups\Model\Carrier as UpsCarrier
+use Magento\Framework\{
+    App\Config\ScopeConfigInterface,
+    DataObject,
+    DataObject\Factory as DataObjectFactory
 };
+use Magento\Store\{
+    Model\ScopeInterface as StoreScopeInterface,
+    Model\Store
+};
+use Magento\Ups\Model\Carrier as UpsCarrier;
 
 class Config
 {

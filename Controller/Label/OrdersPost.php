@@ -14,28 +14,30 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Controller\Label;
 
 use AuroraExtensions\SimpleReturns\{
-    Model\Orders as OrdersModel,
+    Model\Adapter\Sales\Order as OrdersModel,
+    Model\ViewModel\Orders as ViewModel,
     Shared\Action\Redirector,
-    Shared\ModuleComponentInterface,
-    ViewModel\Orders as ViewModel
+    Shared\ModuleComponentInterface
+};
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Framework\{
+    App\Action\Action,
+    App\Action\Context,
+    App\Action\HttpPostActionInterface,
+    App\Request\DataPersistorInterface,
+    Controller\Result\Redirect as ResultRedirect,
+    Data\Form\FormKey\Validator as FormKeyValidator,
+    Exception\LocalizedException
 };
 
-use Magento\{
-    Customer\Api\CustomerRepositoryInterface,
-    Framework\App\Action\Action,
-    Framework\App\Action\Context,
-    Framework\App\Action\HttpPostActionInterface,
-    Framework\App\Request\DataPersistorInterface,
-    Framework\Controller\Result\Redirect as ResultRedirect,
-    Framework\Data\Form\FormKey\Validator as FormKeyValidator,
-    Framework\Exception\LocalizedException,
-    Sales\Model\OrderRepository
-};
-
-class OrdersPost extends Action implements HttpPostActionInterface, ModuleComponentInterface
+class OrdersPost extends Action implements
+    HttpPostActionInterface,
+    ModuleComponentInterface
 {
     /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
     use Redirector {
