@@ -14,20 +14,18 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */ 
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
 
 use AuroraExtensions\SimpleReturns\{
     Helper\Config as ConfigHelper,
-    Model\Label as LabelModel,
+    Model\DataModel\Label as LabelModel,
     Shared\ModuleComponentInterface
 };
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 
-use Magento\Framework\{
-    DataObject,
-    View\Element\Block\ArgumentInterface
-};
-
-class Label extends DataObject implements ArgumentInterface, ModuleComponentInterface
+class Label implements ArgumentInterface, ModuleComponentInterface
 {
     /** @property ConfigHelper $configHelper */
     protected $configHelper;
