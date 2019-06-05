@@ -65,4 +65,15 @@ interface SimpleReturnInterface
      * @return SimpleReturnInterface
      */
     public function setPackages(array $packages): SimpleReturnInterface;
+
+    /**
+     * @return string
+     */
+    public function getRemoteIp(): string;
+
+    /**
+     * @param string $remoteIp
+     * @return SimpleReturnInterface
+     */
+    public function setRemoteIp(string $remoteIp): SimpleReturnInterface;
 }
