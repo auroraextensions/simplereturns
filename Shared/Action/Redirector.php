@@ -42,7 +42,7 @@ trait Redirector
                 __(
                     ModuleComponentInterface::ERROR_INVALID_TRAIT_CONTEXT,
                     __TRAIT__,
-                    Base::class
+                    AbstractAction::class
                 )
             );
         }
