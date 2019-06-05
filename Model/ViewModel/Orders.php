@@ -14,11 +14,13 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */ 
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
 
 use AuroraExtensions\SimpleReturns\{
     Helper\Action as ActionHelper,
-    Model\Label\Processor,
+    Model\ServiceModel\Label\Processor,
     Shared\ModuleComponentInterface
 };
 
@@ -30,7 +32,9 @@ use Magento\{
     Sales\Api\Data\OrderInterface
 };
 
-class Orders extends DataObject implements ArgumentInterface, ModuleComponentInterface
+class Orders extends DataObject implements
+    ArgumentInterface,
+    ModuleComponentInterface
 {
     /** @property Processor $processor */
     protected $processor;
