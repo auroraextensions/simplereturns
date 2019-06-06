@@ -25,14 +25,14 @@ use AuroraExtensions\SimpleReturns\{
     Shared\ModuleComponentInterface
 };
 
-use Magento\{
-    Customer\Api\CustomerRepositoryInterface,
-    Framework\Api\FilterBuilder,
-    Framework\Api\SearchCriteriaBuilder,
-    Framework\Exception\NoSuchEntityException,
-    Framework\Message\ManagerInterface as MessageManagerInterface,
-    Sales\Api\OrderRepositoryInterface
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Framework\{
+    Api\FilterBuilder,
+    Api\SearchCriteriaBuilder,
+    Exception\NoSuchEntityException,
+    Message\ManagerInterface as MessageManagerInterface
 };
+use Magento\Sales\Api\OrderRepositoryInterface;
 
 class Order implements ModuleComponentInterface
 {
@@ -85,7 +85,7 @@ class Order implements ModuleComponentInterface
      * @param string $email
      * @param string $zipCode
      * @return OrderInterface[]
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getOrdersByCustomerEmailAndZipCode(
         string $email,
