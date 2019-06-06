@@ -51,5 +51,9 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      */
     public function createLabel(PackageInterface $package): LabelInterface
     {
+        /** @var LabelInterface $label */
+        $label = $this->labelFactory->create();
+
+        return $label;
     }
 }

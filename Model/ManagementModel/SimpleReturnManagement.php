@@ -70,6 +70,18 @@ class SimpleReturnManagement implements SimpleReturnManagementInterface, ModuleC
     }
 
     /**
+     * Add status update comment to return.
+     *
+     * @param string $comment
+     * @return bool
+     * @todo: Implement this method.
+     */
+    public function addComment(string $comment): bool
+    {
+        return true;
+    }
+
+    /**
      * Create package for return shipment.
      *
      * @param SimpleReturnInterface $rma
@@ -123,15 +135,13 @@ class SimpleReturnManagement implements SimpleReturnManagementInterface, ModuleC
     }
 
     /**
-     * Add status update comment to return.
+     * Create return shipment.
      *
-     * @param string $comment
+     * @param SimpleReturnInterface $rma
      * @return bool
-     * @todo: Implement this method.
      */
-    public function addComment(string $comment): bool
+    public function createShipment(OrderInterface $order): bool
     {
-        return true;
     }
 
     /**
