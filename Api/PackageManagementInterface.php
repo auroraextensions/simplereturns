@@ -24,7 +24,7 @@ interface PackageManagementInterface
      * Create package label.
      *
      * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
-     * @return array
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
      */
     public function createLabel(Data\PackageInterface $package): Data\LabelInterface;
 }

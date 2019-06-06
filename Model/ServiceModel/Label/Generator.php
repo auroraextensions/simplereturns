@@ -23,16 +23,13 @@ namespace AuroraExtensions\SimpleReturns\Model\ServiceModel\Label;
 use AuroraExtensions\SimpleReturns\{
     Api\PackageManagementInterface,
     Helper\Config as ConfigHelper,
-    Model\CarrierFactory,
+    Model\Adapter\Carrier\CarrierFactory,
     Shared\ModuleComponentInterface
 };
-
-use Magento\{
-    Framework\HTTP\PhpEnvironment\RemoteAddress,
-    Sales\Api\Data\OrderInterface,
-    Shipping\Model\Carrier\CarrierInterface,
-    Ups\Model\Carrier as UpsCarrier
-};
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Shipping\Model\Carrier\CarrierInterface;
+use Magento\Ups\Model\Carrier as UpsCarrier;
 
 class Generator implements PackageManagementInterface, ModuleComponentInterface
 {

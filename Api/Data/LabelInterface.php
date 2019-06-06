@@ -49,7 +49,7 @@ interface LabelInterface
 
     /**
      * @param string|null $image
-     * @return $this
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
      */
     public function setImage(?string $image): LabelInterface;
 
@@ -60,7 +60,7 @@ interface LabelInterface
 
     /**
      * @param string $trackingNumber
-     * @return $this
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
      */
     public function setTrackingNumber(string $trackingNumber): LabelInterface;
 }

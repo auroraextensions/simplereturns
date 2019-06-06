@@ -18,8 +18,6 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api;
 
-use Magento\Sales\Api\Data\OrderInterface;
-
 interface SimpleReturnManagementInterface
 {
     /**
@@ -33,8 +31,8 @@ interface SimpleReturnManagementInterface
     /**
      * Create shipment package.
      *
-     * @param OrderInterface $order
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma
      * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
-    public function createPackage(OrderInterface $order): Data\PackageInterface;
+    public function createPackage(Data\SimpleReturnInterface $rma): Data\PackageInterface;
 }
