@@ -101,7 +101,7 @@ class Generator implements PackageManagementInterface, ModuleComponentInterface
         switch ($carrierCode) {
             case UpsCarrier::CODE:
                 /** @var CarrierInterface $carrierModel */
-                $carrierModel = $this->getCarrierModel($carrierCode);
+                $carrierModel = $this->carrierFactory->create($carrierCode);
 
                 /** @var array $params */
                 $params = $package['params'];
@@ -127,17 +127,6 @@ class Generator implements PackageManagementInterface, ModuleComponentInterface
         }
 
         return $packages;
-    }
-
-    /**
-     * Get carrier model by carrier code.
-     *
-     * @param string $code
-     * @return CarrierInterface
-     */
-    protected function getCarrierModel(string $code = 'ups'): CarrierInterface
-    {
-        return $this->carrierFactory->create($code);
     }
 
     /**
