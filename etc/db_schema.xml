@@ -24,13 +24,22 @@
         <column xsi:type="smallint" name="order_id" padding="5" unsigned="true" nullable="false" comment="Order ID"/>
         <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" comment="Package ID"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="256" comment="Remote IP Address"/>
+        <constraint xsi:type="foreign" referenceId="SR_RMA_PKG_ID_SR_PKG_PKG_ID" table="simplreturns_rma" column="package_id"
+                    referenceTable="simplereturns_package" referenceColumn="package_id" onDelete="CASCADE"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="rma_id"/>
         </constraint>
+        <index referenceId="SIMPLERETURNS_RMA_ORDER_ID" indexType="btree">
+            <column name="order_id"/>
+        </index>
+        <index referenceId="SIMPLERETURNS_RMA_PKG_ID" indexType="btree">
+            <column name="package_id"/>
+        </index>
     </table>
     <table name="simplereturns_package" resource="default" engine="innodb" comment="Simple Returns Packages">
         <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" identity="true"
                 comment="Package ID"/>
+        <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="false" comment="RMA ID"/>
         <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="true" comment="Label ID"/>
         <column xsi:type="varchar" name="carrier_code" nullable="true" length="32" comment="Shipping Carrier Code"/>
         <column xsi:type="varchar" name="container_type" nullable="true" length="32" comment="Package Container Type"/>
@@ -38,14 +47,29 @@
         <column xsi:type="varchar" name="dimension_units" nullable="true" length="32" comment="Package Dimension Units"/>
         <column xsi:type="varchar" name="weight_units" nullable="true" length="32" comment="Package Weight Units"/>
         <column xsi:type="smallint" name="weight" padding="5" unsigned="true" nullable="true" comment="Package Weight"/>
+        <constraint xsi:type="foreign" referenceId="SR_PKG_LBL_ID_SR_LBL_LBL_ID" table="simplreturns_package" column="label_id"
+                    referenceTable="simplereturns_label" referenceColumn="label_id" onDelete="CASCADE"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="package_id"/>
         </constraint>
+        <index referenceId="SIMPLERETURNS_PKG_RMA_ID" indexType="btree">
+            <column name="rma_id"/>
+        </index>
+        <index referenceId="SIMPLERETURNS_RMA_LABEL_ID" indexType="btree">
+            <column name="label_id"/>
+        </index>
     </table>
     <table name="simplereturns_label" resource="default" engine="innodb" comment="Simple Returns Labels">
         <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="false" identity="true"
                 comment="Label ID"/>
+        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" comment="Package ID"/>
         <column xsi:type="blob" name="image" nullable="true" comment="Label Image"/>
         <column xsi:type="varchar" name="tracking_number" nullable="true" length="128" comment="Label Tracking Number"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="label_id"/>
+        </constraint>
+        <index referenceId="SIMPLERETURNS_LABEL_PKG_ID" indexType="btree">
+            <column name="package_id"/>
+        </index>
     </table>
 </schema>
