@@ -23,7 +23,7 @@
                 comment="RMA ID"/>
         <column xsi:type="smallint" name="order_id" padding="5" unsigned="true" nullable="false" comment="Order ID"/>
         <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" comment="Package ID"/>
-        <column xsi:type="varchar" name="remote_ip" nullable="true" length="256" comment="Remote IP Address"/>
+        <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
         <constraint xsi:type="foreign" referenceId="SR_RMA_PKG_ID_SR_PKG_PKG_ID" table="simplreturns_rma" column="package_id"
                     referenceTable="simplereturns_package" referenceColumn="package_id" onDelete="CASCADE"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
@@ -43,7 +43,7 @@
         <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="true" comment="Label ID"/>
         <column xsi:type="varchar" name="carrier_code" nullable="true" length="32" comment="Shipping Carrier Code"/>
         <column xsi:type="varchar" name="container_type" nullable="true" length="32" comment="Package Container Type"/>
-        <column xsi:type="varchar" name="description" nullable="true" length="32" comment="Package Description"/>
+        <column xsi:type="varchar" name="description" nullable="true" length="128" comment="Package Description"/>
         <column xsi:type="varchar" name="dimension_units" nullable="true" length="32" comment="Package Dimension Units"/>
         <column xsi:type="varchar" name="weight_units" nullable="true" length="32" comment="Package Weight Units"/>
         <column xsi:type="smallint" name="weight" padding="5" unsigned="true" nullable="true" comment="Package Weight"/>
