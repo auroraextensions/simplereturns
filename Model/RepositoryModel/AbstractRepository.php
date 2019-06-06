@@ -24,7 +24,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\AbstractRepositoryInterface
 };
 
-use Magento\Framework\
+use Magento\Framework\{
     Api\SearchCriteriaInterface,
     Api\SearchResultsInterface,
     Api\SearchResultsInterfaceFactory,
