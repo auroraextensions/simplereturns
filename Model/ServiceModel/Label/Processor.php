@@ -239,7 +239,7 @@ class Processor implements LabelManagementInterface, ModuleComponentInterface
         $carrierCode = $this->configHelper->getShippingCarrier($originStoreId);
 
         /** @var CarrierInterface $carrierModel */
-        $carrierModel = $this->getCarrierModel($carrierCode);
+        $carrierModel = $this->carrierFactory->create($carrierCode);
 
         /** @var string $baseCurrencyCode Base currency code. */
         $baseCurrencyCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
@@ -381,17 +381,6 @@ class Processor implements LabelManagementInterface, ModuleComponentInterface
     }
 
     /**
-     * Get carrier model by carrier code.
-     *
-     * @param string $code
-     * @return CarrierInterface
-     */
-    public function getCarrierModel(string $code = 'ups'): CarrierInterface
-    {
-        return $this->carrierFactory->create($code);
-    }
-
-    /**
      * Get package weight from original shipment.
      *
      * @param Shipment $shipment
@@ -400,7 +389,7 @@ class Processor implements LabelManagementInterface, ModuleComponentInterface
      */
     protected function getPackageWeight($shipment, $storeId): float
     {
-        /** @var float|null $weight */
+        /** @var float $weight */
         $weight = $shipment->getWeight() ?? $this->configHelper->getPackageWeight($storeId);
 
         return (float) $weight;
