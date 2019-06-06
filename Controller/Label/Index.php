@@ -19,13 +19,13 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Label;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\SimpleReturnRepositoryInterface,
+    Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
-    Model\Label\Processor,
-    Model\Label as LabelModel,
-    Model\Orders as OrdersModel,
+    Model\AdapterModel\Sales\Order as OrderAdapterModel,
+    Model\ViewModel\Label as ViewModel,
     Shared\Action\Redirector,
-    Shared\ModuleComponentInterface,
-    ViewModel\Label as ViewModel
+    Shared\ModuleComponentInterface
 };
 
 use Magento\Framework\{
@@ -34,6 +34,7 @@ use Magento\Framework\{
     App\Action\HttpGetActionInterface,
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
+    Exception\NoSuchEntityException,
     View\Result\PageFactory
 };
 
@@ -46,50 +47,50 @@ class Index extends Action implements
         Redirector::__initialize as protected;
     }
 
+    /** @property ExceptionFactory $exceptionFactory */
+    protected $exceptionFactory;
+
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property LabelModel $labelModel */
-    protected $labelModel;
-
-    /** @property OrdersModel $ordersModel */
-    protected $ordersModel;
-
-    /** @property Processor $processor */
-    protected $processor;
+    /** @property OrderAdapterModel $orderAdapter */
+    protected $orderAdapter;
 
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
+
+    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    protected $simpleReturnRepository;
 
     /** @property ViewModel $viewModel */
     protected $viewModel;
 
     /**
      * @param Context $context
+     * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
-     * @param LabelModel $labelModel
      * @param PageFactory $resultPageFactory
-     * @param OrdersModel $ordersModel
-     * @param Processor $processor
+     * @param OrderAdapterModel $orderAdapter
+     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param ViewModel $viewModel
      * @return void
      */
     public function __construct(
         Context $context,
+        ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
-        LabelModel $labelModel,
         PageFactory $resultPageFactory,
-        OrdersModel $ordersModel,
-        Processor $processor,
+        OrderAdapterModel $orderAdapter,
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
         ViewModel $viewModel
     ) {
         parent::__construct($context);
         $this->__initialize();
+        $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
-        $this->labelModel = $labelModel;
         $this->resultPageFactory = $resultPageFactory;
-        $this->ordersModel = $ordersModel;
-        $this->processor = $processor;
+        $this->orderAdapter = $orderAdapter;
+        $this->simpleReturnRepository = $simpleReturnRepository;
         $this->viewModel = $viewModel;
     }
 
@@ -107,36 +108,40 @@ class Index extends Action implements
         $request = $this->getRequest();
 
         /** @var string|null $orderId */
-        $orderId = $request->getParam(self::PARAM_ORDER_ID, null);
+        $orderId = $request->getParam(self::PARAM_ORDER_ID);
 
         /** @var string|null $protectCode */
-        $protectCode = $request->getParam(self::PARAM_PROTECT_CODE, null);
+        $protectCode = $request->getParam(self::PARAM_PROTECT_CODE);
 
         if ($orderId !== null && $protectCode !== null) {
             /** @var OrderInterface[] $orders */
-            $orders = $this->ordersModel->getOrdersByIncrementIdAndProtectCode($orderId, $protectCode);
+            $orders = $this->orderAdapter->getOrdersByIncrementIdAndProtectCode($orderId, $protectCode);
 
             if (!empty($orders)) {
                 /** @var OrderInterface $order */
                 $order = $orders[0];
 
-                /* View model requires order for cache lookup. */
-                $this->viewModel->setOrder($order);
+                try {
+                    /** @var SimpleReturnInterface $rma */
+                    $rma = $this->simpleReturnRepository->get($order);
 
-                /** @var string $cacheKey */
-                $cacheKey = $this->labelModel->getCacheKey($order);
+                    if ($rma && $rma->getId()) {
+                        /** @var Magento\Framework\View\Element\AbstractBlock|bool $block */
+                        $block = $resultPage->getLayout()->getBlock(self::BLOCK_RETURNS_LABEL_INDEX);
 
-                if (($this->labelModel->isCacheEnabled() && $this->labelModel->hasCachedImage($cacheKey))
-                    || $this->processor->requestReturnLabel($order)
-                ) {
-                    /** @var Magento\Framework\View\Element\AbstractBlock|bool $block */
-                    $block = $resultPage->getLayout()->getBlock(self::BLOCK_RETURNS_LABEL_INDEX);
+                        if ($block) {
+                            $block->setData('view_model', $this->viewModel);
+                        }
 
-                    if ($block) {
-                        $block->setData('view_model', $this->viewModel);
+                        return $resultPage;
                     }
 
-                    return $resultPage;
+                    throw $this->exceptionFactory->create(
+                        __('Could not locate the requested RMA.'),
+                        NoSuchEntityException::class
+                    );
+                } catch (NoSuchEntityException $e) {
+                    $this->messageManager->addError($e->getMessage());
                 }
             }
         }
