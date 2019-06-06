@@ -64,34 +64,34 @@ class Config
     const XML_PATH_FIELD_SYSTEM_STORE_INFORMATION = 'general/store_information';
 
     /** @constant string XML_PATH_FIELD_GENERAL_MODULE_ENABLE */
-    const XML_PATH_FIELD_GENERAL_MODULE_ENABLE = 'auroraextensions_returns/general/enable';
+    const XML_PATH_FIELD_GENERAL_MODULE_ENABLE = 'simplereturns/general/enable';
 
     /** @constant string XML_PATH_FIELD_RETURNS_SHIPPING_CARRIER */
-    const XML_PATH_FIELD_RETURNS_SHIPPING_CARRIER = 'auroraextensions_returns/returns/shipping_carrier';
+    const XML_PATH_FIELD_RETURNS_SHIPPING_CARRIER = 'simplereturns/returns/shipping_carrier';
 
     /** @constant string XML_PATH_FIELD_RETURNS_SHIPPING_METHOD */
-    const XML_PATH_FIELD_RETURNS_SHIPPING_METHOD = 'auroraextensions_returns/returns/shipping_method';
+    const XML_PATH_FIELD_RETURNS_SHIPPING_METHOD = 'simplereturns/returns/shipping_method';
 
     /** @constant string XML_PATH_FIELD_RETURNS_ORDER_AMOUNT_MINIMUM */
-    const XML_PATH_FIELD_RETURNS_ORDER_AMOUNT_MINIMUM = 'auroraextensions_returns/returns/order_amount_minimum';
+    const XML_PATH_FIELD_RETURNS_ORDER_AMOUNT_MINIMUM = 'simplereturns/returns/order_amount_minimum';
 
     /** @constant string XML_PATH_FIELD_RETURNS_ORDER_AMOUNT_MAXIMUM */
-    const XML_PATH_FIELD_RETURNS_ORDER_AMOUNT_MAXIMUM = 'auroraextensions_returns/returns/order_amount_maximum';
+    const XML_PATH_FIELD_RETURNS_ORDER_AMOUNT_MAXIMUM = 'simplereturns/returns/order_amount_maximum';
 
     /** @constant string XML_PATH_FIELD_RETURNS_ORDER_AGE_MAXIMUM */
-    const XML_PATH_FIELD_RETURNS_ORDER_AGE_MAXIMUM = 'auroraextensions_returns/returns/order_age_maximum';
+    const XML_PATH_FIELD_RETURNS_ORDER_AGE_MAXIMUM = 'simplereturns/returns/order_age_maximum';
 
     /** @constant string XML_PATH_FIELD_RETURNS_PACKAGE_WEIGHT */
-    const XML_PATH_FIELD_RETURNS_PACKAGE_WEIGHT = 'auroraextensions_returns/returns/package_weight';
+    const XML_PATH_FIELD_RETURNS_PACKAGE_WEIGHT = 'simplereturns/returns/package_weight';
 
     /** @constant string XML_PATH_FIELD_RETURNS_RECIPIENT_FIRST_NAME */
-    const XML_PATH_FIELD_RETURNS_RECIPIENT_FIRST_NAME = 'auroraextensions_returns/returns/recipient_first_name';
+    const XML_PATH_FIELD_RETURNS_RECIPIENT_FIRST_NAME = 'simplereturns/returns/recipient_first_name';
 
     /** @constant string XML_PATH_FIELD_RETURNS_RECIPIENT_LAST_NAME */
-    const XML_PATH_FIELD_RETURNS_RECIPIENT_LAST_NAME = 'auroraextensions_returns/returns/recipient_last_name';
+    const XML_PATH_FIELD_RETURNS_RECIPIENT_LAST_NAME = 'simplereturns/returns/recipient_last_name';
 
     /** @constant string XML_PATH_FIELD_RETURNS_RETURN_FORM_URL */
-    const XML_PATH_FIELD_RETURNS_RETURN_FORM_URL = 'auroraextensions_returns/returns/return_form_url';
+    const XML_PATH_FIELD_RETURNS_RETURN_FORM_URL = 'simplereturns/returns/return_form_url';
 
     /** @constant string XML_PATH_FIELD_TRANS_EMAIL_SUPPORT_EMAIL */
     const XML_PATH_FIELD_TRANS_EMAIL_SUPPORT_EMAIL = 'trans_email/ident_support/email';
