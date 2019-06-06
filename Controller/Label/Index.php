@@ -37,7 +37,9 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Index extends Action implements HttpGetActionInterface, ModuleComponentInterface
+class Index extends Action implements
+    HttpGetActionInterface,
+    ModuleComponentInterface
 {
     /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
     use Redirector {
