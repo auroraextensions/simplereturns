@@ -23,7 +23,8 @@ interface LabelManagementInterface
     /**
      * Create data URI from image.
      *
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface $label
      * @return string
      */
-    public function createImageDataUri(): string;
+    public function createImageDataUri(Data\LabelInterface $label): string;
 }
