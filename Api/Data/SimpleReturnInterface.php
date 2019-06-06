@@ -51,7 +51,7 @@ interface SimpleReturnInterface
 
     /**
      * @param OrderInterface $order
-     * @return SimpleReturnInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
      */
     public function setOrder(OrderInterface $order): SimpleReturnInterface;
 
@@ -62,7 +62,7 @@ interface SimpleReturnInterface
 
     /**
      * @param array $packages
-     * @return SimpleReturnInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
      */
     public function setPackages(array $packages): SimpleReturnInterface;
 
@@ -73,7 +73,7 @@ interface SimpleReturnInterface
 
     /**
      * @param string $remoteIp
-     * @return SimpleReturnInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
      */
     public function setRemoteIp(string $remoteIp): SimpleReturnInterface;
 }

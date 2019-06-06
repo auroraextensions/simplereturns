@@ -45,9 +45,9 @@ interface PackageInterface
     public function setCreatedAt($createdAt);
 
     /**
-     * @return CarrierInterface
+     * @return CarrierInterface|null
      */
-    public function getCarrier(): CarrierInterface;
+    public function getCarrier(): ?CarrierInterface;
 
     /**
      * @param CarrierInterface $carrier
