@@ -18,10 +18,10 @@
  */
 namespace AuroraExtensions\SimpleReturns\Shared;
 
-use AuroraExtensions\SimpleReturns\Controller\{
-    Label\Index as IndexController,
-    Label\Orders as OrdersController,
-    Label\OrdersPost as OrdersPostController
+use AuroraExtensions\SimpleReturns\{
+    Controller\Label\Index as IndexController,
+    Controller\Label\Orders as OrdersController,
+    Controller\Label\OrdersPost as OrdersPostController
 };
 
 interface ModuleComponentInterface

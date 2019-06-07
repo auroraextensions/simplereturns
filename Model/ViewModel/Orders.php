@@ -20,7 +20,6 @@ namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
 
 use AuroraExtensions\SimpleReturns\{
     Helper\Action as ActionHelper,
-    Model\ServiceModel\Label\Processor,
     Shared\ModuleComponentInterface
 };
 
@@ -36,9 +35,6 @@ class Orders extends DataObject implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property Processor $processor */
-    protected $processor;
-
     /** @property RequestInterface $request */
     protected $request;
 
@@ -46,20 +42,17 @@ class Orders extends DataObject implements
     protected $urlBuilder;
 
     /**
-     * @param Processor $processor
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
      * @return void
      */
     public function __construct(
-        Processor $processor,
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = []
     ) {
         parent::__construct($data);
-        $this->processor = $processor;
         $this->request = $request;
         $this->urlBuilder = $urlBuilder;
     }
@@ -118,6 +111,6 @@ class Orders extends DataObject implements
      */
     public function isOrderPrepaidEligible(OrderInterface $order): bool
     {
-        return $this->processor->isOrderPrepaidEligible($order);
+        return true;
     }
 }

@@ -148,12 +148,12 @@ class Order implements ModuleComponentInterface
 
             if (empty($orders)) {
                 throw $this->exceptionFactory->create(
+                    NoSuchEntityException::class,
                     __(
                         self::ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE,
                         $incrementId,
                         $zipCode
-                    ),
-                    NoSuchEntityException::class
+                    )
                 );
             }
         } catch (NoSuchEntityException $e) {
@@ -200,10 +200,8 @@ class Order implements ModuleComponentInterface
 
             if (empty($data)) {
                 throw $this->exceptionFactory->create(
-                    __(
-                        self::ERROR_INVALID_RETURN_LABEL_URL
-                    ),
-                    NoSuchEntityException::class
+                    NoSuchEntityException::class,
+                    __(self::ERROR_INVALID_RETURN_LABEL_URL)
                 );
             }
         } catch (NoSuchEntityException $e) {

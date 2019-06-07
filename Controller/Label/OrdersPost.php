@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Label;
 
 use AuroraExtensions\SimpleReturns\{
+    Exception\ExceptionFactory,
     Model\Adapter\Sales\Order as OrdersModel,
     Model\ViewModel\Orders as ViewModel,
     Shared\Action\Redirector,
@@ -50,6 +51,9 @@ class OrdersPost extends Action implements
     /** @property DataPersistorInterface $dataPersistor */
     protected $dataPersistor;
 
+    /** @property ExceptionFactory $exceptionFactory */
+    protected $exceptionFactory;
+
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
@@ -63,6 +67,7 @@ class OrdersPost extends Action implements
      * @param Context $context
      * @param CustomerRepositoryInterface $customerRepository
      * @param DataPersistorInterface $dataPersistor
+     * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
      * @param OrdersModel $ordersModel
      * @param ViewModel $viewModel
@@ -72,6 +77,7 @@ class OrdersPost extends Action implements
         Context $context,
         CustomerRepositoryInterface $customerRepository,
         DataPersistorInterface $dataPersistor,
+        ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
         OrdersModel $ordersModel,
         ViewModel $viewModel
@@ -80,6 +86,7 @@ class OrdersPost extends Action implements
         $this->__initialize();
         $this->customerRepository = $customerRepository;
         $this->dataPersistor = $dataPersistor;
+        $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->ordersModel = $ordersModel;
         $this->viewModel = $viewModel;
@@ -97,7 +104,7 @@ class OrdersPost extends Action implements
 
         if ($request->isPost() && $this->formKeyValidator->validate($request)) {
             /** @var array|null $params */
-            $params = $request->getPost('returns', null);
+            $params = $request->getPost('returns');
 
             if ($params !== null) {
                 /** @var string|null $email */
@@ -132,7 +139,8 @@ class OrdersPost extends Action implements
 
                         $this->dataPersistor->set(self::DATA_PERSISTOR_KEY, $data);
                     } else {
-                        throw new LocalizedException(
+                        throw $this->exceptionFactory->create(
+                            LocalizedException::class,
                             __(self::ERROR_MISSING_URL_PARAMS)
                         );
                     }

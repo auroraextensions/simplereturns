@@ -137,8 +137,8 @@ class Index extends Action implements
                     }
 
                     throw $this->exceptionFactory->create(
-                        __('Could not locate the requested RMA.'),
-                        NoSuchEntityException::class
+                        NoSuchEntityException::class,
+                        __('Could not locate the requested RMA.')
                     );
                 } catch (NoSuchEntityException $e) {
                     $this->messageManager->addError($e->getMessage());
