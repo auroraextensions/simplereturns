@@ -21,7 +21,7 @@ namespace AuroraExtensions\SimpleReturns\Controller\Label;
 use AuroraExtensions\SimpleReturns\{
     Helper\Action as ActionHelper,
     Model\AdapterModel\Sales\Order as OrdersModel,
-    Model\ViewModel\Orders as ViewModel,
+    Model\ViewModel\OrdersView as ViewModel,
     Shared\ModuleComponentInterface
 };
 
