@@ -21,7 +21,7 @@ namespace AuroraExtensions\SimpleReturns\Controller\Label;
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Model\Adapter\Sales\Order as OrdersModel,
-    Model\ViewModel\Orders as ViewModel,
+    Model\ViewModel\OrdersView as ViewModel,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };

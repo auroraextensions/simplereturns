@@ -23,7 +23,7 @@ use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Model\AdapterModel\Sales\Order as OrderAdapterModel,
-    Model\ViewModel\Label as ViewModel,
+    Model\ViewModel\LabelView as ViewModel,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
