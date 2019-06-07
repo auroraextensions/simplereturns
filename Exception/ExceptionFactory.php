@@ -28,8 +28,8 @@ use Magento\Framework\ObjectManagerInterface;
 
 class ExceptionFactory implements ModuleComponentInterface
 {
-    /** @property string $baseType */
-    protected static $baseType = \Exception::class;
+    /** @constant string BASE_TYPE */
+    const BASE_TYPE = \Exception::class;
 
     /** @property ObjectManagerInterface $objectManager */
     protected $objectManager;
@@ -46,16 +46,19 @@ class ExceptionFactory implements ModuleComponentInterface
     /**
      * Create exception from type given.
      *
-     * @param string $message
      * @param string|null $type
+     * @param string|null $message
      * @return mixed
      * @throws Exception
      */
     public function create(
-        string $message,
-        ?string $type = self::$baseType
+        ?string $type = self::BASE_TYPE,
+        ?string $message = null
     ) {
-        if ($type !== self::$baseType && !is_subclass_of($type, self::$baseType)) {
+        /** @var array $arguments */
+        $arguments = [];
+
+        if ($type !== self::BASE_TYPE && !is_subclass_of($type, self::BASE_TYPE)) {
             throw new \Exception(
                 __(
                     self::ERROR_INVALID_EXCEPTION_TYPE,
@@ -64,10 +67,9 @@ class ExceptionFactory implements ModuleComponentInterface
             );
         }
 
-        /** @var array $arguments */
-        $arguments = [
-            'message' => $message,
-        ];
+        if ($message !== null) {
+            $arguments['message'] = $message;
+        }
 
         return $this->objectManager->create($type, $arguments);
     }
