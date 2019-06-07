@@ -128,7 +128,7 @@ class OrdersPost extends Action implements
                         $this->dataPersistor->set(self::DATA_PERSISTOR_KEY, $data);
                     } elseif ($orderId !== null && $zipCode !== null) {
                         /* Trim delivery route suffix from zip code. */
-                        $zipCode = substr($zipCode, 0, 5);
+                        $zipCode = OrdersModel::truncateZipCode($zipCode);
 
                         /** @var array $data */
                         $data = [
