@@ -1,6 +1,6 @@
 <?php
 /** 
- * Label.php
+ * LabelView.php
  *
  * NOTICE OF LICENSE
  *
@@ -25,7 +25,7 @@ use AuroraExtensions\SimpleReturns\{
 };
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 
-class Label implements ArgumentInterface, ModuleComponentInterface
+class LabelView implements ArgumentInterface, ModuleComponentInterface
 {
     /** @property ConfigHelper $configHelper */
     protected $configHelper;

@@ -1,6 +1,6 @@
 <?php
 /** 
- * Orders.php
+ * OrdersView.php
  *
  * NOTICE OF LICENSE
  *
@@ -19,42 +19,45 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
 
 use AuroraExtensions\SimpleReturns\{
+    Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
+    Helper\Config as ConfigHelper,
     Shared\ModuleComponentInterface
 };
 
-use Magento\{
-    Framework\App\RequestInterface,
-    Framework\DataObject,
-    Framework\UrlInterface,
-    Framework\View\Element\Block\ArgumentInterface,
-    Sales\Api\Data\OrderInterface
+use Magento\Framework\{
+    App\RequestInterface,
+    UrlInterface,
+    View\Element\Block\ArgumentInterface
 };
+use Magento\Sales\Api\Data\OrderInterface;
 
-class Orders extends DataObject implements
+class OrdersView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property RequestInterface $request */
-    protected $request;
-
-    /** @property UrlInterface $urlBuilder */
-    protected $urlBuilder;
-
     /**
+     * @param ConfigHelper $configHelper
+     * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
      * @return void
      */
     public function __construct(
+        ConfigHelper $configHelper,
+        ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = []
     ) {
-        parent::__construct($data);
-        $this->request = $request;
-        $this->urlBuilder = $urlBuilder;
+        parent::__construct(
+            $configHelper,
+            $exceptionFactory,
+            $request,
+            $urlBuilder,
+            $data
+        );
     }
 
     /**
@@ -70,21 +73,6 @@ class Orders extends DataObject implements
             [
                 self::PARAM_ORDER_ID => $order->getRealOrderId(),
                 self::PARAM_PROTECT_CODE => $order->getProtectCode(),
-                '_secure' => true,
-            ]
-        );
-    }
-
-    /**
-     * Get returns_label_ordersPost POST action URL.
-     *
-     * @return string
-     */
-    public function getPostActionUrl(): string
-    {
-        return $this->urlBuilder->getUrl(
-            self::ROUTE_RETURNS_LABEL_ORDERSPOST,
-            [
                 '_secure' => true,
             ]
         );
