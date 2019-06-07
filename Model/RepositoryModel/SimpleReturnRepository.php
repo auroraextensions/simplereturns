@@ -91,6 +91,7 @@ class SimpleReturnRepository extends AbstractRepository implements
 
         if (!$rma->getId()) {
             throw $this->exceptionFactory->create(
+                NoSuchEntityException::class,
                 __('Unable to locate RMA information for the requested order.')
             );
         }
@@ -110,6 +111,7 @@ class SimpleReturnRepository extends AbstractRepository implements
 
         if (!$rma->getId()) {
             throw $this->exceptionFactory->create(
+                NoSuchEntityException::class,
                 __('Unable to locate RMA information for the requested order.')
             );
         }

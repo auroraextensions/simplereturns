@@ -20,9 +20,9 @@ namespace AuroraExtensions\SimpleReturns\Controller\Label;
 
 use AuroraExtensions\SimpleReturns\{
     Helper\Action as ActionHelper,
-    Model\Orders as OrdersModel,
-    Shared\ModuleComponentInterface,
-    ViewModel\Orders as ViewModel
+    Model\AdapterModel\Sales\Order as OrdersModel,
+    Model\ViewModel\Orders as ViewModel,
+    Shared\ModuleComponentInterface
 };
 
 use Magento\Framework\{
@@ -33,7 +33,9 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Orders extends Action implements HttpGetActionInterface, ModuleComponentInterface
+class Orders extends Action implements
+    HttpGetActionInterface,
+    ModuleComponentInterface
 {
     /** @property DataPersistorInterface $dataPersistor */
     protected $dataPersistor;

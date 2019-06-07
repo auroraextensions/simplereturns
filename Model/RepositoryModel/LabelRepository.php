@@ -92,8 +92,8 @@ class LabelRepository extends AbstractRepository implements
 
         if (!$label->getId()) {
             throw $this->exceptionFactory->create(
-                __('Unable to locate label(s) for the requested package.'),
-                NoSuchEntityException::class
+                NoSuchEntityException::class,
+                __('Unable to locate label(s) for the requested package.')
             );
         }
 
@@ -113,8 +113,8 @@ class LabelRepository extends AbstractRepository implements
 
         if (!$label->getId()) {
             throw $this->exceptionFactory->create(
-                __('Unable to locate label(s) for the requested package.'),
-                NoSuchEntityException::class
+                NoSuchEntityException::class,
+                __('Unable to locate label(s) for the requested package.')
             );
         }
 
