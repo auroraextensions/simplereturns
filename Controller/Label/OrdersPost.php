@@ -20,7 +20,7 @@ namespace AuroraExtensions\SimpleReturns\Controller\Label;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
-    Model\Adapter\Sales\Order as OrdersModel,
+    Model\AdapterModel\Sales\Order as OrdersModel,
     Model\ViewModel\OrdersView as ViewModel,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
