@@ -24,7 +24,10 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Exception;
 
 use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
-use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\{
+    ObjectManagerInterface,
+    Phrase
+};
 
 class ExceptionFactory implements ModuleComponentInterface
 {
@@ -47,13 +50,13 @@ class ExceptionFactory implements ModuleComponentInterface
      * Create exception from type given.
      *
      * @param string|null $type
-     * @param string|null $message
+     * @param ?Phrase $message
      * @return mixed
      * @throws Exception
      */
     public function create(
         ?string $type = self::BASE_TYPE,
-        ?string $message = null
+        ?Phrase $message = null
     ) {
         /** @var array $arguments */
         $arguments = [];
