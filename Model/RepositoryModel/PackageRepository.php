@@ -34,7 +34,7 @@ use AuroraExtensions\SimpleReturns\{
 use Magento\Framework\{
     Api\SearchResultsInterface,
     Api\SearchResultsInterfaceFactory,
-    Exception\NoSuchEntityException,
+    Exception\NoSuchEntityException
 };
 
 class PackageRepository extends AbstractRepository implements

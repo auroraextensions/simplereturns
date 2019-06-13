@@ -20,7 +20,7 @@ namespace AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn;
 
 use AuroraExtensions\SimpleReturns\{
     Api\AbstractCollectionInterface,
-    Model\SimpleReturn as SimpleReturnAdapter,
+    Model\DataModel\SimpleReturn,
     Model\ResourceModel\SimpleReturn as SimpleReturnResource
 };
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
@@ -33,7 +33,7 @@ class Collection extends AbstractCollection implements AbstractCollectionInterfa
     protected function _construct()
     {
         $this->_init(
-            SimpleReturnAdapter::class,
+            SimpleReturn::class,
             SimpleReturnResource::class
         );
     }

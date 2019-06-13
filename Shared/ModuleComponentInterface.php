@@ -16,6 +16,8 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Shared;
 
 use AuroraExtensions\SimpleReturns\{
@@ -50,6 +52,7 @@ interface ModuleComponentInterface
     const DEFAULT_FRONT_NAME = 'returns';
     const DEFAULT_SCRIPT_NAME = 'index.php';
 
+    /** @constant string ERROR_DEFAULT_MESSAGE */
     /** @constant string ERROR_INVALID_CARRIER_CODE */
     /** @constant string ERROR_INVALID_EXCEPTION_TYPE */
     /** @constant string ERROR_INVALID_RETURN_LABEL_URL */
@@ -60,6 +63,7 @@ interface ModuleComponentInterface
     /** @constant string ERROR_ORDER_EXCEEDS_AGE_THRESHOLD */
     /** @constant string ERROR_ORDER_HAS_INELIGIBLE_ITEMS */
     /** @constant string ERROR_ORDER_SUBTOTAL_BELOW_MINIMUM */
+    const ERROR_DEFAULT_MESSAGE = 'An error has occurred and we are unable to process the request.';
     const ERROR_INVALID_CARRIER_CODE = 'Unable to create carrier model. Invalid carrier code was given.';
     const ERROR_INVALID_EXCEPTION_TYPE = 'Invalid exception class type %s was given.';
     const ERROR_INVALID_RETURN_LABEL_URL = 'The requested return label URL was invalid. Please verify and try again.';

@@ -25,7 +25,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterfaceFactory,
     Api\Data\SimpleReturnSearchResultsInterfaceFactory,
     Exception\ExceptionFactory,
-    Model\SimpleReturn as SimpleReturnAdapter,
+    Model\DataModel\SimpleReturn,
     Model\ResourceModel\SimpleReturn as SimpleReturnResource,
     Shared\ModuleComponentInterface
 };
@@ -81,7 +81,7 @@ class SimpleReturnRepository extends AbstractRepository implements
      */
     public function get(OrderInterface $order): SimpleReturnInterface
     {
-        /** @var SimpleReturnAdapter $rma */
+        /** @var SimpleReturn $rma */
         $rma = $this->simpleReturnFactory->create();
         $this->simpleReturnResource->load(
             $rma,
@@ -105,7 +105,7 @@ class SimpleReturnRepository extends AbstractRepository implements
      */
     public function getById(int $id): SimpleReturnInterface
     {
-        /** @var SimpleReturnAdapter $rma */
+        /** @var SimpleReturn $rma */
         $rma = $this->simpleReturnFactory->create();
         $this->simpleReturnResource->load($rma, $id);
 
@@ -144,7 +144,7 @@ class SimpleReturnRepository extends AbstractRepository implements
      */
     public function deleteById(int $id): bool
     {
-        /** @var SimpleReturnAdapter $rma */
+        /** @var SimpleReturn $rma */
         $rma = $this->simpleReturnFactory->create();
         $rma->setId($id);
 

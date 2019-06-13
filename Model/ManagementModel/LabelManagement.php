@@ -2,8 +2,6 @@
 /**
  * LabelManagement.php
  *
- * Return shipment label management model.
- *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Aurora Extensions EULA,

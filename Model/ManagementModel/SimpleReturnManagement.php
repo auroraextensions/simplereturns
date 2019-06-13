@@ -2,8 +2,6 @@
 /**
  * SimpleReturnManagement.php
  *
- * Simple return management model.
- *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Aurora Extensions EULA,
@@ -26,7 +24,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\PackageInterfaceFactory,
     Api\Data\SimpleReturnInterface,
     Helper\Config as ConfigHelper,
-    Model\Adapter\Carrier\CarrierFactory,
+    Model\AdapterModel\Carrier\CarrierFactory,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
