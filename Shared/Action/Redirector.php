@@ -20,7 +20,6 @@ use AuroraExtensions\SimpleReturns\{
     Exception\TraitContextException,
     Shared\ModuleComponentInterface
 };
-
 use Magento\Framework\{
     App\Action\AbstractAction,
     Controller\Result\Redirect
