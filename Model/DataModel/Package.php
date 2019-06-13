@@ -40,6 +40,25 @@ class Package extends AbstractModel implements
     }
 
     /**
+     * @return string
+     */
+    public function getCreatedAt(): string
+    {
+        return $this->getData('created_at');
+    }
+
+    /**
+     * @param string $createdAt
+     * @return $this
+     */
+    public function setCreatedAt($createdAt): PackageInterface
+    {
+        $this->setData('created_at', $createdAt);
+
+        return $this;
+    }
+
+    /**
      * @return CarrierInterface
      */
     public function getCarrier(): ?CarrierInterface
