@@ -118,6 +118,9 @@ class OrdersPost extends Action implements
 
                 try {
                     if ($email !== null && $zipCode !== null) {
+                        /* Trim delivery route suffix from zip code. */
+                        $zipCode = OrdersModel::truncateZipCode($zipCode);
+
                         /** @var array $data */
                         $data = [
                             'email'      => $email,
@@ -150,6 +153,6 @@ class OrdersPost extends Action implements
             }
         }
 
-        return $this->getRedirect(self::ROUTE_RETURNS_LABEL_ORDERS);
+        return $this->getRedirectToPath(self::ROUTE_RETURNS_LABEL_ORDERS);
     }
 }
