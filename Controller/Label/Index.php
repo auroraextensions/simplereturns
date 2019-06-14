@@ -27,7 +27,6 @@ use AuroraExtensions\SimpleReturns\{
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
-
 use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
@@ -121,6 +120,9 @@ class Index extends Action implements
                 /** @var OrderInterface $order */
                 $order = $orders[0];
 
+                /* Set applicable order for use by view model. */
+                $this->viewModel->setOrder($order);
+
                 try {
                     /** @var SimpleReturnInterface $rma */
                     $rma = $this->simpleReturnRepository->get($order);
@@ -146,6 +148,6 @@ class Index extends Action implements
             }
         }
 
-        return $this->getRedirect(self::ROUTE_RETURNS_LABEL_ORDERS);
+        return $this->getRedirectToPath(self::ROUTE_RETURNS_LABEL_ORDERS);
     }
 }
