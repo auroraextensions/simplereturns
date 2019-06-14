@@ -25,7 +25,9 @@ use AuroraExtensions\SimpleReturns\{
 };
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 
-class LabelView implements ArgumentInterface, ModuleComponentInterface
+class LabelView extends AbstractView implements
+    ArgumentInterface,
+    ModuleComponentInterface
 {
     /** @property ConfigHelper $configHelper */
     protected $configHelper;

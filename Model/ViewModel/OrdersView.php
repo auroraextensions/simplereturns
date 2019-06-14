@@ -24,7 +24,6 @@ use AuroraExtensions\SimpleReturns\{
     Helper\Config as ConfigHelper,
     Shared\ModuleComponentInterface
 };
-
 use Magento\Framework\{
     App\RequestInterface,
     UrlInterface,

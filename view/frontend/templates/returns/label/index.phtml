@@ -24,23 +24,23 @@ $hasLabel = $viewModel->hasLabel();
 ?>
 <div class="page-returns-label">
     <div class="page-title">
-        <h1 class="return-label-title"><?php echo $block->escapeHtml(__('Return Label')) ?></h1>
+        <h1 class="return-label-title"><?= $block->escapeHtml(__('Return Label')) ?></h1>
     </div>
     <div class="returns-label-content">
         <div class="content-buttons">
             <?php if ($hasLabel): ?>
-                <button class="button print" title="Print Label" type="button" data-mage-init='{"labelPrint":{}}'><?php echo $block->escapeHtml(__('Print Label')) ?></button>
+                <button class="button print" title="Print Label" type="button" data-mage-init='{"labelPrint":{}}'><?= $block->escapeHtml(__('Print Label')) ?></button>
             <?php endif ?>
         </div>
         <div class="content-label">
             <?php if ($hasLabel): ?>
-                <img alt="Return Label" class="return-label" src="<?php echo $viewModel->getLabelEncodedDataUri() ?>"/>
-                <img alt="Return Form" class="return-form" src="<?php echo $viewModel->getReturnFormUrl() ?>"/>
+                <img alt="Return Label" class="return-label" src="<?= $viewModel->getLabelEncodedDataUri() ?>"/>
+                <img alt="Return Form" class="return-form" src="<?= $viewModel->getReturnFormUrl() ?>"/>
             <?php else: ?>
-                <div class="error validation-error shipping-label-message"><?php echo $block->escapeHtml(__('We were unable to generate a label for this order.')) ?></div>
+                <div class="error validation-error shipping-label-message"><?= $block->escapeHtml(__('We were unable to generate a label for this order.')) ?></div>
                 <ul class="error-reasons">
                     <?php foreach ($viewModel->getErrorMessages() as $message): ?>
-                        <li><?php echo $message ?></li>
+                        <li><?= $message ?></li>
                     <?php endforeach ?>
                 </ul>
             <?php endif ?>

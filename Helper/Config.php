@@ -2,8 +2,6 @@
 /**
  * Config.php
  *
- * Helper class for system configuration settings.
- *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Aurora Extensions EULA,

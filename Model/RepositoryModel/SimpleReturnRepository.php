@@ -30,12 +30,12 @@ use AuroraExtensions\SimpleReturns\{
     Shared\ModuleComponentInterface
 };
 
-use Magento\{
-    Framework\Api\SearchResultsInterface,
-    Framework\Api\SearchResultsInterfaceFactory,
-    Framework\Exception\NoSuchEntityException,
-    Sales\Api\Data\OrderInterface
+use Magento\Framework\{
+    Api\SearchResultsInterface,
+    Api\SearchResultsInterfaceFactory,
+    Exception\NoSuchEntityException
 };
+use Magento\Sales\Api\Data\OrderInterface;
 
 class SimpleReturnRepository extends AbstractRepository implements
     SimpleReturnRepositoryInterface,
@@ -78,6 +78,7 @@ class SimpleReturnRepository extends AbstractRepository implements
     /**
      * @param OrderInterface $order
      * @return SimpleReturnInterface
+     * @throws NoSuchEntityException
      */
     public function get(OrderInterface $order): SimpleReturnInterface
     {
@@ -92,7 +93,7 @@ class SimpleReturnRepository extends AbstractRepository implements
         if (!$rma->getId()) {
             throw $this->exceptionFactory->create(
                 NoSuchEntityException::class,
-                __('Unable to locate RMA information for the requested order.')
+                __('Unable to locate SimpleReturn RMA information.')
             );
         }
 
@@ -102,6 +103,7 @@ class SimpleReturnRepository extends AbstractRepository implements
     /**
      * @param int $id
      * @return SimpleReturnInterface
+     * @throws NoSuchEntityException
      */
     public function getById(int $id): SimpleReturnInterface
     {
@@ -112,7 +114,7 @@ class SimpleReturnRepository extends AbstractRepository implements
         if (!$rma->getId()) {
             throw $this->exceptionFactory->create(
                 NoSuchEntityException::class,
-                __('Unable to locate RMA information for the requested order.')
+                __('Unable to locate SimpleReturn RMA information.')
             );
         }
 

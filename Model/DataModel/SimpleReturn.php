@@ -23,11 +23,8 @@ use AuroraExtensions\SimpleReturns\{
     Model\ResourceModel\SimpleReturn as SimpleReturnResourceModel,
     Shared\ModuleComponentInterface
 };
-
-use Magento\{
-    Framework\Model\AbstractModel,
-    Sales\Api\Data\OrderInterface
-};
+use Magento\Framework\Model\AbstractModel;
+use Magento\Sales\Api\Data\OrderInterface;
 
 class SimpleReturn extends AbstractModel implements
     SimpleReturnInterface,
