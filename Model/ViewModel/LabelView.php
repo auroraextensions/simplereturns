@@ -19,39 +19,45 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
 
 use AuroraExtensions\SimpleReturns\{
+    Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Model\DataModel\Label as LabelModel,
     Shared\ModuleComponentInterface
 };
-use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Framework\{
+    App\RequestInterface,
+    UrlInterface,
+    View\Element\Block\ArgumentInterface
+};
 
 class LabelView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property ConfigHelper $configHelper */
-    protected $configHelper;
-
     /** @property array $errors */
     protected $errors = [];
 
-    /** @property LabelModel $labelModel */
-    protected $labelModel;
-
     /**
      * @param ConfigHelper $configHelper
-     * @param LabelModel $labelModel
+     * @param ExceptionFactory $exceptionFactory
+     * @param RequestInterface $request
+     * @param UrlInterface $urlBuilder
      * @param array $data
      * @return void
      */
     public function __construct(
         ConfigHelper $configHelper,
-        LabelModel $labelModel,
+        ExceptionFactory $exceptionFactory,
+        RequestInterface $request,
+        UrlInterface $urlBuilder,
         array $data = []
     ) {
-        parent::__construct($data);
-        $this->configHelper = $configHelper;
-        $this->labelModel = $labelModel;
+        parent::__construct(
+            $configHelper,
+            $exceptionFactory,
+            $request,
+            $urlBuilder
+        );
     }
 
     /**
@@ -61,15 +67,7 @@ class LabelView extends AbstractView implements
      */
     public function hasLabel()
     {
-        /** @var string $cacheKey */
-        $cacheKey = $this->labelModel->getCacheKey($this->getOrder());
-
-        /** @var string|null $image */
-        $image = $this->labelModel->hasCachedImage($cacheKey)
-            ? $this->labelModel->getCachedImage($cacheKey)
-            : $this->labelModel->getImage();
-
-        return (!empty($image) && $image !== null);
+        return false;
     }
 
     /**
@@ -99,14 +97,6 @@ class LabelView extends AbstractView implements
      */
     public function getLabelEncodedDataUri(): ?string
     {
-        /** @var string $cacheKey */
-        $cacheKey = $this->labelModel->getCacheKey($this->getOrder());
-
-        /** @var string|null $image */
-        $image = $this->labelModel->hasCachedImage($cacheKey)
-            ? $this->labelModel->getCachedImage($cacheKey)
-            : $this->labelModel->getImage();
-
-        return self::PREFIX_DATAURI . $image;
+        return '';
     }
 }
