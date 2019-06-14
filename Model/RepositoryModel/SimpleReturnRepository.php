@@ -19,20 +19,17 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
 use AuroraExtensions\SimpleReturns\{
-    Api\AbstractCollectionInterfaceFactory,
+    Api\AbstractCollectionInterface,
     Api\SimpleReturnRepositoryInterface,
     Api\Data\SimpleReturnInterface,
     Api\Data\SimpleReturnInterfaceFactory,
-    Api\Data\SimpleReturnSearchResultsInterfaceFactory,
     Exception\ExceptionFactory,
     Model\DataModel\SimpleReturn,
     Model\ResourceModel\SimpleReturn as SimpleReturnResource,
     Shared\ModuleComponentInterface
 };
-
 use Magento\Framework\{
     Api\SearchResultsInterface,
-    Api\SearchResultsInterfaceFactory,
     Exception\NoSuchEntityException
 };
 use Magento\Sales\Api\Data\OrderInterface;
@@ -53,26 +50,26 @@ class SimpleReturnRepository extends AbstractRepository implements
     /**
      * @param AbstractCollectionInterfaceFactory $collectionFactory
      * @param SearchResultsInterfaceFactory $searchResultsFactory
+     * @param ExceptionFactory $exceptionFactory
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnResource $simpleReturnResource
-     * @param ExceptionFactory $exceptionFactory
      * @return void
      */
     public function __construct(
-        AbstractCollectionInterfaceFactory $collectionFactory,
-        SearchResultsInterfaceFactory $searchResultsFactory,
+        $collectionFactory,
+        $searchResultsFactory,
+        ExceptionFactory $exceptionFactory,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
-        SimpleReturnResource $simpleReturnResource,
-        ExceptionFactory $exceptionFactory
+        SimpleReturnResource $simpleReturnResource
     ) {
         parent::__construct(
             $collectionFactory,
             $searchResultsFactory
         );
 
+        $this->exceptionFactory = $exceptionFactory;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnResource = $simpleReturnResource;
-        $this->exceptionFactory = $exceptionFactory;
     }
 
     /**
