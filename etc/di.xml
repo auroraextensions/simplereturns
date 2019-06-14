@@ -32,6 +32,9 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Label"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
 
+    <preference for="AuroraExtensions\SimpleReturns\Api\AbstractRepositoryInterface"
+                type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AbstractRepository"/>
+
     <type name="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository">
         <arguments>
             <argument name="collectionFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\CollectionFactory</argument>

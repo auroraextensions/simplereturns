@@ -140,7 +140,7 @@ class Index extends Action implements
 
                     throw $this->exceptionFactory->create(
                         NoSuchEntityException::class,
-                        __('Could not locate the requested RMA.')
+                        __('Unable to locate SimpleReturn RMA information.')
                     );
                 } catch (NoSuchEntityException $e) {
                     $this->messageManager->addError($e->getMessage());

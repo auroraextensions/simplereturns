@@ -20,14 +20,11 @@ namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
 use AuroraExtensions\SimpleReturns\{
     Api\AbstractCollectionInterface,
-    Api\AbstractCollectionInterfaceFactory,
     Api\AbstractRepositoryInterface
 };
-
 use Magento\Framework\{
     Api\SearchCriteriaInterface,
     Api\SearchResultsInterface,
-    Api\SearchResultsInterfaceFactory,
     Api\Search\FilterGroup,
     Api\SortOrder,
     Exception\NoSuchEntityException
@@ -47,8 +44,8 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
      * @return void
      */
     public function __construct(
-        AbstractCollectionInterfaceFactory $collectionFactory,
-        SearchResultsInterfaceFactory $searchResultsFactory
+        $collectionFactory,
+        $searchResultsFactory
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->searchResultsFactory = $searchResultsFactory;
