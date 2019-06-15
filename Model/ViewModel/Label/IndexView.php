@@ -1,6 +1,6 @@
 <?php
 /** 
- * LabelView.php
+ * IndexView.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,12 +16,13 @@
  */ 
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
+namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Label;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Model\DataModel\Label as LabelModel,
+    Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
@@ -30,7 +31,7 @@ use Magento\Framework\{
     View\Element\Block\ArgumentInterface
 };
 
-class LabelView extends AbstractView implements
+class IndexView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
