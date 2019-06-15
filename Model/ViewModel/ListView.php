@@ -1,6 +1,6 @@
 <?php
 /** 
- * OrdersView.php
+ * ListView.php
  *
  * NOTICE OF LICENSE
  *
@@ -31,7 +31,7 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
-class OrdersView extends AbstractView implements
+class ListView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
