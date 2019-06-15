@@ -16,12 +16,13 @@
  */ 
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
+namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
+    Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
