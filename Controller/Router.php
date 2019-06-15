@@ -27,7 +27,8 @@ use Magento\Framework\{
     App\ActionFactory,
     App\RequestInterface,
     App\ResponseInterface,
-    App\RouterInterface
+    App\RouterInterface,
+    DataObject\Factory as DataObjectFactory
 };
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -39,15 +40,22 @@ class Router implements RouterInterface, ModuleComponentInterface
     /** @property ConfigHelper $configHelper */
     protected $configHelper;
 
+    /** @property DataObjectFactory $dataObjectFactory */
+    protected $dataObjectFactory;
+
     /** @property ResponseInterface $response */
     protected $response;
 
     /** @property StoreManagerInterface $storeManager */
     protected $storeManager;
 
+    /** @property DataObject $settings */
+    protected $settings;
+
     /**
      * @param ActionFactory $actionFactory
      * @param ConfigHelper $configHelper
+     * @param DataObjectFactory $dataObjectFactory
      * @param ResponseInterface $response
      * @param StoreManagerInterface $storeManager
      * @return void
@@ -55,13 +63,58 @@ class Router implements RouterInterface, ModuleComponentInterface
     public function __construct(
         ActionFactory $actionFactory,
         ConfigHelper $configHelper,
+        DataObjectFactory $dataObjectFactory,
         ResponseInterface $response,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        array $data = []
     ) {
         $this->actionFactory = $actionFactory;
         $this->configHelper = $configHelper;
+        $this->dataObjectFactory = $dataObjectFactory;
         $this->response = $response;
         $this->storeManager = $storeManager;
+        $this->settings = $this->dataObjectFactory->create($data);
+    }
+
+    /**
+     * Get dispatch array.
+     *
+     * @return array
+     */
+    protected function getDispatch(): array
+    {
+        return array_change_key_case(
+            $this->settings->getData('dispatch') ?? []
+        );
+    }
+
+    /**
+     * Get full actions.
+     *
+     * @return array
+     */
+    protected function getFullActions(): array
+    {
+        return array_keys($this->getDispatch());
+    }
+
+    /**
+     * Check if full action is valid for either
+     * a specific partner or all partners.
+     *
+     * @param string $action
+     * @param array $actions
+     * @return bool
+     */
+    protected function isValid(
+        string $action,
+        array $actions = []
+    ): bool
+    {
+        /* Default to checking all full actions. */
+        $actions = !empty($actions) ? $actions : $this->getFullActions();
+
+        return in_array($action, $actions);
     }
 
     /**
@@ -73,23 +126,20 @@ class Router implements RouterInterface, ModuleComponentInterface
     public function match(RequestInterface $request)
     {
         /** @var string $routePath */
-        $routePath = ActionHelper::getUrlNoScript($request->getRequestUri(), $request->getBaseUrl());
-        $routePath = strtolower($routePath);
+        $routePath = strtolower(
+            ActionHelper::getUrlNoScript($request->getRequestUri(), $request->getBaseUrl())
+        );
 
         /** @var string $fullAction */
         $fullAction = ActionHelper::getFullActionFromRoutePath($routePath);
 
-        /** @var array $actionKeys */
-        $actionKeys = array_keys(self::DICT_ACTION_CONTROLLER_DISPATCH);
-
-        if (!in_array($fullAction, $actionKeys)) {
-            return null;
-        }
-
         /** @var int $storeId */
         $storeId = $this->storeManager->getStore()->getId();
 
-        if (!$this->configHelper->isModuleEnabled($storeId)) {
+        /** @var bool $isEnabled */
+        $isEnabled = $this->configHelper->isModuleEnabled($storeId);
+
+        if (!$this->isValid($fullAction) || !$isEnabled) {
             return $this->actionFactory->create(NoRouteHandler::class);
         }
 
@@ -124,6 +174,16 @@ class Router implements RouterInterface, ModuleComponentInterface
             ->setActionName($actionName)
             ->setDispatched(true);
 
-        return $this->actionFactory->create(self::DICT_ACTION_CONTROLLER_DISPATCH[$fullAction], ['request' => $request]);
+        /** @var string $actionClass */
+        $actionClass = get_class(
+            $this->getDispatch()[$fullAction]
+        );
+
+        return $this->actionFactory->create(
+            $actionClass,
+            [
+                'request' => $request,
+            ]
+        );
     }
 }
