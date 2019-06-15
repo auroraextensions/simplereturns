@@ -1,6 +1,6 @@
 <?php
 /** 
- * OrdersView.php
+ * IndexView.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,12 +16,13 @@
  */ 
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
+namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Label;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
-    Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
+    Model\DataModel\Label as LabelModel,
+    Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
@@ -29,12 +30,14 @@ use Magento\Framework\{
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
-use Magento\Sales\Api\Data\OrderInterface;
 
-class OrdersView extends AbstractView implements
+class IndexView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    /** @property array $errors */
+    protected $errors = [];
+
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
@@ -54,50 +57,47 @@ class OrdersView extends AbstractView implements
             $configHelper,
             $exceptionFactory,
             $request,
-            $urlBuilder,
-            $data
+            $urlBuilder
         );
     }
 
     /**
-     * Get return label URL.
+     * Check for label image.
      *
-     * @param OrderInterface $order
+     * @return bool
+     */
+    public function hasLabel()
+    {
+        return false;
+    }
+
+    /**
+     * Get error messages from label creation.
+     *
+     * @return array
+     */
+    public function getErrorMessages()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Get return form URL for store.
+     *
      * @return string
      */
-    public function getReturnLabelUrl(OrderInterface $order): string
+    public function getReturnFormUrl()
     {
-        return $this->urlBuilder->getUrl(
-            self::ROUTE_RETURNS_LABEL_INDEX,
-            [
-                self::PARAM_ORDER_ID => $order->getRealOrderId(),
-                self::PARAM_PROTECT_CODE => $order->getProtectCode(),
-                '_secure' => true,
-            ]
-        );
+        return $this->configHelper->getReturnFormUrl($this->getOrder()->getStoreId());
     }
 
     /**
-     * Check if customer has existing orders.
+     * Get encoded label string as data URI.
      *
-     * @return bool
+     * @return string|null
      */
-    public function hasOrders(): bool
+    public function getLabelEncodedDataUri(): ?string
     {
-        /** @var array $orders */
-        $orders = $this->getData('orders') ?? [];
-
-        return (bool)(count($orders) > 0);
-    }
-
-    /**
-     * Check if order is eligible for prepaid return labels.
-     *
-     * @param OrderInterface $order
-     * @return bool
-     */
-    public function isOrderPrepaidEligible(OrderInterface $order): bool
-    {
-        return true;
+        return '';
     }
 }

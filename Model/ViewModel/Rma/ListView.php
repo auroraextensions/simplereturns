@@ -1,6 +1,6 @@
 <?php
 /** 
- * LabelView.php
+ * ListView.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,12 +16,13 @@
  */ 
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
+namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
+    Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
-    Model\DataModel\Label as LabelModel,
+    Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
@@ -29,14 +30,12 @@ use Magento\Framework\{
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
+use Magento\Sales\Api\Data\OrderInterface;
 
-class LabelView extends AbstractView implements
+class ListView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property array $errors */
-    protected $errors = [];
-
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
@@ -56,47 +55,50 @@ class LabelView extends AbstractView implements
             $configHelper,
             $exceptionFactory,
             $request,
-            $urlBuilder
+            $urlBuilder,
+            $data
         );
     }
 
     /**
-     * Check for label image.
+     * Get return label URL.
+     *
+     * @param OrderInterface $order
+     * @return string
+     */
+    public function getReturnLabelUrl(OrderInterface $order): string
+    {
+        return $this->urlBuilder->getUrl(
+            self::ROUTE_RETURNS_LABEL_INDEX,
+            [
+                self::PARAM_ORDER_ID => $order->getRealOrderId(),
+                self::PARAM_PROTECT_CODE => $order->getProtectCode(),
+                '_secure' => true,
+            ]
+        );
+    }
+
+    /**
+     * Check if customer has existing orders.
      *
      * @return bool
      */
-    public function hasLabel()
+    public function hasOrders(): bool
     {
-        return false;
+        /** @var array $orders */
+        $orders = $this->getData('orders') ?? [];
+
+        return (bool)(count($orders) > 0);
     }
 
     /**
-     * Get error messages from label creation.
+     * Check if order is eligible for prepaid return labels.
      *
-     * @return array
+     * @param OrderInterface $order
+     * @return bool
      */
-    public function getErrorMessages()
+    public function isOrderPrepaidEligible(OrderInterface $order): bool
     {
-        return $this->errors;
-    }
-
-    /**
-     * Get return form URL for store.
-     *
-     * @return string
-     */
-    public function getReturnFormUrl()
-    {
-        return $this->configHelper->getReturnFormUrl($this->getOrder()->getStoreId());
-    }
-
-    /**
-     * Get encoded label string as data URI.
-     *
-     * @return string|null
-     */
-    public function getLabelEncodedDataUri(): ?string
-    {
-        return '';
+        return true;
     }
 }
