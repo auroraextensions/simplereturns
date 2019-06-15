@@ -1,6 +1,6 @@
 <?php
 /**
- * OrdersPost.php
+ * CreatePost.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,12 +16,12 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Controller\Label;
+namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
-    Model\AdapterModel\Sales\Order as OrdersModel,
-    Model\ViewModel\OrdersView as ViewModel,
+    Model\AdapterModel\Sales\Order as OrderAdapter,
+    Model\ViewModel\Rma\CreateView as ViewModel,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
@@ -36,7 +36,7 @@ use Magento\Framework\{
     Exception\LocalizedException
 };
 
-class OrdersPost extends Action implements
+class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
@@ -57,8 +57,8 @@ class OrdersPost extends Action implements
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property OrdersModel $ordersModel */
-    protected $ordersModel;
+    /** @property OrderAdapter $orderAdapter */
+    protected $orderAdapter;
 
     /** @property ViewModel $viewModel */
     protected $viewModel;
@@ -69,7 +69,7 @@ class OrdersPost extends Action implements
      * @param DataPersistorInterface $dataPersistor
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
-     * @param OrdersModel $ordersModel
+     * @param OrderAdapter $orderAdapter
      * @param ViewModel $viewModel
      * @return void
      */
@@ -79,7 +79,7 @@ class OrdersPost extends Action implements
         DataPersistorInterface $dataPersistor,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
-        OrdersModel $ordersModel,
+        OrderAdapter $orderAdapter,
         ViewModel $viewModel
     ) {
         parent::__construct($context);
@@ -88,7 +88,7 @@ class OrdersPost extends Action implements
         $this->dataPersistor = $dataPersistor;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
-        $this->ordersModel = $ordersModel;
+        $this->orderAdapter = $orderAdapter;
         $this->viewModel = $viewModel;
     }
 
@@ -119,7 +119,7 @@ class OrdersPost extends Action implements
                 try {
                     if ($email !== null && $zipCode !== null) {
                         /* Trim delivery route suffix from zip code. */
-                        $zipCode = OrdersModel::truncateZipCode($zipCode);
+                        $zipCode = OrderAdapter::truncateZipCode($zipCode);
 
                         /** @var array $data */
                         $data = [
@@ -131,7 +131,7 @@ class OrdersPost extends Action implements
                         $this->dataPersistor->set(self::DATA_PERSISTOR_KEY, $data);
                     } elseif ($orderId !== null && $zipCode !== null) {
                         /* Trim delivery route suffix from zip code. */
-                        $zipCode = OrdersModel::truncateZipCode($zipCode);
+                        $zipCode = OrderAdapter::truncateZipCode($zipCode);
 
                         /** @var array $data */
                         $data = [

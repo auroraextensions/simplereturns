@@ -1,6 +1,6 @@
 <?php
 /**
- * Orders.php
+ * Create.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,12 +16,12 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Controller\Label;
+namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 
 use AuroraExtensions\SimpleReturns\{
     Helper\Action as ActionHelper,
-    Model\AdapterModel\Sales\Order as OrdersModel,
-    Model\ViewModel\OrdersView as ViewModel,
+    Model\AdapterModel\Sales\Order as OrderAdapter,
+    Model\ViewModel\Rma\CreateView as ViewModel,
     Shared\ModuleComponentInterface
 };
 
@@ -40,8 +40,8 @@ class Orders extends Action implements
     /** @property DataPersistorInterface $dataPersistor */
     protected $dataPersistor;
 
-    /** @property OrdersModel $ordersModel */
-    protected $ordersModel;
+    /** @property OrderAdapter $orderAdapter */
+    protected $orderAdapter;
 
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
@@ -52,7 +52,7 @@ class Orders extends Action implements
     /**
      * @param Context $context
      * @param DataPersistorInterface $dataPersistor
-     * @param OrdersModel $ordersModel
+     * @param OrderAdapter $orderAdapter
      * @param PageFactory $resultPageFactory
      * @param ViewModel $viewModel
      * @return void
@@ -60,13 +60,13 @@ class Orders extends Action implements
     public function __construct(
         Context $context,
         DataPersistorInterface $dataPersistor,
-        OrdersModel $ordersModel,
+        OrderAdapter $orderAdapter,
         PageFactory $resultPageFactory,
         ViewModel $viewModel
     ) {
         parent::__construct($context);
         $this->dataPersistor = $dataPersistor;
-        $this->ordersModel = $ordersModel;
+        $this->orderAdapter = $orderAdapter;
         $this->resultPageFactory = $resultPageFactory;
         $this->viewModel = $viewModel;
     }
@@ -78,45 +78,6 @@ class Orders extends Action implements
      */
     public function execute()
     {
-        /** @var Page $resultPage */
-        $resultPage = $this->resultPageFactory->create();
-
-        /** @var array $data */
-        $data = $this->dataPersistor->get(self::DATA_PERSISTOR_KEY);
-        $this->dataPersistor->clear(self::DATA_PERSISTOR_KEY);
-
-        if ($data) {
-            $this->viewModel->setData($data);
-
-            /** @var string|null $email */
-            $email = $data[self::PARAM_EMAIL] ?? null;
-
-            /** @var string|null $orderId */
-            $orderId = $data[self::PARAM_ORDER_ID] ?? null;
-
-            /** @var string|null $zipCode */
-            $zipCode = $data[self::PARAM_ZIP_CODE] ?? null;
-
-            if ($email !== null && $zipCode !== null) {
-                /** @var array $orders */
-                $orders = $this->ordersModel->getOrdersByCustomerEmailAndZipCode($email, $zipCode);
-
-                $this->viewModel->setData('orders', $orders);
-            } elseif ($orderId !== null && $zipCode !== null) {
-                /** @var array $orders */
-                $orders = $this->ordersModel->getOrdersByIncrementIdAndZipCode($orderId, $zipCode);
-
-                $this->viewModel->setData('orders', $orders);
-            }
-
-            /** @var Magento\Framework\View\Element\AbstractBlock|bool $block */
-            $block = $resultPage->getLayout()->getBlock(self::BLOCK_RETURNS_LABEL_ORDERS);
-
-            if ($block) {
-                $block->setData('view_model', $this->viewModel);
-            }
-        }
-
-        return $resultPage;
+        return $this->resultPageFactory->create();
     }
 }
