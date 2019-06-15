@@ -28,4 +28,17 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="AuroraExtensions\SimpleReturns\Controller\Router">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="dispatch" xsi:type="array">
+                    <item name="returns_rma_create" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\Create</item>
+                    <item name="returns_rma_createPost" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\CreatePost</item>
+                    <item name="returns_rma_list" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\List</item>
+                    <item name="returns_label_index" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Label\Index</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
 </config>
