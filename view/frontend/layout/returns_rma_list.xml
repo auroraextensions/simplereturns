@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * returns_label_orders.xml
+ * returns_rma_list.xml
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,10 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Magento\Framework\View\Element\Template" name="returns_label_orders" template="AuroraExtensions_SimpleReturns::returns/label/orders.phtml" cacheable="false">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="returns_rma_list"
+                   template="AuroraExtensions_SimpleReturns::returns/rma/list.phtml"
+                   cacheable="false">
                 <arguments>
                     <argument name="column_headers" xsi:type="array">
                         <item name="order_number" xsi:type="string">Order #</item>
