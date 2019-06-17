@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * returns_rma_list.xml
+ * returns_rma_orders.xml
  *
  * NOTICE OF LICENSE
  *
@@ -20,7 +20,7 @@
     <body>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
-                   name="returns_rma_list"
+                   name="returns_rma_orders"
                    template="AuroraExtensions_SimpleReturns::returns/rma/list.phtml"
                    cacheable="false">
                 <arguments>

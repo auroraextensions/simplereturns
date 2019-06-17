@@ -1,6 +1,6 @@
 <?php
 /**
- * List.php
+ * Orders.php
  *
  * NOTICE OF LICENSE
  *
@@ -33,7 +33,7 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class List extends Action implements
+class Orders extends Action implements
     HttpGetActionInterface,
     ModuleComponentInterface
 {

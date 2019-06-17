@@ -19,7 +19,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="Magento\Framework\App\RouterList">
         <arguments>
-            <argument name="routerList" xsi:type="array">
+            <argument name="routerlist" xsi:type="array">
                 <item name="auroraextensions_simplereturns_router" xsi:type="array">
                     <item name="class" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Router</item>
                     <item name="disable" xsi:type="boolean">false</item>
@@ -35,7 +35,7 @@
                 <item name="dispatch" xsi:type="array">
                     <item name="returns_rma_create" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\Create</item>
                     <item name="returns_rma_createPost" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\CreatePost</item>
-                    <item name="returns_rma_list" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\List</item>
+                    <item name="returns_rma_orders" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\Orders</item>
                     <item name="returns_label_index" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Label\Index</item>
                 </item>
             </argument>
