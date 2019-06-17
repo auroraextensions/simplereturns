@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * di.xml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Carriers">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="carriers" xsi:type="array">
+                    <item name="ups" xsi:type="string">UPS</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Methods">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="methods" xsi:type="array">
+                    <item name="03" xsi:type="string">UPS Ground</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

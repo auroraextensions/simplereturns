@@ -18,30 +18,53 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ServiceModel\System\Source;
+namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source;
 
-use Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\{
+    DataObject,
+    DataObject\Factory as DataObjectFactory,
+    Option\ArrayInterface
+};
 
 class Methods implements ArrayInterface
 {
-    /** @property array $options */
-    protected static $options = [];
+    /** @property DataObjectFactory $dataObjectFactory */
+    protected $dataObjectFactory;
 
-    /** @property array $values */
-    protected static $values = [
-        'UPS Ground' => '03',
-    ];
+    /** @property array $options */
+    protected $options = [];
+
+    /** @property DataObject $settings */
+    protected $settings;
 
     /**
+     * @param DataObjectFactory $dataObjectFactory
+     * @param array $data
      * @return void
      */
-    public function __construct()
-    {
-        array_walk(self::$values, [$this, 'setOption']);
+    public function __construct(
+        DataObjectFactory $dataObjectFactory,
+        array $data = []
+    ) {
+        $this->dataObjectFactory = $dataObjectFactory;
+        $this->settings = $this->dataObjectFactory->create($data);
+
+        /** @var array $methods */
+        $methods = array_flip(
+            $this->settings->getData('methods') ?? []
+        );
+
+        array_walk(
+            $methods,
+            [
+                $this,
+                'setOption'
+            ]
+        );
     }
 
     /**
-     * Set option key/value array on self::$options.
+     * Create/update option key/value array.
      *
      * @param string $value
      * @param string $key
@@ -49,7 +72,7 @@ class Methods implements ArrayInterface
      */
     protected function setOption($value, $key)
     {
-        self::$options[] = [
+        $this->options[] = [
             'label' => __($key),
             'value' => $value,
         ];
@@ -61,6 +84,6 @@ class Methods implements ArrayInterface
      */
     public function toOptionArray()
     {
-        return self::$options;
+        return $this->options;
     }
 }
