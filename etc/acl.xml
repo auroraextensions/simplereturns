@@ -23,7 +23,7 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="AuroraExtensions_SimpleReturns::configuration" title="Returns"/>
+                            <resource id="AuroraExtensions_SimpleReturns::configuration" title="Simple Returns"/>
                         </resource>
                     </resource>
                 </resource>
