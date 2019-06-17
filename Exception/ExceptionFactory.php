@@ -43,6 +43,7 @@ final class ExceptionFactory implements ModuleComponentInterface
 
     /**
      * @param ObjectManagerInterface $objectManager
+     * @param PhraseFactory $phraseFactory
      * @return void
      */
     public function __construct(

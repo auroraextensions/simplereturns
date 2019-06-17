@@ -65,7 +65,7 @@ interface ModuleComponentInterface
     /** @constant string ERROR_ORDER_SUBTOTAL_BELOW_MINIMUM */
     const ERROR_DEFAULT_MESSAGE = 'An error has occurred and we are unable to process the request.';
     const ERROR_INVALID_CARRIER_CODE = 'Unable to create carrier model. Invalid carrier code was given.';
-    const ERROR_INVALID_EXCEPTION_TYPE = 'Invalid exception class type %s was given.';
+    const ERROR_INVALID_EXCEPTION_TYPE = 'Invalid exception class type %1 was given.';
     const ERROR_INVALID_RETURN_LABEL_URL = 'The requested return label URL was invalid. Please verify and try again.';
     const ERROR_INVALID_TRAIT_CONTEXT = '%1 can only be used when extending or implementing %2';
     const ERROR_MISSING_URL_PARAMS = 'Please provide an email address or order ID and billing/shipping zip code.';
