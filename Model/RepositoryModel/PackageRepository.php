@@ -59,8 +59,8 @@ class PackageRepository extends AbstractRepository implements
      * @return void
      */
     public function __construct(
-        AbstractCollectionInterfaceFactory $collectionFactory,
-        SearchResultsInterfaceFactory $searchResultsFactory,
+        $collectionFactory,
+        $searchResultsFactory,
         PackageInterfaceFactory $packageFactory,
         PackageResourceModel $packageResource,
         ExceptionFactory $exceptionFactory

@@ -59,8 +59,8 @@ class LabelRepository extends AbstractRepository implements
      * @return void
      */
     public function __construct(
-        AbstractCollectionInterfaceFactory $collectionFactory,
-        SearchResultsInterfaceFactory $searchResultsFactory,
+        $collectionFactory,
+        $searchResultsFactory,
         LabelInterfaceFactory $labelFactory,
         LabelResourceModel $labelResource,
         ExceptionFactory $exceptionFactory
