@@ -24,7 +24,6 @@ use AuroraExtensions\SimpleReturns\{
     Model\ViewModel\Rma\CreateView as ViewModel,
     Shared\ModuleComponentInterface
 };
-
 use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
@@ -33,7 +32,7 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Orders extends Action implements
+class Create extends Action implements
     HttpGetActionInterface,
     ModuleComponentInterface
 {
