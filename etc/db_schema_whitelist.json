@@ -1,0 +1,53 @@
+{
+    "simplereturns_rma": {
+        "column": {
+            "rma_id": true,
+            "order_id": true,
+            "package_id": true,
+            "remote_ip": true
+        },
+        "index": {
+            "SIMPLERETURNS_RMA_ORDER_ID": true,
+            "SIMPLERETURNS_RMA_PACKAGE_ID": true
+        },
+        "constraint": {
+            "SIMPLERETURNS_RMA_PACKAGE_ID_SIMPLERETURNS_PACKAGE_PACKAGE_ID": true,
+            "PRIMARY": true
+        }
+    },
+    "simplereturns_package": {
+        "column": {
+            "package_id": true,
+            "rma_id": true,
+            "label_id": true,
+            "carrier_code": true,
+            "container_type": true,
+            "description": true,
+            "dimension_units": true,
+            "weight_units": true,
+            "weight": true
+        },
+        "index": {
+            "SIMPLERETURNS_PACKAGE_RMA_ID": true,
+            "SIMPLERETURNS_PACKAGE_LABEL_ID": true
+        },
+        "constraint": {
+            "SIMPLERETURNS_PACKAGE_LABEL_ID_SIMPLERETURNS_LABEL_LABEL_ID": true,
+            "PRIMARY": true
+        }
+    },
+    "simplereturns_label": {
+        "column": {
+            "label_id": true,
+            "package_id": true,
+            "image": true,
+            "tracking_number": true
+        },
+        "index": {
+            "SIMPLERETURNS_LABEL_PACKAGE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

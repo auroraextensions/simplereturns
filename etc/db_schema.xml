@@ -24,8 +24,9 @@
         <column xsi:type="smallint" name="order_id" padding="5" unsigned="true" nullable="false" comment="Order ID"/>
         <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" comment="Package ID"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
-        <constraint xsi:type="foreign" referenceId="SR_RMA_PKG_ID_SR_PKG_PKG_ID" table="simplreturns_rma" column="package_id"
-                    referenceTable="simplereturns_package" referenceColumn="package_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="SIMPLERETURNS_RMA_PACKAGE_ID_SIMPLERETURNS_PACKAGE_PACKAGE_ID"
+                    table="simplreturns_rma" column="package_id" referenceTable="simplereturns_package"
+                    referenceColumn="package_id" onDelete="CASCADE"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="rma_id"/>
         </constraint>
@@ -47,8 +48,9 @@
         <column xsi:type="varchar" name="dimension_units" nullable="true" length="32" comment="Package Dimension Units"/>
         <column xsi:type="varchar" name="weight_units" nullable="true" length="32" comment="Package Weight Units"/>
         <column xsi:type="smallint" name="weight" padding="5" unsigned="true" nullable="true" comment="Package Weight"/>
-        <constraint xsi:type="foreign" referenceId="SR_PKG_LBL_ID_SR_LBL_LBL_ID" table="simplreturns_package" column="label_id"
-                    referenceTable="simplereturns_label" referenceColumn="label_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="SIMPLERETURNS_PACKAGE_LABEL_ID_SIMPLERETURNS_LABEL_LABEL_ID"
+                    table="simplreturns_package" column="label_id" referenceTable="simplereturns_label"
+                    referenceColumn="label_id" onDelete="CASCADE"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="package_id"/>
         </constraint>
