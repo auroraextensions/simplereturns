@@ -24,7 +24,6 @@ use AuroraExtensions\SimpleReturns\{
     Model\ViewModel\Rma\ListView as ViewModel,
     Shared\ModuleComponentInterface
 };
-
 use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
