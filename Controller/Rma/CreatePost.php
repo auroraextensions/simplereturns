@@ -142,10 +142,13 @@ class CreatePost extends Action implements
 
                         $this->dataPersistor->set(self::DATA_PERSISTOR_KEY, $data);
                     } else {
-                        throw $this->exceptionFactory->create(
+                        /** @var LocalizedException $exception */
+                        $exception = $this->exceptionFactory->create(
                             LocalizedException::class,
                             __(self::ERROR_MISSING_URL_PARAMS)
                         );
+
+                        throw $exception;
                     }
                 } catch (LocalizedException $e) {
                     $this->messageManager->addError($e->getMessage());
@@ -153,6 +156,6 @@ class CreatePost extends Action implements
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_RETURNS_LABEL_ORDERS);
+        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_OVERVIEW);
     }
 }

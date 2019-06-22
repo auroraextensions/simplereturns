@@ -36,10 +36,8 @@ interface ModuleComponentInterface
     const ATTRIBUTE_CODE_SIMPLE_RETURN = 'simple_return';
     const ATTRIBUTE_LABEL_SIMPLE_RETURN = 'Returnable';
 
-    /** @constant string BLOCK_RETURNS_LABEL_INDEX */
-    /** @constant string BLOCK_RETURNS_LABEL_ORDERS */
-    const BLOCK_RETURNS_LABEL_INDEX = 'returns_label_index';
-    const BLOCK_RETURNS_LABEL_ORDERS = 'returns_label_orders';
+    /** @constant string BLOCK_SIMPLERETURNS_LABEL_INDEX */
+    const BLOCK_SIMPLERETURNS_LABEL_INDEX = 'simplereturns_label_index';
 
     /** @constant string COLUMN_HEADERS_KEY */
     const COLUMN_HEADERS_KEY = 'column_headers';
@@ -49,7 +47,7 @@ interface ModuleComponentInterface
 
     /** @constant string DEFAULT_FRONT_NAME */
     /** @constant string DEFAULT_SCRIPT_NAME */
-    const DEFAULT_FRONT_NAME = 'returns';
+    const DEFAULT_FRONT_NAME = 'simplereturns';
     const DEFAULT_SCRIPT_NAME = 'index.php';
 
     /** @constant string ERROR_DEFAULT_MESSAGE */
@@ -88,16 +86,12 @@ interface ModuleComponentInterface
     const FORMAT_RMA_REQUEST_COMMENT = 'A return label was generated from [%1] with tracking number %2';
 
     /** @constant string FULLACTION_DELIMITER */
-    /** @constant string FULLACTION_RETURNS_LABEL_INDEX */
-    /** @constant string FULLACTION_RETURNS_LABEL_ORDERS */
-    /** @constant string FULLACTION_RETURNS_LABEL_ORDERSPOST */
+    /** @constant string FULLACTION_SIMPLERETURNS_LABEL_INDEX */
     const FULLACTION_DELIMITER = '_';
-    const FULLACTION_RETURNS_LABEL_INDEX = 'returns_label_index';
-    const FULLACTION_RETURNS_LABEL_ORDERS = 'returns_label_orders';
-    const FULLACTION_RETURNS_LABEL_ORDERSPOST = 'returns_label_ordersPost';
+    const FULLACTION_SIMPLERETURNS_LABEL_INDEX = 'simplereturns_label_index';
 
     /** @constant string LABEL_CACHE_ID */
-    const LABEL_CACHE_ID = 'RETURN_LABEL_CONTENT_PER_ORDER';
+    const LABEL_CACHE_ID = 'SIMPLERETURNS_RETURN_LABEL_CONTENT_PER_ORDER';
 
     /** @constant string PARAM_EMAIL */
     /** @constant string PARAM_ORDER_ID */
@@ -114,12 +108,16 @@ interface ModuleComponentInterface
     /** @constant string PREFIX_DATAURI */
     const PREFIX_DATAURI = 'data:image/jpeg;base64,';
 
-    /** @constant string ROUTE_RETURNS_LABEL_INDEX */
-    /** @constant string ROUTE_RETURNS_LABEL_ORDERS */
-    /** @constant string ROUTE_RETURNS_LABEL_ORDERSPOST */
-    const ROUTE_RETURNS_LABEL_INDEX = 'returns/label/index';
-    const ROUTE_RETURNS_LABEL_ORDERS = 'returns/label/orders';
-    const ROUTE_RETURNS_LABEL_ORDERSPOST = 'returns/label/ordersPost';
+    /** @constant string ROUTE_SIMPLERETURNS_LABEL_INDEX */
+    /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATE */
+    /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATEPOST */
+    /** @constant string ROUTE_SIMPLERETURNS_RMA_OVERVIEW */
+    /** @constant string ROUTE_SIMPLERETURNS_RMA_OVERVIEWPOST */
+    const ROUTE_SIMPLERETURNS_LABEL_INDEX = 'simplereturns/label/index';
+    const ROUTE_SIMPLERETURNS_RMA_CREATE = 'simplereturns/rma/create';
+    const ROUTE_SIMPLERETURNS_RMA_CREATEPOST = 'simplereturns/rma/createPost';
+    const ROUTE_SIMPLERETURNS_RMA_OVERVIEW = 'simplereturns/rma/overview';
+    const ROUTE_SIMPLERETURNS_RMA_OVERVIEWPOST = 'simplereturns/rma/overviewPost';
 
     /** @constant string SQL_COLUMN_LABEL_PRIMARY_FIELD */
     /** @constant string SQL_COLUMN_PKG_PRIMARY_FIELD */
@@ -137,17 +135,10 @@ interface ModuleComponentInterface
     const SQL_TABLE_ENTITY_RMA = 'simplereturns_rma';
 
     /** @constant string XML_LAYOUT_HANDLE_NOROUTE */
-    const XML_LAYOUT_HANDLE_NOROUTE = 'returns_noroute';
+    const XML_LAYOUT_HANDLE_NOROUTE = 'simplereturns_noroute';
 
     /** @constant int ZIP_CODE_INDEX */
     /** @constant int ZIP_CODE_LENGTH */
     const ZIP_CODE_INDEX = 0;
     const ZIP_CODE_LENGTH = 5;
-
-    /** @constant array DICT_ACTION_CONTROLLER_DISPATCH */
-    const DICT_ACTION_CONTROLLER_DISPATCH = [
-        self::FULLACTION_RETURNS_LABEL_INDEX      => IndexController::class,
-        self::FULLACTION_RETURNS_LABEL_ORDERS     => OrdersController::class,
-        self::FULLACTION_RETURNS_LABEL_ORDERSPOST => OrdersPostController::class,
-    ];
 }

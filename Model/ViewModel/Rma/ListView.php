@@ -69,7 +69,7 @@ class ListView extends AbstractView implements
     public function getReturnLabelUrl(OrderInterface $order): string
     {
         return $this->urlBuilder->getUrl(
-            self::ROUTE_RETURNS_LABEL_INDEX,
+            self::ROUTE_SIMPLERETURNS_LABEL_INDEX,
             [
                 self::PARAM_ORDER_ID => $order->getRealOrderId(),
                 self::PARAM_PROTECT_CODE => $order->getProtectCode(),

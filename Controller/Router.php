@@ -146,7 +146,7 @@ class Router implements RouterInterface, ModuleComponentInterface
         /** @var array $parts */
         $parts = explode(self::FULLACTION_DELIMITER, $fullAction);
 
-        if ($fullAction === self::FULLACTION_RETURNS_LABEL_INDEX) {
+        if ($fullAction === self::FULLACTION_SIMPLERETURNS_LABEL_INDEX) {
             /** @var string $basePath */
             $basePath = implode('/', $parts);
 

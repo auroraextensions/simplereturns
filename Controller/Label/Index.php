@@ -129,7 +129,7 @@ class Index extends Action implements
 
                     if ($rma && $rma->getId()) {
                         /** @var Magento\Framework\View\Element\AbstractBlock|bool $block */
-                        $block = $resultPage->getLayout()->getBlock(self::BLOCK_RETURNS_LABEL_INDEX);
+                        $block = $resultPage->getLayout()->getBlock(self::BLOCK_SIMPLERETURNS_LABEL_INDEX);
 
                         if ($block) {
                             $block->setData('view_model', $this->viewModel);
@@ -138,16 +138,19 @@ class Index extends Action implements
                         return $resultPage;
                     }
 
-                    throw $this->exceptionFactory->create(
+                    /** @var NoSuchEntityException $exception */
+                    $exception = $this->exceptionFactory->create(
                         NoSuchEntityException::class,
                         __('Unable to locate SimpleReturn RMA information.')
                     );
+
+                    throw $exception;
                 } catch (NoSuchEntityException $e) {
                     $this->messageManager->addError($e->getMessage());
                 }
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_RETURNS_LABEL_ORDERS);
+        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_OVERVIEW);
     }
 }
