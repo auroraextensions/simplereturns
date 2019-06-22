@@ -24,7 +24,6 @@ use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Shared\ModuleComponentInterface
 };
-
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\{
     Api\FilterBuilder,
@@ -147,7 +146,8 @@ class Order implements ModuleComponentInterface
             $orders = $this->getOrdersByFilters($filters);
 
             if (empty($orders)) {
-                throw $this->exceptionFactory->create(
+                /** @var NoSuchEntityException $exception */
+                $exception = $this->exceptionFactory->create(
                     NoSuchEntityException::class,
                     __(
                         self::ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE,
@@ -155,6 +155,8 @@ class Order implements ModuleComponentInterface
                         $zipCode
                     )
                 );
+
+                throw $exception;
             }
         } catch (NoSuchEntityException $e) {
             $this->messageManager->addError($e->getMessage());
@@ -199,10 +201,13 @@ class Order implements ModuleComponentInterface
             }
 
             if (empty($data)) {
-                throw $this->exceptionFactory->create(
+                /** @var NoSuchEntityException $exception */
+                $exception = $this->exceptionFactory->create(
                     NoSuchEntityException::class,
                     __(self::ERROR_INVALID_RETURN_LABEL_URL)
                 );
+
+                throw $exception;
             }
         } catch (NoSuchEntityException $e) {
             $this->messageManager->addError($e->getMessage());
