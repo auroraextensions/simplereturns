@@ -77,6 +77,34 @@ class Overview extends Action implements
      */
     public function execute()
     {
+        /** @var array $data */
+        $data = $this->dataPersistor->get(self::DATA_PERSISTOR_KEY);
+        $this->dataPersistor->clear(self::DATA_PERSISTOR_KEY);
+
+        /** @var string|null $zipCode */
+        $zipCode = $data['zip_code'] ?? null;
+        $zipCode = !empty($zipCode) ? trim($zipCode) : $zipCode;
+
+        /** @var string|null $email */
+        $email = $data['email'] ?? null;
+        $email = !empty($email) ? trim($email) : $email;
+
+        /** @var string|null $orderId */
+        $orderId = $data['order_id'] ?? null;
+        $orderId = !empty($orderId) ? trim($orderId) : $orderId;
+
+        if ($zipCode !== null) {
+            if ($email !== null) {
+                $orders = $this->orderAdapter->getOrdersByCustomerEmailAndZipCode($email, $zipCode);
+
+                $this->viewModel->setData('orders', $orders);
+            } elseif ($orderId !== null) {
+                $orders = $this->orderAdapter->getOrdersByIncrementIdAndZipCode($orderId, $zipCode);
+
+                $this->viewModel->setData('orders', $orders);
+            }
+        }
+
         return $this->resultPageFactory->create();
     }
 }
