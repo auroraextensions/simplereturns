@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * returns_label_index.xml
+ * simplereturns_label_index.xml
  *
  * NOTICE OF LICENSE
  *
@@ -23,8 +23,8 @@
     <body>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
-                   name="returns_label_index"
-                   template="AuroraExtensions_SimpleReturns::returns/label/index.phtml"
+                   name="simplereturns_label_index"
+                   template="AuroraExtensions_SimpleReturns::label/index.phtml"
                    cacheable="false"/>
         </referenceContainer>
     </body>

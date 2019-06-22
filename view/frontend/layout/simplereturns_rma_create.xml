@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * returns_rma_create.xml
+ * simplereturns_rma_create.xml
  *
  * NOTICE OF LICENSE
  *
@@ -20,8 +20,8 @@
     <body>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
-                   name="returns_rma_create"
-                   template="AuroraExtensions_SimpleReturns::returns/rma/create.phtml"
+                   name="simplereturns_rma_create"
+                   template="AuroraExtensions_SimpleReturns::rma/create.phtml"
                    cacheable="false">
                 <arguments>
                     <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\CreateView</argument>
