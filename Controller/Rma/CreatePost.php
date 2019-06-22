@@ -104,7 +104,7 @@ class CreatePost extends Action implements
 
         if ($request->isPost() && $this->formKeyValidator->validate($request)) {
             /** @var array|null $params */
-            $params = $request->getPost('returns');
+            $params = $request->getPost('simplereturns');
 
             if ($params !== null) {
                 /** @var string|null $email */
