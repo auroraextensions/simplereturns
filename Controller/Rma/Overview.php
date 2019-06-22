@@ -1,6 +1,6 @@
 <?php
 /**
- * Orders.php
+ * Overview.php
  *
  * NOTICE OF LICENSE
  *
@@ -32,7 +32,7 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Orders extends Action implements
+class Overview extends Action implements
     HttpGetActionInterface,
     ModuleComponentInterface
 {
@@ -71,7 +71,7 @@ class Orders extends Action implements
     }
 
     /**
-     * Execute returns_label_orders action.
+     * Execute simplereturns_rma_overview action.
      *
      * @return Page
      */
