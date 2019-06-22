@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * di.xml
+ * routes.xml
  *
  * NOTICE OF LICENSE
  *
@@ -18,7 +18,7 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="standard">
-        <route id="returns" frontName="returns">
+        <route id="simplereturns" frontName="simplereturns">
             <module name="AuroraExtensions_SimpleReturns"/>
         </route>
     </router>
