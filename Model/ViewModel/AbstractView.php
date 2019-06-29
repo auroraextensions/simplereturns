@@ -74,9 +74,7 @@ abstract class AbstractView extends DataObject implements
      * @param string $route
      * @return string
      */
-    public function getPostActionUrl(
-        string $route = self::ROUTE_SIMPLERETURNS_RMA_OVERVIEWPOST
-    ): string
+    public function getPostActionUrl(string $route): string
     {
         return $this->urlBuilder->getUrl(
             $route,
