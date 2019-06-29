@@ -59,4 +59,20 @@ class SearchView extends AbstractView implements
             $urlBuilder
         );
     }
+
+    /**
+     * @param string $route
+     * @return string
+     */
+    public function getPostActionUrl(
+        string $route = self::ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST
+    ): string
+    {
+        return $this->urlBuilder->getUrl(
+            $route,
+            [
+                '_secure' => true,
+            ]
+        );
+    }
 }

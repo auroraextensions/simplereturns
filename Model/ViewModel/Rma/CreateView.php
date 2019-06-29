@@ -59,4 +59,20 @@ class CreateView extends AbstractView implements
             $data
         );
     }
+
+    /**
+     * @param string $route
+     * @return string
+     */
+    public function getPostActionUrl(
+        string $route = self::ROUTE_SIMPLERETURNS_RMA_CREATEPOST
+    ): string
+    {
+        return $this->urlBuilder->getUrl(
+            $route,
+            [
+                '_secure' => true,
+            ]
+        );
+    }
 }

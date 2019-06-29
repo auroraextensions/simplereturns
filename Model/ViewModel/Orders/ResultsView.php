@@ -59,4 +59,47 @@ class ResultsView extends AbstractView implements
             $urlBuilder
         );
     }
+
+    /**
+     * Get return label URL.
+     *
+     * @param OrderInterface $order
+     * @return string
+     */
+    public function getReturnLabelUrl(OrderInterface $order): string
+    {
+        return $this->urlBuilder->getUrl(
+            self::ROUTE_SIMPLERETURNS_LABEL_INDEX,
+            [
+                self::PARAM_ORDER_ID => $order->getRealOrderId(),
+                self::PARAM_PROTECT_CODE => $order->getProtectCode(),
+                '_secure' => true,
+            ]
+        );
+    }
+
+    /**
+     * Check if customer has existing orders.
+     *
+     * @return bool
+     */
+    public function hasOrders(): bool
+    {
+        /** @var array $orders */
+        $orders = $this->getData('orders') ?? [];
+
+        return (bool)(count($orders) > 0);
+    }
+
+    /**
+     * Check if order is eligible for prepaid return labels.
+     *
+     * @param OrderInterface $order
+     * @return bool
+     * @todo: Implement this method.
+     */
+    public function isOrderPrepaidEligible(OrderInterface $order): bool
+    {
+        return true;
+    }
 }
