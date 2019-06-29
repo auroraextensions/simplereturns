@@ -156,6 +156,6 @@ class CreatePost extends Action implements
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_OVERVIEW);
+        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_ORDERS_SEARCH);
     }
 }
