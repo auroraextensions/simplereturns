@@ -20,12 +20,6 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Shared;
 
-use AuroraExtensions\SimpleReturns\{
-    Controller\Label\Index as IndexController,
-    Controller\Label\Orders as OrdersController,
-    Controller\Label\OrdersPost as OrdersPostController
-};
-
 interface ModuleComponentInterface
 {
     /** @constant string ADDRESS_FIELD_DELIMITER */
@@ -37,7 +31,9 @@ interface ModuleComponentInterface
     const ATTRIBUTE_LABEL_SIMPLE_RETURN = 'Returnable';
 
     /** @constant string BLOCK_SIMPLERETURNS_LABEL_INDEX */
+    /** @constant string BLOCK_SIMPLERETURNS_RMA_OVERVIEW */
     const BLOCK_SIMPLERETURNS_LABEL_INDEX = 'simplereturns_label_index';
+    const BLOCK_SIMPLERETURNS_RMA_OVERVIEW = 'simplereturns_rma_overview';
 
     /** @constant string COLUMN_HEADERS_KEY */
     const COLUMN_HEADERS_KEY = 'column_headers';
