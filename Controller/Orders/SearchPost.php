@@ -151,6 +151,6 @@ class SearchPost extends Action implements
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_ORDERS_SEARCH);
+        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_ORDERS_RESULTS);
     }
 }
