@@ -31,8 +31,10 @@ interface ModuleComponentInterface
     const ATTRIBUTE_LABEL_SIMPLE_RETURN = 'Returnable';
 
     /** @constant string BLOCK_SIMPLERETURNS_LABEL_INDEX */
+    /** @constant string BLOCK_SIMPLERETURNS_ORDERS_RESULTS */
     /** @constant string BLOCK_SIMPLERETURNS_ORDERS_SEARCH */
     const BLOCK_SIMPLERETURNS_LABEL_INDEX = 'simplereturns_label_index';
+    const BLOCK_SIMPLERETURNS_ORDERS_RESULTS = 'simplereturns_orders_results';
     const BLOCK_SIMPLERETURNS_ORDERS_SEARCH = 'simplereturns_orders_search';
 
     /** @constant string COLUMN_HEADERS_KEY */
