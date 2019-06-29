@@ -19,7 +19,8 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository"/>
-    <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\SimpleReturn"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface"
+                type="AuroraExtensions\SimpleReturns\Model\DataModel\SimpleReturn"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
 
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface"

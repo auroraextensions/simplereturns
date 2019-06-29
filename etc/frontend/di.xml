@@ -32,9 +32,11 @@
         <arguments>
             <argument name="data" xsi:type="array">
                 <item name="dispatch" xsi:type="array">
+                    <item name="simplereturns_orders_search" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Orders\Search</item>
+                    <item name="simplereturns_orders_searchPost" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Orders\SearchPost</item>
+                    <item name="simplereturns_orders_results" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Orders\Results</item>
                     <item name="simplereturns_rma_create" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\Create</item>
                     <item name="simplereturns_rma_createPost" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\CreatePost</item>
-                    <item name="simplereturns_rma_orders" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Rma\Orders</item>
                     <item name="simplereturns_label_index" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Label\Index</item>
                 </item>
             </argument>
