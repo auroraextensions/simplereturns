@@ -19,14 +19,14 @@
 /** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ListView $viewModel */
 $viewModel = $block->getViewModel();
 ?>
-<div class="block simplereturns-rma-create">
+<div class="block simplereturns-rma-list">
     <div class="simplereturns-rma-form">
         <div class="container-form">
             <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="simplereturns-rma-form">
                 <?= $block->getBlockHtml('formkey') ?>
                 <fieldset class="fieldset simplereturns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                     <legend class="legend">
-                        <span><?= $block->escapeHtml(__('Please enter the Zip Code for the order')); ?></span>
+                        <span><?= $block->escapeHtml(__('Please enter the Zip Code for the order')) ?></span>
                     </legend>
                     <div class="field zip_code required">
                         <label class="label zip_code" for="zip_code">
@@ -44,7 +44,7 @@ $viewModel = $block->getViewModel();
                 </fieldset>
                 <fieldset class="fieldset simplereturns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                     <legend class="legend">
-                        <span><?= $block->escapeHtml(__('Please enter the Email Address for the order or the Order ID')); ?></span>
+                        <span><?= $block->escapeHtml(__('Please enter the Email Address for the order or the Order ID')) ?></span>
                     </legend>
                     <div class="field email required">
                         <label class="label email" for="email">
