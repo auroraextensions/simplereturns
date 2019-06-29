@@ -111,7 +111,7 @@ class Search extends Action implements
         }
 
         /** @var Magento\Framework\View\Element\AbstractBlock|bool $block */
-        $block = $resultPage->getLayout()->getBlock(self::BLOCK_SIMPLERETURNS_RMA_OVERVIEW);
+        $block = $resultPage->getLayout()->getBlock(self::BLOCK_SIMPLERETURNS_ORDERS_SEARCH);
 
         if ($block) {
             $block->setData('view_model', $this->viewModel);
