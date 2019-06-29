@@ -19,21 +19,16 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Orders;
 
 use AuroraExtensions\SimpleReturns\{
-    Api\SimpleReturnRepositoryInterface,
-    Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
-    Model\AdapterModel\Sales\Order as OrderAdapterModel,
-    Model\ViewModel\Label\IndexView as ViewModel,
-    Shared\Action\Redirector,
+    Model\AdapterModel\Sales\Order as OrderAdapter,
+    Model\ViewModel\Rma\ListView as ViewModel,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
     App\Action\HttpGetActionInterface,
-    Controller\Result\Redirect as ResultRedirect,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Exception\NoSuchEntityException,
+    App\Request\DataPersistorInterface,
     View\Result\PageFactory
 };
 
@@ -41,67 +36,86 @@ class Search extends Action implements
     HttpGetActionInterface,
     ModuleComponentInterface
 {
-    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
-    use Redirector {
-        Redirector::__initialize as protected;
-    }
+    /** @property DataPersistorInterface $dataPersistor */
+    protected $dataPersistor;
 
-    /** @property ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
-
-    /** @property FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
-
-    /** @property OrderAdapterModel $orderAdapter */
+    /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
-
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
 
     /** @property ViewModel $viewModel */
     protected $viewModel;
 
     /**
      * @param Context $context
-     * @param ExceptionFactory $exceptionFactory
-     * @param FormKeyValidator $formKeyValidator
+     * @param DataPersistorInterface $dataPersistor
+     * @param OrderAdapter $orderAdapter
      * @param PageFactory $resultPageFactory
-     * @param OrderAdapterModel $orderAdapter
-     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param ViewModel $viewModel
      * @return void
      */
     public function __construct(
         Context $context,
-        ExceptionFactory $exceptionFactory,
-        FormKeyValidator $formKeyValidator,
+        DataPersistorInterface $dataPersistor,
+        OrderAdapter $orderAdapter,
         PageFactory $resultPageFactory,
-        OrderAdapterModel $orderAdapter,
-        SimpleReturnRepositoryInterface $simpleReturnRepository,
         ViewModel $viewModel
     ) {
         parent::__construct($context);
-        $this->__initialize();
-        $this->exceptionFactory = $exceptionFactory;
-        $this->formKeyValidator = $formKeyValidator;
-        $this->resultPageFactory = $resultPageFactory;
+        $this->dataPersistor = $dataPersistor;
         $this->orderAdapter = $orderAdapter;
-        $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->resultPageFactory = $resultPageFactory;
         $this->viewModel = $viewModel;
     }
 
     /**
-     * Execute returns_label_index action.
+     * Execute simplereturns_rma_overview action.
      *
-     * @return Redirect|Page
+     * @return Page
      */
     public function execute()
     {
+        /** @var array $data */
+        $data = $this->dataPersistor->get(self::DATA_PERSISTOR_KEY);
+        $this->dataPersistor->clear(self::DATA_PERSISTOR_KEY);
+
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
+
+        /** @var string|null $zipCode */
+        $zipCode = $data['zip_code'] ?? null;
+        $zipCode = !empty($zipCode) ? trim($zipCode) : $zipCode;
+
+        /** @var string|null $email */
+        $email = $data['email'] ?? null;
+        $email = !empty($email) ? trim($email) : $email;
+
+        /** @var string|null $orderId */
+        $orderId = $data['order_id'] ?? null;
+        $orderId = !empty($orderId) ? trim($orderId) : $orderId;
+
+        if ($zipCode !== null) {
+            if ($email !== null) {
+                /** @var OrderInterface[] $orders */
+                $orders = $this->orderAdapter->getOrdersByCustomerEmailAndZipCode($email, $zipCode);
+
+                $this->viewModel->setData('orders', $orders);
+            } elseif ($orderId !== null) {
+                /** @var OrderInterface[] $orders */
+                $orders = $this->orderAdapter->getOrdersByIncrementIdAndZipCode($orderId, $zipCode);
+
+                $this->viewModel->setData('orders', $orders);
+            }
+        }
+
+        /** @var Magento\Framework\View\Element\AbstractBlock|bool $block */
+        $block = $resultPage->getLayout()->getBlock(self::BLOCK_SIMPLERETURNS_RMA_OVERVIEW);
+
+        if ($block) {
+            $block->setData('view_model', $this->viewModel);
+        }
 
         return $resultPage;
     }
