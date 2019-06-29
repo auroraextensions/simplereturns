@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * simplereturns_rma_overview.xml
+ * simplereturns_orders_search.xml
  *
  * NOTICE OF LICENSE
  *
@@ -20,8 +20,8 @@
     <body>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
-                   name="simplereturns_rma_overview"
-                   template="AuroraExtensions_SimpleReturns::rma/list.phtml"
+                   name="simplereturns_orders_search"
+                   template="AuroraExtensions_SimpleReturns::orders/search.phtml"
                    cacheable="false">
                 <arguments>
                     <argument name="column_headers" xsi:type="array">
@@ -30,7 +30,7 @@
                         <item name="order_total" xsi:type="string">Order Total</item>
                         <item name="order_status" xsi:type="string">Order Status</item>
                     </argument>
-                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ListView</argument>
+                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Orders\SearchView</argument>
                 </arguments>
             </block>
         </referenceContainer>
