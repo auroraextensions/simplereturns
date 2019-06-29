@@ -1,6 +1,6 @@
 <?php
 /**
- * Overview.php
+ * Search.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,7 +16,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Controller\Rma;
+namespace AuroraExtensions\SimpleReturns\Controller\Orders;
 
 use AuroraExtensions\SimpleReturns\{
     Helper\Action as ActionHelper,
@@ -32,7 +32,7 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Overview extends Action implements
+class Search extends Action implements
     HttpGetActionInterface,
     ModuleComponentInterface
 {
@@ -81,6 +81,9 @@ class Overview extends Action implements
         $data = $this->dataPersistor->get(self::DATA_PERSISTOR_KEY);
         $this->dataPersistor->clear(self::DATA_PERSISTOR_KEY);
 
+        /** @var Page $resultPage */
+        $resultPage = $this->resultPageFactory->create();
+
         /** @var string|null $zipCode */
         $zipCode = $data['zip_code'] ?? null;
         $zipCode = !empty($zipCode) ? trim($zipCode) : $zipCode;
@@ -95,16 +98,25 @@ class Overview extends Action implements
 
         if ($zipCode !== null) {
             if ($email !== null) {
+                /** @var OrderInterface[] $orders */
                 $orders = $this->orderAdapter->getOrdersByCustomerEmailAndZipCode($email, $zipCode);
 
                 $this->viewModel->setData('orders', $orders);
             } elseif ($orderId !== null) {
+                /** @var OrderInterface[] $orders */
                 $orders = $this->orderAdapter->getOrdersByIncrementIdAndZipCode($orderId, $zipCode);
 
                 $this->viewModel->setData('orders', $orders);
             }
         }
 
-        return $this->resultPageFactory->create();
+        /** @var Magento\Framework\View\Element\AbstractBlock|bool $block */
+        $block = $resultPage->getLayout()->getBlock(self::BLOCK_SIMPLERETURNS_ORDERS_SEARCH);
+
+        if ($block) {
+            $block->setData('view_model', $this->viewModel);
+        }
+
+        return $resultPage;
     }
 }

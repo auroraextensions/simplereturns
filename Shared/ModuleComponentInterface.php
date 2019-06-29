@@ -20,12 +20,6 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Shared;
 
-use AuroraExtensions\SimpleReturns\{
-    Controller\Label\Index as IndexController,
-    Controller\Label\Orders as OrdersController,
-    Controller\Label\OrdersPost as OrdersPostController
-};
-
 interface ModuleComponentInterface
 {
     /** @constant string ADDRESS_FIELD_DELIMITER */
@@ -37,7 +31,9 @@ interface ModuleComponentInterface
     const ATTRIBUTE_LABEL_SIMPLE_RETURN = 'Returnable';
 
     /** @constant string BLOCK_SIMPLERETURNS_LABEL_INDEX */
+    /** @constant string BLOCK_SIMPLERETURNS_ORDERS_SEARCH */
     const BLOCK_SIMPLERETURNS_LABEL_INDEX = 'simplereturns_label_index';
+    const BLOCK_SIMPLERETURNS_ORDERS_SEARCH = 'simplereturns_orders_search';
 
     /** @constant string COLUMN_HEADERS_KEY */
     const COLUMN_HEADERS_KEY = 'column_headers';
@@ -111,13 +107,15 @@ interface ModuleComponentInterface
     /** @constant string ROUTE_SIMPLERETURNS_LABEL_INDEX */
     /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATE */
     /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATEPOST */
-    /** @constant string ROUTE_SIMPLERETURNS_RMA_OVERVIEW */
-    /** @constant string ROUTE_SIMPLERETURNS_RMA_OVERVIEWPOST */
+    /** @constant string ROUTE_SIMPLERETURNS_ORDERS_RESULTS */
+    /** @constant string ROUTE_SIMPLERETURNS_ORDERS_SEARCH */
+    /** @constant string ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST */
     const ROUTE_SIMPLERETURNS_LABEL_INDEX = 'simplereturns/label/index';
     const ROUTE_SIMPLERETURNS_RMA_CREATE = 'simplereturns/rma/create';
     const ROUTE_SIMPLERETURNS_RMA_CREATEPOST = 'simplereturns/rma/createPost';
-    const ROUTE_SIMPLERETURNS_RMA_OVERVIEW = 'simplereturns/rma/overview';
-    const ROUTE_SIMPLERETURNS_RMA_OVERVIEWPOST = 'simplereturns/rma/overviewPost';
+    const ROUTE_SIMPLERETURNS_ORDERS_RESULTS = 'simplereturns/orders/results';
+    const ROUTE_SIMPLERETURNS_ORDERS_SEARCH = 'simplereturns/orders/search';
+    const ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST = 'simplereturns/orders/searchPost';
 
     /** @constant string SQL_COLUMN_LABEL_PRIMARY_FIELD */
     /** @constant string SQL_COLUMN_PKG_PRIMARY_FIELD */

@@ -1,6 +1,6 @@
 <?php
 /**
- * OverviewPost.php
+ * SearchPost.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,7 +16,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Controller\Rma;
+namespace AuroraExtensions\SimpleReturns\Controller\Orders;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
@@ -36,7 +36,7 @@ use Magento\Framework\{
     Exception\LocalizedException
 };
 
-class OverviewPost extends Action implements
+class SearchPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
@@ -151,6 +151,6 @@ class OverviewPost extends Action implements
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_OVERVIEW);
+        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_ORDERS_SEARCH);
     }
 }

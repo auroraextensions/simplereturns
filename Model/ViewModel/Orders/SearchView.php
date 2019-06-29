@@ -1,6 +1,6 @@
 <?php
 /** 
- * AbstractView.php
+ * SearchView.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,35 +16,26 @@
  */ 
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
+namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Orders;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
+    Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
     App\RequestInterface,
-    DataObject,
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
 
-abstract class AbstractView extends DataObject implements
+class SearchView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property ConfigHelper $configHelper */
-    protected $configHelper;
-
-    /** @property ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
-
-    /** @property RequestInterface $request */
-    protected $request;
-
-    /** @property UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    /** @property array $errors */
+    protected $errors = [];
 
     /**
      * @param ConfigHelper $configHelper
@@ -61,20 +52,21 @@ abstract class AbstractView extends DataObject implements
         UrlInterface $urlBuilder,
         array $data = []
     ) {
-        parent::__construct($data);
-        $this->configHelper = $configHelper;
-        $this->exceptionFactory = $exceptionFactory;
-        $this->request = $request;
-        $this->urlBuilder = $urlBuilder;
+        parent::__construct(
+            $configHelper,
+            $exceptionFactory,
+            $request,
+            $urlBuilder
+        );
     }
 
     /**
-     * Get POST action URL.
-     *
      * @param string $route
      * @return string
      */
-    public function getPostActionUrl(string $route): string
+    public function getPostActionUrl(
+        string $route = self::ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST
+    ): string
     {
         return $this->urlBuilder->getUrl(
             $route,

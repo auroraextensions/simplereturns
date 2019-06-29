@@ -1,0 +1,76 @@
+<?php
+/**
+ * results.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+
+/** @var Magento\Framework\View\Element\Template $block */
+/** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Orders\ResultsView $viewModel */
+$viewModel = $block->getViewModel();
+
+/** @var string $email */
+/** @var string $orderId */
+/** @var string $zipCode */
+$email = $viewModel->getEmail();
+$orderId = $viewModel->getOrderId();
+$zipCode = $viewModel->getZipCode();
+
+/** @var Magento\Framework\Pricing\Helper\Data $priceHelper */
+$priceHelper = $this->helper('Magento\Framework\Pricing\Helper\Data');
+?>
+<div class="block simplereturns-orders-results">
+    <?php if ($viewModel->hasOrders()): ?>
+        <table class="fieldset orders-results">
+            <thead>
+                <tr>
+                    <th class="col order-number"><?= $block->escapeHtml(__('Order #')) ?></th>
+                    <th class="col order-date"><?= $block->escapeHtml(__('Order Date')) ?></th>
+                    <th class="col order-total"><?= $block->escapeHtml(__('Order Total')) ?></th>
+                    <th class="col order-status"><?= $block->escapeHtml(__('Order Status')) ?></th>
+                    <th class="col return-label"><?= $block->escapeHtml(__('Return Label')) ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($viewModel->getOrders() as $order): ?>
+                    <tr>
+                        <td class="col order-number"><?= $block->escapeHtml($order->getRealOrderId()) ?></td>
+                        <td class="col order-date"><?= $block->escapeHtml($block->formatDate($order->getCreatedAt(), \IntlDateFormatter::LONG)) ?></td>
+                        <td class="col order-total"><?= $block->escapeHtml($priceHelper->currency($order->getGrandTotal(), true, false)) ?></td>
+                        <td class="col order-status"><em><?= $block->escapeHtml($order->getStatusLabel()) ?></em></td>
+                        <td class="col return-label">
+                            <?php if ($viewModel->isOrderPrepaidEligible($order)): ?>
+                                <a
+                                    href="<?= $block->escapeHtmlAttr($viewModel->getReturnLabelUrl($order)) ?>"
+                                    class="print-label"
+                                    target="_blank"
+                                    data-order="<?= $block->escapeHtml($order->getRealOrderId()) ?>"
+                                    aria-label="<?= $block->escapeHtml(__('Get return label for order %1', $order->getRealOrderId())) ?>"
+                                ><?= $block->escapeHtml(__('Get Return Label')) ?></a>
+                            <?php endif ?>
+                        </td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <?php /** @var string $searchMethod */ ?>
+        <?php $searchMethod = $email !== null ? 'email address and zip code' : 'order ID and zip code' ?>
+        <p><?= $block->escapeHtml(__('Sorry, no orders were found for the specified ' . $searchMethod . '.')) ?></p>
+    <?php endif ?>
+    <div class="actions-toolbar">
+        <button type="button" title="Go Back" class="button back" onclick="window.history.back();">
+            <span><?= $block->escapeHtml(__('Back')) ?></span>
+        </button>
+    </div>
+</div>
