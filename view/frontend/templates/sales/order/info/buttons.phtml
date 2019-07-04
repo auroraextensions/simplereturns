@@ -1,0 +1,51 @@
+<?php
+/**
+ * buttons.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+
+/**
+ * @see Magento_Sales::order/info/buttons.phtml
+ * @var Magento\Sales\Block\Order\Info\Buttons $block
+ */
+use Magento\Framework\Data\Helper\PostHelper;
+use Magento\Sales\Helper\Reorder as ReorderHelper;
+
+/** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\InfoView */
+$viewModel = $block->getViewModel();
+
+/** @var Magento\Sales\Api\Data\OrderInterface $order */
+$order = $block->getOrder();
+?>
+<div class="actions">
+    <?php if ($this->helper(ReorderHelper::class)->canReorder($order->getEntityId())) : ?>
+        <a href="#" data-post='<?=
+        /* @noEscape */ $this->helper(PostHelper::class)
+            ->getPostData($block->getReorderUrl($order))
+        ?>' class="action order">
+            <span><?= $block->escapeHtml(__('Reorder')) ?></span>
+        </a>
+    <?php endif ?>
+    <?php if ($viewModel->isReturnable($order)): ?>
+        <a href="#" class="action rma">
+            <span><?= $block->escapeHtml(__('Return Order')) ?></span>
+        </a>
+    <?php endif ?>
+    <a class="action print"
+       href="<?= $block->escapeUrl($block->getPrintUrl($order)) ?>"
+       onclick="this.target='_blank';">
+        <span><?= $block->escapeHtml(__('Print Order')) ?></span>
+    </a>
+    <?= $block->getChildHtml() ?>
+</div>
