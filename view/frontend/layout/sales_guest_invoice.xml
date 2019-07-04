@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * sales_guest_invoice.xml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="sales.order.info.buttons">
+            <!-- @see https://github.com/magento/magento2/issues/3356 -->
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">AuroraExtensions_SimpleReturns::sales/order/info/buttons.phtml</argument>
+            </action>
+            <arguments>
+                <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\InfoView</argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>
