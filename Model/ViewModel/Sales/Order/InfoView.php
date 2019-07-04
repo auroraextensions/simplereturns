@@ -63,6 +63,22 @@ class InfoView extends AbstractView implements
 
     /**
      * @param OrderInterface $order
+     * @return string
+     */
+    public function getRmaUrl(OrderInterface $order): string
+    {
+        return $this->urlBuilder->getUrl(
+            'simplereturns/rma/create',
+            [
+                'order_id' => $order->getRealOrderId(),
+                'code'     => $order->getProtectCode(),
+                '_secure'  => true,
+            ]
+        );
+    }
+
+    /**
+     * @param OrderInterface $order
      * @return bool
      */
     public function isReturnable(OrderInterface $order): bool
