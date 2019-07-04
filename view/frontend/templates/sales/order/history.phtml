@@ -19,10 +19,8 @@
  * @see Magento_Sales::order/history.phtml
  * @var Magento\Sales\Block\Order\History $block
  */
-use Magento\{
-    Framework\Data\Helper\PostHelper,
-    Sales\Helper\Reorder as ReorderHelper
-};
+use Magento\Framework\Data\Helper\PostHelper;
+use Magento\Sales\Helper\Reorder as ReorderHelper;
 
 /** @var AuroraExtensions\SimpleReturns\Model\ViewModel\OrdersView $viewModel */
 $viewModel = $block->getViewModel();
@@ -86,5 +84,7 @@ $count = count($orders);
         <div class="order-products-toolbar toolbar bottom"><?= $block->getPagerHtml() ?></div>
     <?php endif ?>
 <?php else: ?>
-    <div class="message info empty"><span><?= __('You have placed no orders.') ?></span></div>
+    <div class="message info empty">
+        <span><?= __('You have placed no orders.') ?></span>
+    </div>
 <?php endif ?>
