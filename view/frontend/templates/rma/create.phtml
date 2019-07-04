@@ -21,6 +21,9 @@ $viewModel = $block->getViewModel();
 
 /** @var Magento\Sales\Api\Data\OrderInterface $order */
 $order = $viewModel->getOrder();
+
+/** @var array $reasons */
+$reasons = $viewModel->getReasons();
 ?>
 <div class="block returns-rma-create">
     <div class="returns-rma-form">
@@ -29,7 +32,7 @@ $order = $viewModel->getOrder();
                 <?= $block->getBlockHtml('formkey') ?>
                 <fieldset class="fieldset returns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                     <legend class="legend">
-                        <span><?= $block->escapeHtml(__('New RMA request for Order #%1', $order->getRealOrderId())) ?></span>
+                        <span><?= $block->escapeHtml(__('New Return for Order #%1', $order->getRealOrderId())) ?></span>
                     </legend>
                     <div class="field order_id required">
                         <label class="label order_id" for="order_id">
@@ -44,6 +47,18 @@ $order = $viewModel->getOrder();
                                    disabled
                                    title="<?= $block->escapeHtmlAttr(__('Order ID')) ?>"
                                    data-mage-init='{"mage/trim-input":{}}'>
+                        </div>
+                    </div>
+                    <div class="field reason required">
+                        <label class="label reason" for="reason">
+                            <span><?= $block->escapeHtml(__('Reason')) ?></span>
+                        </label>
+                        <div class="control">
+                            <select class="select">
+                                <?php foreach ($reasons as $reason): ?>
+                                    <option value="<?= $reason ?>"><?= $reason ?></option>
+                                <?php endforeach ?>
+                            </select>
                         </div>
                     </div>
                 </fieldset>
