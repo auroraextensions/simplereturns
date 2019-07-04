@@ -18,6 +18,9 @@
 /** @var Magento\Framework\View\Element\Template $block */
 /** @var AuroraExtensions\SimpleReturns\Model\ViewModel\CreateView $viewModel */
 $viewModel = $block->getViewModel();
+
+/** @var Magento\Sales\Api\Data\OrderInterface $order */
+$order = $viewModel->getOrder();
 ?>
 <div class="block returns-rma-create">
     <div class="returns-rma-form">
@@ -26,40 +29,8 @@ $viewModel = $block->getViewModel();
                 <?= $block->getBlockHtml('formkey') ?>
                 <fieldset class="fieldset returns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                     <legend class="legend">
-                        <span><?= $block->escapeHtml(__('Please enter the Zip Code for the order')); ?></span>
+                        <span><?= $block->escapeHtml(__('New RMA request for Order #%1', $order->getRealOrderId())) ?></span>
                     </legend>
-                    <div class="field zip_code required">
-                        <label class="label zip_code" for="zip_code">
-                            <span><?= $block->escapeHtml(__('Billing or Shipping Zip Code')) ?></span>
-                        </label>
-                        <div class="control">
-                            <input name="returns[zip_code]"
-                                   id="zip_code"
-                                   type="text"
-                                   class="form-input input-text"
-                                   title="<?= $block->escapeHtmlAttr(__('Billing or Shipping Zip Code')) ?>"
-                                   data-mage-init='{"mage/trim-input":{}}'>
-                        </div>
-                    </div>
-                </fieldset>
-                <fieldset class="fieldset returns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
-                    <legend class="legend">
-                        <span><?= $block->escapeHtml(__('Please enter the Email Address for the order or the Order ID')); ?></span>
-                    </legend>
-                    <div class="field email required">
-                        <label class="label email" for="email">
-                            <span><?= $block->escapeHtml(__('Email Address')) ?></span>
-                        </label>
-                        <div class="control">
-                            <input name="returns[email]"
-                                   id="email"
-                                   type="email"
-                                   class="form-input input-text"
-                                   title="<?= $block->escapeHtmlAttr(__('Email')) ?>"
-                                   data-mage-init='{"mage/trim-input":{}}'
-                                   data-validate="{'validate-email':true}">
-                        </div>
-                    </div>
                     <div class="field order_id required">
                         <label class="label order_id" for="order_id">
                             <span><?= $block->escapeHtml(__('Order ID')) ?></span>
@@ -69,15 +40,10 @@ $viewModel = $block->getViewModel();
                                    id="order_id"
                                    type="text"
                                    class="form-input input-text"
+                                   value="<?= $block->escapeHtmlAttr($order->getRealOrderId()) ?>"
+                                   disabled
                                    title="<?= $block->escapeHtmlAttr(__('Order ID')) ?>"
                                    data-mage-init='{"mage/trim-input":{}}'>
-                        </div>
-                    </div>
-                    <div class="actions-toolbar">
-                        <div class="primary">
-                            <button type="submit" class="action primary" name="send" id="send3">
-                                <span><?= $block->escapeHtml(__('Submit')) ?></span>
-                            </button>
                         </div>
                     </div>
                 </fieldset>

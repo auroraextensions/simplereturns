@@ -22,11 +22,14 @@ use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
+    Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
     App\RequestInterface,
+    Exception\NoSuchEntityException,
+    Message\ManagerInterface as MessageManagerInterface,
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
@@ -36,12 +39,20 @@ class CreateView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    /** @property MessageManagerInterface $messageManager */
+    protected $messageManager;
+
+    /** @property OrderAdapter $orderAdapter */
+    protected $orderAdapter;
+
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param MessageManagerInterface $messageManager
+     * @param OrderAdapter $orderAdapter
      * @return void
      */
     public function __construct(
@@ -49,7 +60,9 @@ class CreateView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = []
+        array $data = [],
+        MessageManagerInterface $messageManager,
+        OrderAdapter $orderAdapter
     ) {
         parent::__construct(
             $configHelper,
@@ -58,6 +71,51 @@ class CreateView extends AbstractView implements
             $urlBuilder,
             $data
         );
+
+        $this->messageManager = $messageManager;
+        $this->orderAdapter = $orderAdapter;
+    }
+
+    /**
+     * @return OrderInterface|null
+     * @throws NoSuchEntityException
+     */
+    public function getOrder(): ?OrderInterface
+    {
+        /** @var int|string $orderId */
+        $orderId = $this->request->getParam(self::PARAM_ORDER_ID);
+
+        /** @var string $orderId */
+        $protectCode = $this->request->getParam(self::PARAM_PROTECT_CODE);
+
+        if ($orderId !== null && $protectCode !== null) {
+            /** @var NoSuchEntityException $exception */
+            $exception = $this->exceptionFactory->create(
+                NoSuchEntityException::class,
+                __('Unable to locate any matching orders.')
+            );
+
+            try {
+                /** @var array $fields */
+                $fields = [
+                    self::FIELD_INCREMENT_ID => $orderId,
+                    self::FIELD_PROTECT_CODE => $protectCode,
+                ];
+
+                /** @var OrderInterface[] $orders */
+                $orders = $this->orderAdapter->getOrdersByFields($fields);
+
+                if (!empty($orders)) {
+                    return $orders[0];
+                }
+
+                throw $exception;
+            } catch (NoSuchEntityException $e) {
+                $this->messageManager->addError($e->getMessage());
+            }
+        }
+
+        return null;
     }
 
     /**

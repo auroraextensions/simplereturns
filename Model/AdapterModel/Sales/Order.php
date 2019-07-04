@@ -217,6 +217,52 @@ class Order implements ModuleComponentInterface
     }
 
     /**
+     * Get orders by field key/value pairs.
+     *
+     * @param array $fields
+     * @return array
+     */
+    public function getOrdersByFields(array $fields = []): array
+    {
+        /** @var array $filters */
+        $filters = [];
+
+        /**
+         * @var string $field
+         * @var mixed $value
+         */
+        foreach ($fields as $field => $value) {
+            $filters[] = $this->filterBuilder
+                ->setField($field)
+                ->setValue($value)
+                ->create();
+        }
+
+        try {
+            /** @var NoSuchEntityException $exception */
+            $exception = $this->exceptionFactory->create(
+                NoSuchEntityException::class,
+                __('Unable to locate any matching orders.')
+            );
+
+            /** @var OrderInterface[] $orders */
+            $orders = array_values(
+                $this->getOrdersByFilters($filters)
+            );
+
+            if (!empty($orders)) {
+                return $orders;
+            }
+
+            throw $exception;
+        } catch (NoSuchEntityException $e) {
+            $this->messageManager->addError($e->getMessage());
+        }
+
+        return [];
+    }
+
+    /**
      * Get orders collection by filters.
      *
      * @param array $filters
