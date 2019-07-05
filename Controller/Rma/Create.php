@@ -77,6 +77,12 @@ class Create extends Action implements
      */
     public function execute()
     {
-        return $this->resultPageFactory->create();
+        /** @var Page $resultPage */
+        $resultPage = $this->resultPageFactory->create();
+        $resultPage->getConfig()->getTitle()->set(
+            __('Create RMA Request')
+        );
+
+        return $resultPage;
     }
 }
