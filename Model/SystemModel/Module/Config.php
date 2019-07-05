@@ -84,7 +84,7 @@ class Config
      */
     public function getCarriers(): array
     {
-        return $this->settings->getData('carriers');
+        return $this->settings->getData('carriers') ?? [];
     }
 
     /**
@@ -92,7 +92,15 @@ class Config
      */
     public function getMethods(): array
     {
-        return $this->settings->getData('methods');
+        return $this->settings->getData('methods') ?? [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getReasons(): array
+    {
+        return $this->settings->getData('reasons') ?? [];
     }
 
     /**
