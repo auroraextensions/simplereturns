@@ -23,9 +23,6 @@ use Magento\Framework\Option\ArrayInterface;
 
 class Carriers implements ArrayInterface
 {
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
-
     /** @property array $options */
     protected $options = [];
 

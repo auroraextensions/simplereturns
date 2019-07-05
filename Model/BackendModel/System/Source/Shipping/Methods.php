@@ -23,9 +23,6 @@ use Magento\Framework\Option\ArrayInterface;
 
 class Methods implements ArrayInterface
 {
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
-
     /** @property array $options */
     protected $options = [];
 
