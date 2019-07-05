@@ -21,7 +21,6 @@ namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\ViewModel\Rma\CreateView as ViewModel,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
@@ -60,9 +59,6 @@ class CreatePost extends Action implements
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property ViewModel $viewModel */
-    protected $viewModel;
-
     /**
      * @param Context $context
      * @param CustomerRepositoryInterface $customerRepository
@@ -70,7 +66,6 @@ class CreatePost extends Action implements
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
      * @param OrderAdapter $orderAdapter
-     * @param ViewModel $viewModel
      * @return void
      */
     public function __construct(
@@ -79,8 +74,7 @@ class CreatePost extends Action implements
         DataPersistorInterface $dataPersistor,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
-        OrderAdapter $orderAdapter,
-        ViewModel $viewModel
+        OrderAdapter $orderAdapter
     ) {
         parent::__construct($context);
         $this->__initialize();
@@ -89,7 +83,6 @@ class CreatePost extends Action implements
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->orderAdapter = $orderAdapter;
-        $this->viewModel = $viewModel;
     }
 
     /**
@@ -102,58 +95,22 @@ class CreatePost extends Action implements
         /** @var Magento\Framework\App\RequestInterface $request */
         $request = $this->getRequest();
 
-        if ($request->isPost() && $this->formKeyValidator->validate($request)) {
-            /** @var array|null $params */
-            $params = $request->getPost('simplereturns');
+        if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
+            return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+        }
 
-            if ($params !== null) {
-                /** @var string|null $email */
-                $email = !empty($params['email']) ? $params['email'] : null;
+        /** @var array|null $params */
+        $params = $request->getPost('simplereturns');
 
-                /** @var string|int|null $orderId */
-                $orderId = !empty($params['order_id']) ? $params['order_id'] : null;
+        if ($params !== null) {
+            /** @var int|string $orderId */
+            $orderId = $params['order_id'] ?? null;
+            $orderId = !empty($orderId) ? $orderId : null;
 
-                /** @var string|int|null $zipCode */
-                $zipCode = !empty($params['zip_code']) ? $params['zip_code'] : null;
-
-                try {
-                    if ($email !== null && $zipCode !== null) {
-                        /* Trim delivery route suffix from zip code. */
-                        $zipCode = OrderAdapter::truncateZipCode($zipCode);
-
-                        /** @var array $data */
-                        $data = [
-                            'email'      => $email,
-                            'zip_code'   => $zipCode,
-                            'is_checked' => true,
-                        ];
-
-                        $this->dataPersistor->set(self::DATA_PERSISTOR_KEY, $data);
-                    } elseif ($orderId !== null && $zipCode !== null) {
-                        /* Trim delivery route suffix from zip code. */
-                        $zipCode = OrderAdapter::truncateZipCode($zipCode);
-
-                        /** @var array $data */
-                        $data = [
-                            'order_id'   => $orderId,
-                            'zip_code'   => $zipCode,
-                            'is_checked' => true,
-                        ];
-
-                        $this->dataPersistor->set(self::DATA_PERSISTOR_KEY, $data);
-                    } else {
-                        /** @var LocalizedException $exception */
-                        $exception = $this->exceptionFactory->create(
-                            LocalizedException::class,
-                            __(self::ERROR_MISSING_URL_PARAMS)
-                        );
-
-                        throw $exception;
-                    }
-                } catch (LocalizedException $e) {
-                    $this->messageManager->addError($e->getMessage());
-                }
-            }
+            /**
+             * @todo: Check for existing RMA, redirect if exists.
+             *        If no RMA exists, create new SimpleReturn RMA.
+             */
         }
 
         return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_ORDERS_SEARCH);
