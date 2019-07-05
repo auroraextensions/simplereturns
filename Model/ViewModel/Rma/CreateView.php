@@ -23,6 +23,7 @@ use AuroraExtensions\SimpleReturns\{
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
+    Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
@@ -42,6 +43,9 @@ class CreateView extends AbstractView implements
     /** @property MessageManagerInterface $messageManager */
     protected $messageManager;
 
+    /** @property ModuleConfig $moduleConfig */
+    protected $moduleConfig;
+
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
@@ -52,6 +56,7 @@ class CreateView extends AbstractView implements
      * @param UrlInterface $urlBuilder
      * @param array $data
      * @param MessageManagerInterface $messageManager
+     * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @return void
      */
@@ -62,6 +67,7 @@ class CreateView extends AbstractView implements
         UrlInterface $urlBuilder,
         array $data = [],
         MessageManagerInterface $messageManager,
+        ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter
     ) {
         parent::__construct(
@@ -73,6 +79,7 @@ class CreateView extends AbstractView implements
         );
 
         $this->messageManager = $messageManager;
+        $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
     }
 
@@ -89,25 +96,25 @@ class CreateView extends AbstractView implements
         $protectCode = $this->request->getParam(self::PARAM_PROTECT_CODE);
 
         if ($orderId !== null && $protectCode !== null) {
-            /** @var NoSuchEntityException $exception */
-            $exception = $this->exceptionFactory->create(
-                NoSuchEntityException::class,
-                __('Unable to locate any matching orders.')
-            );
+            /** @var array $fields */
+            $fields = [
+                self::FIELD_INCREMENT_ID => $orderId,
+                self::FIELD_PROTECT_CODE => $protectCode,
+            ];
 
             try {
-                /** @var array $fields */
-                $fields = [
-                    self::FIELD_INCREMENT_ID => $orderId,
-                    self::FIELD_PROTECT_CODE => $protectCode,
-                ];
-
                 /** @var OrderInterface[] $orders */
                 $orders = $this->orderAdapter->getOrdersByFields($fields);
 
                 if (!empty($orders)) {
                     return $orders[0];
                 }
+
+                /** @var NoSuchEntityException $exception */
+                $exception = $this->exceptionFactory->create(
+                    NoSuchEntityException::class,
+                    __('Unable to locate any matching orders.')
+                );
 
                 throw $exception;
             } catch (NoSuchEntityException $e) {
@@ -116,6 +123,14 @@ class CreateView extends AbstractView implements
         }
 
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getReasons(): array
+    {
+        return $this->moduleConfig->getReasons();
     }
 
     /**
