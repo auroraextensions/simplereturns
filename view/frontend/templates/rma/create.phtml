@@ -24,6 +24,9 @@ $order = $viewModel->getOrder();
 
 /** @var array $reasons */
 $reasons = $viewModel->getReasons();
+
+/** @var array $resolutions */
+$resolutions = $viewModel->getResolutions();
 ?>
 <div class="block returns-rma-create">
     <div class="returns-rma-form">
@@ -56,6 +59,18 @@ $reasons = $viewModel->getReasons();
                         <div class="control">
                             <select class="select">
                                 <?php foreach ($reasons as $value => $label): ?>
+                                    <option value="<?= $block->escapeHtmlAttr(__($value)) ?>"><?= $block->escapeHtml(__($label)) ?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field resolution required">
+                        <label class="label resolution" for="resolution">
+                            <span><?= $block->escapeHtml(__('Resolution')) ?></span>
+                        </label>
+                        <div class="control">
+                            <select class="select">
+                                <?php foreach ($resolutions as $value => $label): ?>
                                     <option value="<?= $block->escapeHtmlAttr(__($value)) ?>"><?= $block->escapeHtml(__($label)) ?></option>
                                 <?php endforeach ?>
                             </select>
