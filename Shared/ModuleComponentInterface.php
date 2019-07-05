@@ -106,12 +106,14 @@ interface ModuleComponentInterface
     /** @constant string PREFIX_DATAURI */
     const PREFIX_DATAURI = 'data:image/jpeg;base64,';
 
+    /** @constant string ROUTE_SALES_GUEST_VIEW */
     /** @constant string ROUTE_SIMPLERETURNS_LABEL_INDEX */
     /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATE */
     /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATEPOST */
     /** @constant string ROUTE_SIMPLERETURNS_ORDERS_RESULTS */
     /** @constant string ROUTE_SIMPLERETURNS_ORDERS_SEARCH */
     /** @constant string ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST */
+    const ROUTE_SALES_GUEST_VIEW = 'sales/guest/view';
     const ROUTE_SIMPLERETURNS_LABEL_INDEX = 'simplereturns/label/index';
     const ROUTE_SIMPLERETURNS_RMA_CREATE = 'simplereturns/rma/create';
     const ROUTE_SIMPLERETURNS_RMA_CREATEPOST = 'simplereturns/rma/createPost';
