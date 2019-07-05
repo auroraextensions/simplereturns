@@ -1,6 +1,6 @@
 <?php
 /**
- * Methods.php
+ * Reasons.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,24 +16,41 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Shipping;
+namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Rma;
 
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
-use Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\{
+    DataObject,
+    DataObject\Factory as DataObjectFactory,
+    Option\ArrayInterface
+};
 
-class Methods implements ArrayInterface
+class Reasons implements ArrayInterface
 {
+    /** @property DataObjectFactory $dataObjectFactory */
+    protected $dataObjectFactory;
+
     /** @property array $options */
     protected $options = [];
 
+    /** @property DataObject $settings */
+    protected $settings;
+
     /**
-     * @param ModuleConfig $moduleConfig
+     * @param DataObjectFactory $dataObjectFactory
+     * @param array $data
      * @return void
      */
-    public function __construct(ModuleConfig $moduleConfig)
-    {
+    public function __construct(
+        DataObjectFactory $dataObjectFactory,
+        array $data = []
+    ) {
+        $this->dataObjectFactory = $dataObjectFactory;
+        $this->settings = $this->dataObjectFactory->create($data);
+
         /** @var array $methods */
-        $methods = array_flip($moduleConfig->getMethods());
+        $methods = array_flip(
+            $this->settings->getData('reasons') ?? []
+        );
 
         array_walk(
             $methods,
@@ -45,18 +62,19 @@ class Methods implements ArrayInterface
     }
 
     /**
+     * Create/update option key/value array.
+     *
      * @param string $value
      * @param string $key
      * @return void
      */
-    protected function setOption($value, $key): void
+    protected function setOption($value, $key)
     {
         $this->options[] = [
             'label' => __($key),
             'value' => $value,
         ];
     }
-
     /**
      * Get formatted option key/value pairs.
      *

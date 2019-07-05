@@ -1,6 +1,6 @@
 <?php
 /**
- * Config.php
+ * InvalidCarrierException.php
  *
  * NOTICE OF LICENSE
  *
@@ -14,16 +14,8 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
-declare(strict_types=1);
+namespace AuroraExtensions\SimpleReturns\Exception;
 
-namespace AuroraExtensions\SimpleReturns\Helper;
-
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
-
-/**
- * @deprecated
- * @see AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config
- */
-class Config extends ModuleConfig
+class InvalidCarrierException extends \Exception
 {
 }

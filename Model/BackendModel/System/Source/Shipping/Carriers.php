@@ -2,8 +2,6 @@
 /**
  * Carriers.php
  *
- * Shipping carrier options source model.
- *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Aurora Extensions EULA,
@@ -20,42 +18,25 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Shipping;
 
-use Magento\Framework\{
-    DataObject,
-    DataObject\Factory as DataObjectFactory,
-    Option\ArrayInterface
-};
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use Magento\Framework\Option\ArrayInterface;
 
 class Carriers implements ArrayInterface
 {
-    /** @property DataObjectFactory $dataObjectFactory */
-    protected $dataObjectFactory;
-
     /** @property array $options */
     protected $options = [];
 
-    /** @property DataObject $settings */
-    protected $settings;
-
     /**
-     * @param DataObjectFactory $dataObjectFactory
-     * @param array $data
+     * @param ModuleConfig $moduleConfig
      * @return void
      */
-    public function __construct(
-        DataObjectFactory $dataObjectFactory,
-        array $data = []
-    ) {
-        $this->dataObjectFactory = $dataObjectFactory;
-        $this->settings = $this->dataObjectFactory->create($data);
-
-        /** @var array $methods */
-        $methods = array_flip(
-            $this->settings->getData('carriers') ?? []
-        );
+    public function __construct(ModuleConfig $moduleConfig)
+    {
+        /** @var array $carriers */
+        $carriers = array_flip($moduleConfig->getCarriers());
 
         array_walk(
-            $methods,
+            $carriers,
             [
                 $this,
                 'setOption'
@@ -64,19 +45,18 @@ class Carriers implements ArrayInterface
     }
 
     /**
-     * Set option key/value array on self::$options.
-     *
      * @param string $value
      * @param string $key
      * @return void
      */
-    protected function setOption($value, $key)
+    protected function setOption($value, $key): void
     {
         $this->options[] = [
             'label' => __($key),
             'value' => $value,
         ];
     }
+
     /**
      * Get formatted option key/value pairs.
      *

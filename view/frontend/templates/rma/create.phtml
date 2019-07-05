@@ -32,7 +32,7 @@ $reasons = $viewModel->getReasons();
                 <?= $block->getBlockHtml('formkey') ?>
                 <fieldset class="fieldset returns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                     <legend class="legend">
-                        <span><?= $block->escapeHtml(__('New Return for Order #%1', $order->getRealOrderId())) ?></span>
+                        <span><?= $block->escapeHtml(__('Create Return for Order #%1', $order->getRealOrderId())) ?></span>
                     </legend>
                     <div class="field order_id required">
                         <label class="label order_id" for="order_id">
@@ -55,8 +55,8 @@ $reasons = $viewModel->getReasons();
                         </label>
                         <div class="control">
                             <select class="select">
-                                <?php foreach ($reasons as $reason): ?>
-                                    <option value="<?= $reason ?>"><?= $reason ?></option>
+                                <?php foreach ($reasons as $value => $label): ?>
+                                    <option value="<?= $block->escapeHtmlAttr(__($value)) ?>"><?= $block->escapeHtml(__($label)) ?></option>
                                 <?php endforeach ?>
                             </select>
                         </div>
