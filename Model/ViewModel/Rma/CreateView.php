@@ -134,6 +134,14 @@ class CreateView extends AbstractView implements
     }
 
     /**
+     * @return array
+     */
+    public function getResolutions(): array
+    {
+        return $this->moduleConfig->getResolutions();
+    }
+
+    /**
      * @param string $route
      * @return string
      */
