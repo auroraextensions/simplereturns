@@ -18,7 +18,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source;
+namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Shipping;
 
 use Magento\Framework\{
     DataObject,
