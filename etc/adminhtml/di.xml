@@ -17,7 +17,7 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Carriers">
+    <type name="AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Shipping\Carriers">
         <arguments>
             <argument name="data" xsi:type="array">
                 <item name="carriers" xsi:type="array">
@@ -26,7 +26,7 @@
             </argument>
         </arguments>
     </type>
-    <type name="AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Methods">
+    <type name="AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Shipping\Methods">
         <arguments>
             <argument name="data" xsi:type="array">
                 <item name="methods" xsi:type="array">
