@@ -24,26 +24,55 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Carrier;
 
 use AuroraExtensions\SimpleReturns\{
+    Exception\ExceptionFactory,
+    Exception\InvalidCarrierException,
     Helper\Config as ConfigHelper,
+    Model\SystemModel\Module\Config as ModuleConfig,
     Shared\ModuleComponentInterface
 };
-
-use Magento\{
-    Framework\ObjectManagerInterface,
-    Shipping\Model\Carrier\CarrierInterface
+use Magento\Framework\{
+    DataObject,
+    DataObject\Factory as DataObjectFactory,
+    ObjectManagerInterface
 };
+use Magento\Shipping\Model\Carrier\CarrierInterface;
+use Magento\Ups\Model\Carrier as UpsModel;
 
 class CarrierFactory implements ModuleComponentInterface
 {
+    /** @property array $carriers */
+    protected $carriers = [
+        UpsModel::CODE => UpsModel::class,
+    ];
+
+    /** @property DataObjectFactory $dataObjectFactory */
+    protected $dataObjectFactory;
+
+    /** @property ExceptionFactory $exceptionFactory */
+    protected $exceptionFactory;
+
+    /** @property ModuleConfig $moduleConfig */
+    protected $moduleConfig;
+
     /** @property ObjectManagerInterface $objectManager */
     protected $objectManager;
 
     /**
+     * @param DataObjectFactory $dataObjectFactory
+     * @param ExceptionFactory $exceptionFactory
+     * @param ModuleConfig $moduleConfig
      * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public function __construct(ObjectManagerInterface $objectManager)
-    {
+    public function __construct(
+        DataObjectFactory $dataObjectFactory,
+        ExceptionFactory $exceptionFactory,
+        ModuleConfig $moduleConfig,
+        ObjectManagerInterface $objectManager
+    ) {
+        $this->dataObjectFactory = $dataObjectFactory;
+        $this->exceptionFactory = $exceptionFactory;
+        $this->moduleConfig = $moduleConfig;
         $this->objectManager = $objectManager;
     }
 
@@ -57,12 +86,18 @@ class CarrierFactory implements ModuleComponentInterface
     public function create(string $code): CarrierInterface
     {
         /** @var array $codes */
-        $codes = array_keys(ConfigHelper::$carriers);
+        $codes = array_keys($this->carriers);
 
         if (!in_array($code, $codes)) {
-            throw new \Exception(self::ERROR_INVALID_CARRIER_CODE);
+            /** @var InvalidCarrierException $exception */
+            $exception = $this->exceptionFactory->create(
+                InvalidCarrierException::class,
+                __(self::ERROR_INVALID_CARRIER_CODE)
+            );
+
+            throw $exception;
         }
 
-        return $this->objectManager->create(ConfigHelper::$carriers[$code]);
+        return $this->objectManager->create($this->carriers[$code]);
     }
 }
