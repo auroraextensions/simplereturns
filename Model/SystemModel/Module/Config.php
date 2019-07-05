@@ -104,6 +104,14 @@ class Config
     }
 
     /**
+     * @return array
+     */
+    public function getResolutions(): array
+    {
+        return $this->settings->getData('resolutions') ?? [];
+    }
+
+    /**
      * Check if module is enabled for given store.
      *
      * @param int|string $store
