@@ -2,8 +2,6 @@
 /**
  * Carriers.php
  *
- * Shipping carrier options source model.
- *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Aurora Extensions EULA,
@@ -20,37 +18,25 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Shipping;
 
-use Magento\Framework\{
-    DataObject,
-    DataObject\Factory as DataObjectFactory,
-    Option\ArrayInterface
-};
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use Magento\Framework\Option\ArrayInterface;
 
 class Carriers implements ArrayInterface
 {
-    /** @property DataObjectFactory $dataObjectFactory */
-    protected $dataObjectFactory;
+    /** @property ModuleConfig $moduleConfig */
+    protected $moduleConfig;
 
     /** @property array $options */
     protected $options = [];
 
-    /** @property DataObject $settings */
-    protected $settings;
-
     /**
-     * @param DataObjectFactory $dataObjectFactory
-     * @param array $data
+     * @param ModuleConfig $moduleConfig
      * @return void
      */
-    public function __construct(
-        DataObjectFactory $dataObjectFactory,
-        array $data = []
-    ) {
-        $this->dataObjectFactory = $dataObjectFactory;
-        $this->settings = $this->dataObjectFactory->create($data);
-
+    public function __construct(ModuleConfig $moduleConfig)
+    {
         /** @var array $carriers */
-        $carriers = array_flip($this->getCarriers());
+        $carriers = array_flip($moduleConfig->getCarriers());
 
         array_walk(
             $carriers,
@@ -59,14 +45,6 @@ class Carriers implements ArrayInterface
                 'setOption'
             ]
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function getCarriers(): array
-    {
-        return $this->settings->getData('carriers') ?? [];
     }
 
     /**
