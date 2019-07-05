@@ -1,8 +1,8 @@
 <?php
 /**
- * Carriers.php
+ * Methods.php
  *
- * Shipping carrier options source model.
+ * Shipping method options source model.
  *
  * NOTICE OF LICENSE
  *
@@ -18,7 +18,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source;
+namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Shipping;
 
 use Magento\Framework\{
     DataObject,
@@ -26,7 +26,7 @@ use Magento\Framework\{
     Option\ArrayInterface
 };
 
-class Carriers implements ArrayInterface
+class Methods implements ArrayInterface
 {
     /** @property DataObjectFactory $dataObjectFactory */
     protected $dataObjectFactory;
@@ -51,7 +51,7 @@ class Carriers implements ArrayInterface
 
         /** @var array $methods */
         $methods = array_flip(
-            $this->settings->getData('carriers') ?? []
+            $this->settings->getData('methods') ?? []
         );
 
         array_walk(
@@ -64,7 +64,7 @@ class Carriers implements ArrayInterface
     }
 
     /**
-     * Set option key/value array on self::$options.
+     * Create/update option key/value array.
      *
      * @param string $value
      * @param string $key
