@@ -28,12 +28,12 @@ $reasons = $viewModel->getReasons();
 /** @var array $resolutions */
 $resolutions = $viewModel->getResolutions();
 ?>
-<div class="block returns-rma-create">
-    <div class="returns-rma-form">
+<div class="block simplereturns-rma-create">
+    <div class="simplereturns-rma-form">
         <div class="container-form">
-            <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="returns-rma-form">
+            <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="simplereturns-rma-create-form">
                 <?= $block->getBlockHtml('formkey') ?>
-                <fieldset class="fieldset returns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
+                <fieldset class="fieldset simplereturns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                     <legend class="legend">
                         <span><?= $block->escapeHtml(__('Create Return for Order #%1', $order->getRealOrderId())) ?></span>
                     </legend>
@@ -42,7 +42,7 @@ $resolutions = $viewModel->getResolutions();
                             <span><?= $block->escapeHtml(__('Order ID')) ?></span>
                         </label>
                         <div class="control">
-                            <input name="returns[order_id]"
+                            <input name="simplereturns[order_id]"
                                    id="order_id"
                                    type="text"
                                    class="form-input input-text"
