@@ -46,16 +46,18 @@
         <arguments>
             <argument name="data" xsi:type="array">
                 <item name="reasons" xsi:type="array">
-                    <item name="arrived_too_late" xsi:type="string">Arrived Too Late</item>
-                    <item name="damaged_items" xsi:type="string">Damaged Items</item>
-                    <item name="missing_items" xsi:type="string">Missing Items</item>
-                    <item name="no_longer_needed" xsi:type="string">No Longer Needed</item>
-                    <item name="not_as_advertised" xsi:type="string">Does not look/work as advertised</item>
-                    <item name="wrong_color" xsi:type="string">Wrong Color</item>
-                    <item name="wrong_make" xsi:type="string">Wrong Make</item>
-                    <item name="wrong_model" xsi:type="string">Wrong Model</item>
-                    <item name="wrong_size" xsi:type="string">Wrong Size</item>
-                    <item name="other" xsi:type="string">Other</item>
+                    <item name="no_longer_needed" xsi:type="string">No longer needed</item>
+                    <item name="inaccurate_description" xsi:type="string">Inaccurate website description</item>
+                    <item name="defective_not_working" xsi:type="string">Item defective or doesn't work</item>
+                    <item name="bought_by_mistake" xsi:type="string">Bought by mistake</item>
+                    <item name="better_price_available" xsi:type="string">Better price available</item>
+                    <item name="damaged_pretransit" xsi:type="string">Product damaged, but shipping box OK</item>
+                    <item name="arrived_too_late" xsi:type="string">Item arrived too late</item>
+                    <item name="missing_broken_parts" xsi:type="string">Missing or broken parts</item>
+                    <item name="damaged_in_transit" xsi:type="string">Product and shipping box both damaged</item>
+                    <item name="wrong_item" xsi:type="string">Wrong item was sent</item>
+                    <item name="extra_item" xsi:type="string">Received extra item I didn't buy (no refund needed)</item>
+                    <item name="unapproved_purchase" xsi:type="string">Didn't approve purchase</item>
                 </item>
                 <item name="resolutions" xsi:type="array">
                     <item name="replacement" xsi:type="string">Replacement</item>
