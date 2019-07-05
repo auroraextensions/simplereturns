@@ -57,7 +57,7 @@ $resolutions = $viewModel->getResolutions();
                             <span><?= $block->escapeHtml(__('Reason')) ?></span>
                         </label>
                         <div class="control">
-                            <select class="select">
+                            <select id="reason" name="reason" class="select">
                                 <?php foreach ($reasons as $value => $label): ?>
                                     <option value="<?= $block->escapeHtmlAttr(__($value)) ?>"><?= $block->escapeHtml(__($label)) ?></option>
                                 <?php endforeach ?>
@@ -69,11 +69,19 @@ $resolutions = $viewModel->getResolutions();
                             <span><?= $block->escapeHtml(__('Resolution')) ?></span>
                         </label>
                         <div class="control">
-                            <select class="select">
+                            <select id="resolution" name="resolution" class="select">
                                 <?php foreach ($resolutions as $value => $label): ?>
                                     <option value="<?= $block->escapeHtmlAttr(__($value)) ?>"><?= $block->escapeHtml(__($label)) ?></option>
                                 <?php endforeach ?>
                             </select>
+                        </div>
+                    </div>
+                    <div class="field comments optional">
+                        <label class="label comments" for="comments">
+                            <span><?= $block->escapeHtml(__('Comments')) ?></span>
+                        </label>
+                        <div class="control">
+                            <textarea name="comments"></textarea>
                         </div>
                     </div>
                 </fieldset>
