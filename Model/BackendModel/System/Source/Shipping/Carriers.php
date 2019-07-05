@@ -49,13 +49,11 @@ class Carriers implements ArrayInterface
         $this->dataObjectFactory = $dataObjectFactory;
         $this->settings = $this->dataObjectFactory->create($data);
 
-        /** @var array $methods */
-        $methods = array_flip(
-            $this->settings->getData('carriers') ?? []
-        );
+        /** @var array $carriers */
+        $carriers = array_flip($this->getCarriers());
 
         array_walk(
-            $methods,
+            $carriers,
             [
                 $this,
                 'setOption'
@@ -64,19 +62,26 @@ class Carriers implements ArrayInterface
     }
 
     /**
-     * Set option key/value array on self::$options.
-     *
+     * @return array
+     */
+    public function getCarriers(): array
+    {
+        return $this->settings->getData('carriers') ?? [];
+    }
+
+    /**
      * @param string $value
      * @param string $key
      * @return void
      */
-    protected function setOption($value, $key)
+    protected function setOption($value, $key): void
     {
         $this->options[] = [
             'label' => __($key),
             'value' => $value,
         ];
     }
+
     /**
      * Get formatted option key/value pairs.
      *

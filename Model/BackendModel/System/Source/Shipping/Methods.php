@@ -50,9 +50,7 @@ class Methods implements ArrayInterface
         $this->settings = $this->dataObjectFactory->create($data);
 
         /** @var array $methods */
-        $methods = array_flip(
-            $this->settings->getData('methods') ?? []
-        );
+        $methods = array_flip($this->getMethods());
 
         array_walk(
             $methods,
@@ -64,19 +62,26 @@ class Methods implements ArrayInterface
     }
 
     /**
-     * Create/update option key/value array.
-     *
+     * @return array
+     */
+    public function getMethods(): array
+    {
+        return $this->settings->getData('methods') ?? [];
+    }
+
+    /**
      * @param string $value
      * @param string $key
      * @return void
      */
-    protected function setOption($value, $key)
+    protected function setOption($value, $key): void
     {
         $this->options[] = [
             'label' => __($key),
             'value' => $value,
         ];
     }
+
     /**
      * Get formatted option key/value pairs.
      *
