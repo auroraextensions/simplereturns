@@ -47,13 +47,22 @@
             <argument name="data" xsi:type="array">
                 <item name="reasons" xsi:type="array">
                     <item name="arrived_too_late" xsi:type="string">Arrived Too Late</item>
-                    <item name="damaged" xsi:type="string">Damaged</item>
+                    <item name="damaged_items" xsi:type="string">Damaged Items</item>
                     <item name="missing_items" xsi:type="string">Missing Items</item>
                     <item name="no_longer_needed" xsi:type="string">No Longer Needed</item>
+                    <item name="not_as_advertised" xsi:type="string">Does not look/work as advertised</item>
                     <item name="wrong_color" xsi:type="string">Wrong Color</item>
+                    <item name="wrong_make" xsi:type="string">Wrong Make</item>
                     <item name="wrong_model" xsi:type="string">Wrong Model</item>
                     <item name="wrong_size" xsi:type="string">Wrong Size</item>
                     <item name="other" xsi:type="string">Other</item>
+                </item>
+                <item name="resolutions" xsi:type="array">
+                    <item name="replacement" xsi:type="string">Replacement</item>
+                    <item name="repair" xsi:type="string">Repair</item>
+                    <item name="refund" xsi:type="string">Refund</item>
+                    <item name="exchange" xsi:type="string">Exchange</item>
+                    <item name="store_credit" xsi:type="string">Store Credit</item>
                 </item>
             </argument>
         </arguments>
