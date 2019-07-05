@@ -17,10 +17,12 @@
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <head>
-        <title>Create RMA Request</title>
-    </head>
     <body>
+        <referenceBlock name="page.main.title">
+            <action method="setPageTitle">
+                <argument name="title" xsi:type="string" translate="true">Create RMA Request</argument>
+            </action>
+        </referenceBlock>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
                    name="simplereturns_rma_create"
