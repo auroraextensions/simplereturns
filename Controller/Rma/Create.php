@@ -18,56 +18,29 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 
-use AuroraExtensions\SimpleReturns\{
-    Helper\Action as ActionHelper,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\ViewModel\Rma\CreateView as ViewModel,
-    Shared\ModuleComponentInterface
-};
 use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
     App\Action\HttpGetActionInterface,
-    App\Request\DataPersistorInterface,
     View\Result\PageFactory
 };
 
-class Create extends Action implements
-    HttpGetActionInterface,
-    ModuleComponentInterface
+class Create extends Action implements HttpGetActionInterface
 {
-    /** @property DataPersistorInterface $dataPersistor */
-    protected $dataPersistor;
-
-    /** @property OrderAdapter $orderAdapter */
-    protected $orderAdapter;
-
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
 
-    /** @property ViewModel $viewModel */
-    protected $viewModel;
-
     /**
      * @param Context $context
-     * @param DataPersistorInterface $dataPersistor
-     * @param OrderAdapter $orderAdapter
      * @param PageFactory $resultPageFactory
-     * @param ViewModel $viewModel
      * @return void
      */
     public function __construct(
         Context $context,
-        DataPersistorInterface $dataPersistor,
-        OrderAdapter $orderAdapter,
-        PageFactory $resultPageFactory,
-        ViewModel $viewModel
+        PageFactory $resultPageFactory
     ) {
         parent::__construct($context);
-        $this->dataPersistor = $dataPersistor;
-        $this->orderAdapter = $orderAdapter;
         $this->resultPageFactory = $resultPageFactory;
-        $this->viewModel = $viewModel;
     }
 
     /**
