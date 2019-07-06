@@ -88,10 +88,13 @@ class SimpleReturnRepository extends AbstractRepository implements
         );
 
         if (!$rma->getId()) {
-            throw $this->exceptionFactory->create(
+            /** @var NoSuchEntityException $exception */
+            $exception = $this->exceptionFactory->create(
                 NoSuchEntityException::class,
                 __('Unable to locate SimpleReturn RMA information.')
             );
+
+            throw $exception;
         }
 
         return $rma;
@@ -109,10 +112,13 @@ class SimpleReturnRepository extends AbstractRepository implements
         $this->simpleReturnResource->load($rma, $id);
 
         if (!$rma->getId()) {
-            throw $this->exceptionFactory->create(
+            /** @var NoSuchEntityException $exception */
+            $exception = $this->exceptionFactory->create(
                 NoSuchEntityException::class,
                 __('Unable to locate SimpleReturn RMA information.')
             );
+
+            throw $exception;
         }
 
         return $rma;
