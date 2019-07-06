@@ -1,6 +1,6 @@
 <?php
 /**
- * Create.php
+ * View.php
  *
  * NOTICE OF LICENSE
  *
@@ -25,7 +25,7 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Create extends Action implements HttpGetActionInterface
+class View extends Action implements HttpGetActionInterface
 {
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
@@ -53,7 +53,7 @@ class Create extends Action implements HttpGetActionInterface
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->getConfig()->getTitle()->set(
-            __('Create RMA Request')
+            __('View RMA Request')
         );
 
         return $resultPage;
