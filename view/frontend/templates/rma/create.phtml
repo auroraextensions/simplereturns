@@ -52,6 +52,16 @@ $resolutions = $viewModel->getResolutions();
                                    data-mage-init='{"mage/trim-input":{}}'>
                         </div>
                     </div>
+                    <div class="field protect_code required">
+                        <div class="control">
+                            <input name="simplereturns[protect_code]"
+                                   id="protect_code"
+                                   type="hidden"
+                                   class="form-input input-text"
+                                   value="<?= $block->escapeHtmlAttr($order->getProtectCode()) ?>"
+                                   data-mage-init='{"mage/trim-input":{}}'>
+                        </div>
+                    </div>
                     <div class="field reason required">
                         <label class="label reason" for="reason">
                             <span><?= $block->escapeHtml(__('Reason')) ?></span>
