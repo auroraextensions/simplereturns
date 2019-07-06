@@ -8,7 +8,7 @@
             "resolution": true,
             "comments": true,
             "remote_ip": true,
-            "token": true
+            "token_hash": true
         },
         "index": {
             "SIMPLERETURNS_RMA_ORDER_ID": true,

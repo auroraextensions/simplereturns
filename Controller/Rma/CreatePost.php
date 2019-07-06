@@ -24,6 +24,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
+    Model\AdapterModel\Security\Token as Tokenizer,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
@@ -35,6 +36,7 @@ use Magento\Framework\{
     Data\Form\FormKey\Validator as FormKeyValidator,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
+    HTTP\PhpEnvironment\RemoteAddress,
     UrlInterface
 };
 
@@ -56,11 +58,17 @@ class CreatePost extends Action implements
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
+    /** @property RemoteAddress $remoteAddress */
+    protected $remoteAddress;
+
     /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
     protected $simpleReturnFactory;
 
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
+
+    /** @property Tokenizer $tokenizer */
+    protected $tokenizer;
 
     /** @property UrlInterface $urlBuilder */
     protected $urlBuilder;
@@ -70,8 +78,10 @@ class CreatePost extends Action implements
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
      * @param OrderAdapter $orderAdapter
+     * @param RemoteAddress $remoteAddress
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param Tokenizer $tokenizer
      * @param UrlInterface $urlBuilder
      * @return void
      */
@@ -80,8 +90,10 @@ class CreatePost extends Action implements
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
         OrderAdapter $orderAdapter,
+        RemoteAddress $remoteAddress,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
+        Tokenizer $tokenizer,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
@@ -89,8 +101,10 @@ class CreatePost extends Action implements
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->orderAdapter = $orderAdapter;
+        $this->remoteAddress = $remoteAddress;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->tokenizer = $tokenizer;
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -165,12 +179,23 @@ class CreatePost extends Action implements
                         /** @var SimpleReturn $rma */
                         $rma = $this->simpleReturnFactory->create();
 
+                        /** @var string $remoteIp */
+                        $remoteIp = $this->remoteAddress->getRemoteAddress();
+
+                        /** @var string $token */
+                        $token = $this->tokenizer->createToken();
+
+                        /** @var string $tokenHash */
+                        $tokenHash = Tokenizer::getHash($token);
+
                         /** @var array $data */
                         $data = [
                             'order_id'   => $orderId,
                             'reason'     => $reason,
                             'resolution' => $resolution,
                             'comments'   => $comments,
+                            'remote_ip'  => $remoteIp,
+                            'token_hash' => $tokenHash,
                         ];
 
                         /** @var int $rmaId */
@@ -182,7 +207,8 @@ class CreatePost extends Action implements
                         $viewUrl = $this->urlBuilder->getUrl(
                             'simplereturns/rma/view',
                             [
-                                'rma_id' => $rmaId,
+                                'rma_id'  => $rmaId,
+                                'token'   => $token,
                                 '_secure' => true,
                             ]
                         );
