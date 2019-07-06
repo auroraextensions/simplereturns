@@ -4,6 +4,9 @@
             "rma_id": true,
             "order_id": true,
             "package_id": true,
+            "reason": true,
+            "resolution": true,
+            "comments": true,
             "remote_ip": true
         },
         "index": {

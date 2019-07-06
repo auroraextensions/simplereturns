@@ -34,7 +34,8 @@ use Magento\Framework\{
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
     Exception\LocalizedException,
-    Exception\NoSuchEntityException
+    Exception\NoSuchEntityException,
+    UrlInterface
 };
 
 class CreatePost extends Action implements
@@ -61,6 +62,9 @@ class CreatePost extends Action implements
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
+    /** @property UrlInterface $urlBuilder */
+    protected $urlBuilder;
+
     /**
      * @param Context $context
      * @param ExceptionFactory $exceptionFactory
@@ -68,6 +72,7 @@ class CreatePost extends Action implements
      * @param OrderAdapter $orderAdapter
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param UrlInterface $urlBuilder
      * @return void
      */
     public function __construct(
@@ -76,7 +81,8 @@ class CreatePost extends Action implements
         FormKeyValidator $formKeyValidator,
         OrderAdapter $orderAdapter,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
         $this->__initialize();
@@ -85,6 +91,7 @@ class CreatePost extends Action implements
         $this->orderAdapter = $orderAdapter;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -153,26 +160,37 @@ class CreatePost extends Action implements
 
                             throw $exception;
                         }
+                    /* RMA doesn't exist, continue processing. */
+                    } catch (NoSuchEntityException $e) {
+                        /** @var SimpleReturn $rma */
+                        $rma = $this->simpleReturnFactory->create();
+
+                        /** @var array $data */
+                        $data = [
+                            'order_id'   => $orderId,
+                            'reason'     => $reason,
+                            'resolution' => $resolution,
+                            'comments'   => $comments,
+                        ];
+
+                        /** @var int $rmaId */
+                        $rmaId = $this->simpleReturnRepository->save(
+                            $rma->addData($data)
+                        );
+
+                        /** @var string $viewUrl */
+                        $viewUrl = $this->urlBuilder->getUrl(
+                            'simplereturns/rma/view',
+                            [
+                                'rma_id' => $rmaId,
+                                '_secure' => true,
+                            ]
+                        );
+
+                        return $this->getRedirectToUrl($viewUrl);
                     } catch (LocalizedException $e) {
                         throw $e;
-                    } catch (NoSuchEntityException $e) {
-                        /* RMA doesn't exist, so continue processing. */
                     }
-
-                    /** @var SimpleReturn $rma */
-                    $rma = $this->simpleReturnFactory->create();
-
-                    /** @var array $data */
-                    $data = [
-                        'order_id'   => $orderId,
-                        'reason'     => $reason,
-                        'resolution' => $resolution,
-                        'comments'   => $comments,
-                    ];
-
-                    $this->simpleReturnRepository->save(
-                        $rma->addData($data)
-                    );
                 }
 
                 /** @var LocalizedException $exception */
@@ -182,18 +200,13 @@ class CreatePost extends Action implements
                 );
 
                 throw $exception;
-            } catch (LocalizedException $e) {
-                $this->messageManager->addError($e->getMessage());
             } catch (NoSuchEntityException $e) {
                 $this->messageManager->addError($e->getMessage());
+            } catch (LocalizedException $e) {
+                $this->messageManager->addError($e->getMessage());
             }
-
-            /**
-             * @todo: Check for existing RMA, redirect if exists.
-             *        If no RMA exists, create new SimpleReturn RMA.
-             */
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_ORDERS_SEARCH);
+        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
     }
 }
