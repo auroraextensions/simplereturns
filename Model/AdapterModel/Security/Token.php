@@ -72,13 +72,13 @@ class Token
     }
 
     /**
-     * Determine if token is alphanumeric.
+     * Determine if token is hexidecimal.
      *
      * @param string $token
      * @return bool
      */
-    public static function isAlphanumeric(string $token): bool
+    public static function isHexidecimal(string $token): bool
     {
-        return !preg_match('/[^A-Za-z0-9]/', $token);
+        return !preg_match('/[^a-f0-9]/', $token);
     }
 }
