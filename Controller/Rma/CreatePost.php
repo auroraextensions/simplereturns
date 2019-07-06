@@ -188,7 +188,6 @@ class CreatePost extends Action implements
                 $this->messageManager->addError($e->getMessage());
             }
 
-
             /**
              * @todo: Check for existing RMA, redirect if exists.
              *        If no RMA exists, create new SimpleReturn RMA.
