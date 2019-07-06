@@ -97,14 +97,12 @@ class ViewView extends AbstractView implements
             ? (int) $rmaId
             : null;
 
-        if (!is_int($rmaId)) {
-            return null;
-        }
-
-        try {
-            return $this->simpleReturnRepository->getById($rmaId);
-        } catch (NoSuchEntityException $e) {
-            return null;
+        if (is_int($rmaId)) {
+            try {
+                return $this->simpleReturnRepository->getById($rmaId);
+            } catch (NoSuchEntityException $e) {
+                return null;
+            }
         }
 
         return null;
