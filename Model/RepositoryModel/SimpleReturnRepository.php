@@ -131,7 +131,7 @@ class SimpleReturnRepository extends AbstractRepository implements
     public function save(SimpleReturnInterface $rma): int
     {
         $this->simpleReturnResource->save($rma);
-        return $rma->getId();
+        return (int) $rma->getId();
     }
 
     /**
