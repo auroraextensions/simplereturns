@@ -22,7 +22,10 @@
         <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="false" identity="true"
                 comment="RMA ID"/>
         <column xsi:type="smallint" name="order_id" padding="5" unsigned="true" nullable="false" comment="Order ID"/>
-        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" comment="Package ID"/>
+        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
+        <column xsi:type="varchar" name="reason" nullable="true" length="128" comment="Reason"/>
+        <column xsi:type="varchar" name="resolution" nullable="true" length="128" comment="Resolution"/>
+        <column xsi:type="mediumtext" name="comments" nullable="true" comment="Comments"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
         <constraint xsi:type="foreign" referenceId="SIMPLERETURNS_RMA_PACKAGE_ID_SIMPLERETURNS_PACKAGE_PACKAGE_ID"
                     table="simplreturns_rma" column="package_id" referenceTable="simplereturns_package"
@@ -64,7 +67,7 @@
     <table name="simplereturns_label" resource="default" engine="innodb" comment="Simple Returns Labels">
         <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="false" identity="true"
                 comment="Label ID"/>
-        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" comment="Package ID"/>
+        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
         <column xsi:type="blob" name="image" nullable="true" comment="Label Image"/>
         <column xsi:type="varchar" name="tracking_number" nullable="true" length="128" comment="Label Tracking Number"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
