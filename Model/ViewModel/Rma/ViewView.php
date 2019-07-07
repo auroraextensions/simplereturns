@@ -35,6 +35,10 @@ use Magento\Framework\{
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
+use Magento\Sales\{
+    Api\Data\OrderInterface,
+    Api\OrderRepositoryInterface
+};
 
 class ViewView extends AbstractView implements
     ArgumentInterface,
@@ -45,6 +49,9 @@ class ViewView extends AbstractView implements
 
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
+
+    /** @property OrderRepositoryInterface $orderRepository */
+    protected $orderRepository;
 
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
@@ -57,6 +64,7 @@ class ViewView extends AbstractView implements
      * @param array $data
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
+     * @param OrderRepositoryInterface $orderRepository
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @return void
      */
@@ -68,6 +76,7 @@ class ViewView extends AbstractView implements
         array $data = [],
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
+        OrderRepositoryInterface $orderRepository,
         SimpleReturnRepositoryInterface $simpleReturnRepository
     ) {
         parent::__construct(
@@ -80,11 +89,32 @@ class ViewView extends AbstractView implements
 
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
+        $this->orderRepository = $orderRepository;
         $this->simpleReturnRepository = $simpleReturnRepository;
     }
 
     /**
-     * Get requested SimpleReturn data object.
+     * Get associated order.
+     *
+     * @return OrderInterface|null
+     * @throws NoSuchEntityException
+     */
+    public function getOrder(): ?OrderInterface
+    {
+        /** @var SimpleReturnInterface $rma */
+        $rma = $this->getSimpleReturn();
+
+        try {
+            return $this->orderRepository->get($rma->getOrderId());
+        } catch (NoSuchEntityException $e) {
+            return null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get associated SimpleReturn data object.
      *
      * @return SimpleReturnInterface|null
      * @throws NoSuchEntityException

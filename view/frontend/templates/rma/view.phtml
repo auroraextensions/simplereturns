@@ -21,11 +21,14 @@ $viewModel = $block->getViewModel();
 
 /** @var AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface */
 $rma = $viewModel->getSimpleReturn();
+
+/** @var Magento\Sales\Api\Data\OrderInterface $order */
+$order = $viewModel->getOrder();
 ?>
 <div class="block simplereturns-rma-view">
-    <h2><?= $block->escapeHtml(__('View Return for Order #%1', $rma->getOrderId())) ?></h2>
+    <h2><?= $block->escapeHtml(__('View Return #%1 for Order #%2', $rma->getId(), $order->getRealOrderId())) ?></h2>
     <div class="container">
-        <div class="simplereturns-rma-id"><?= $block->escapeHtml(__('Return #: %1', $rma->getId())) ?></div>
+        <div class="simplereturns-rma-order-id"><?= $block->escapeHtml(__('Order #: %1', $order->getRealOrderId())) ?></div>
         <div class="simplereturns-rma-reason"><?= $block->escapeHtml(__('Reason: %1', $rma->getReason())) ?></div>
         <div class="simplereturns-rma-resolution"><?= $block->escapeHtml(__('Resolution: %1', $rma->getResolution())) ?></div>
         <div class="simplereturns-rma-comments"><?= $block->escapeHtml(__('Comments: %1', $rma->getComments())) ?></div>
