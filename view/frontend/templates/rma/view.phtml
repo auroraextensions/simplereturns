@@ -19,18 +19,30 @@
 /** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView $viewModel */
 $viewModel = $block->getViewModel();
 
-/** @var AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface */
+/** @var AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma */
 $rma = $viewModel->getSimpleReturn();
 
 /** @var Magento\Sales\Api\Data\OrderInterface $order */
 $order = $viewModel->getOrder();
 ?>
 <div class="block simplereturns-rma-view">
-    <h2><?= $block->escapeHtml(__('View Return #%1 for Order #%2', $rma->getId(), $order->getRealOrderId())) ?></h2>
+    <h2><?= $block->escapeHtml(__('View Return for Order #%1', $order->getRealOrderId())) ?></h2>
     <div class="container">
-        <div class="simplereturns-rma-order-id"><?= $block->escapeHtml(__('Order #: %1', $order->getRealOrderId())) ?></div>
-        <div class="simplereturns-rma-reason"><?= $block->escapeHtml(__('Reason: %1', $rma->getReason())) ?></div>
-        <div class="simplereturns-rma-resolution"><?= $block->escapeHtml(__('Resolution: %1', $rma->getResolution())) ?></div>
-        <div class="simplereturns-rma-comments"><?= $block->escapeHtml(__('Comments: %1', $rma->getComments())) ?></div>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Order #')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('%1', $order->getRealOrderId())) ?></span>
+        </div>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Reason')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('%1', $rma->getReason())) ?></span>
+        </div>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Resolution')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('%1', $rma->getResolution())) ?></span>
+        </div>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Comments')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('%1', $rma->getComments())) ?></span>
+        </div>
     </div>
 </div>
