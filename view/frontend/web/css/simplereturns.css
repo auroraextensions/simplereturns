@@ -17,3 +17,13 @@ input[readonly] {
   background-color: #fafafa;
   opacity: 0.5;
 }
+
+.simplereturns-rma-view .row .title {
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.simplereturns-rma-view .row .value {
+  font-size: 1.5rem;
+  font-weight: 300;
+}

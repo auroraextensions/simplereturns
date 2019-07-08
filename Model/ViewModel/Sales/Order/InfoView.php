@@ -38,9 +38,6 @@ class InfoView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property array $errors */
-    protected $errors = [];
-
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 

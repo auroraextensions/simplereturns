@@ -18,6 +18,11 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 
+use AuroraExtensions\SimpleReturns\{
+    Model\ViewModel\Rma\ViewView as ViewModel,
+    Shared\Action\Redirector,
+    Shared\ModuleComponentInterface
+};
 use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
@@ -25,28 +30,42 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class View extends Action implements HttpGetActionInterface
+class View extends Action implements
+    HttpGetActionInterface,
+    ModuleComponentInterface
 {
+    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
+    use Redirector {
+        Redirector::__initialize as protected;
+    }
+
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
+
+    /** @property ViewModel $viewModel */
+    protected $viewModel;
 
     /**
      * @param Context $context
      * @param PageFactory $resultPageFactory
+     * @param ViewModel $viewModel
      * @return void
      */
     public function __construct(
         Context $context,
-        PageFactory $resultPageFactory
+        PageFactory $resultPageFactory,
+        ViewModel $viewModel
     ) {
         parent::__construct($context);
+        $this->__initialize();
         $this->resultPageFactory = $resultPageFactory;
+        $this->viewModel = $viewModel;
     }
 
     /**
-     * Execute returns_label_orders action.
+     * Execute simplereturns_rma_view action.
      *
-     * @return Page
+     * @return Page|Redirect
      */
     public function execute()
     {
@@ -56,6 +75,10 @@ class View extends Action implements HttpGetActionInterface
             __('View RMA Request')
         );
 
-        return $resultPage;
+        if ($this->viewModel->hasSimpleReturn()) {
+            return $resultPage;
+        }
+
+        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
     }
 }
