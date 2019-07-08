@@ -22,6 +22,9 @@ use Magento\Framework\Math\Random as Generator;
 
 class Token
 {
+    /** @constant string CHARS_HEX */
+    const CHARS_HEX = '0123456789abcdef';
+
     /** @constant string HASH_ALGO */
     const HASH_ALGO = 'sha512';
 
@@ -38,14 +41,18 @@ class Token
     }
 
     /**
-     * Create alphanumeric token of specified length.
+     * Create token of specified length and charset.
      *
      * @param int $length
+     * @param string $chars
      * @return string
      */
-    public function createToken(int $length = 64): string
+    public function createToken(
+        int $length = 64,
+        string $chars = self::CHARS_HEX
+    ): string
     {
-        return $this->generator->getRandomString($length);
+        return $this->generator->getRandomString($length, $chars);
     }
 
     /**
