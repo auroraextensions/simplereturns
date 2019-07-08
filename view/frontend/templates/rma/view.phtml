@@ -34,11 +34,11 @@ $order = $viewModel->getOrder();
         </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Reason')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('%1', $rma->getReason())) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('%1', $viewModel->getLabel('reasons', $rma->getReason()))) ?></span>
         </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Resolution')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('%1', $rma->getResolution())) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('%1', $viewModel->getLabel('resolutions', $rma->getResolution()))) ?></span>
         </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Comments')) ?></span>
