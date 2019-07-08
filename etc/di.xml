@@ -70,6 +70,7 @@
                     <item name="approved" xsi:type="string">Approved</item>
                     <item name="canceled" xsi:type="string">Canceled</item>
                     <item name="declined" xsi:type="string">Declined</item>
+                    <item name="on_hold" xsi:type="string">On Hold</item>
                     <item name="pending" xsi:type="string">Pending</item>
                 </item>
             </argument>
