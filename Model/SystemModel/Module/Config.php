@@ -84,7 +84,7 @@ class Config
      */
     public function getCarriers(): array
     {
-        return $this->settings->getData('carriers') ?? [];
+        return $this->getSettings()->getData('carriers') ?? [];
     }
 
     /**
@@ -92,7 +92,7 @@ class Config
      */
     public function getMethods(): array
     {
-        return $this->settings->getData('methods') ?? [];
+        return $this->getSettings()->getData('methods') ?? [];
     }
 
     /**
@@ -100,7 +100,7 @@ class Config
      */
     public function getReasons(): array
     {
-        return $this->settings->getData('reasons') ?? [];
+        return $this->getSettings()->getData('reasons') ?? [];
     }
 
     /**
@@ -108,7 +108,15 @@ class Config
      */
     public function getResolutions(): array
     {
-        return $this->settings->getData('resolutions') ?? [];
+        return $this->getSettings()->getData('resolutions') ?? [];
+    }
+
+    /**
+     * @return DataObject|null
+     */
+    public function getSettings(): ?DataObject
+    {
+        return $this->settings;
     }
 
     /**
