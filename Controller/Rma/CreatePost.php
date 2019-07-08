@@ -192,7 +192,7 @@ class CreatePost extends Action implements
                             'resolution' => $resolution,
                             'comments'   => $comments,
                             'remote_ip'  => $remoteIp,
-                            'token_hash' => $token,
+                            'token'      => $token,
                         ];
 
                         /** @var int $rmaId */
