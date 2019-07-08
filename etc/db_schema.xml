@@ -24,9 +24,9 @@
         <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" comment="Store ID"/>
         <column xsi:type="smallint" name="order_id" padding="5" unsigned="true" nullable="false" comment="Order ID"/>
         <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
-        <column xsi:type="varchar" name="status" nullable="true" length="64" comment="Status"/>
-        <column xsi:type="varchar" name="reason" nullable="true" length="128" comment="Reason"/>
-        <column xsi:type="varchar" name="resolution" nullable="true" length="128" comment="Resolution"/>
+        <column xsi:type="varchar" name="status" nullable="true" length="32" comment="Status"/>
+        <column xsi:type="varchar" name="reason" nullable="true" length="64" comment="Reason"/>
+        <column xsi:type="varchar" name="resolution" nullable="true" length="32" comment="Resolution"/>
         <column xsi:type="mediumtext" name="comments" nullable="true" comment="Comments"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
         <column xsi:type="varchar" name="token" nullable="true" length="128" comment="RMA Token"/>
