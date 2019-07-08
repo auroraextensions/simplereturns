@@ -185,9 +185,13 @@ class CreatePost extends Action implements
                         /** @var string $token */
                         $token = $this->tokenizer->createToken();
 
+                        /** @var string $status */
+                        $status = $this->moduleConfig->getDefaultStatus();
+
                         /** @var array $data */
                         $data = [
                             'order_id'   => $orderId,
+                            'status'     => $status,
                             'reason'     => $reason,
                             'resolution' => $resolution,
                             'comments'   => $comments,
