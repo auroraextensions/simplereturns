@@ -185,9 +185,6 @@ class CreatePost extends Action implements
                         /** @var string $token */
                         $token = $this->tokenizer->createToken();
 
-                        /** @var string $tokenHash */
-                        $tokenHash = Tokenizer::getHash($token);
-
                         /** @var array $data */
                         $data = [
                             'order_id'   => $orderId,
@@ -195,7 +192,7 @@ class CreatePost extends Action implements
                             'resolution' => $resolution,
                             'comments'   => $comments,
                             'remote_ip'  => $remoteIp,
-                            'token_hash' => $tokenHash,
+                            'token_hash' => $token,
                         ];
 
                         /** @var int $rmaId */
