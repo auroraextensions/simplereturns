@@ -2,13 +2,15 @@
     "simplereturns_rma": {
         "column": {
             "rma_id": true,
+            "store_id": true,
             "order_id": true,
             "package_id": true,
+            "status": true,
             "reason": true,
             "resolution": true,
             "comments": true,
             "remote_ip": true,
-            "token_hash": true
+            "token": true
         },
         "index": {
             "SIMPLERETURNS_RMA_ORDER_ID": true,

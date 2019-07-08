@@ -134,7 +134,7 @@ class InfoView extends AbstractView implements
             'simplereturns/rma/view',
             [
                 'rma_id'  => $rma->getId(),
-                'token'   => $rma->getTokenHash(),
+                'token'   => $rma->getToken(),
                 '_secure' => true,
             ]
         );
