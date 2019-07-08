@@ -17,31 +17,6 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\Framework\App\RouterList">
-        <arguments>
-            <argument name="routerlist" xsi:type="array">
-                <item name="auroraextensions_simplereturns_router" xsi:type="array">
-                    <item name="class" xsi:type="string">AuroraExtensions\SimpleReturns\Controller\Router</item>
-                    <item name="disable" xsi:type="boolean">false</item>
-                    <item name="sortOrder" xsi:type="string">10</item>
-                </item>
-            </argument>
-        </arguments>
-    </type>
-    <type name="AuroraExtensions\SimpleReturns\Controller\Router">
-        <arguments>
-            <argument name="data" xsi:type="array">
-                <item name="dispatch" xsi:type="array">
-                    <item name="simplereturns_orders_search" xsi:type="object">AuroraExtensions\SimpleReturns\Controller\Orders\Search</item>
-                    <item name="simplereturns_orders_searchPost" xsi:type="object">AuroraExtensions\SimpleReturns\Controller\Orders\SearchPost</item>
-                    <item name="simplereturns_orders_results" xsi:type="object">AuroraExtensions\SimpleReturns\Controller\Orders\Results</item>
-                    <item name="simplereturns_rma_create" xsi:type="object">AuroraExtensions\SimpleReturns\Controller\Rma\Create</item>
-                    <item name="simplereturns_rma_createPost" xsi:type="object">AuroraExtensions\SimpleReturns\Controller\Rma\CreatePost</item>
-                    <item name="simplereturns_label_index" xsi:type="object">AuroraExtensions\SimpleReturns\Controller\Label\Index</item>
-                </item>
-            </argument>
-        </arguments>
-    </type>
     <type name="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config">
         <arguments>
             <argument name="data" xsi:type="array">
