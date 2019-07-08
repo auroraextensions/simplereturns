@@ -18,12 +18,19 @@ input[readonly] {
   opacity: 0.5;
 }
 
+.simplereturns-rma-view .row span {
+  display: inline-block;
+  font-size: 1.5rem;
+}
+
 .simplereturns-rma-view .row .title {
-  font-size: 2rem;
   font-weight: 500;
 }
 
+.simplereturns-rma-view .row .title:after {
+  content: "\003A";
+}
+
 .simplereturns-rma-view .row .value {
-  font-size: 1.5rem;
   font-weight: 300;
 }
