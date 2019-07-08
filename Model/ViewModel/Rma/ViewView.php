@@ -121,7 +121,7 @@ class ViewView extends AbstractView implements
      */
     public function getSimpleReturn(): ?SimpleReturnInterface
     {
-        /** @var int|string $rmaId */
+        /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
         $rmaId = $rmaId !== null && is_numeric($rmaId)
             ? (int) $rmaId
@@ -136,5 +136,20 @@ class ViewView extends AbstractView implements
         }
 
         return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSimpleReturn(): bool
+    {
+        /** @var SimpleReturnInterface|null $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            return true;
+        }
+
+        return false;
     }
 }
