@@ -99,8 +99,7 @@ class Router implements RouterInterface, ModuleComponentInterface
     }
 
     /**
-     * Check if full action is valid for either
-     * a specific partner or all partners.
+     * Check if full action is valid.
      *
      * @param string $action
      * @param array $actions
