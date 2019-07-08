@@ -94,6 +94,21 @@ class ViewView extends AbstractView implements
     }
 
     /**
+     * Get frontend label for field type by key.
+     *
+     * @param string $type
+     * @param string $key
+     * @param string
+     */
+    public function getLabel(string $type, string $key): string
+    {
+        /** @var array $labels */
+        $labels = $this->moduleConfig->getSettings()->getData($type);
+
+        return $labels[$key] ?? $key;
+    }
+
+    /**
      * Get associated order.
      *
      * @return OrderInterface|null
