@@ -23,6 +23,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
+    Model\AdapterModel\Security\Token as Tokenizer,
     Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
@@ -56,6 +57,9 @@ class ViewView extends AbstractView implements
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
+    /** @property Tokenizer $tokenizer */
+    protected $tokenizer;
+
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
@@ -66,6 +70,7 @@ class ViewView extends AbstractView implements
      * @param ModuleConfig $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param Tokenizer $tokenizer
      * @return void
      */
     public function __construct(
@@ -77,7 +82,8 @@ class ViewView extends AbstractView implements
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
         OrderRepositoryInterface $orderRepository,
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        Tokenizer $tokenizer
     ) {
         parent::__construct(
             $configHelper,
@@ -91,6 +97,7 @@ class ViewView extends AbstractView implements
         $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->tokenizer = $tokenizer;
     }
 
     /**
@@ -119,10 +126,12 @@ class ViewView extends AbstractView implements
         /** @var SimpleReturnInterface $rma */
         $rma = $this->getSimpleReturn();
 
-        try {
-            return $this->orderRepository->get($rma->getOrderId());
-        } catch (NoSuchEntityException $e) {
-            return null;
+        if ($rma !== null) {
+            try {
+                return $this->orderRepository->get($rma->getOrderId());
+            } catch (NoSuchEntityException $e) {
+                /* No action required. */
+            }
         }
 
         return null;
@@ -143,10 +152,28 @@ class ViewView extends AbstractView implements
             : null;
 
         if (is_int($rmaId)) {
-            try {
-                return $this->simpleReturnRepository->getById($rmaId);
-            } catch (NoSuchEntityException $e) {
-                return null;
+            /** @var string|null $token */
+            $token = $this->request->getParam(self::PARAM_TOKEN);
+            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
+
+            if ($token !== null) {
+                try {
+                    /** @var SimpleReturnInterface $rma */
+                    $rma = $this->simpleReturnRepository->getById($rmaId);
+
+                    if (Tokenizer::isEqual($token, $rma->getToken())) {
+                        return $rma;
+                    }
+
+                    /** @var LocalizedException $exception */
+                    $exception = $this->exceptionFactory->create(LocalizedException::class);
+
+                    throw $exception;
+                } catch (NoSuchEntityException $e) {
+                    /* No action required. */
+                } catch (LocalizedException $e) {
+                    /* No action required. */
+                }
             }
         }
 
