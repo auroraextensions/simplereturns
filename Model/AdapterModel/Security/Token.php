@@ -84,7 +84,7 @@ class Token
      * @param string $token
      * @return bool
      */
-    public static function isHexidecimal(string $token): bool
+    public static function isHex(string $token): bool
     {
         return !preg_match('/[^a-f0-9]/', $token);
     }
