@@ -25,6 +25,7 @@ use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\AdapterModel\Security\Token as Tokenizer,
+    Model\SystemModel\Module\Config as ModuleConfig,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
@@ -55,6 +56,9 @@ class CreatePost extends Action implements
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
+    /** @property ModuleConfig $moduleConfig */
+    protected $moduleConfig;
+
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
@@ -77,6 +81,7 @@ class CreatePost extends Action implements
      * @param Context $context
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
@@ -89,6 +94,7 @@ class CreatePost extends Action implements
         Context $context,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
+        ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
@@ -100,6 +106,7 @@ class CreatePost extends Action implements
         $this->__initialize();
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->remoteAddress = $remoteAddress;
         $this->simpleReturnFactory = $simpleReturnFactory;
