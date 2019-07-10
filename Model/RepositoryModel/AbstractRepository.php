@@ -132,7 +132,7 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
         $results = $this->searchResultsFactory->create();
         $results->setSearchCriteria($criteria);
 
-        /** @var array $returns */
+        /** @var array $items */
         $items = [];
 
         foreach ($collection as $item) {
