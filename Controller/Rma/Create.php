@@ -44,7 +44,7 @@ class Create extends Action implements HttpGetActionInterface
     }
 
     /**
-     * Execute returns_label_orders action.
+     * Execute simplereturns_rma_create action.
      *
      * @return Page
      */

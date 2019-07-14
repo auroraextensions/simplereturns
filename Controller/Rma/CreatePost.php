@@ -116,7 +116,7 @@ class CreatePost extends Action implements
     }
 
     /**
-     * Execute returns_label_ordersPost POST action.
+     * Execute simplereturns_rma_createPost action.
      *
      * @return Redirect
      */
