@@ -114,6 +114,7 @@ interface ModuleComponentInterface
     /** @constant string ROUTE_SIMPLERETURNS_LABEL_INDEX */
     /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATE */
     /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATEPOST */
+    /** @constant string ROUTE_SIMPLERETURNS_RMA_VIEW */
     /** @constant string ROUTE_SIMPLERETURNS_ORDERS_RESULTS */
     /** @constant string ROUTE_SIMPLERETURNS_ORDERS_SEARCH */
     /** @constant string ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST */
@@ -121,6 +122,7 @@ interface ModuleComponentInterface
     const ROUTE_SIMPLERETURNS_LABEL_INDEX = 'simplereturns/label/index';
     const ROUTE_SIMPLERETURNS_RMA_CREATE = 'simplereturns/rma/create';
     const ROUTE_SIMPLERETURNS_RMA_CREATEPOST = 'simplereturns/rma/createPost';
+    const ROUTE_SIMPLERETURNS_RMA_VIEW = 'simplereturns/rma/view';
     const ROUTE_SIMPLERETURNS_ORDERS_RESULTS = 'simplereturns/orders/results';
     const ROUTE_SIMPLERETURNS_ORDERS_SEARCH = 'simplereturns/orders/search';
     const ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST = 'simplereturns/orders/searchPost';
