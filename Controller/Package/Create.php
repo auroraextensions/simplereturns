@@ -16,7 +16,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Controller\Rma;
+namespace AuroraExtensions\SimpleReturns\Controller\Package;
 
 use Magento\Framework\{
     App\Action\Action,
@@ -44,7 +44,7 @@ class Create extends Action implements HttpGetActionInterface
     }
 
     /**
-     * Execute simplereturns_rma_create action.
+     * Execute simplereturns_package_create action.
      *
      * @return Page
      */
@@ -53,7 +53,7 @@ class Create extends Action implements HttpGetActionInterface
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->getConfig()->getTitle()->set(
-            __('Create RMA Request')
+            __('Create RMA Package')
         );
 
         return $resultPage;

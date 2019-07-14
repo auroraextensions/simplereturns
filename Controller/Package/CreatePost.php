@@ -16,14 +16,14 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Controller\Rma;
+namespace AuroraExtensions\SimpleReturns\Controller\Package;
 
 use AuroraExtensions\SimpleReturns\{
-    Api\Data\SimpleReturnInterface,
-    Api\Data\SimpleReturnInterfaceFactory,
+    Api\Data\PackageInterface,
+    Api\Data\PackageInterfaceFactory,
+    Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\AdapterModel\Security\Token as Tokenizer,
     Model\SystemModel\Module\Config as ModuleConfig,
     Shared\Action\Redirector,
@@ -60,14 +60,14 @@ class CreatePost extends Action implements
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    /** @property PackageInterfaceFactory $packageFactory */
+    protected $packageFactory;
+
+    /** @property PackageRepositoryInterface $packageRepository */
+    protected $packageRepository;
 
     /** @property RemoteAddress $remoteAddress */
     protected $remoteAddress;
-
-    /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
-    protected $simpleReturnFactory;
 
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
@@ -83,9 +83,9 @@ class CreatePost extends Action implements
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
      * @param ModuleConfig $moduleConfig
-     * @param OrderAdapter $orderAdapter
+     * @param PackageInterfaceFactory $packageFactory
+     * @param PackageRepositoryInterface $packageRepository
      * @param RemoteAddress $remoteAddress
-     * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param Tokenizer $tokenizer
      * @param UrlInterface $urlBuilder
@@ -96,9 +96,9 @@ class CreatePost extends Action implements
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
         ModuleConfig $moduleConfig,
-        OrderAdapter $orderAdapter,
+        PackageInterfaceFactory $packageFactory,
+        PackageRepositoryInterface $packageRepository,
         RemoteAddress $remoteAddress,
-        SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         Tokenizer $tokenizer,
         UrlInterface $urlBuilder
@@ -108,16 +108,16 @@ class CreatePost extends Action implements
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->moduleConfig = $moduleConfig;
-        $this->orderAdapter = $orderAdapter;
+        $this->packageFactory = $packageFactory;
+        $this->packageRepository = $packageRepository;
         $this->remoteAddress = $remoteAddress;
-        $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->tokenizer = $tokenizer;
         $this->urlBuilder = $urlBuilder;
     }
 
     /**
-     * Execute simplereturns_rma_createPost action.
+     * Execute simplereturns_package_createPost action.
      *
      * @return Redirect
      */
@@ -127,65 +127,46 @@ class CreatePost extends Action implements
         $request = $this->getRequest();
 
         if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+            return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_VIEW);
         }
 
         /** @var array|null $params */
-        $params = $request->getPost('simplereturns');
+        $params = $request->getPost('simplereturns_package');
 
         if ($params !== null) {
-            /** @var int|string $orderId */
-            $orderId = $params['order_id'] ?? null;
-            $orderId = !empty($orderId) ? $orderId : null;
+            /** @var int|string|null */
+            $rmaId = $params['rma_id'] ?? null;
+            $rmaId = $rmaId !== null && is_numeric($rmaId)
+                ? (int) $rmaId
+                : null;
 
-            /** @var string $protectCode */
-            $protectCode = $params['protect_code'] ?? null;
-            $protectCode = !empty($protectCode) ? $protectCode : null;
-
-            /** @var string $reason */
-            $reason = $params['reason'] ?? null;
-            $reason = !empty($reason) ? $reason : null;
-
-            /** @var string $resolution */
-            $resolution = $params['resolution'] ?? null;
-            $resolution = !empty($resolution) ? $resolution : null;
-
-            /** @var string $comments */
-            $comments = $params['comments'] ?? null;
-            $comments = !empty($comments) ? $comments : null;
-
-            /** @var array $fields */
-            $fields = [
-                self::FIELD_INCREMENT_ID => $orderId,
-                self::FIELD_PROTECT_CODE => $protectCode,
-            ];
+            /** @var string|null $rmaToken */
+            $rmaToken = $params['rma_token'] ?? null;
+            $rmaToken = !empty($rmaToken) ? $rmaToken : null;
 
             try {
-                /** @var OrderInterface[] $orders */
-                $orders = $this->orderAdapter->getOrdersByFields($fields);
+                /** @var SimpleReturnInterface $rma */
+                $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                if (!empty($orders)) {
-                    /** @var OrderInterface $order */
-                    $order = $orders[0];
-
+                if ($rma->getId()) {
                     try {
-                        /** @var SimpleReturn $rma */
-                        $rma = $this->simpleReturnRepository->get($order);
+                        /** @var PackageInterface $package */
+                        $package = $this->packageRepository->get($rma);
 
-                        /** @note Consider possible redirect to RMA view page. */
-                        if ($rma->getId()) {
+                        /** @note Consider possible redirect to Package view page. */
+                        if ($package->getId()) {
                             /** @var AlreadyExistsException $exception */
                             $exception = $this->exceptionFactory->create(
                                 AlreadyExistsException::class,
-                                __('An RMA request already exists for this order.')
+                                __('There is already a package for this return.')
                             );
 
                             throw $exception;
                         }
-                    /* RMA doesn't exist, continue processing. */
+                    /* Package doesn't exist, continue processing. */
                     } catch (NoSuchEntityException $e) {
-                        /** @var SimpleReturn $rma */
-                        $rma = $this->simpleReturnFactory->create();
+                        /** @var PackageInterface $package */
+                        $package = $this->packageFactory->create();
 
                         /** @var string $remoteIp */
                         $remoteIp = $this->remoteAddress->getRemoteAddress();
@@ -193,30 +174,27 @@ class CreatePost extends Action implements
                         /** @var string $token */
                         $token = $this->tokenizer->createToken();
 
-                        /** @var string $status */
-                        $status = $this->moduleConfig->getDefaultStatus();
+                        /** @var string $carrierCode */
+                        $carrierCode = $this->moduleConfig->getShippingCarrier();
 
                         /** @var array $data */
                         $data = [
-                            'order_id'   => $orderId,
-                            'status'     => $status,
-                            'reason'     => $reason,
-                            'resolution' => $resolution,
-                            'comments'   => $comments,
-                            'remote_ip'  => $remoteIp,
-                            'token'      => $token,
+                            'rma_id'         => $rmaId,
+                            'carrier_code'   => $carrierCode,
+                            'remote_ip'      => $remoteIp,
+                            'token'          => $token,
                         ];
 
-                        /** @var int $rmaId */
-                        $rmaId = $this->simpleReturnRepository->save(
-                            $rma->addData($data)
+                        /** @var int $pkgId */
+                        $pkgId = $this->packageRepository->save(
+                            $package->addData($data)
                         );
 
                         /** @var string $viewUrl */
                         $viewUrl = $this->urlBuilder->getUrl(
-                            'simplereturns/rma/view',
+                            'simplereturns/package/view',
                             [
-                                'rma_id'  => $rmaId,
+                                'pkg_id'  => $pkgId,
                                 'token'   => $token,
                                 '_secure' => true,
                             ]
@@ -233,7 +211,7 @@ class CreatePost extends Action implements
                 /** @var LocalizedException $exception */
                 $exception = $this->exceptionFactory->create(
                     LocalizedException::class,
-                    __('Unable to create RMA request.')
+                    __('Unable to create package for return shipment.')
                 );
 
                 throw $exception;
@@ -244,6 +222,6 @@ class CreatePost extends Action implements
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_VIEW);
     }
 }

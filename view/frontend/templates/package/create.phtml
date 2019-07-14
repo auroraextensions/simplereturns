@@ -1,0 +1,70 @@
+<?php
+/**
+ * create.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+
+/** @var Magento\Framework\View\Element\Template $block */
+/** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Package\CreateView $viewModel */
+$viewModel = $block->getViewModel();
+
+/** @var AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma */
+$rma = $viewModel->getSimpleReturn();
+?>
+<div class="block simplereturns-package-create">
+    <div class="simplereturns-package-form">
+        <div class="container-form">
+            <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="simplereturns-package-create-form">
+                <?= $block->getBlockHtml('formkey') ?>
+                <fieldset class="fieldset simplereturns_package" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
+                    <legend class="legend">
+                        <span><?= $block->escapeHtml(__('Create Package for Return #%1', $rma->getId())) ?></span>
+                    </legend>
+                    <div class="field rma_id required">
+                        <label class="label rma_id" for="rma_id">
+                            <span><?= $block->escapeHtml(__('Return ID')) ?></span>
+                        </label>
+                        <div class="control">
+                            <input name="simplereturns_package[rma_id]"
+                                   id="rma_id"
+                                   type="text"
+                                   class="form-input input-text"
+                                   value="<?= $block->escapeHtmlAttr($rma->getId()) ?>"
+                                   readonly
+                                   title="<?= $block->escapeHtmlAttr(__('Return ID')) ?>"
+                                   data-mage-init='{"mage/trim-input":{}}'>
+                        </div>
+                    </div>
+                    <div class="field rma_token required">
+                        <div class="control">
+                            <input name="simplereturns_package[rma_token]"
+                                   id="rma_token"
+                                   type="hidden"
+                                   class="form-input input-text"
+                                   value="<?= $block->escapeHtmlAttr($rma->getToken()) ?>"
+                                   data-mage-init='{"mage/trim-input":{}}'>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <button class="action submit" title="<?= $block->escapeHtmlAttr(__('Submit')) ?>" type="submit">
+                            <span><?= $block->escapeHtml(__('Submit')) ?></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Create.php
+ * View.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,8 +16,13 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Controller\Rma;
+namespace AuroraExtensions\SimpleReturns\Controller\Package;
 
+use AuroraExtensions\SimpleReturns\{
+    Model\ViewModel\Package\ViewView as ViewModel,
+    Shared\Action\Redirector,
+    Shared\ModuleComponentInterface
+};
 use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
@@ -25,37 +30,55 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Create extends Action implements HttpGetActionInterface
+class View extends Action implements
+    HttpGetActionInterface,
+    ModuleComponentInterface
 {
+    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
+    use Redirector {
+        Redirector::__initialize as protected;
+    }
+
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
+
+    /** @property ViewModel $viewModel */
+    protected $viewModel;
 
     /**
      * @param Context $context
      * @param PageFactory $resultPageFactory
+     * @param ViewModel $viewModel
      * @return void
      */
     public function __construct(
         Context $context,
-        PageFactory $resultPageFactory
+        PageFactory $resultPageFactory,
+        ViewModel $viewModel
     ) {
         parent::__construct($context);
+        $this->__initialize();
         $this->resultPageFactory = $resultPageFactory;
+        $this->viewModel = $viewModel;
     }
 
     /**
-     * Execute simplereturns_rma_create action.
+     * Execute simplereturns_rma_view action.
      *
-     * @return Page
+     * @return Page|Redirect
      */
     public function execute()
     {
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->getConfig()->getTitle()->set(
-            __('Create RMA Request')
+            __('View Return Shipment Package')
         );
 
-        return $resultPage;
+        if ($this->viewModel->hasPackage()) {
+            return $resultPage;
+        }
+
+        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
     }
 }
