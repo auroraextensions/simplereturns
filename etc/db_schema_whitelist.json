@@ -31,7 +31,9 @@
             "description": true,
             "dimension_units": true,
             "weight_units": true,
-            "weight": true
+            "weight": true,
+            "remote_ip": true,
+            "token": true
         },
         "index": {
             "SIMPLERETURNS_PACKAGE_RMA_ID": true,
@@ -47,7 +49,9 @@
             "label_id": true,
             "package_id": true,
             "image": true,
-            "tracking_number": true
+            "tracking_number": true,
+            "remote_ip": true,
+            "token": true
         },
         "index": {
             "SIMPLERETURNS_LABEL_PACKAGE_ID": true

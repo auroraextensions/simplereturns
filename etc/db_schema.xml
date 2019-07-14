@@ -54,6 +54,8 @@
         <column xsi:type="varchar" name="dimension_units" nullable="true" length="32" comment="Package Dimension Units"/>
         <column xsi:type="varchar" name="weight_units" nullable="true" length="32" comment="Package Weight Units"/>
         <column xsi:type="smallint" name="weight" padding="5" unsigned="true" nullable="true" comment="Package Weight"/>
+        <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
+        <column xsi:type="varchar" name="token" nullable="true" length="128" comment="Package Token"/>
         <constraint xsi:type="foreign" referenceId="SIMPLERETURNS_PACKAGE_LABEL_ID_SIMPLERETURNS_LABEL_LABEL_ID"
                     table="simplreturns_package" column="label_id" referenceTable="simplereturns_label"
                     referenceColumn="label_id" onDelete="CASCADE"/>
@@ -73,6 +75,8 @@
         <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
         <column xsi:type="blob" name="image" nullable="true" comment="Label Image"/>
         <column xsi:type="varchar" name="tracking_number" nullable="true" length="128" comment="Label Tracking Number"/>
+        <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
+        <column xsi:type="varchar" name="token" nullable="true" length="128" comment="Label Token"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="label_id"/>
         </constraint>
