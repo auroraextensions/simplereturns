@@ -17,29 +17,38 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="AuroraExtensions\SimpleReturns\Api\AbstractRepositoryInterface"
+                type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AbstractRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface"
                 type="AuroraExtensions\SimpleReturns\Model\DataModel\SimpleReturn"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
-
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\PackageRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Package"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
-
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\LabelRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Label"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
 
-    <preference for="AuroraExtensions\SimpleReturns\Api\AbstractRepositoryInterface"
-                type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AbstractRepository"/>
-
     <type name="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository">
         <arguments>
             <argument name="collectionFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\CollectionFactory</argument>
             <argument name="searchResultsFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterfaceFactory</argument>
+        </arguments>
+    </type>
+    <type name="AuroraExtensions\SimpleReturns\Model\RepositoryModel\PackageRepository">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ResourceModel\Package\CollectionFactory</argument>
+            <argument name="searchResultsFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterfaceFactory</argument>
+        </arguments>
+    </type>
+    <type name="AuroraExtensions\SimpleReturns\Model\RepositoryModel\LabelRepository">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ResourceModel\Label\CollectionFactory</argument>
+            <argument name="searchResultsFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterfaceFactory</argument>
         </arguments>
     </type>
     <type name="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config">
