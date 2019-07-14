@@ -1,6 +1,6 @@
 <?php
 /**
- * ResultsView.php
+ * CreateView.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,26 +16,33 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Orders;
+namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
+    Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
+    Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
     App\RequestInterface,
+    Exception\NoSuchEntityException,
+    Message\ManagerInterface as MessageManagerInterface,
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
 
-class ResultsView extends AbstractView implements
+class CreateView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property array $errors */
-    protected $errors = [];
+    /** @property MessageManagerInterface $messageManager */
+    protected $messageManager;
+
+    /** @property ModuleConfig $moduleConfig */
+    protected $moduleConfig;
 
     /**
      * @param ConfigHelper $configHelper
@@ -43,6 +50,8 @@ class ResultsView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param MessageManagerInterface $messageManager
+     * @param ModuleConfig $moduleConfig
      * @return void
      */
     public function __construct(
@@ -50,56 +59,19 @@ class ResultsView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = []
+        array $data = [],
+        MessageManagerInterface $messageManager,
+        ModuleConfig $moduleConfig
     ) {
         parent::__construct(
             $configHelper,
             $exceptionFactory,
             $request,
-            $urlBuilder
+            $urlBuilder,
+            $data
         );
-    }
 
-    /**
-     * Get return label URL.
-     *
-     * @param OrderInterface $order
-     * @return string
-     */
-    public function getReturnLabelUrl(OrderInterface $order): string
-    {
-        return $this->urlBuilder->getUrl(
-            self::ROUTE_SIMPLERETURNS_LABEL_INDEX,
-            [
-                self::PARAM_ORDER_ID => $order->getRealOrderId(),
-                self::PARAM_PROTECT_CODE => $order->getProtectCode(),
-                '_secure' => true,
-            ]
-        );
-    }
-
-    /**
-     * Check if customer has existing orders.
-     *
-     * @return bool
-     */
-    public function hasOrders(): bool
-    {
-        /** @var array $orders */
-        $orders = $this->getData('orders') ?? [];
-
-        return (bool)(count($orders) > 0);
-    }
-
-    /**
-     * Check if order is eligible for prepaid return labels.
-     *
-     * @param OrderInterface $order
-     * @return bool
-     * @todo: Implement this method.
-     */
-    public function isOrderPrepaidEligible(OrderInterface $order): bool
-    {
-        return true;
+        $this->messageManager = $messageManager;
+        $this->moduleConfig = $moduleConfig;
     }
 }
