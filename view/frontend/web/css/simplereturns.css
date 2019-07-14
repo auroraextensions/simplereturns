@@ -18,6 +18,11 @@ input[readonly] {
   opacity: 0.5;
 }
 
+.simplereturns-rma-view .subtitle {
+  border-bottom: 1px solid #fafafa;
+  padding-bottom: 10px;
+}
+
 .simplereturns-rma-view .row span {
   display: inline-block;
   font-size: 1.5rem;
