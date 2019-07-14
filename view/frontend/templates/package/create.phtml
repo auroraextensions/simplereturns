@@ -27,16 +27,16 @@ $rma = $viewModel->getSimpleReturn();
         <div class="container-form">
             <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="simplereturns-package-create-form">
                 <?= $block->getBlockHtml('formkey') ?>
-                <fieldset class="fieldset package" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
+                <fieldset class="fieldset simplereturns_package" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                     <legend class="legend">
-                        <span><?= $block->escapeHtml(__('Create Package for Return #%1', $order->getRealOrderId())) ?></span>
+                        <span><?= $block->escapeHtml(__('Create Package for Return #%1', $rma->getId())) ?></span>
                     </legend>
                     <div class="field rma_id required">
                         <label class="label rma_id" for="rma_id">
                             <span><?= $block->escapeHtml(__('Return ID')) ?></span>
                         </label>
                         <div class="control">
-                            <input name="simplereturns[rma_id]"
+                            <input name="simplereturns_package[rma_id]"
                                    id="rma_id"
                                    type="text"
                                    class="form-input input-text"
@@ -46,10 +46,10 @@ $rma = $viewModel->getSimpleReturn();
                                    data-mage-init='{"mage/trim-input":{}}'>
                         </div>
                     </div>
-                    <div class="field token required">
+                    <div class="field rma_token required">
                         <div class="control">
-                            <input name="simplereturns[token]"
-                                   id="token"
+                            <input name="simplereturns_package[rma_token]"
+                                   id="rma_token"
                                    type="hidden"
                                    class="form-input input-text"
                                    value="<?= $block->escapeHtmlAttr($rma->getToken()) ?>"
