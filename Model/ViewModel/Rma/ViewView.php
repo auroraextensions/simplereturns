@@ -101,13 +101,39 @@ class ViewView extends AbstractView implements
     }
 
     /**
+     * @return string
+     */
+    public function getCreatePackageUrl(): string
+    {
+        return $this->urlBuilder->getUrl(
+            'simplereturns/package/create',
+            [
+                '_secure' => true,
+            ]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewLabelUrl(): string
+    {
+        return $this->urlBuilder->getUrl(
+            'simplereturns/label/view',
+            [
+                '_secure' => true,
+            ]
+        );
+    }
+
+    /**
      * Get frontend label for field type by key.
      *
      * @param string $type
      * @param string $key
      * @param string
      */
-    public function getLabel(string $type, string $key): string
+    public function getFrontendLabel(string $type, string $key): string
     {
         /** @var array $labels */
         $labels = $this->moduleConfig->getSettings()->getData($type);
@@ -166,7 +192,9 @@ class ViewView extends AbstractView implements
                     }
 
                     /** @var LocalizedException $exception */
-                    $exception = $this->exceptionFactory->create(LocalizedException::class);
+                    $exception = $this->exceptionFactory->create(
+                        LocalizedException::class
+                    );
 
                     throw $exception;
                 } catch (NoSuchEntityException $e) {
