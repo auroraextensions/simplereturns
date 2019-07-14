@@ -128,7 +128,7 @@ class LabelRepository extends AbstractRepository implements
     public function save(LabelInterface $label): int
     {
         $this->labelResource->save($label);
-        return $label->getId();
+        return (int) $label->getId();
     }
 
     /**
