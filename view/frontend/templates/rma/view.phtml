@@ -29,8 +29,8 @@ $order = $viewModel->getOrder();
     <h2><?= $block->escapeHtml(__('View Return for Order #%1', $order->getRealOrderId())) ?></h2>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
     <div class="actions">
-        <a href="<?= $viewModel->getCreatePackageUrl() ?>" target="_blank"><?= $block->escapeHtml(__('Create Return Shipment')) ?></a>
-        <a href="<?= $viewModel->getViewLabelUrl() ?>" target="_blank"><?= $block->escapeHtml(__('Print Label')) ?></a>
+        <a class="action" href="<?= $viewModel->getCreatePackageUrl() ?>" target="_blank"><?= $block->escapeHtml(__('Create Package')) ?></a>
+        <a class="action" href="<?= $viewModel->getViewLabelUrl() ?>" target="_blank"><?= $block->escapeHtml(__('Print Label')) ?></a>
     </div>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
     <div class="details">
@@ -52,7 +52,7 @@ $order = $viewModel->getOrder();
         </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Comments')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('%1', $rma->getComments())) ?></span>
+            <span class="value"><?= $block->escapeHtml($rma->getComments()) ?></span>
         </div>
     </div>
 </div>
