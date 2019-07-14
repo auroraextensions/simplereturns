@@ -19,9 +19,12 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\SimpleReturnInterface,
+    Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
+    Model\AdapterModel\Security\Token as Tokenizer,
     Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
@@ -44,6 +47,12 @@ class CreateView extends AbstractView implements
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
+    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    protected $simpleReturnRepository;
+
+    /** @property Tokenizer $tokenizer */
+    protected $tokenizer;
+
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
@@ -52,6 +61,8 @@ class CreateView extends AbstractView implements
      * @param array $data
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
+     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param Tokenizer $tokenizer
      * @return void
      */
     public function __construct(
@@ -61,7 +72,9 @@ class CreateView extends AbstractView implements
         UrlInterface $urlBuilder,
         array $data = [],
         MessageManagerInterface $messageManager,
-        ModuleConfig $moduleConfig
+        ModuleConfig $moduleConfig,
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        Tokenizer $tokenizer
     ) {
         parent::__construct(
             $configHelper,
@@ -73,5 +86,82 @@ class CreateView extends AbstractView implements
 
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
+        $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->tokenizer = $tokenizer;
+    }
+
+    /**
+     * Get associated SimpleReturn data object.
+     *
+     * @return SimpleReturnInterface|null
+     * @throws NoSuchEntityException
+     */
+    public function getSimpleReturn(): ?SimpleReturnInterface
+    {
+        /** @var int|string|null $rmaId */
+        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
+        $rmaId = $rmaId !== null && is_numeric($rmaId)
+            ? (int) $rmaId
+            : null;
+
+        if (is_int($rmaId)) {
+            /** @var string|null $rmaToken */
+            $rmaToken = $this->request->getParam(self::PARAM_TOKEN);
+            $rmaToken = $rmaToken !== null && Tokenizer::isHex($rmaToken) ? $rmaToken : null;
+
+            if ($rmaToken !== null) {
+                try {
+                    /** @var SimpleReturnInterface $rma */
+                    $rma = $this->simpleReturnRepository->getById($rmaId);
+
+                    if (Tokenizer::isEqual($rmaToken, $rma->getToken())) {
+                        return $rma;
+                    }
+
+                    /** @var LocalizedException $exception */
+                    $exception = $this->exceptionFactory->create(
+                        LocalizedException::class
+                    );
+
+                    throw $exception;
+                } catch (NoSuchEntityException $e) {
+                    /* No action required. */
+                } catch (LocalizedException $e) {
+                    /* No action required. */
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $route
+     * @return string
+     */
+    public function getPostActionUrl(
+        string $route = self::ROUTE_SIMPLERETURNS_PKG_CREATEPOST
+    ): string
+    {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var int|string|null $rmaId */
+        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
+
+        if ($rmaId !== null) {
+            $params['rma_id'] = $rmaId;
+        }
+
+        /** @var string|null $token */
+        $token = $this->request->getParam(self::PARAM_TOKEN);
+
+        if ($token !== null) {
+            $params['token'] = $token;
+        }
+
+        return $this->urlBuilder->getUrl($route, $params);
     }
 }
