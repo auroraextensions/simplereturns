@@ -35,6 +35,7 @@ use Magento\Framework\{
     App\Action\HttpPostActionInterface,
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
+    Exception\AlreadyExistsException,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
     HTTP\PhpEnvironment\RemoteAddress,
@@ -173,9 +174,9 @@ class CreatePost extends Action implements
 
                         /** @note Consider possible redirect to RMA view page. */
                         if ($rma->getId()) {
-                            /** @var LocalizedException $exception */
+                            /** @var AlreadyExistsException $exception */
                             $exception = $this->exceptionFactory->create(
-                                LocalizedException::class,
+                                AlreadyExistsException::class,
                                 __('An RMA request already exists for this order.')
                             );
 
@@ -222,6 +223,8 @@ class CreatePost extends Action implements
                         );
 
                         return $this->getRedirectToUrl($viewUrl);
+                    } catch (AlreadyExistsException $e) {
+                        throw $e;
                     } catch (LocalizedException $e) {
                         throw $e;
                     }
