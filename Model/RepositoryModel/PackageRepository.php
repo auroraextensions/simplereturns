@@ -128,7 +128,7 @@ class PackageRepository extends AbstractRepository implements
     public function save(PackageInterface $package): int
     {
         $this->packageResource->save($package);
-        return $package->getId();
+        return (int) $package->getId();
     }
 
     /**
