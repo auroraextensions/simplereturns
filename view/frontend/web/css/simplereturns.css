@@ -23,6 +23,10 @@ input[readonly] {
   padding-bottom: 10px;
 }
 
+.simplereturns-rma-view .actions a.action {
+  padding-right: 3px;
+}
+
 .simplereturns-rma-view .row span {
   display: inline-block;
   font-size: 1.5rem;
