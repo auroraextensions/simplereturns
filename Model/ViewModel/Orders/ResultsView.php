@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  * ResultsView.php
  *
  * NOTICE OF LICENSE
@@ -13,7 +13,7 @@
  * @package       AuroraExtensions_SimpleReturns
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
- */ 
+ */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Orders;
