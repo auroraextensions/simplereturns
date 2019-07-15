@@ -21,46 +21,51 @@ $viewModel = $block->getViewModel();
 
 /** @var AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma */
 $rma = $viewModel->getSimpleReturn();
+
+/** @var Magento\Sales\Api\Data\OrderInterface $order */
+$order = $viewModel->getOrder();
+
+/** @var float $packageWeight */
+$packageWeight = $viewModel->getPackageWeight();
+
+/** @var string $weightUnits */
+$weightUnits = $viewModel->getWeightUnits();
 ?>
 <div class="block simplereturns-package-create">
-    <div class="simplereturns-package-form">
+    <h2><?= $block->escapeHtml(__('Create Return Package for Order #%1', $order->getRealOrderId())) ?></h2>
+    <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
+    <div class="details">
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>
+        </div>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Package Weight')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('%1 (%2)', $packageWeight, $weightUnits)) ?></span>
+        </div>
+    </div>
+    <h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
+    <div class="simplereturns-package-create-form">
         <div class="container-form">
             <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="simplereturns-package-create-form">
                 <?= $block->getBlockHtml('formkey') ?>
                 <fieldset class="fieldset simplereturns_package" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
-                    <legend class="legend">
-                        <span><?= $block->escapeHtml(__('Create Package for Return #%1', $rma->getId())) ?></span>
-                    </legend>
-                    <div class="field rma_id required">
-                        <label class="label rma_id" for="rma_id">
-                            <span><?= $block->escapeHtml(__('Return ID')) ?></span>
+                    <div class="field generate_shipping_label required">
+                        <label class="label generate_shipping_label" for="generate_shipping_label">
+                            <span><?= $block->escapeHtml(__('Generate Shipping Label')) ?></span>
                         </label>
                         <div class="control">
-                            <input name="simplereturns_package[rma_id]"
-                                   id="rma_id"
-                                   type="text"
-                                   class="form-input input-text"
-                                   value="<?= $block->escapeHtmlAttr($rma->getId()) ?>"
-                                   readonly
-                                   title="<?= $block->escapeHtmlAttr(__('Return ID')) ?>"
-                                   data-mage-init='{"mage/trim-input":{}}'>
-                        </div>
-                    </div>
-                    <div class="field rma_token required">
-                        <div class="control">
-                            <input name="simplereturns_package[rma_token]"
-                                   id="rma_token"
-                                   type="hidden"
-                                   class="form-input input-text"
-                                   value="<?= $block->escapeHtmlAttr($rma->getToken()) ?>"
-                                   data-mage-init='{"mage/trim-input":{}}'>
+                            <select id="generate_shipping_label" name="simplereturns_package[generate_shipping_label]" class="select">
+                                <option value="yes"><?= $block->escapeHtml(__('Yes')) ?></option>
+                                <option value="no"><?= $block->escapeHtml(__('No')) ?></option>
+                            </select>
                         </div>
                     </div>
                 </fieldset>
                 <div class="actions-toolbar">
                     <div class="primary">
-                        <button class="action submit" title="<?= $block->escapeHtmlAttr(__('Submit')) ?>" type="submit">
-                            <span><?= $block->escapeHtml(__('Submit')) ?></span>
+                        <button class="action submit" title="<?= $block->escapeHtmlAttr(__('Confirm')) ?>" type="submit">
+                            <span><?= $block->escapeHtml(__('Confirm')) ?></span>
                         </button>
                     </div>
                 </div>
