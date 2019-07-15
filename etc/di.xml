@@ -54,6 +54,12 @@
     <type name="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config">
         <arguments>
             <argument name="data" xsi:type="array">
+                <item name="carriers" xsi:type="array">
+                    <item name="ups" xsi:type="string">UPS</item>
+                </item>
+                <item name="methods" xsi:type="array">
+                    <item name="03" xsi:type="string">UPS Ground</item>
+                </item>
                 <item name="reasons" xsi:type="array">
                     <item name="no_longer_needed" xsi:type="string">No longer needed</item>
                     <item name="inaccurate_description" xsi:type="string">Inaccurate website description</item>
