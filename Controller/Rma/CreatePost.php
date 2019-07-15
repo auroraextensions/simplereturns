@@ -134,23 +134,23 @@ class CreatePost extends Action implements
         $params = $request->getPost('simplereturns');
 
         if ($params !== null) {
-            /** @var int|string $orderId */
-            $orderId = $params['order_id'] ?? null;
+            /** @var int|string|null $orderId */
+            $orderId = $request->getParam(self::PARAM_ORDER_ID);
             $orderId = !empty($orderId) ? $orderId : null;
 
-            /** @var string $protectCode */
-            $protectCode = $params['protect_code'] ?? null;
+            /** @var string|null $protectCode */
+            $protectCode = $request->getParam(self::PARAM_PROTECT_CODE);
             $protectCode = !empty($protectCode) ? $protectCode : null;
 
-            /** @var string $reason */
+            /** @var string|null $reason */
             $reason = $params['reason'] ?? null;
             $reason = !empty($reason) ? $reason : null;
 
-            /** @var string $resolution */
+            /** @var string|null $resolution */
             $resolution = $params['resolution'] ?? null;
             $resolution = !empty($resolution) ? $resolution : null;
 
-            /** @var string $comments */
+            /** @var string|null $comments */
             $comments = $params['comments'] ?? null;
             $comments = !empty($comments) ? $comments : null;
 
