@@ -70,21 +70,21 @@ final class ExceptionFactory implements ModuleComponentInterface
         /** @var array $arguments */
         $arguments = [];
 
-        if ($type !== self::BASE_TYPE && !is_subclass_of($type, self::BASE_TYPE)) {
-            throw new \Exception(
-                __(
-                    self::ERROR_INVALID_EXCEPTION_TYPE,
-                    $type
-                )
-            );
-        }
-
         /* If no message was given, set default message. */
         $message = $message ?? $this->phraseFactory->create(
             [
                 'text' => self::ERROR_DEFAULT_MESSAGE,
             ]
         );
+
+        if ($type !== self::BASE_TYPE && !is_subclass_of($type, self::BASE_TYPE)) {
+            throw new \Exception(
+                __(
+                    self::ERROR_INVALID_EXCEPTION_TYPE,
+                    $type
+                )->__toString()
+            );
+        }
 
         if (!is_subclass_of($type, self::BASE_TYPE)) {
             $arguments['message'] = $message->__toString();
