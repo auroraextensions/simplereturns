@@ -29,7 +29,7 @@ interface PackageInterface
 
     /**
      * @param int $id
-     * @return $this
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setId($id);
 
@@ -40,7 +40,7 @@ interface PackageInterface
 
     /**
      * @param string $createdAt
-     * @return $this
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setCreatedAt($createdAt);
 
@@ -51,7 +51,7 @@ interface PackageInterface
 
     /**
      * @param CarrierInterface $carrier
-     * @return PackageInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setCarrier(CarrierInterface $carrier): PackageInterface;
 
@@ -62,7 +62,7 @@ interface PackageInterface
 
     /**
      * @param string $code
-     * @return PackageInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setCarrierCode(string $code): PackageInterface;
 
@@ -73,7 +73,7 @@ interface PackageInterface
 
     /**
      * @param string $type
-     * @return PackageInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setContainerType(string $type): PackageInterface;
 
@@ -84,7 +84,7 @@ interface PackageInterface
 
     /**
      * @param string $description
-     * @return PackageInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setDescription(string $description): PackageInterface;
 
@@ -95,7 +95,7 @@ interface PackageInterface
 
     /**
      * @param string $units
-     * @return PackageInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setDimensionUnits(string $units): PackageInterface;
 
@@ -106,7 +106,7 @@ interface PackageInterface
 
     /**
      * @param LabelInterface $label
-     * @return PackageInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setLabel(LabelInterface $label): PackageInterface;
 
@@ -117,7 +117,7 @@ interface PackageInterface
 
     /**
      * @param float $weight
-     * @return PackageInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setWeight(float $weight): PackageInterface;
 
@@ -128,7 +128,7 @@ interface PackageInterface
 
     /**
      * @param string $units
-     * @return PackageInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
     public function setWeightUnits(string $units): PackageInterface;
 }
