@@ -179,10 +179,10 @@ class CreatePost extends Action implements
 
                         /** @var array $data */
                         $data = [
-                            'rma_id'         => $rmaId,
-                            'carrier_code'   => $carrierCode,
-                            'remote_ip'      => $remoteIp,
-                            'token'          => $token,
+                            'rma_id'       => $rmaId,
+                            'carrier_code' => $carrierCode,
+                            'remote_ip'    => $remoteIp,
+                            'token'        => $token,
                         ];
 
                         /** @var int $pkgId */
