@@ -135,13 +135,13 @@ class CreatePost extends Action implements
 
         if ($params !== null) {
             /** @var int|string|null */
-            $rmaId = $params['rma_id'] ?? null;
+            $rmaId = $request->getParam(self::PARAM_RMA_ID);
             $rmaId = $rmaId !== null && is_numeric($rmaId)
                 ? (int) $rmaId
                 : null;
 
             /** @var string|null $rmaToken */
-            $rmaToken = $params['rma_token'] ?? null;
+            $rmaToken = $request->getParam(self::PARAM_TOKEN);
             $rmaToken = !empty($rmaToken) ? $rmaToken : null;
 
             try {
