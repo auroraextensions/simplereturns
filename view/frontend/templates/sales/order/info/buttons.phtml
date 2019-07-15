@@ -43,7 +43,7 @@ $order = $block->getOrder();
         </a>
     <?php else: ?>
         <a class="action create-rma" href="<?= $block->escapeUrl($viewModel->getRmaCreateUrl($order)) ?>" target="_blank">
-            <span><?= $block->escapeHtml(__('Create Return')) ?></span>
+            <span><?= $block->escapeHtml(__('Return or replace items')) ?></span>
         </a>
     <?php endif ?>
     <a class="action print"

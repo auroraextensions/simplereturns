@@ -21,7 +21,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Carrier;
+namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Shipping\Carrier;
 
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
@@ -32,7 +32,7 @@ use AuroraExtensions\SimpleReturns\{
 };
 use Magento\Framework\{
     DataObject,
-    DataObject\Factory as DataObjectFactory,
+    DataObjectFactory,
     ObjectManagerInterface
 };
 use Magento\Shipping\Model\Carrier\CarrierInterface;
@@ -40,11 +40,6 @@ use Magento\Ups\Model\Carrier as UpsModel;
 
 class CarrierFactory implements ModuleComponentInterface
 {
-    /** @property array $carriers */
-    protected $carriers = [
-        UpsModel::CODE => UpsModel::class,
-    ];
-
     /** @property DataObjectFactory $dataObjectFactory */
     protected $dataObjectFactory;
 
@@ -86,7 +81,7 @@ class CarrierFactory implements ModuleComponentInterface
     public function create(string $code): CarrierInterface
     {
         /** @var array $codes */
-        $codes = array_keys($this->carriers);
+        $codes = array_keys($this->moduleConfig->getCarriers());
 
         if (!in_array($code, $codes)) {
             /** @var InvalidCarrierException $exception */

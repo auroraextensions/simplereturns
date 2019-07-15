@@ -80,7 +80,7 @@ interface ModuleComponentInterface
 
     /** @constant string FORMAT_RMA_ORDER_REFERENCE */
     /** @constant string FORMAT_RMA_REQUEST_COMMENT */
-    const FORMAT_RMA_ORDER_REFERENCE = 'RMA: Order #%1';
+    const FORMAT_RMA_ORDER_REFERENCE = 'RMA for Order #%1';
     const FORMAT_RMA_REQUEST_COMMENT = 'A return label was generated from [%1] with tracking number %2';
 
     /** @constant string FULLACTION_DELIMITER */
