@@ -149,11 +149,25 @@ class CreateView extends AbstractView implements
         string $route = self::ROUTE_SIMPLERETURNS_RMA_CREATEPOST
     ): string
     {
-        return $this->urlBuilder->getUrl(
-            $route,
-            [
-                '_secure' => true,
-            ]
-        );
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var int|string|null $orderId */
+        $orderId = $this->request->getParam(self::PARAM_ORDER_ID);
+
+        if ($orderId !== null) {
+            $params['order_id'] = $orderId;
+        }
+
+        /** @var string|null $protectCode */
+        $protectCode = $this->request->getParam(self::PARAM_PROTECT_CODE);
+
+        if ($protectCode !== null) {
+            $params['code'] = $protectCode;
+        }
+
+        return $this->urlBuilder->getUrl($route, $params);
     }
 }
