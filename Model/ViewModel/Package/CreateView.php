@@ -31,6 +31,7 @@ use AuroraExtensions\SimpleReturns\{
 };
 use Magento\Framework\{
     App\RequestInterface,
+    Exception\LocalizedException,
     Exception\NoSuchEntityException,
     Message\ManagerInterface as MessageManagerInterface,
     UrlInterface,
@@ -95,6 +96,7 @@ class CreateView extends AbstractView implements
      *
      * @return SimpleReturnInterface|null
      * @throws NoSuchEntityException
+     * @throws LocalizedException
      */
     public function getSimpleReturn(): ?SimpleReturnInterface
     {
