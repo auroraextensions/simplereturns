@@ -27,7 +27,7 @@ interface LabelInterface
 
     /**
      * @param int $id
-     * @return $this
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
      */
     public function setId($id);
 
@@ -38,7 +38,7 @@ interface LabelInterface
 
     /**
      * @param string $createdAt
-     * @return $this
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
      */
     public function setCreatedAt($createdAt);
 

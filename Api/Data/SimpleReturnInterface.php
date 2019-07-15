@@ -29,7 +29,7 @@ interface SimpleReturnInterface
 
     /**
      * @param int $id
-     * @return $this
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
      */
     public function setId($id);
 
@@ -40,7 +40,7 @@ interface SimpleReturnInterface
 
     /**
      * @param string $createdAt
-     * @return $this
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
      */
     public function setCreatedAt($createdAt);
 
