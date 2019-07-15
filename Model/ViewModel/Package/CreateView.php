@@ -24,11 +24,13 @@ use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
+    Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\AdapterModel\Security\Token as Tokenizer,
     Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
+use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\{
     App\RequestInterface,
     Exception\LocalizedException,
@@ -37,16 +39,23 @@ use Magento\Framework\{
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
+use Magento\Sales\Api\Data\OrderInterface;
 
 class CreateView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    /** @property DirectoryHelper $directoryHelper */
+    protected $directoryHelper;
+
     /** @property MessageManagerInterface $messageManager */
     protected $messageManager;
 
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
+
+    /** @property OrderAdapter $orderAdapter */
+    protected $orderAdapter;
 
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
@@ -60,8 +69,10 @@ class CreateView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param DirectoryHelper $directoryHelper
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
+     * @param OrderAdapter $orderAdapter
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param Tokenizer $tokenizer
      * @return void
@@ -72,8 +83,10 @@ class CreateView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
+        DirectoryHelper $directoryHelper,
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
+        OrderAdapter $orderAdapter,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         Tokenizer $tokenizer
     ) {
@@ -85,8 +98,10 @@ class CreateView extends AbstractView implements
             $data
         );
 
+        $this->directoryHelper = $directoryHelper;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
+        $this->orderAdapter = $orderAdapter;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->tokenizer = $tokenizer;
     }
@@ -95,8 +110,8 @@ class CreateView extends AbstractView implements
      * Get associated SimpleReturn data object.
      *
      * @return SimpleReturnInterface|null
-     * @throws NoSuchEntityException
      * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function getSimpleReturn(): ?SimpleReturnInterface
     {
@@ -106,7 +121,7 @@ class CreateView extends AbstractView implements
             ? (int) $rmaId
             : null;
 
-        if (is_int($rmaId)) {
+        if ($rmaId !== null) {
             /** @var string|null $rmaToken */
             $rmaToken = $this->request->getParam(self::PARAM_TOKEN);
             $rmaToken = $rmaToken !== null && Tokenizer::isHex($rmaToken) ? $rmaToken : null;
@@ -135,6 +150,76 @@ class CreateView extends AbstractView implements
         }
 
         return null;
+    }
+
+    /**
+     * @return OrderInterface|null
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function getOrder(): ?OrderInterface
+    {
+        /** @var SimpleReturnInterface|null $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            /** @var array $fields */
+            $fields = [
+                'entity_id' => $rma->getOrderId(),
+            ];
+
+            try {
+                /** @var OrderInterface[] $orders */
+                $orders = $this->orderAdapter->getOrdersByFields($fields);
+
+                if (!empty($orders)) {
+                    return $orders[0];
+                }
+
+                /** @var NoSuchEntityException $exception */
+                $exception = $this->exceptionFactory->create(
+                    NoSuchEntityException::class,
+                    __('Unable to locate any matching orders.')
+                );
+
+                throw $exception;
+            } catch (NoSuchEntityException $e) {
+                $this->messageManager->addError($e->getMessage());
+            } catch (LocalizedException $e) {
+                $this->messageManager->addError($e->getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPackageWeight(): float
+    {
+        /** @var Shipment $shipment */
+        $shipment = $this->getShipment();
+
+        return $shipment->getWeight() ?? $this->moduleConfig->getPackageWeight();
+    }
+
+    /**
+     * @return Shipment
+     */
+    public function getShipment()
+    {
+        return $this->getOrder()
+            ->getShipmentsCollection()
+            ->getFirstItem();
+    }
+
+    /**
+     * @return string
+     */
+    public function getWeightUnits(): string
+    {
+        return $this->directoryHelper->getWeightUnit();
     }
 
     /**
