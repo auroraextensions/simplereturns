@@ -19,7 +19,9 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\PackageInterface,
     Api\Data\SimpleReturnInterface,
+    Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
@@ -54,6 +56,9 @@ class ViewView extends AbstractView implements
     /** @property OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
+    /** @property PackageRepositoryInterface $packageRepository */
+    protected $packageRepository;
+
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
@@ -69,6 +74,7 @@ class ViewView extends AbstractView implements
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
+     * @param PackageRepositoryInterface $packageRepository
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param Tokenizer $tokenizer
      * @return void
@@ -82,6 +88,7 @@ class ViewView extends AbstractView implements
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
         OrderRepositoryInterface $orderRepository,
+        PackageRepositoryInterface $packageRepository,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         Tokenizer $tokenizer
     ) {
@@ -96,6 +103,7 @@ class ViewView extends AbstractView implements
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
+        $this->packageRepository = $packageRepository;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->tokenizer = $tokenizer;
     }
@@ -126,6 +134,30 @@ class ViewView extends AbstractView implements
 
         return $this->urlBuilder->getUrl(
             'simplereturns/package/create',
+            $params
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewPackageUrl(): string
+    {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var PackageInterface|null $package */
+        $package = $this->getPackage();
+
+        if ($package !== null) {
+            $params['pkg_id'] = $package->getId();
+            $params['token'] = $package->getToken();
+        }
+
+        return $this->urlBuilder->getUrl(
+            'simplereturns/package/view',
             $params
         );
     }
@@ -174,6 +206,37 @@ class ViewView extends AbstractView implements
                 return $this->orderRepository->get($rma->getOrderId());
             } catch (NoSuchEntityException $e) {
                 /* No action required. */
+            } catch (LocalizedException $e) {
+                /* No action required. */
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return PackageInterface|null
+     */
+    public function getPackage(): ?PackageInterface
+    {
+        /** @var SimpleReturnInterface|null $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            /** @var int|string|null $pkgId */
+            $pkgId = $rma->getPackageId();
+            $pkgId = $pkgId !== null && is_numeric($pkgId)
+                ? (int) $pkgId
+                : null;
+
+            if ($pkgId !== null) {
+                try {
+                    return $this->packageRepository->getById($pkgId);
+                } catch (NoSuchEntityException $e) {
+                    /* No action required. */
+                } catch (LocalizedException $e) {
+                    /* No action required. */
+                }
             }
         }
 
@@ -223,6 +286,21 @@ class ViewView extends AbstractView implements
         }
 
         return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPackage(): bool
+    {
+        /** @var PackageInterface|null $package */
+        $package = $this->getPackage();
+
+        if ($package !== null) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
