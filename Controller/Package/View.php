@@ -72,7 +72,7 @@ class View extends Action implements
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->getConfig()->getTitle()->set(
-            __('View Return Shipment Package')
+            __('View Return Package')
         );
 
         if ($this->viewModel->hasPackage()) {
