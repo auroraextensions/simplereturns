@@ -94,12 +94,14 @@ interface ModuleComponentInterface
     /** @constant string PARAM_EMAIL */
     /** @constant string PARAM_ORDER_ID */
     /** @constant string PARAM_PROTECT_CODE */
+    /** @constant string PARAM_PKG_ID */
     /** @constant string PARAM_RMA_ID */
     /** @constant string PARAM_TOKEN */
     /** @constant string PARAM_ZIP_CODE */
     const PARAM_EMAIL = 'email';
     const PARAM_ORDER_ID = 'order_id';
     const PARAM_PROTECT_CODE = 'code';
+    const PARAM_PKG_ID = 'pkg_id';
     const PARAM_RMA_ID = 'rma_id';
     const PARAM_TOKEN = 'token';
     const PARAM_ZIP_CODE = 'zip_code';

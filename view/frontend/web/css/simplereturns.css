@@ -18,34 +18,29 @@ input[readonly] {
   opacity: 0.5;
 }
 
-.simplereturns-rma-view .subtitle,
-.simplereturns-package-create .subtitle {
+.subtitle {
   border-bottom: 1px solid #fafafa;
   padding-bottom: 10px;
 }
 
-.simplereturns-rma-view .actions a.action,
-.simplereturns-package-create .actions a.action {
+.actions a.action {
   padding-right: 3px;
 }
 
-.simplereturns-rma-view .row span,
-.simplereturns-package-create .row span {
+.row span.title,
+.row span.value {
   display: inline-block;
   font-size: 1.5rem;
 }
 
-.simplereturns-rma-view .row .title,
-.simplereturns-package-create .row .title {
+.row .title {
   font-weight: 500;
 }
 
-.simplereturns-rma-view .row .title:after,
-.simplereturns-package-create .row .title:after {
+.row .title:after {
   content: "\003A";
 }
 
-.simplereturns-rma-view .row .value,
-.simplereturns-package-create .row .value {
+.row .value {
   font-weight: 300;
 }
