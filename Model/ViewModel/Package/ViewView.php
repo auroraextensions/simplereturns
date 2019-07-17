@@ -301,4 +301,16 @@ class ViewView extends AbstractView implements
             ]
         );
     }
+
+    public function hasPackage(): bool
+    {
+        /** @var PackageInterface|null $package */
+        $package = $this->getPackage();
+
+        if ($package !== null) {
+            return true;
+        }
+
+        return false;
+    }
 }
