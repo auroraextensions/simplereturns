@@ -107,6 +107,29 @@ class CreateView extends AbstractView implements
     }
 
     /**
+     * @return string
+     */
+    public function getShippingCarrier(): string
+    {
+        return $this->moduleConfig->getShippingCarrier();
+    }
+
+    /**
+     * Get frontend label for field type by key.
+     *
+     * @param string $type
+     * @param string $key
+     * @param string
+     */
+    public function getFrontendLabel(string $type, string $key): string
+    {
+        /** @var array $labels */
+        $labels = $this->moduleConfig->getSettings()->getData($type);
+
+        return $labels[$key] ?? $key;
+    }
+
+    /**
      * Get associated SimpleReturn data object.
      *
      * @return SimpleReturnInterface|null
@@ -201,7 +224,10 @@ class CreateView extends AbstractView implements
         /** @var Shipment $shipment */
         $shipment = $this->getShipment();
 
-        return $shipment->getWeight() ?? $this->moduleConfig->getPackageWeight();
+        /** @var float|string $weight */
+        $weight = $shipment->getWeight() ?? $this->moduleConfig->getPackageWeight();
+
+        return (float) $weight;
     }
 
     /**
