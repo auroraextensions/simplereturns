@@ -26,8 +26,7 @@ namespace AuroraExtensions\SimpleReturns\Exception;
 use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Framework\{
     ObjectManagerInterface,
-    Phrase,
-    PhraseFactory
+    Phrase
 };
 
 final class ExceptionFactory implements ModuleComponentInterface
@@ -38,21 +37,15 @@ final class ExceptionFactory implements ModuleComponentInterface
     /** @property ObjectManagerInterface $objectManager */
     protected $objectManager;
 
-    /** @property PhraseFactory $phraseFactory */
-    protected $phraseFactory;
-
     /**
      * @param ObjectManagerInterface $objectManager
-     * @param PhraseFactory $phraseFactory
      * @return void
      */
     public function __construct(
-        ObjectManagerInterface $objectManager,
-        PhraseFactory $phraseFactory
+        ObjectManagerInterface $objectManager
     )
     {
         $this->objectManager = $objectManager;
-        $this->phraseFactory = $phraseFactory;
     }
 
     /**
@@ -71,11 +64,7 @@ final class ExceptionFactory implements ModuleComponentInterface
         $arguments = [];
 
         /* If no message was given, set default message. */
-        $message = $message ?? $this->phraseFactory->create(
-            [
-                'text' => self::ERROR_DEFAULT_MESSAGE,
-            ]
-        );
+        $message = $message ?? __(self::ERROR_DEFAULT_MESSAGE);
 
         if ($type !== self::BASE_TYPE && !is_subclass_of($type, self::BASE_TYPE)) {
             throw new \Exception(
