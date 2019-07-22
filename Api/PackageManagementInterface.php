@@ -18,13 +18,18 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api;
 
+use AuroraExtensions\SimpleReturns\{
+    Api\Data\LabelInterface,
+    Api\Data\PackageInterface
+};
+
 interface PackageManagementInterface
 {
     /**
      * Create package label.
      *
      * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface|null
      */
-    public function createLabel(Data\PackageInterface $package): Data\LabelInterface;
+    public function createLabel(PackageInterface $package): ?LabelInterface;
 }

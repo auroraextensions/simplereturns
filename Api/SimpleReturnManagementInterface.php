@@ -18,6 +18,11 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api;
 
+use AuroraExtensions\SimpleReturns\{
+    Api\Data\PackageInterface,
+    Api\Data\SimpleReturnInterface
+};
+
 interface SimpleReturnManagementInterface
 {
     /**
@@ -32,7 +37,7 @@ interface SimpleReturnManagementInterface
      * Create shipment package.
      *
      * @param \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface|null
      */
-    public function createPackage(Data\SimpleReturnInterface $rma): Data\PackageInterface;
+    public function createPackage(SimpleReturnInterface $rma): ?PackageInterface;
 }
