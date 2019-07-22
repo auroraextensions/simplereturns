@@ -91,10 +91,13 @@ class PackageRepository extends AbstractRepository implements
         );
 
         if (!$package->getId()) {
-            throw $this->exceptionFactory->create(
+            /** @var NoSuchEntityException $exception */
+            $exception = $this->exceptionFactory->create(
                 NoSuchEntityException::class,
                 __('Unable to locate package(s) for the requested RMA.')
             );
+
+            throw $exception;
         }
 
         return $package;
@@ -112,10 +115,13 @@ class PackageRepository extends AbstractRepository implements
         $this->packageResource->load($package, $id);
 
         if (!$package->getId()) {
-            throw $this->exceptionFactory->create(
+            /** @var NoSuchEntityException $exception */
+            $exception = $this->exceptionFactory->create(
                 NoSuchEntityException::class,
                 __('Unable to locate package(s) for the requested RMA.')
             );
+
+            throw $exception;
         }
 
         return $package;
