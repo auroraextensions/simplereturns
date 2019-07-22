@@ -258,17 +258,18 @@ class ViewView extends AbstractView implements
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getPackageWeight(): float
+    public function getPackageWeight(): string
     {
         /** @var Shipment $shipment */
         $shipment = $this->getShipment();
 
         /** @var float|string $weight */
         $weight = $shipment->getWeight() ?? $this->moduleConfig->getPackageWeight();
+        $weight = (float) $weight;
 
-        return (float) $weight;
+        return number_format($weight, 2);
     }
 
     /**
