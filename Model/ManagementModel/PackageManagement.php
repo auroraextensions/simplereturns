@@ -23,6 +23,9 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterface,
     Api\Data\LabelInterfaceFactory,
     Api\Data\PackageInterface,
+    Api\Data\SimpleReturnInterface,
+    Api\Data\SimpleReturnInterfaceFactory,
+    Api\SimpleReturnRepositoryInterface,
     Shared\ModuleComponentInterface
 };
 
@@ -31,26 +34,41 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
     /** @property LabelInterfaceFactory $labelFactory */
     protected $labelFactory;
 
+    /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
+    protected $simpleReturnFactory;
+
+    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    protected $simpleReturnRepository;
+
     /**
      * @param LabelInterfaceFactory $labelFactory
+     * @param SimpleReturnInterfaceFactory $simpleReturnFactory
+     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @return void
      */
     public function __construct(
-        LabelInterfaceFactory $labelFactory
+        LabelInterfaceFactory $labelFactory,
+        SimpleReturnInterfaceFactory $simpleReturnFactory,
+        SimpleReturnRepositoryInterface $simpleReturnRepository
     ) {
         $this->labelFactory = $labelFactory;
+        $this->simpleReturnFactory = $simpleReturnFactory;
+        $this->simpleReturnRepository = $simpleReturnRepository;
     }
 
     /**
      * Create package label.
      *
      * @param PackageInterface $package
-     * @return LabelInterface
+     * @return LabelInterface|null
      */
-    public function createLabel(PackageInterface $package): LabelInterface
+    public function createLabel(PackageInterface $package): ?LabelInterface
     {
         /** @var LabelInterface $label */
         $label = $this->labelFactory->create();
+
+        /** @var SimpleReturnInterface $rma */
+        $rma = $this->simpleReturnFactory->create();
 
         return $label;
     }
