@@ -24,15 +24,16 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\PackageInterfaceFactory,
     Api\Data\SimpleReturnInterface,
     Helper\Config as ConfigHelper,
-    Model\AdapterModel\Carrier\CarrierFactory,
+    Model\AdapterModel\Shipping\Carrier\CarrierFactory,
     Shared\ModuleComponentInterface
 };
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\{
+    Phrase,
+    HTTP\PhpEnvironment\RemoteAddress
+};
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Ups\Model\Carrier as UpsCarrier;
-use Zend_Measure_Length as LengthUnits;
-use Zend_Measure_Weight as WeightUnits;
 
 class SimpleReturnManagement implements SimpleReturnManagementInterface, ModuleComponentInterface
 {
@@ -83,63 +84,57 @@ class SimpleReturnManagement implements SimpleReturnManagementInterface, ModuleC
      * Create package for return shipment.
      *
      * @param SimpleReturnInterface $rma
-     * @return PackageInterface
+     * @return PackageInterface|null
      */
-    public function createPackage(SimpleReturnInterface $rma): PackageInterface
+    public function createPackage(SimpleReturnInterface $rma): ?PackageInterface
     {
         /** @var array $items */
         $items = [];
 
-        /** @var OrderInterface $order */
+        /** @var OrderInterface|null $order */
         $order = $rma->getOrder();
 
-        /** @var array $visibleItems */
-        $visibleItems = $order->getAllVisibleItems();
+        if ($order !== null) {
+            /** @var array $visibleItems */
+            $visibleItems = $order->getAllVisibleItems();
 
-        foreach ($visibleItems as $item) {
-            $items[] = $item->toArray();
+            foreach ($visibleItems as $item) {
+                $items[] = $item->toArray();
+            }
+
+            /** @var int|string $storeId */
+            $storeId = $order->getStoreId();
+
+            /** @var string $carrierCode */
+            $carrierCode = $this->configHelper->getShippingCarrier($storeId);
+
+            /** @var CarrierInterface $carrierModel */
+            $carrierModel = $this->carrierFactory->create($carrierCode);
+
+            /** @var array $containers */
+            $containers = $carrierModel->getContainerTypesAll();
+
+            /** @var string $container */
+            $container = $this->configHelper->getContainer($storeId);
+
+            /** @var array $data */
+            $data = [
+                'container'       => $containers[$container],
+                'description'     => $this->getRmaOrderReference($order),
+                'dimension_units' => \Zend_Measure_Length::INCH,
+                'weight_units'    => \Zend_Measure_Weight::POUND,
+                'weight'          => $order->getWeight(),
+                'items'           => $items,
+            ];
+
+            /** @var PackageInterface $pacakge */
+            $package = $this->packageFactory->create();
+            $package->addData($data);
+
+            return $package;
         }
 
-        /** @var int|string $storeId */
-        $storeId = $order->getStoreId();
-
-        /** @var string $carrierCode */
-        $carrierCode = $this->configHelper->getShippingCarrier($storeId);
-
-        /** @var CarrierInterface $carrierModel */
-        $carrierModel = $this->carrierFactory->create($carrierCode);
-
-        /** @var array $containers */
-        $containers = $carrierModel->getContainerTypesAll();
-
-        /** @var string $container */
-        $container = $this->configHelper->getContainer($storeId);
-
-        /** @var array $data */
-        $data = [
-            'container'       => $containers[$container],
-            'description'     => $this->getRmaOrderReference($order),
-            'dimension_units' => LengthUnits::INCH,
-            'weight_units'    => WeightUnits::POUND,
-            'weight'          => $order->getWeight(),
-            'items'           => $items,
-        ];
-
-        /** @var PackageInterface $pacakge */
-        $package = $this->packageFactory->create();
-        $package->addData($data);
-
-        return $package;
-    }
-
-    /**
-     * Create return shipment.
-     *
-     * @param SimpleReturnInterface $rma
-     * @return bool
-     */
-    public function createShipment(OrderInterface $order): bool
-    {
+        return null;
     }
 
     /**
@@ -148,7 +143,7 @@ class SimpleReturnManagement implements SimpleReturnManagementInterface, ModuleC
      * @param OrderInterface $order
      * @return string
      */
-    public function getRmaOrderReference(OrderInterface $order): string
+    public function getRmaOrderReference(OrderInterface $order): Phrase
     {
         return __(
             self::FORMAT_RMA_ORDER_REFERENCE,
@@ -162,7 +157,7 @@ class SimpleReturnManagement implements SimpleReturnManagementInterface, ModuleC
      * @param string $trackingNumber
      * @return string
      */
-    public function getRmaRequestComment(string $trackingNumber): string
+    public function getRmaRequestComment(string $trackingNumber): Phrase
     {
         return __(
             self::FORMAT_RMA_REQUEST_COMMENT,
