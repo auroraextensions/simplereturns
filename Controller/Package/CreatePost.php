@@ -21,6 +21,8 @@ namespace AuroraExtensions\SimpleReturns\Controller\Package;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\PackageInterface,
     Api\Data\PackageInterfaceFactory,
+    Api\Data\SimpleReturnInterface,
+    Api\Data\SimpleReturnInterfaceFactory,
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
@@ -69,6 +71,9 @@ class CreatePost extends Action implements
     /** @property RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
+    /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
+    protected $simpleReturnFactory;
+
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
@@ -86,6 +91,7 @@ class CreatePost extends Action implements
      * @param PackageInterfaceFactory $packageFactory
      * @param PackageRepositoryInterface $packageRepository
      * @param RemoteAddress $remoteAddress
+     * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param Tokenizer $tokenizer
      * @param UrlInterface $urlBuilder
@@ -99,6 +105,7 @@ class CreatePost extends Action implements
         PackageInterfaceFactory $packageFactory,
         PackageRepositoryInterface $packageRepository,
         RemoteAddress $remoteAddress,
+        SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         Tokenizer $tokenizer,
         UrlInterface $urlBuilder
@@ -111,6 +118,7 @@ class CreatePost extends Action implements
         $this->packageFactory = $packageFactory;
         $this->packageRepository = $packageRepository;
         $this->remoteAddress = $remoteAddress;
+        $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->tokenizer = $tokenizer;
         $this->urlBuilder = $urlBuilder;
@@ -177,8 +185,8 @@ class CreatePost extends Action implements
                         /** @var string $carrierCode */
                         $carrierCode = $this->moduleConfig->getShippingCarrier();
 
-                        /** @var array $data */
-                        $data = [
+                        /** @var array $pkgData */
+                        $pkgData = [
                             'rma_id'       => $rmaId,
                             'carrier_code' => $carrierCode,
                             'remote_ip'    => $remoteIp,
@@ -187,7 +195,21 @@ class CreatePost extends Action implements
 
                         /** @var int $pkgId */
                         $pkgId = $this->packageRepository->save(
-                            $package->addData($data)
+                            $package->addData($pkgData)
+                        );
+
+                        /** @var SimpleReturnInterface $rma */
+                        $rma = $this->simpleReturnFactory->create();
+
+                        /** @var array $rmaData */
+                        $rmaData = [
+                            'rma_id'     => $rmaId,
+                            'package_id' => $pkgId,
+                        ];
+
+                        /* Update RMA with newly created package ID. */
+                        $this->simpleReturnRepository->save(
+                            $rma->addData($rmaData)
                         );
 
                         /** @var string $viewUrl */
