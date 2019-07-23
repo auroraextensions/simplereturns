@@ -34,6 +34,9 @@
                 <recipient_last_name>Service</recipient_last_name>
                 <return_form_url></return_form_url>
             </returns>
+            <origin>
+                <company></company>
+            </origin>
         </simplereturns>
     </default>
 </config>
