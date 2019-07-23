@@ -26,10 +26,8 @@ use AuroraExtensions\SimpleReturns\{
 interface PackageManagementInterface
 {
     /**
-     * Create package label.
-     *
      * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package
      * @return \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface|null
      */
-    public function createLabel(PackageInterface $package): ?LabelInterface;
+    public function createShipmentPackages(PackageInterface $package): array;
 }

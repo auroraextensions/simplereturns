@@ -20,149 +20,88 @@ namespace AuroraExtensions\SimpleReturns\Model\ManagementModel;
 
 use AuroraExtensions\SimpleReturns\{
     Api\SimpleReturnManagementInterface,
-    Api\Data\PackageInterface,
-    Api\Data\PackageInterfaceFactory,
     Api\Data\SimpleReturnInterface,
-    Helper\Config as ConfigHelper,
-    Model\AdapterModel\Shipping\Carrier\CarrierFactory,
+    Api\SimpleReturnRepositoryInterface,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
-    Phrase,
+    Exception\LocalizedException,
+    Exception\NoSuchEntityException,
     HTTP\PhpEnvironment\RemoteAddress
 };
-use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Shipping\Model\Carrier\CarrierInterface;
-use Magento\Ups\Model\Carrier as UpsCarrier;
+use Magento\Sales\Api\OrderRepositoryInterface;
 
 class SimpleReturnManagement implements SimpleReturnManagementInterface, ModuleComponentInterface
 {
-    /** @property CarrierFactory $carrierFactory */
-    protected $carrierFactory;
-
-    /** @property ConfigHelper $configHelper */
-    protected $configHelper;
-
-    /** @property PackageInterfaceFactory $packageFactory */
-    protected $packageFactory;
+    /** @property OrderRepositoryInterface $orderRepository */
+    protected $orderRepository;
 
     /** @property RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
+    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    protected $simpleReturnRepository;
+
     /**
-     * @param CarrierFactory $carrierFactory
-     * @param ConfigHelper $configHelper
-     * @param PackageInterfaceFactory $packageFactory
+     * @param OrderRepositoryInterface $orderRepository
      * @param RemoteAddress $remoteAddress
+     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @return void
      */
     public function __construct(
-        CarrierFactory $carrierFactory,
-        ConfigHelper $configHelper,
-        PackageInterfaceFactory $packageFactory,
-        RemoteAddress $remoteAddress
+        OrderRepositoryInterface $orderRepository,
+        RemoteAddress $remoteAddress,
+        SimpleReturnRepositoryInterface $simpleReturnRepository
     ) {
-        $this->carrierFactory = $carrierFactory;
-        $this->configHelper = $configHelper;
-        $this->packageFactory = $packageFactory;
+        $this->orderRepository = $orderRepository;
         $this->remoteAddress = $remoteAddress;
+        $this->simpleReturnRepository = $simpleReturnRepository;
     }
 
     /**
-     * Add status update comment to return.
-     *
-     * @param string $comment
-     * @return bool
-     * @todo: Implement this method.
-     */
-    public function addComment(string $comment): bool
-    {
-        return true;
-    }
-
-    /**
-     * Create package for return shipment.
+     * Add RMA comment to order.
      *
      * @param SimpleReturnInterface $rma
-     * @return PackageInterface|null
+     * @param string $comment
+     * @return bool
      */
-    public function createPackage(SimpleReturnInterface $rma): ?PackageInterface
+    public function addOrderComment(
+        SimpleReturnInterface $rma,
+        string $comment
+    ): bool
     {
-        /** @var array $items */
-        $items = [];
+        /** @var int|string|null $orderId */
+        $orderId = $rma->getOrderId();
+        $orderId = $orderId !== null && is_numeric($orderId)
+            ? (int) $orderId
+            : null;
 
-        /** @var OrderInterface|null $order */
-        $order = $rma->getOrder();
+        if ($orderId !== null) {
+            try {
+                /** @var OrderInterface $order */
+                $order = $this->orderRepository->get($orderId);
 
-        if ($order !== null) {
-            /** @var array $visibleItems */
-            $visibleItems = $order->getAllVisibleItems();
+                if ($order->getId()) {
+                    /* Insert comment and update order. */
+                    $order->addStatusHistoryComment($comment);
+                    $this->orderRepository->save($order);
 
-            foreach ($visibleItems as $item) {
-                $items[] = $item->toArray();
+                    return true;
+                }
+
+                /** @var LocalizedException $exception */
+                $exception = $this->exceptionFactory->create(
+                    LocalizedException::class
+                );
+
+                throw $exception;
+            } catch (NoSuchEntityException $e) {
+                /* No action required. */
+            } catch (LocalizedException $e) {
+                /* No action required. */
             }
-
-            /** @var int|string $storeId */
-            $storeId = $order->getStoreId();
-
-            /** @var string $carrierCode */
-            $carrierCode = $this->configHelper->getShippingCarrier($storeId);
-
-            /** @var CarrierInterface $carrierModel */
-            $carrierModel = $this->carrierFactory->create($carrierCode);
-
-            /** @var array $containers */
-            $containers = $carrierModel->getContainerTypesAll();
-
-            /** @var string $container */
-            $container = $this->configHelper->getContainer($storeId);
-
-            /** @var array $data */
-            $data = [
-                'container'       => $containers[$container],
-                'description'     => $this->getRmaOrderReference($order),
-                'dimension_units' => \Zend_Measure_Length::INCH,
-                'weight_units'    => \Zend_Measure_Weight::POUND,
-                'weight'          => $order->getWeight(),
-                'items'           => $items,
-            ];
-
-            /** @var PackageInterface $pacakge */
-            $package = $this->packageFactory->create();
-            $package->addData($data);
-
-            return $package;
         }
 
-        return null;
-    }
-
-    /**
-     * Get RMA order reference for return label.
-     *
-     * @param OrderInterface $order
-     * @return string
-     */
-    public function getRmaOrderReference(OrderInterface $order): Phrase
-    {
-        return __(
-            self::FORMAT_RMA_ORDER_REFERENCE,
-            $order->getIncrementId()
-        );
-    }
-
-    /**
-     * Get RMA request comment for noting on order.
-     *
-     * @param string $trackingNumber
-     * @return string
-     */
-    public function getRmaRequestComment(string $trackingNumber): Phrase
-    {
-        return __(
-            self::FORMAT_RMA_REQUEST_COMMENT,
-            $this->remoteAddress->getRemoteAddress(),
-            $trackingNumber
-        );
+        return false;
     }
 }

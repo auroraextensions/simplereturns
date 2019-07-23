@@ -26,18 +26,9 @@ use AuroraExtensions\SimpleReturns\{
 interface SimpleReturnManagementInterface
 {
     /**
-     * Add status update comment to return.
-     *
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma
      * @param string $comment
      * @return bool
      */
-    public function addComment(string $comment): bool;
-
-    /**
-     * Create shipment package.
-     *
-     * @param \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface|null
-     */
-    public function createPackage(SimpleReturnInterface $rma): ?PackageInterface;
+    public function addOrderComment(SimpleReturnInterface $rma, string $comment): bool;
 }

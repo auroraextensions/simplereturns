@@ -18,6 +18,8 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\SystemModel\Module;
 
+use Magento\Dhl\Model\Carrier as DHL;
+use Magento\Fedex\Model\Carrier as Fedex;
 use Magento\Framework\{
     App\Config\ScopeConfigInterface,
     DataObject,
@@ -27,6 +29,8 @@ use Magento\Store\{
     Model\ScopeInterface as StoreScopeInterface,
     Model\Store
 };
+use Magento\Ups\Model\Carrier as UPS;
+use Magento\Usps\Model\Carrier as USPS;
 
 class Config
 {
@@ -40,13 +44,22 @@ class Config
     const DEFAULT_RETURNS_ORDER_AGE_MAXIMUM = 30;
 
     /** @constant float DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM */
-    const DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM = 10000.00;
+    const DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM = 1000.00;
 
     /** @constant float DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM */
-    const DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM = 100.00;
+    const DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM = 50.00;
+
+    /** @constant float DEFAULT_PACKAGE_WEIGHT */
+    const DEFAULT_PACKAGE_WEIGHT = 5.00;
 
     /** @constant string DEFAULT_RMA_STATUS_CODE */
     const DEFAULT_RMA_STATUS_CODE = 'pending';
+
+    /** @constant string DEFAULT_FEDEX_CONTAINER_CODE */
+    const DEFAULT_FEDEX_CONTAINER_CODE = 'FEDEX_BOX';
+
+    /** @constant string DEFAULT_FEDEX_METHOD_CODE */
+    const DEFAULT_FEDEX_METHOD_CODE = 'FEDEX_GROUND';
 
     /** @constant string DEFAULT_UPS_CONTAINER_CODE */
     const DEFAULT_UPS_CONTAINER_CODE = 'CP';
@@ -54,8 +67,13 @@ class Config
     /** @constant string DEFAULT_UPS_METHOD_CODE */
     const DEFAULT_UPS_METHOD_CODE = '03';
 
-    /** @constant float DEFAULT_UPS_PACKAGE_WEIGHT */
-    const DEFAULT_UPS_PACKAGE_WEIGHT = 5.00;
+    /** @var array $containerMethods */
+    protected $containerMethods = [
+        DHL::CODE   => 'getDhlContainer',
+        Fedex::CODE => 'getFedexContainer',
+        UPS::CODE   => 'getUpsContainer',
+        USPS::CODE  => 'getUspsContainer',
+    ];
 
     /** @property DataObjectFactory $dataObjectFactory */
     protected $dataObjectFactory;
@@ -237,6 +255,43 @@ class Config
     }
 
     /**
+     * @param string $code
+     * @param int $store
+     * @param string $scope
+     * @return string
+     */
+    public function getContainerCode(
+        string $code,
+        int $store = Store::DEFAULT_STORE_ID,
+        string $scope = StoreScopeInterface::SCOPE_STORE
+    ): string
+    {
+        /** @var string $method */
+        $method = $this->containerMethods[$code];
+
+        return $this->{$method}($store, $scope);
+    }
+
+    /**
+     * Get shipping packaging for Fedex shipping method.
+     *
+     * @param int|string $store
+     * @param string $scope
+     * @return string
+     */
+    public function getFedexContainer(
+        $store = Store::DEFAULT_STORE_ID,
+        $scope = StoreScopeInterface::SCOPE_STORE
+    ): string
+    {
+        return $this->scopeConfig->getValue(
+            'carriers/fedex/container',
+            $scope,
+            $store
+        ) ?? self::DEFAULT_FEDEX_CONTAINER_CODE;
+    }
+
+    /**
      * Get shipping packaging for UPS shipping method.
      *
      * @param int|string $store
@@ -328,7 +383,7 @@ class Config
             'simplereturns/returns/package_weight',
             $scope,
             $store
-        ) ?? self::DEFAULT_UPS_PACKAGE_WEIGHT;
+        ) ?? self::DEFAULT_PACKAGE_WEIGHT;
     }
 
     /**
