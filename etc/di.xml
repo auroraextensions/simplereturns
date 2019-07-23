@@ -19,15 +19,21 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="AuroraExtensions\SimpleReturns\Api\AbstractRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AbstractRepository"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnManagementInterface"
+                type="AuroraExtensions\SimpleReturns\Model\ManagementModel\SimpleReturnManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface"
                 type="AuroraExtensions\SimpleReturns\Model\DataModel\SimpleReturn"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\PackageManagementInterface"
+                type="AuroraExtensions\SimpleReturns\Model\ManagementModel\PackageManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\PackageRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Package"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\LabelManagementInterface"
+                type="AuroraExtensions\SimpleReturns\Model\ManagementModel\LabelManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\LabelRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Label"/>
@@ -79,7 +85,6 @@
                     <item name="repair" xsi:type="string">Repair</item>
                     <item name="refund" xsi:type="string">Refund</item>
                     <item name="exchange" xsi:type="string">Exchange</item>
-                    <item name="store_credit" xsi:type="string">Store Credit</item>
                 </item>
                 <item name="statuses" xsi:type="array">
                     <item name="approved" xsi:type="string">Approved</item>
