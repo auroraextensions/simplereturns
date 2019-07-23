@@ -40,10 +40,13 @@ class Config
     const DEFAULT_RETURNS_ORDER_AGE_MAXIMUM = 30;
 
     /** @constant float DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM */
-    const DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM = 10000.00;
+    const DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM = 1000.00;
 
     /** @constant float DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM */
-    const DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM = 100.00;
+    const DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM = 50.00;
+
+    /** @constant float DEFAULT_PACKAGE_WEIGHT */
+    const DEFAULT_PACKAGE_WEIGHT = 5.00;
 
     /** @constant string DEFAULT_RMA_STATUS_CODE */
     const DEFAULT_RMA_STATUS_CODE = 'pending';
@@ -53,9 +56,6 @@ class Config
 
     /** @constant string DEFAULT_UPS_METHOD_CODE */
     const DEFAULT_UPS_METHOD_CODE = '03';
-
-    /** @constant float DEFAULT_UPS_PACKAGE_WEIGHT */
-    const DEFAULT_UPS_PACKAGE_WEIGHT = 5.00;
 
     /** @property DataObjectFactory $dataObjectFactory */
     protected $dataObjectFactory;
@@ -328,7 +328,7 @@ class Config
             'simplereturns/returns/package_weight',
             $scope,
             $store
-        ) ?? self::DEFAULT_UPS_PACKAGE_WEIGHT;
+        ) ?? self::DEFAULT_PACKAGE_WEIGHT;
     }
 
     /**
