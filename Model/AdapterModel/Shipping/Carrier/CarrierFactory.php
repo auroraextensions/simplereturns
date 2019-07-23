@@ -26,20 +26,30 @@ namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Shipping\Carrier;
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Exception\InvalidCarrierException,
-    Helper\Config as ConfigHelper,
     Model\SystemModel\Module\Config as ModuleConfig,
     Shared\ModuleComponentInterface
 };
+use Magento\Dhl\Model\Carrier as DHL;
+use Magento\Fedex\Model\Carrier as Fedex;
 use Magento\Framework\{
     DataObject,
-    DataObjectFactory,
+    DataObject\Factory as DataObjectFactory,
     ObjectManagerInterface
 };
 use Magento\Shipping\Model\Carrier\CarrierInterface;
-use Magento\Ups\Model\Carrier as UpsModel;
+use Magento\Ups\Model\Carrier as UPS;
+use Magento\Usps\Model\Carrier as USPS;
 
 class CarrierFactory implements ModuleComponentInterface
 {
+    /** @property array $carriers */
+    protected $carriers = [
+        DHL::CODE   => DHL::class,
+        Fedex::CODE => Fedex::class,
+        UPS::CODE   => UPS::class,
+        USPS::CODE  => USPS::class,
+    ];
+
     /** @property DataObjectFactory $dataObjectFactory */
     protected $dataObjectFactory;
 
@@ -87,7 +97,10 @@ class CarrierFactory implements ModuleComponentInterface
             /** @var InvalidCarrierException $exception */
             $exception = $this->exceptionFactory->create(
                 InvalidCarrierException::class,
-                __(self::ERROR_INVALID_CARRIER_CODE)
+                __(
+                    self::ERROR_INVALID_CARRIER_CODE,
+                    $code
+                )
             );
 
             throw $exception;
