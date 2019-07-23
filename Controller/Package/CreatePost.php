@@ -23,6 +23,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\PackageInterfaceFactory,
     Api\Data\SimpleReturnInterface,
     Api\Data\SimpleReturnInterfaceFactory,
+    Api\PackageManagementInterface,
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
@@ -65,6 +66,9 @@ class CreatePost extends Action implements
     /** @property PackageInterfaceFactory $packageFactory */
     protected $packageFactory;
 
+    /** @property PackageManagementInterface $packageManagement */
+    protected $packageManagement;
+
     /** @property PackageRepositoryInterface $packageRepository */
     protected $packageRepository;
 
@@ -89,6 +93,7 @@ class CreatePost extends Action implements
      * @param FormKeyValidator $formKeyValidator
      * @param ModuleConfig $moduleConfig
      * @param PackageInterfaceFactory $packageFactory
+     * @param PackageManagementInterface $packageManagement
      * @param PackageRepositoryInterface $packageRepository
      * @param RemoteAddress $remoteAddress
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
@@ -103,6 +108,7 @@ class CreatePost extends Action implements
         FormKeyValidator $formKeyValidator,
         ModuleConfig $moduleConfig,
         PackageInterfaceFactory $packageFactory,
+        PackageManagementInterface $packageManagement,
         PackageRepositoryInterface $packageRepository,
         RemoteAddress $remoteAddress,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
@@ -116,6 +122,7 @@ class CreatePost extends Action implements
         $this->formKeyValidator = $formKeyValidator;
         $this->moduleConfig = $moduleConfig;
         $this->packageFactory = $packageFactory;
+        $this->packageManagement = $packageManagement;
         $this->packageRepository = $packageRepository;
         $this->remoteAddress = $remoteAddress;
         $this->simpleReturnFactory = $simpleReturnFactory;
