@@ -21,8 +21,6 @@ namespace AuroraExtensions\SimpleReturns\Api;
 interface LabelManagementInterface
 {
     /**
-     * Create data URI from image.
-     *
      * @param \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface $label
      * @return string
      */
