@@ -25,7 +25,9 @@ use Magento\Framework\{
     DataObject,
     DataObject\Factory as DataObjectFactory
 };
+use Magento\Shipping\Model\Config as ShippingConfig;
 use Magento\Store\{
+    Model\Information as StoreInformation,
     Model\ScopeInterface as StoreScopeInterface,
     Model\Store
 };
@@ -100,6 +102,8 @@ class Config
         $this->settings = $this->dataObjectFactory->create($data);
     }
 
+    /* DI data methods */
+
     /**
      * @return array
      */
@@ -139,6 +143,8 @@ class Config
     {
         return $this->settings;
     }
+
+    /* System configuration settings */
 
     /**
      * Get default RMA status.
@@ -486,6 +492,29 @@ class Config
         );
     }
 
+    /* Origin Settings */
+
+    /**
+     * Get company name from settings.
+     *
+     * @param int $store
+     * @param string $scope
+     * @return string|null
+     */
+    public function getCompanyName(
+        int $store = Store::DEFAULT_STORE_ID,
+        string $scope = StoreScopeInterface::SCOPE_STORE
+    ): ?string
+    {
+        return $this->scopeConfig->getValue(
+            'simplereturns/origin/company',
+            $scope,
+            $store
+        );
+    }
+
+    /* Miscellaneous */
+
     /**
      * Get store information as DataObject.
      *
@@ -504,6 +533,67 @@ class Config
             $scope,
             $store
         );
+
+        return $this->dataObjectFactory->create($data);
+    }
+
+    /**
+     * Get origin information as DataObject.
+     *
+     * @param int $store
+     * @param string $scope
+     * @return DataObject
+     */
+    public function getOriginInfo(
+        int $store = Store::DEFAULT_STORE_ID,
+        string $scope = StoreScopeInterface::SCOPE_STORE
+    ): DataObject
+    {
+        /** @var array $data */
+        $data = [
+            'company' => $this->getCompanyName(
+                $store,
+                $scope
+            ) ?? $this->scopeConfig->getValue(
+                StoreInformation::XML_PATH_STORE_INFO_NAME,
+                $scope,
+                $store
+            ),
+            'email' => $this->getCustomerSupportEmail(
+                $store,
+                $scope
+            ),
+            'street' => $this->scopeConfig->getValue(
+                'shipping/origin/street_line1',
+                $scope,
+                $store
+            ),
+            'street2' => $this->scopeConfig->getValue(
+                'shipping/origin/street_line2',
+                $scope,
+                $store
+            ),
+            'city' => $this->scopeConfig->getValue(
+                ShippingConfig::XML_PATH_ORIGIN_CITY,
+                $scope,
+                $store
+            ),
+            'postcode' => $this->scopeConfig->getValue(
+                ShippingConfig::XML_PATH_ORIGIN_POSTCODE,
+                $scope,
+                $store
+            ),
+            'region_id' => $this->scopeConfig->getValue(
+                ShippingConfig::XML_PATH_ORIGIN_REGION_ID,
+                $scope,
+                $store
+            ),
+            'country_id' => $this->scopeConfig->getValue(
+                ShippingConfig::XML_PATH_ORIGIN_COUNTRY_ID,
+                $scope,
+                $store
+            ),
+        ];
 
         return $this->dataObjectFactory->create($data);
     }
