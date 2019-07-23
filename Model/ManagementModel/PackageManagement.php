@@ -129,9 +129,6 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                 $order->getRealOrderId()
             )->__toString();
 
-            /** @var array $containers */
-            $containers = $carrierModel->getContainerTypesAll();
-
             /** @var string $container */
             $container = $this->getContainerCode(
                 $carrierCode,
@@ -140,7 +137,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
 
             /** @var array $params */
             $params = [
-                'container'       => $containers[$container],
+                'container'       => $container,
                 'description'     => $description,
                 'dimension_units' => $this->getDimensionUnit(),
                 'weight_units'    => $this->getWeightUnit(),
