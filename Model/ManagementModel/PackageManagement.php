@@ -27,6 +27,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\LabelRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
+    Model\AdapterModel\Security\Token as Tokenizer,
     Model\AdapterModel\Shipping\Carrier\CarrierFactory,
     Model\SystemModel\Module\Config as ModuleConfig,
     Shared\ModuleComponentInterface
@@ -97,6 +98,9 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
     /** @property StoreManagerInterface $storeManager */
     protected $storeManager;
 
+    /** @property Tokenizer $tokenizer */
+    protected $tokenizer;
+
     /**
      * @param CarrierFactory $carrierFactory
      * @param DataObjectFactory $dataObjectFactory
@@ -112,6 +116,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      * @param ShipmentRequestFactory $shipmentRequestFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param StoreManagerInterface $storeManager
+     * @param Tokenizer $tokenizer
      * @return void
      */
     public function __construct(
@@ -128,7 +133,8 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
         RemoteAddress $remoteAddress,
         ShipmentRequestFactory $shipmentRequestFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Tokenizer $tokenizer
     ) {
         $this->carrierFactory = $carrierFactory;
         $this->dataObjectFactory = $dataObjectFactory;
@@ -144,6 +150,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
         $this->shipmentRequestFactory = $shipmentRequestFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->storeManager = $storeManager;
+        $this->tokenizer = $tokenizer;
     }
 
     /**
@@ -404,12 +411,16 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                         /** @var string|null $trackingNumber */
                         $trackingNumber = $shipmentInfo['tracking_number'] ?? null;
 
+                        /** @var string $token */
+                        $token = $this->tokenizer->createToken();
+
                         $label->addData(
                             [
                                 'package_id'      => $package->getId(),
                                 'image'           => $labelImage,
                                 'tracking_number' => $trackingNumber,
                                 'remote_ip'       => $this->remoteAddress->getRemoteAddress(),
+                                'token'           => $token,
                             ]
                         );
 

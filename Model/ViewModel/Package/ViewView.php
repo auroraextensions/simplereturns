@@ -19,8 +19,10 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\LabelInterface,
     Api\Data\PackageInterface,
     Api\Data\SimpleReturnInterface,
+    Api\LabelRepositoryInterface,
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
@@ -49,6 +51,9 @@ class ViewView extends AbstractView implements
     /** @property DirectoryHelper $directoryHelper */
     protected $directoryHelper;
 
+    /** @property LabelRepositoryInterface $labelRepository */
+    protected $labelRepository;
+
     /** @property MessageManagerInterface $messageManager */
     protected $messageManager;
 
@@ -58,11 +63,11 @@ class ViewView extends AbstractView implements
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
+    /** @property PackageRepositoryInterface $packageRepository */
+    protected $packageRepository;
+
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
-
-    /** @property Tokenizer $tokenizer */
-    protected $tokenizer;
 
     /**
      * @param ConfigHelper $configHelper
@@ -71,11 +76,11 @@ class ViewView extends AbstractView implements
      * @param UrlInterface $urlBuilder
      * @param array $data
      * @param DirectoryHelper $directoryHelper
+     * @param LabelRepositoryInterface $labelRepository
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
-     * @param Tokenizer $tokenizer
      * @return void
      */
     public function __construct(
@@ -85,12 +90,12 @@ class ViewView extends AbstractView implements
         UrlInterface $urlBuilder,
         array $data = [],
         DirectoryHelper $directoryHelper,
+        LabelRepositoryInterface $labelRepository,
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
         PackageRepositoryInterface $packageRepository,
-        SimpleReturnRepositoryInterface $simpleReturnRepository,
-        Tokenizer $tokenizer
+        SimpleReturnRepositoryInterface $simpleReturnRepository
     ) {
         parent::__construct(
             $configHelper,
@@ -101,12 +106,12 @@ class ViewView extends AbstractView implements
         );
 
         $this->directoryHelper = $directoryHelper;
+        $this->labelRepository = $labelRepository;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->packageRepository = $packageRepository;
         $this->simpleReturnRepository = $simpleReturnRepository;
-        $this->tokenizer = $tokenizer;
     }
 
     /**
@@ -148,7 +153,9 @@ class ViewView extends AbstractView implements
         if ($pkgId !== null) {
             /** @var string|null $pkgToken */
             $pkgToken = $this->request->getParam(self::PARAM_TOKEN);
-            $pkgToken = $pkgToken !== null && Tokenizer::isHex($pkgToken) ? $pkgToken : null;
+            $pkgToken = $pkgToken !== null && Tokenizer::isHex($pkgToken)
+                ? $pkgToken
+                : null;
 
             if ($pkgToken !== null) {
                 try {
@@ -170,6 +177,44 @@ class ViewView extends AbstractView implements
                 } catch (LocalizedException $e) {
                     /* No action required. */
                 }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return LabelInterface|null
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function getLabel(): ?LabelInterface
+    {
+        /** @var PackageInterface|null $package */
+        $package = $this->getPackage();
+
+        if ($package !== null) {
+            /** @var int $labelId */
+            $labelId = (int) $package->getLabelId();
+
+            try {
+                /** @var LabelInterface $label */
+                $label = $this->labelRepository->getById($labelId);
+
+                if ($label->getId()) {
+                    return $label;
+                }
+
+                /** @var LocalizedException $exception */
+                $exception = $this->exceptionFactory->create(
+                    LocalizedException::class
+                );
+
+                throw $exception;
+            } catch (NoSuchEntityException $e) {
+                /* No action required. */
+            } catch (LocalizedException $e) {
+                /* No action required. */
             }
         }
 
@@ -295,14 +340,43 @@ class ViewView extends AbstractView implements
      */
     public function getViewLabelUrl(): string
     {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var LabelInterface|null $label */
+        $label = $this->getLabel();
+
+        if ($label !== null) {
+            $params['label_id'] = $label->getId();
+            $params['token'] = $label->getToken();
+        }
+
         return $this->urlBuilder->getUrl(
             'simplereturns/label/view',
-            [
-                '_secure' => true,
-            ]
+            $params
         );
     }
 
+    /**
+     * @return bool
+     */
+    public function hasLabel(): bool
+    {
+        /** @var LabelInterface|null $label */
+        $label = $this->getLabel();
+
+        if ($label !== null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     public function hasPackage(): bool
     {
         /** @var PackageInterface|null $package */
