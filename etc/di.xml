@@ -96,4 +96,10 @@
             </argument>
         </arguments>
     </type>
+    <virtualType name="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Rma\Statuses"
+                 type="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Generic">
+        <arguments>
+            <argument name="key" xsi:type="string">statuses</argument>
+        </arguments>
+    </virtualType>
 </config>
