@@ -28,13 +28,13 @@ use AuroraExtensions\SimpleReturns\{
 class LabelManagement implements LabelManagementInterface, ModuleComponentInterface
 {
     /**
-     * Create image data URI from blob.
+     * Get image as data URI.
      *
      * @param LabelInterface $label
      * @return string
      */
-    public function createImageDataUri(LabelInterface $label): string
+    public function getImageDataUri(LabelInterface $label): string
     {
-        return '';
+        return self::PREFIX_DATAURI . base64_encode($label->getImage());
     }
 }
