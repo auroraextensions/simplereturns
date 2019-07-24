@@ -36,6 +36,8 @@ use Magento\Directory\{
     Model\ResourceModel\Region\CollectionFactory as RegionCollectionFactory
 };
 use Magento\Framework\{
+    DataObject,
+    DataObject\Factory as DataObjectFactory,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
     HTTP\PhpEnvironment\RemoteAddress,
@@ -55,6 +57,9 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
 {
     /** @property CarrierFactory $carrierFactory */
     protected $carrierFactory;
+
+    /** @property DataObjectFactory $dataObjectFactory */
+    protected $dataObjectFactory;
 
     /** @property DirectoryHelper $directoryHelper */
     protected $directoryHelper;
@@ -94,6 +99,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
 
     /**
      * @param CarrierFactory $carrierFactory
+     * @param DataObjectFactory $dataObjectFactory
      * @param DirectoryHelper $directoryHelper
      * @param ExceptionFactory $exceptionFactory
      * @param LabelInterfaceFactory $labelFactory
@@ -110,6 +116,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      */
     public function __construct(
         CarrierFactory $carrierFactory,
+        DataObjectFactory $dataObjectFactory,
         DirectoryHelper $directoryHelper,
         ExceptionFactory $exceptionFactory,
         LabelInterfaceFactory $labelFactory,
@@ -124,6 +131,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
         StoreManagerInterface $storeManager
     ) {
         $this->carrierFactory = $carrierFactory;
+        $this->dataObjectFactory = $dataObjectFactory;
         $this->directoryHelper = $directoryHelper;
         $this->exceptionFactory = $exceptionFactory;
         $this->labelFactory = $labelFactory;
@@ -159,8 +167,8 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
             /** @var OrderInterface $order */
             $order = $this->orderRepository->get($rma->getOrderId());
 
-            /** @var int|string $storeId */
-            $storeId = $order->getStoreId();
+            /** @var int $storeId */
+            $storeId = (int) $order->getStoreId();
 
             /** @var string $carrierCode */
             $carrierCode = $this->moduleConfig->getShippingCarrier($storeId);
@@ -178,21 +186,29 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
             $visibleItems = $order->getAllVisibleItems();
 
             foreach ($visibleItems as $item) {
-                $items[] = $item->toArray();
-            }
+                $items[] = $item->toArray(); }
 
             /** @var string $description */
             $description = $this->getOrderComment($order);
 
+            /** @var array $containers */
+            $containers = $carrierModel->getContainerTypes(
+                $this->dataObjectFactory->create(
+                    [
+                        'method' => $this->moduleConfig->getShippingMethod($storeId),
+                    ]
+                )
+            );
+
             /** @var string $container */
-            $container = $this->getContainerCode(
+            $container = $this->moduleConfig->getContainerCode(
                 $carrierCode,
                 (int) $storeId
             );
 
             /** @var array $params */
             $params = [
-                'container'       => $container,
+                'container'       => '00', /** @todo: Set up mapping for container type values. */
                 'description'     => $description,
                 'dimension_units' => $this->getDimensionUnit(),
                 'weight_units'    => $this->getWeightUnit(),
@@ -255,17 +271,23 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                 ->addFieldToFilter('main_table.region_id', ['eq' => $shipperAddress->getRegionId()])
                 ->getFirstItem();
 
+            /** @var Region|null $returnsRegion */
+            $returnsRegion = $this->regionCollectionFactory->create()
+                ->addFieldToSelect('*')
+                ->addFieldToFilter('main_table.region_id', ['eq' => $returnsAddress->getRegionId()])
+                ->getFirstItem();
+
             /** @var int|string $shipperRegionCode */
             $shipperRegionCode = $shipperRegion->getCode();
 
             /** @var int|string $returnsRegionCode */
-            $returnsRegionCode = $returnsAddress->getRegionId();
+            $returnsRegionCode = $returnsRegion->getCode();
 
             /** @var DataObject $returnsRecipient */
-            $returnsRecipient = $this->moduleConfig->getRecipientData($originStoreId);
+            $returnsRecipient = $this->moduleConfig->getRecipientData($storeId);
 
             /** @var DataObject $storeInfo */
-            $storeInfo = $this->moduleConfig->getStoreInfo($originStoreId);
+            $storeInfo = $this->moduleConfig->getStoreInfo($storeId);
 
             /** @var array $conditions */
             $conditions = [
@@ -439,7 +461,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
     public function getOrderComment(OrderInterface $order): string
     {
         return __(
-            self::FORMAT_RMA_ORDER_REFERENCE,
+            self::FORMAT_RMA_ORDER_COMMENT,
             $order->getRealOrderId()
         )->__toString();
     }
@@ -451,23 +473,10 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
     public function getRmaComment(string $trackingNumber): string
     {
         return __(
-            self::FORMAT_RMA_REQUEST_REFERENCE,
+            self::FORMAT_RMA_REQUEST_COMMENT,
             $this->remoteAddress->getRemoteAddress(),
             $trackingNumber
         )->__toString();
-    }
-
-    /**
-     * @param string $code
-     * @param int $store
-     * @return string
-     */
-    public function getContainerCode(string $code, int $store): string
-    {
-        return $this->moduleConfig->getContainerCode(
-            $code,
-            $store
-        );
     }
 
     /**
@@ -481,9 +490,10 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
 
     /**
      * @return string
+     * @todo: Finish implementing.
      */
     public function getWeightUnit(): string
     {
-        return $this->directoryHelper->getWeightUnit();
+        return \Zend_Measure_Weight::POUND;
     }
 }
