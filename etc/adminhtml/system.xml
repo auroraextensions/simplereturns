@@ -82,6 +82,7 @@
                 </field>
             </group>
             <group id="origin" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Origin Settings</label>
                 <field id="company" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Company Name</label>
                     <comment>The company name used when creating shipping labels. Overrides the store name.</comment>
