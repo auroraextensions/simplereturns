@@ -30,7 +30,6 @@ use AuroraExtensions\SimpleReturns\{
     Model\ResourceModel\Label as LabelResourceModel,
     Shared\ModuleComponentInterface
 };
-
 use Magento\Framework\{
     Api\SearchResultsInterface,
     Api\SearchResultsInterfaceFactory,
@@ -137,7 +136,7 @@ class LabelRepository extends AbstractRepository implements
      */
     public function delete(LabelInterface $label): bool
     {
-        return $this->deleteById($label->getId());
+        return $this->deleteById((int) $label->getId());
     }
 
     /**
