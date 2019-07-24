@@ -35,19 +35,19 @@
                 </field>
             </group>
             <group id="returns" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Returns Settings</label>
+                <label>RMA Settings</label>
                 <field id="default_rma_status" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default RMA Status</label>
-                    <source_model>AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Rma\Statuses</source_model>
+                    <source_model>AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Rma\Statuses</source_model>
                     <comment>The default status when an RMA request is created.</comment>
                 </field>
                 <field id="shipping_carrier" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Shipping Carrier</label>
-                    <source_model>AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Shipping\Carriers</source_model>
+                    <source_model>AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Shipping\Carriers</source_model>
                 </field>
                 <field id="shipping_method" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Shipping Method</label>
-                    <source_model>AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Shipping\Methods</source_model>
+                    <source_model>AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Shipping\Methods</source_model>
                 </field>
                 <field id="order_amount_minimum" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Minimum Order Amount</label>

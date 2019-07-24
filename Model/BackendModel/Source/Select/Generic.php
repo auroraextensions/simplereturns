@@ -1,6 +1,6 @@
 <?php
 /**
- * Reasons.php
+ * Generic.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,44 +16,32 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\BackendModel\System\Source\Rma;
+namespace AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select;
 
-use Magento\Framework\{
-    DataObject,
-    DataObject\Factory as DataObjectFactory,
-    Option\ArrayInterface
-};
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use Magento\Framework\Option\ArrayInterface;
 
-class Reasons implements ArrayInterface
+class Generic implements ArrayInterface
 {
-    /** @property DataObjectFactory $dataObjectFactory */
-    protected $dataObjectFactory;
-
     /** @property array $options */
     protected $options = [];
 
-    /** @property DataObject $settings */
-    protected $settings;
-
     /**
-     * @param DataObjectFactory $dataObjectFactory
-     * @param array $data
+     * @param ModuleConfig $moduleConfig
+     * @param string $key
      * @return void
      */
     public function __construct(
-        DataObjectFactory $dataObjectFactory,
-        array $data = []
+        ModuleConfig $moduleConfig,
+        string $key
     ) {
-        $this->dataObjectFactory = $dataObjectFactory;
-        $this->settings = $this->dataObjectFactory->create($data);
-
-        /** @var array $methods */
-        $methods = array_flip(
-            $this->settings->getData('reasons') ?? []
+        /** @var array $data */
+        $data = array_flip(
+            $moduleConfig->getSettings()->getData($key) ?? []
         );
 
         array_walk(
-            $methods,
+            $data,
             [
                 $this,
                 'setOption'
@@ -62,19 +50,18 @@ class Reasons implements ArrayInterface
     }
 
     /**
-     * Create/update option key/value array.
-     *
-     * @param string $value
-     * @param string $key
+     * @param int|string|null $value
+     * @param int|string $key
      * @return void
      */
-    protected function setOption($value, $key)
+    protected function setOption($value, $key): void
     {
         $this->options[] = [
             'label' => __($key),
             'value' => $value,
         ];
     }
+
     /**
      * Get formatted option key/value pairs.
      *

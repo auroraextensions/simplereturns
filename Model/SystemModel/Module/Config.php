@@ -64,7 +64,7 @@ class Config
     const DEFAULT_FEDEX_METHOD_CODE = 'FEDEX_GROUND';
 
     /** @constant string DEFAULT_UPS_CONTAINER_CODE */
-    const DEFAULT_UPS_CONTAINER_CODE = 'CP';
+    const DEFAULT_UPS_CONTAINER_CODE = '00';
 
     /** @constant string DEFAULT_UPS_METHOD_CODE */
     const DEFAULT_UPS_METHOD_CODE = '03';

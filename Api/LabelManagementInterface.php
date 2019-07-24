@@ -24,5 +24,5 @@ interface LabelManagementInterface
      * @param \AuroraExtensions\SimpleReturns\Api\Data\LabelInterface $label
      * @return string
      */
-    public function createImageDataUri(Data\LabelInterface $label): string;
+    public function getImageDataUri(Data\LabelInterface $label): string;
 }
