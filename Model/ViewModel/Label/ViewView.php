@@ -149,7 +149,14 @@ class ViewView extends AbstractView implements
      */
     public function hasLabel(): bool
     {
-        return true;
+        /** @var LabelInterface|null $label */
+        $label = $this->getLabel();
+
+        if ($label !== null) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
