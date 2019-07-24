@@ -205,6 +205,9 @@ class CreatePost extends Action implements
                             $package->addData($pkgData)
                         );
 
+                        /** @todo: Check "Generate shipping label" select value. */
+                        $this->packageManagement->requestToReturnShipment($package);
+
                         /** @var SimpleReturnInterface $rma */
                         $rma = $this->simpleReturnFactory->create();
 
