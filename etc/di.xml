@@ -102,4 +102,16 @@
             <argument name="key" xsi:type="string">statuses</argument>
         </arguments>
     </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Shipping\Carriers"
+                 type="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Generic">
+        <arguments>
+            <argument name="key" xsi:type="string">carriers</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Shipping\Methods"
+                 type="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Generic">
+        <arguments>
+            <argument name="key" xsi:type="string">methods</argument>
+        </arguments>
+    </virtualType>
 </config>
