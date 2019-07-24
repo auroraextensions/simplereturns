@@ -44,3 +44,7 @@ input[readonly] {
 .row .value {
   font-weight: 300;
 }
+
+.label-content-buttons {
+  padding: 5px 0;
+}
