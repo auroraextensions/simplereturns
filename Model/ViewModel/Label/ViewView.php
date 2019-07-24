@@ -25,6 +25,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
+    Helper\Config as ConfigHelper,
     Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface

@@ -143,7 +143,7 @@ class PackageRepository extends AbstractRepository implements
      */
     public function delete(PackageInterface $package): bool
     {
-        return $this->deleteById($package->getId());
+        return $this->deleteById((int) $package->getId());
     }
 
     /**

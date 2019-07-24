@@ -20,6 +20,7 @@ namespace AuroraExtensions\SimpleReturns\Model\ManagementModel;
 
 use AuroraExtensions\SimpleReturns\{
     Api\PackageManagementInterface,
+    Api\PackageRepositoryInterface,
     Api\Data\LabelInterface,
     Api\Data\LabelInterfaceFactory,
     Api\Data\PackageInterface,
@@ -83,6 +84,9 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
     /** @property OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
+    /** @property PackageRepositoryInterface $packageRepository */
+    protected $packageRepository;
+
     /** @property RegionCollectionFactory $regionCollectionFactory */
     protected $regionCollectionFactory;
 
@@ -111,6 +115,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
+     * @param PackageRepositoryInterface $packageRepository
      * @param RegionCollectionFactory $regionCollectionFactory
      * @param RemoteAddress $remoteAddress
      * @param ShipmentRequestFactory $shipmentRequestFactory
@@ -129,6 +134,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
         OrderRepositoryInterface $orderRepository,
+        PackageRepositoryInterface $packageRepository,
         RegionCollectionFactory $regionCollectionFactory,
         RemoteAddress $remoteAddress,
         ShipmentRequestFactory $shipmentRequestFactory,
@@ -145,6 +151,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
+        $this->packageRepository = $packageRepository;
         $this->regionCollectionFactory = $regionCollectionFactory;
         $this->remoteAddress = $remoteAddress;
         $this->shipmentRequestFactory = $shipmentRequestFactory;
@@ -414,21 +421,25 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                         /** @var string $token */
                         $token = $this->tokenizer->createToken();
 
-                        $label->addData(
-                            [
-                                'package_id'      => $package->getId(),
-                                'image'           => $labelImage,
-                                'tracking_number' => $trackingNumber,
-                                'remote_ip'       => $this->remoteAddress->getRemoteAddress(),
-                                'token'           => $token,
-                            ]
+                        /** @var int $labelId */
+                        $labelId = $this->labelRepository->save(
+                            $label->addData(
+                                [
+                                    'package_id'      => $package->getId(),
+                                    'image'           => $labelImage,
+                                    'tracking_number' => $trackingNumber,
+                                    'remote_ip'       => $this->remoteAddress->getRemoteAddress(),
+                                    'token'           => $token,
+                                ]
+                            )
                         );
+                        $package->setLabelId($labelId);
+                        $this->packageRepository->save($package);
 
+                        /* Add RMA comment to order. */
                         $order->addStatusHistoryComment(
                             $this->getRmaComment($trackingNumber)
                         );
-
-                        $this->labelRepository->save($label);
                         $this->orderRepository->save($order);
                     }
                 }

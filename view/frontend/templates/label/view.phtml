@@ -27,12 +27,12 @@ $hasLabel = $viewModel->hasLabel();
         <h1 class="simplereturns-label-title"><?= $block->escapeHtml(__('Return Label')) ?></h1>
     </div>
     <div class="simplereturns-label-content">
-        <div class="content-buttons">
+        <div class="label-content-buttons">
             <?php if ($hasLabel): ?>
                 <button class="button print" title="Print Label" type="button" data-mage-init='{"labelPrint":{}}'><?= $block->escapeHtml(__('Print Label')) ?></button>
             <?php endif ?>
         </div>
-        <div class="content-label">
+        <div class="label-content-image">
             <?php if ($hasLabel): ?>
                 <img alt="Return Label" class="return-label" src="<?= $viewModel->getLabelDataUri() ?>"/>
             <?php else: ?>

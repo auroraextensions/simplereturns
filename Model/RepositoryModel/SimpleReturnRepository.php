@@ -140,7 +140,7 @@ class SimpleReturnRepository extends AbstractRepository implements
      */
     public function delete(SimpleReturnInterface $rma): bool
     {
-        return $this->deleteById($rma->getId());
+        return $this->deleteById((int) $rma->getId());
     }
 
     /**
