@@ -424,7 +424,7 @@ class Config
     ): string
     {
         return $this->scopeConfig->getValue(
-            'simplereturns/returns/recipient_first_name',
+            'simplereturns/returns/recipient_last_name',
             $scope,
             $store
         ) ?? self::DEFAULT_RETURNS_RECIPIENT_LAST_NAME;
