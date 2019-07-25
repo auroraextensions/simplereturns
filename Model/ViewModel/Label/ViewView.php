@@ -20,6 +20,8 @@ namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Label;
 
 use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterface,
+    Api\Data\PackageInterface,
+    Api\Data\SimpleReturnInterface,
     Api\LabelManagementInterface,
     Api\LabelRepositoryInterface,
     Api\PackageRepositoryInterface,
@@ -95,7 +97,8 @@ class ViewView extends AbstractView implements
             $configHelper,
             $exceptionFactory,
             $request,
-            $urlBuilder
+            $urlBuilder,
+            $data
         );
 
         $this->labelManagement = $labelManagement;
@@ -135,6 +138,78 @@ class ViewView extends AbstractView implements
         if ($labelId !== null) {
             try {
                 return $this->labelRepository->getById($labelId);
+            } catch (NoSuchEntityException $e) {
+                /* No action required. */
+            } catch (LocalizedException $e) {
+                /* No action required. */
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return PackageInterface|null
+     */
+    public function getPackage(): ?PackageInterface
+    {
+        /** @var LabelInterface|null $label */
+        $label = $this->getLabel();
+
+        if ($label !== null) {
+            /** @var int $pkgId */
+            $pkgId = (int) $label->getPackageId();
+
+            try {
+                return $this->packageRepository->getById($pkgId);
+            } catch (NoSuchEntityException $e) {
+                /* No action required. */
+            } catch (LocalizedException $e) {
+                /* No action required. */
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return SimpleReturnInterface|null
+     */
+    public function getSimpleReturn(): ?SimpleReturnInterface
+    {
+        /** @var PackageInterface|null $package */
+        $package = $this->getPackage();
+
+        if ($package !== null) {
+            /** @var int $rmaId */
+            $rmaId = (int) $package->getRmaId();
+
+            try {
+                return $this->simpleReturnRepository->getById($rmaId);
+            } catch (NoSuchEntityException $e) {
+                /* No action required. */
+            } catch (LocalizedException $e) {
+                /* No action required. */
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return OrderInterface|null
+     */
+    public function getOrder(): ?OrderInterface
+    {
+        /** @var SimpleReturnInterface|null $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            /** @var int|string $orderId */
+            $orderId = $rma->getOrderId();
+
+            try {
+                return $this->orderRepository->get($orderId);
             } catch (NoSuchEntityException $e) {
                 /* No action required. */
             } catch (LocalizedException $e) {
