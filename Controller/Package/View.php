@@ -79,6 +79,6 @@ class View extends Action implements
             return $resultPage;
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_VIEW);
     }
 }

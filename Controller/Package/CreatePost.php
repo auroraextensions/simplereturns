@@ -255,9 +255,9 @@ class CreatePost extends Action implements
 
                 throw $exception;
             } catch (NoSuchEntityException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             } catch (LocalizedException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             }
         }
 
