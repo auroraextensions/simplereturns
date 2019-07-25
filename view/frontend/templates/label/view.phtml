@@ -21,10 +21,13 @@ $viewModel = $block->getViewModel();
 
 /** @var bool $hasLabel */
 $hasLabel = $viewModel->hasLabel();
+
+/** @var Magento\Sales\Api\Data\OrderInterface $order */
+$order = $viewModel->getOrder();
 ?>
 <div class="simplereturns-label-view">
     <div class="page-title">
-        <h1 class="simplereturns-label-title"><?= $block->escapeHtml(__('Return Label')) ?></h1>
+        <h2 class="simplereturns-label-title"><?= $block->escapeHtml(__('Return Shipping Label for Order #%1', $order->getRealOrderId())) ?></h2>
     </div>
     <div class="simplereturns-label-content">
         <div class="label-content-buttons">
