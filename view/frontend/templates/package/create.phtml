@@ -36,6 +36,26 @@ $weightUnits = $viewModel->getWeightUnits();
 ?>
 <div class="block simplereturns-package-create">
     <h2><?= $block->escapeHtml(__('Create Return Package for Order #%1', $order->getRealOrderId())) ?></h2>
+    <h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
+    <div class="actions">
+        <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="simplereturns-package-create-form">
+            <?= $block->getBlockHtml('formkey') ?>
+            <fieldset class="fieldset simplereturns_package" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
+                <div class="label request_label">
+                    <span><?= $block->escapeHtml(__('Generate Shipping Label')) ?></span>
+                </div>
+                <div class="field request_label toggle optional">
+                    <input type="checkbox"
+                           id="request_label"
+                           name="simplereturns_package[request_label]"
+                           data-validate="{required:true}"
+                           class="input-checkbox checkbox required"
+                           checked>
+                    <label class="request_label" for="request_label"></label>
+                </div>
+            </fieldset>
+        </form>
+    </div>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
     <div class="details">
         <div class="row">
@@ -51,32 +71,15 @@ $weightUnits = $viewModel->getWeightUnits();
             <span class="value"><?= $block->escapeHtml(__('%1 (%2)', $packageWeight, $weightUnits)) ?></span>
         </div>
     </div>
-    <h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
-    <div class="simplereturns-package-create-form">
-        <div class="container-form">
-            <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="simplereturns-package-create-form">
-                <?= $block->getBlockHtml('formkey') ?>
-                <fieldset class="fieldset simplereturns_package" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
-                    <div class="field generate_shipping_label required">
-                        <label class="label generate_shipping_label" for="generate_shipping_label">
-                            <span><?= $block->escapeHtml(__('Generate Shipping Label')) ?></span>
-                        </label>
-                        <div class="control">
-                            <select id="generate_shipping_label" name="simplereturns_package[generate_shipping_label]" class="select">
-                                <option value="yes"><?= $block->escapeHtml(__('Yes')) ?></option>
-                                <option value="no"><?= $block->escapeHtml(__('No')) ?></option>
-                            </select>
-                        </div>
-                    </div>
-                </fieldset>
-                <div class="actions-toolbar">
-                    <div class="primary">
-                        <button class="action submit" title="<?= $block->escapeHtmlAttr(__('Confirm')) ?>" type="submit">
-                            <span><?= $block->escapeHtml(__('Confirm')) ?></span>
-                        </button>
-                    </div>
-                </div>
-            </form>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button class="action submit"
+                    form="simplereturns-package-create-form"
+                    onclick="!this.form && $('#' + $(this).attr('form')).submit()"
+                    title="<?= $block->escapeHtmlAttr(__('Confirm')) ?>"
+                    type="submit">
+                <span><?= $block->escapeHtml(__('Confirm')) ?></span>
+            </button>
         </div>
     </div>
 </div>
