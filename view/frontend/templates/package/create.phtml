@@ -41,18 +41,17 @@ $weightUnits = $viewModel->getWeightUnits();
         <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="simplereturns-package-create-form">
             <?= $block->getBlockHtml('formkey') ?>
             <fieldset class="fieldset simplereturns_package" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
-                <div class="field request_label required">
-                    <label class="label request_label" for="request_label">
-                        <span><?= $block->escapeHtml(__('Generate Shipping Label')) ?></span>
-                    </label>
-                    <div class="checkbox">
-                        <input type="checkbox"
-                               id="request_label"
-                               name="simplereturns_package[request_label]"
-                               data-validate="{required:true}"
-                               class="input-checkbox checkbox required"
-                               value="1">
-                    </div>
+                <div class="label request_label">
+                    <span><?= $block->escapeHtml(__('Generate Shipping Label')) ?></span>
+                </div>
+                <div class="field request_label toggle optional">
+                    <input type="checkbox"
+                           id="request_label"
+                           name="simplereturns_package[request_label]"
+                           data-validate="{required:true}"
+                           class="input-checkbox checkbox required"
+                           checked>
+                    <label class="request_label" for="request_label"></label>
                 </div>
             </fieldset>
         </form>
