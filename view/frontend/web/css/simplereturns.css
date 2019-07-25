@@ -24,7 +24,15 @@ input[readonly] {
 }
 
 .actions a.action {
-  padding-right: 3px;
+  border: 2px solid #cccccc;
+  border-radius: 3px;
+  color: #5e5e5e;
+  display: inline-block;
+  margin: 3px 0 0;
+  padding: 2px 10px;
+  text-decoration: none;
+  text-transform: uppercase;
+  vertical-align: top;
 }
 
 .row span.title,
@@ -46,5 +54,5 @@ input[readonly] {
 }
 
 .label-content-buttons {
-  padding: 5px 0;
+  padding: 10px 0;
 }

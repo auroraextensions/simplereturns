@@ -19,8 +19,10 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\LabelInterface,
     Api\Data\PackageInterface,
     Api\Data\SimpleReturnInterface,
+    Api\LabelRepositoryInterface,
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
@@ -47,6 +49,9 @@ class ViewView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    /** @property LabelRepositoryInterface $labelRepository */
+    protected $labelRepository;
+
     /** @property MessageManagerInterface $messageManager */
     protected $messageManager;
 
@@ -71,6 +76,7 @@ class ViewView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param LabelRepositoryInterface $labelRepository
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
@@ -85,6 +91,7 @@ class ViewView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
+        LabelRepositoryInterface $labelRepository,
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
         OrderRepositoryInterface $orderRepository,
@@ -100,6 +107,7 @@ class ViewView extends AbstractView implements
             $data
         );
 
+        $this->labelRepository = $labelRepository;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
@@ -167,11 +175,22 @@ class ViewView extends AbstractView implements
      */
     public function getViewLabelUrl(): string
     {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var LabelInterface|null $label */
+        $label = $this->getLabel();
+
+        if ($label !== null) {
+            $params['label_id'] = $label->getId();
+            $params['token'] = $label->getToken();
+        }
+
         return $this->urlBuilder->getUrl(
             'simplereturns/label/view',
-            [
-                '_secure' => true,
-            ]
+            $params
         );
     }
 
@@ -208,35 +227,6 @@ class ViewView extends AbstractView implements
                 /* No action required. */
             } catch (LocalizedException $e) {
                 /* No action required. */
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @return PackageInterface|null
-     */
-    public function getPackage(): ?PackageInterface
-    {
-        /** @var SimpleReturnInterface|null $rma */
-        $rma = $this->getSimpleReturn();
-
-        if ($rma !== null) {
-            /** @var int|string|null $pkgId */
-            $pkgId = $rma->getPackageId();
-            $pkgId = $pkgId !== null && is_numeric($pkgId)
-                ? (int) $pkgId
-                : null;
-
-            if ($pkgId !== null) {
-                try {
-                    return $this->packageRepository->getById($pkgId);
-                } catch (NoSuchEntityException $e) {
-                    /* No action required. */
-                } catch (LocalizedException $e) {
-                    /* No action required. */
-                }
             }
         }
 
@@ -286,6 +276,71 @@ class ViewView extends AbstractView implements
         }
 
         return null;
+    }
+
+    /**
+     * @return PackageInterface|null
+     */
+    public function getPackage(): ?PackageInterface
+    {
+        /** @var SimpleReturnInterface|null $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            /** @var int|string|null $pkgId */
+            $pkgId = $rma->getPackageId();
+            $pkgId = $pkgId !== null && is_numeric($pkgId)
+                ? (int) $pkgId
+                : null;
+
+            if ($pkgId !== null) {
+                try {
+                    return $this->packageRepository->getById($pkgId);
+                } catch (NoSuchEntityException $e) {
+                    /* No action required. */
+                } catch (LocalizedException $e) {
+                    /* No action required. */
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return LabelInterface|null
+     */
+    public function getLabel(): ?LabelInterface
+    {
+        /** @var PackageInterface|null $package */
+        $package = $this->getPackage();
+
+        if ($package !== null) {
+            try {
+                return $this->labelRepository->get($package);
+            } catch (NoSuchEntityException $e) {
+                /* No action required. */
+            } catch (LocalizedException $e) {
+                /* No action required. */
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasLabel(): bool
+    {
+        /** @var LabelInterface|null $label */
+        $label = $this->getLabel();
+
+        if ($label !== null) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -21,7 +21,9 @@
         <css src="AuroraExtensions_SimpleReturns::css/simplereturns.css"/>
     </head>
     <body>
+        <referenceBlock name="catalog.compare.sidebar" remove="true"/>
         <referenceBlock name="page.main.title" remove="true"/>
+        <referenceContainer name="sidebar.additional" remove="true"/>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
                    name="simplereturns_package_view"
