@@ -159,6 +159,12 @@ class CreatePost extends Action implements
             $rmaToken = $request->getParam(self::PARAM_TOKEN);
             $rmaToken = !empty($rmaToken) ? $rmaToken : null;
 
+            /** @var int|string|null $requestLabel */
+            $requestLabel = $params['request_label'] ?? null;
+            $requestLabel = $requestLabel !== null && is_numeric($requestLabel)
+                ? (bool) $requestLabel
+                : true;
+
             try {
                 /** @var SimpleReturnInterface $rma */
                 $rma = $this->simpleReturnRepository->getById($rmaId);
@@ -205,8 +211,9 @@ class CreatePost extends Action implements
                             $package->addData($pkgData)
                         );
 
-                        /** @todo: Check "Generate shipping label" select value. */
-                        $this->packageManagement->requestToReturnShipment($package);
+                        if ($requestLabel) {
+                            $this->packageManagement->requestToReturnShipment($package);
+                        }
 
                         /** @var SimpleReturnInterface $rma */
                         $rma = $this->simpleReturnFactory->create();
