@@ -38,13 +38,20 @@ $packageWeight = $viewModel->getPackageWeight();
 $weightUnits = $viewModel->getWeightUnits();
 ?>
 <div class="block simplereturns-package-view">
-    <h2><?= $block->escapeHtml(__('View Return Package for Order #%1', $order->getRealOrderId())) ?></h2>
+    <h2><?= $block->escapeHtml(__('View Package Details for Order #%1', $order->getRealOrderId())) ?></h2>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
     <div class="actions">
+        <a class="action" href="<?= $viewModel->getViewRmaUrl() ?>"><?= $block->escapeHtml(__('View RMA Details')) ?></a>
+        <?php if ($viewModel->hasLabel()): ?>
         <a class="action" href="<?= $viewModel->getViewLabelUrl() ?>"><?= $block->escapeHtml(__('Print Label')) ?></a>
+        <?php endif ?>
     </div>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
     <div class="details">
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getId())) ?></span>
+        </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
             <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>

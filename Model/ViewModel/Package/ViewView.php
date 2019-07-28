@@ -359,6 +359,30 @@ class ViewView extends AbstractView implements
     }
 
     /**
+     * @return string
+     */
+    public function getViewRmaUrl(): string
+    {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var SimpleReturnInterface $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            $params['rma_id'] = $rma->getId();
+            $params['token'] = $rma->getToken();
+        }
+
+        return $this->urlBuilder->getUrl(
+            'simplereturns/rma/view',
+            $params
+        );
+    }
+
+    /**
      * @return bool
      */
     public function hasLabel(): bool
