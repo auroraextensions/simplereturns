@@ -61,13 +61,12 @@ input[readonly] {
   display: inline-block;
   float: right;
   height: 26px;
-  margin: 20px auto;
   position: relative;
   width: 80px;
 }
 
 .simplereturns .toggle:after {
-  color: #000;
+  color: #f6f6f6;
   content: "NO";
   font: 12px/26px Arial, sans-serif;
   font-weight: bold;
