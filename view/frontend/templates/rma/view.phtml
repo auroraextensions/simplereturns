@@ -25,7 +25,7 @@ $rma = $viewModel->getSimpleReturn();
 /** @var Magento\Sales\Api\Data\OrderInterface $order */
 $order = $viewModel->getOrder();
 ?>
-<div class="block simplereturns-rma-view">
+<div class="block simplereturns simplereturns-rma-view">
     <h2><?= $block->escapeHtml(__('View Return for Order #%1', $order->getRealOrderId())) ?></h2>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
     <div class="actions">

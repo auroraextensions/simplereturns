@@ -31,7 +31,7 @@ $hasLabel = $viewModel->hasLabel();
 /** @var Magento\Sales\Api\Data\OrderInterface $order */
 $order = $viewModel->getOrder();
 ?>
-<div class="simplereturns-label-view">
+<div class="block simplereturns simplereturns-label-view">
     <div class="page-title">
         <h2 class="simplereturns-label-title"><?= $block->escapeHtml(__('View RMA Package Shipping Label for Order #%1', $order->getRealOrderId())) ?></h2>
     </div>
