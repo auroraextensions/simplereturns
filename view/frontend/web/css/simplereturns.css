@@ -18,12 +18,7 @@ input[readonly] {
   opacity: 0.5;
 }
 
-.subtitle {
-  border-bottom: 1px solid #fafafa;
-  padding-bottom: 10px;
-}
-
-.actions a.action {
+.actions .action {
   border: 2px solid #cccccc;
   border-radius: 3px;
   color: #5e5e5e;
@@ -46,6 +41,17 @@ input[readonly] {
 .actions-toolbar,
 .details {
   padding: 1rem 0;
+}
+
+.details .thumbnail {
+  float: right;
+  transform: rotate(90deg);
+  width: 33.333%;
+}
+
+.subtitle {
+  border-bottom: 1px solid #fafafa;
+  padding-bottom: 10px;
 }
 
 .toggle {
@@ -120,8 +126,4 @@ input[readonly] {
 
 .row .value {
   font-weight: 300;
-}
-
-.label-content-buttons {
-  padding: 10px 0;
 }
