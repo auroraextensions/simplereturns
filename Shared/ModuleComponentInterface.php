@@ -78,8 +78,10 @@ interface ModuleComponentInterface
     const FIELD_INCREMENT_ID = 'increment_id';
     const FIELD_PROTECT_CODE = 'protect_code';
 
+    /** @constant string FORMAT_FRONT_ID */
     /** @constant string FORMAT_RMA_ORDER_COMMENT */
     /** @constant string FORMAT_RMA_REQUEST_COMMENT */
+    const FORMAT_FRONT_ID = '%05d';
     const FORMAT_RMA_ORDER_COMMENT = 'RMA for Order #%1';
     const FORMAT_RMA_REQUEST_COMMENT = 'A return label was generated from [%1] with tracking number %2';
 
