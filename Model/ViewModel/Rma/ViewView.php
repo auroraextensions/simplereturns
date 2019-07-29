@@ -201,7 +201,7 @@ class ViewView extends AbstractView implements
      * @param string $key
      * @param string
      */
-    public function getFrontendLabel(string $type, string $key): string
+    public function getFrontLabel(string $type, string $key): string
     {
         /** @var array $labels */
         $labels = $this->moduleConfig->getSettings()->getData($type);
