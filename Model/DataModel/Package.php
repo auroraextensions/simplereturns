@@ -42,6 +42,17 @@ class Package extends AbstractModel implements
     /**
      * @return string
      */
+    public function getFrontId(): string
+    {
+        return sprintf(
+            self::FORMAT_FRONT_ID,
+            $this->getId()
+        );
+    }
+
+    /**
+     * @return string
+     */
     public function getCreatedAt(): string
     {
         return $this->getData('created_at');

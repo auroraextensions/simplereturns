@@ -22,7 +22,7 @@ define([
 
     $.widget('mage.labelPrint', {
         options: {
-            container: ".label-content-image"
+            container: ".thumbnail"
         },
         _create: function () {
             this.element.on('click', $.proxy(this._print, this));

@@ -43,7 +43,7 @@ $weightUnits = $viewModel->getWeightUnits();
     <div class="actions">
         <a class="action" href="<?= $viewModel->getViewRmaUrl() ?>"><?= $block->escapeHtml(__('View RMA Details')) ?></a>
         <?php if ($viewModel->hasLabel()): ?>
-        <a class="action" href="<?= $viewModel->getViewLabelUrl() ?>"><?= $block->escapeHtml(__('Print Label')) ?></a>
+        <a class="action" href="<?= $viewModel->getViewLabelUrl() ?>"><?= $block->escapeHtml(__('View Shipping Label')) ?></a>
         <?php endif ?>
     </div>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
