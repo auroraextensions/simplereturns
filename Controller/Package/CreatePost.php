@@ -145,15 +145,15 @@ class CreatePost extends Action implements
             return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_VIEW);
         }
 
-        /** @var array|null $params */
-        $params = $request->getPost('simplereturns_package');
+        /** @var int|string|null */
+        $rmaId = $request->getParam(self::PARAM_RMA_ID);
+        $rmaId = $rmaId !== null && is_numeric($rmaId)
+            ? (int) $rmaId
+            : null;
 
-        if ($params !== null) {
-            /** @var int|string|null */
-            $rmaId = $request->getParam(self::PARAM_RMA_ID);
-            $rmaId = $rmaId !== null && is_numeric($rmaId)
-                ? (int) $rmaId
-                : null;
+        if ($rmaId !== null) {
+            /** @var array|null $params */
+            $params = $request->getPost('simplereturns_package');
 
             /** @var string|null $rmaToken */
             $rmaToken = $request->getParam(self::PARAM_TOKEN);
@@ -161,9 +161,9 @@ class CreatePost extends Action implements
 
             /** @var int|string|null $requestLabel */
             $requestLabel = $params['request_label'] ?? null;
-            $requestLabel = $requestLabel !== null && is_numeric($requestLabel)
-                ? (bool) $requestLabel
-                : true;
+            $requestLabel = $requestLabel !== null && strtolower($requestLabel) === 'on'
+                ? true
+                : false;
 
             try {
                 /** @var SimpleReturnInterface $rma */
