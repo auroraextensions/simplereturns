@@ -15,26 +15,41 @@
  * @license       Aurora Extensions EULA
  */
 
-/** @var Magento\Framework\View\Element\Template $block */
-/** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView $viewModel */
+/**
+ * @use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
+ * @use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
+ * @use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
+ * @use AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView
+ * @use Magento\Framework\View\Element\Template
+ * @use Magento\Sales\Api\Data\OrderInterface
+ */
+
+/** @var Template $block */
+/** @var ViewView $viewModel */
 $viewModel = $block->getViewModel();
 
-/** @var AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma */
+/** @var SimpleReturnInterface $rma */
 $rma = $viewModel->getSimpleReturn();
 
-/** @var Magento\Sales\Api\Data\OrderInterface $order */
+/** @var OrderInterface $order */
 $order = $viewModel->getOrder();
+
+/** @var bool $hasPackage */
+$hasPackage = $viewModel->hasPackage();
+
+/** @var bool $hasLabel */
+$hasLabel = $viewModel->hasLabel();
 ?>
 <div class="block simplereturns simplereturns-rma-view">
     <h2><?= $block->escapeHtml(__('View Return for Order #%1', $order->getRealOrderId())) ?></h2>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
     <div class="actions">
-    <?php if ($viewModel->hasPackage()): ?>
+    <?php if ($hasPackage): ?>
         <a class="action" href="<?= $viewModel->getViewPackageUrl() ?>"><?= $block->escapeHtml(__('View Package Details')) ?></a>
     <?php else: ?>
         <a class="action" href="<?= $viewModel->getCreatePackageUrl() ?>"><?= $block->escapeHtml(__('Create Package')) ?></a>
     <?php endif ?>
-    <?php if ($viewModel->hasLabel()): ?>
+    <?php if ($hasLabel): ?>
         <a class="action" href="<?= $viewModel->getViewLabelUrl() ?>"><?= $block->escapeHtml(__('View Shipping Label')) ?></a>
     <?php endif ?>
     </div>
@@ -48,6 +63,22 @@ $order = $viewModel->getOrder();
             <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
             <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>
         </div>
+        <?php if ($hasPackage): ?>
+        <?php /** @var PackageInterface $package */ ?>
+        <?php $package = $viewModel->getPackage() ?>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Package')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('#%1', $package->getFrontId())) ?></span>
+        </div>
+        <?php endif ?>
+        <?php if ($hasLabel): ?>
+        <?php /** @var LabelInterface $label */ ?>
+        <?php $label = $viewModel->getLabel() ?>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Label')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('#%1', $label->getFrontId())) ?></span>
+        </div>
+        <?php endif ?>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Status')) ?></span>
             <span class="value"><?= $block->escapeHtml(__('%1', $viewModel->getFrontLabel('statuses', $rma->getStatus()))) ?></span>

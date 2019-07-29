@@ -15,20 +15,29 @@
  * @license       Aurora Extensions EULA
  */
 
-/** @var Magento\Framework\View\Element\Template $block */
-/** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Label\ViewView $viewModel */
+/**
+ * @use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
+ * @use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
+ * @use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
+ * @use AuroraExtensions\SimpleReturns\Model\ViewModel\Label\ViewView
+ * @use Magento\Framework\View\Element\Template
+ * @use Magento\Sales\Api\Data\OrderInterface
+ */
+
+/** @var Template $block */
+/** @var ViewView $viewModel */
 $viewModel = $block->getViewModel();
 
-/** @var AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma */
+/** @var SimpleReturnInterface $rma */
 $rma = $viewModel->getSimpleReturn();
 
-/** @var AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package */
+/** @var PackageInterface $package */
 $package = $viewModel->getPackage();
 
-/** @var bool $hasLabel */
-$hasLabel = $viewModel->hasLabel();
+/** @var LabelInterface $label */
+$label = $viewModel->getLabel();
 
-/** @var Magento\Sales\Api\Data\OrderInterface $order */
+/** @var OrderInterface $order */
 $order = $viewModel->getOrder();
 ?>
 <div class="block simplereturns simplereturns-label-view">
@@ -42,6 +51,10 @@ $order = $viewModel->getOrder();
     </div>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
     <div class="details">
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Label')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('#%1', $label->getFrontId())) ?></span>
+        </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
             <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getFrontId())) ?></span>
