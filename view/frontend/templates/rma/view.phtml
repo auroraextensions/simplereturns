@@ -41,6 +41,10 @@ $order = $viewModel->getOrder();
     <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
     <div class="details">
         <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getFrontId())) ?></span>
+        </div>
+        <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
             <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>
         </div>
