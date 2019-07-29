@@ -50,7 +50,7 @@ $weightUnits = $viewModel->getWeightUnits();
     <div class="details">
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getId())) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getFrontId())) ?></span>
         </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
@@ -58,7 +58,7 @@ $weightUnits = $viewModel->getWeightUnits();
         </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Package Carrier')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('%1', $viewModel->getFrontendLabel('carriers', $carrierCode))) ?></span>
+            <span class="value"><?= $block->escapeHtml(__('%1', $viewModel->getFrontLabel('carriers', $carrierCode))) ?></span>
         </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Package Weight')) ?></span>
