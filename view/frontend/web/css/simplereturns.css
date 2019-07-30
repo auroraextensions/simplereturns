@@ -43,9 +43,15 @@ input[readonly] {
   padding: 1rem 0;
 }
 
+.simplereturns .details .info,
+.simplereturns .details .thumbnail {
+  display: inline-block;
+}
+
 .simplereturns .details .thumbnail {
   float: right;
-  transform: rotate(90deg);
+  transform: translate(100%) rotate(90deg);
+  transform-origin: left top;
   width: 33.333%;
 }
 
