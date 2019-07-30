@@ -68,3 +68,8 @@
   visibility: visible;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 }
+
+.tooltip button {
+  margin: 0 5px;
+  padding: 2px 10px;
+}
