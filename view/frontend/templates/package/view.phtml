@@ -56,23 +56,77 @@ $hasLabel = $viewModel->hasLabel();
         <div class="info">
             <div class="row">
                 <span class="title"><?= $block->escapeHtml(__('Package')) ?></span>
-                <span class="value"><?= $block->escapeHtml(__('#%1', $package->getFrontId())) ?></span>
+                <span class="value">
+                    <?= $block->escapeHtml(
+                        __(
+                            '#%1',
+                            $package->getFrontId()
+                        )
+                    ) ?>
+                </span>
             </div>
             <div class="row">
                 <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
-                <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getFrontId())) ?></span>
+                <span class="value">
+                    <?= $block->escapeHtml(
+                        __(
+                            '#%1',
+                            $rma->getFrontId()
+                        )
+                    ) ?>
+                </span>
             </div>
             <div class="row">
                 <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
-                <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>
+                <span class="value">
+                    <?= $block->escapeHtml(
+                        __(
+                            '#%1',
+                            $order->getRealOrderId()
+                        )
+                    ) ?>
+                </span>
             </div>
             <div class="row">
                 <span class="title"><?= $block->escapeHtml(__('Shipping Carrier')) ?></span>
-                <span class="value"><?= $block->escapeHtml(__('%1', $viewModel->getFrontLabel('carriers', $carrierCode))) ?></span>
+                <span class="value">
+                    <?= $block->escapeHtml(
+                        __(
+                            '%1',
+                            $viewModel->getFrontLabel(
+                                'carriers',
+                                $carrierCode
+                            )
+                        )
+                    ) ?>
+                </span>
+            </div>
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Shipping Method')) ?></span>
+                <span class="value">
+                    <?= $block->escapeHtml(
+                        __(
+                            '%1',
+                            $viewModel->getFrontLabel(
+                                'methods',
+                                $carrierCode,
+                                $viewModel->getShippingMethod()
+                            )
+                        )
+                    ) ?>
+                </span>
             </div>
             <div class="row">
                 <span class="title"><?= $block->escapeHtml(__('Package Weight')) ?></span>
-                <span class="value"><?= $block->escapeHtml(__('%1 (%2)', $packageWeight, $weightUnits)) ?></span>
+                <span class="value">
+                    <?= $block->escapeHtml(
+                        __(
+                            '%1 (%2)',
+                            $packageWeight,
+                            $weightUnits
+                        )
+                    ) ?>
+                </span>
             </div>
         </div>
         <?php if ($hasLabel): ?>
