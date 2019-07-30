@@ -19,7 +19,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
     <module name="AuroraExtensions_SimpleReturns" setup_version="1.0.0">
         <sequence>
-            <module name="AuroraExtensions_Cache"/>
+            <module name="AuroraExtensions_Polyfill"/>
         </sequence>
     </module>
 </config>

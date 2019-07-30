@@ -62,9 +62,15 @@
             <argument name="data" xsi:type="array">
                 <item name="carriers" xsi:type="array">
                     <item name="ups" xsi:type="string">UPS</item>
+                    <item name="fedex" xsi:type="string">Fedex</item>
                 </item>
                 <item name="methods" xsi:type="array">
-                    <item name="03" xsi:type="string">UPS Ground</item>
+                    <item name="ups" xsi:type="array">
+                        <item name="03" xsi:type="string">UPS Ground</item>
+                    </item>
+                    <item name="fedex" xsi:type="array">
+                        <item name="FEDEX_GROUND" xsi:type="string">Fedex Ground</item>
+                    </item>
                 </item>
                 <item name="reasons" xsi:type="array">
                     <item name="no_longer_needed" xsi:type="string">No longer needed</item>
@@ -109,7 +115,7 @@
         </arguments>
     </virtualType>
     <virtualType name="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Shipping\Methods"
-                 type="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Generic">
+                 type="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Grouped\Generic">
         <arguments>
             <argument name="key" xsi:type="string">methods</argument>
         </arguments>

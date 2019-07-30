@@ -337,6 +337,30 @@ class ViewView extends AbstractView implements
     /**
      * @return string
      */
+    public function getGenerateLabelUrl(): string
+    {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var PackageInterface|null $package */
+        $package = $this->getPackage();
+
+        if ($package !== null) {
+            $params['pkg_id'] = $package->getId();
+            $params['token'] = $package->getToken();
+        }
+
+        return $this->urlBuilder->getUrl(
+            'simplereturns/label/generate',
+            $params
+        );
+    }
+
+    /**
+     * @return string
+     */
     public function getViewLabelUrl(): string
     {
         /** @var array $params */
