@@ -72,7 +72,7 @@ class View extends Action implements
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->getConfig()->getTitle()->set(
-            __('View Return Package')
+            __('View Package Details')
         );
 
         if ($this->viewModel->hasPackage()) {
