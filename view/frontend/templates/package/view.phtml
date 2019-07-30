@@ -36,39 +36,49 @@ $packageWeight = $viewModel->getPackageWeight();
 
 /** @var string $weightUnits */
 $weightUnits = $viewModel->getWeightUnits();
+
+/** @var bool $hasLabel */
+$hasLabel = $viewModel->hasLabel();
 ?>
-<div class="block simplereturns simplereturns-package-view">
+<div class="block simplereturns">
     <h2><?= $block->escapeHtml(__('View Package Details for Order #%1', $order->getRealOrderId())) ?></h2>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
     <div class="actions">
         <a class="action" href="<?= $viewModel->getViewRmaUrl() ?>"><?= $block->escapeHtml(__('View RMA Details')) ?></a>
-        <?php if ($viewModel->hasLabel()): ?>
-        <a class="action" href="<?= $viewModel->getViewLabelUrl() ?>"><?= $block->escapeHtml(__('View Label Details')) ?></a>
+        <?php if ($hasLabel): ?>
+        <a class="action" href="#" title="Print" data-mage-init='{"labelPrint":{}}'><?= $block->escapeHtml(__('Print Label')) ?></a>
         <?php else: ?>
-        <a class="action" href="<?= $viewModel->getGenerateLabelUrl() ?>"><?= $block->escapeHtml(__('Generate Shipping Label')) ?></a>
+        <a class="action" href="<?= $viewModel->getGenerateLabelUrl() ?>"><?= $block->escapeHtml(__('Generate Label')) ?></a>
         <?php endif ?>
     </div>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
     <div class="details">
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Package')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('#%1', $package->getFrontId())) ?></span>
+        <div class="info">
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Package')) ?></span>
+                <span class="value"><?= $block->escapeHtml(__('#%1', $package->getFrontId())) ?></span>
+            </div>
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
+                <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getFrontId())) ?></span>
+            </div>
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
+                <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>
+            </div>
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Shipping Carrier')) ?></span>
+                <span class="value"><?= $block->escapeHtml(__('%1', $viewModel->getFrontLabel('carriers', $carrierCode))) ?></span>
+            </div>
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Package Weight')) ?></span>
+                <span class="value"><?= $block->escapeHtml(__('%1 (%2)', $packageWeight, $weightUnits)) ?></span>
+            </div>
         </div>
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getFrontId())) ?></span>
+        <?php if ($hasLabel): ?>
+        <div class="thumbnail">
+            <img alt="Shipping Label" src="<?= $viewModel->getLabelDataUri() ?>"/>
         </div>
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>
-        </div>
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Shipping Carrier')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('%1', $viewModel->getFrontLabel('carriers', $carrierCode))) ?></span>
-        </div>
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Package Weight')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('%1 (%2)', $packageWeight, $weightUnits)) ?></span>
-        </div>
+        <?php endif ?>
     </div>
 </div>
