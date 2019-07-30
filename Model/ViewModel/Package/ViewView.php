@@ -22,6 +22,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterface,
     Api\Data\PackageInterface,
     Api\Data\SimpleReturnInterface,
+    Api\LabelManagementInterface,
     Api\LabelRepositoryInterface,
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
@@ -53,6 +54,9 @@ class ViewView extends AbstractView implements
 
     /** @property LabelInterface $label */
     protected $label;
+
+    /** @property LabelManagementInterface $labelManagement */
+    protected $labelManagement;
 
     /** @property LabelRepositoryInterface $labelRepository */
     protected $labelRepository;
@@ -88,6 +92,7 @@ class ViewView extends AbstractView implements
      * @param UrlInterface $urlBuilder
      * @param array $data
      * @param DirectoryHelper $directoryHelper
+     * @param LabelManagementInterface $labelManagement
      * @param LabelRepositoryInterface $labelRepository
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
@@ -102,6 +107,7 @@ class ViewView extends AbstractView implements
         UrlInterface $urlBuilder,
         array $data = [],
         DirectoryHelper $directoryHelper,
+        LabelManagementInterface $labelManagement,
         LabelRepositoryInterface $labelRepository,
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
@@ -118,12 +124,28 @@ class ViewView extends AbstractView implements
         );
 
         $this->directoryHelper = $directoryHelper;
+        $this->labelManagement = $labelManagement;
         $this->labelRepository = $labelRepository;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->packageRepository = $packageRepository;
         $this->simpleReturnRepository = $simpleReturnRepository;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLabelDataUri(): ?string
+    {
+        /** @var LabelInterface|null $label */
+        $label = $this->getLabel();
+
+        if ($label !== null) {
+            return $this->labelManagement->getImageDataUri($label);
+        }
+
+        return null;
     }
 
     /**
