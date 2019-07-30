@@ -145,7 +145,7 @@ class CreatePost extends Action implements
             return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_VIEW);
         }
 
-        /** @var int|string|null */
+        /** @var int|string|null $rmaId */
         $rmaId = $request->getParam(self::PARAM_RMA_ID);
         $rmaId = $rmaId !== null && is_numeric($rmaId)
             ? (int) $rmaId
