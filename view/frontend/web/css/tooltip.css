@@ -1,0 +1,70 @@
+/**
+ * tooltip.css
+ *
+ * @see https://chrisbracco.com/a-simple-css-tooltip/
+ */
+
+[data-tooltip] {
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+
+[data-tooltip]:before,
+[data-tooltip]:after {
+  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+}
+
+[data-tooltip]:before {
+  background-color: #000;
+  background-color: hsla(0, 0%, 20%, 0.9);
+  position: absolute;
+  border-radius: 3px;
+  bottom: 150%;
+  color: #fff;
+  content: attr(data-tooltip);
+  font-size: 14px;
+  left: 50%;
+  line-height: 1.2;
+  margin-bottom: 5px;
+  margin-left: -80px;
+  padding: 7px;
+  text-align: center;
+  width: 160px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+[data-tooltip]:after {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #000;
+  border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+  bottom: 150%;
+  content: " ";
+  font-size: 0;
+  left: 50%;
+  line-height: 0;
+  margin-left: -5px;
+  position: absolute;
+  width: 0;
+}
+
+[data-tooltip]:active,
+[data-tooltip]:focus,
+[data-tooltip]:hover,
+[data-tooltip]:visited {
+  text-decoration: none;
+}
+
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+  opacity: 1;
+  visibility: visible;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+}
