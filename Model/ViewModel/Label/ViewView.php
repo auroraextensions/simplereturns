@@ -223,6 +223,30 @@ class ViewView extends AbstractView implements
     /**
      * @return string
      */
+    public function getViewPackageUrl(): string
+    {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var PackageInterface|null $package */
+        $package = $this->getPackage();
+
+        if ($package !== null) {
+            $params['pkg_id'] = $package->getId();
+            $params['token'] = $package->getToken();
+        }
+
+        return $this->urlBuilder->getUrl(
+            'simplereturns/package/view',
+            $params
+        );
+    }
+
+    /**
+     * @return string
+     */
     public function getViewRmaUrl(): string
     {
         /** @var array $params */
