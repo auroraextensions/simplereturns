@@ -51,26 +51,26 @@ $order = $viewModel->getOrder();
     </div>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
     <div class="details">
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Label')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('#%1', $label->getFrontId())) ?></span>
+        <div class="info">
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Label')) ?></span>
+                <span class="value"><?= $block->escapeHtml(__('#%1', $label->getFrontId())) ?></span>
+            </div>
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
+                <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getFrontId())) ?></span>
+            </div>
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Package')) ?></span>
+                <span class="value"><?= $block->escapeHtml(__('#%1', $package->getFrontId())) ?></span>
+            </div>
+            <div class="row">
+                <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
+                <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>
+            </div>
         </div>
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('#%1', $rma->getFrontId())) ?></span>
-        </div>
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Package')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('#%1', $package->getFrontId())) ?></span>
-        </div>
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>
-        </div>
-        <div class="row">
-            <span class="value thumbnail">
-                <img alt="Shipping Label" src="<?= $viewModel->getLabelDataUri() ?>"/>
-            </span>
+        <div class="thumbnail">
+            <img alt="Shipping Label" src="<?= $viewModel->getLabelDataUri() ?>"/>
         </div>
     </div>
 </div>
