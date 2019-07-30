@@ -72,7 +72,7 @@ class View extends Action implements
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->getConfig()->getTitle()->set(
-            __('View RMA Request')
+            __('View RMA Details')
         );
 
         if ($this->viewModel->hasSimpleReturn()) {
