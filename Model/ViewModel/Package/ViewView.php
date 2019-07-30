@@ -51,6 +51,9 @@ class ViewView extends AbstractView implements
     /** @property DirectoryHelper $directoryHelper */
     protected $directoryHelper;
 
+    /** @property LabelInterface $label */
+    protected $label;
+
     /** @property LabelRepositoryInterface $labelRepository */
     protected $labelRepository;
 
@@ -60,11 +63,20 @@ class ViewView extends AbstractView implements
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
+    /** @property OrderInterface $order */
+    protected $order;
+
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
+    /** @property PackageInterface $package */
+    protected $package;
+
     /** @property PackageRepositoryInterface $packageRepository */
     protected $packageRepository;
+
+    /** @property SimpleReturnInterface $rma */
+    protected $rma;
 
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
@@ -132,7 +144,9 @@ class ViewView extends AbstractView implements
     public function getFrontLabel(string $type, string $key): string
     {
         /** @var array $labels */
-        $labels = $this->moduleConfig->getSettings()->getData($type);
+        $labels = $this->moduleConfig
+            ->getSettings()
+            ->getData($type);
 
         return $labels[$key] ?? $key;
     }
@@ -144,6 +158,10 @@ class ViewView extends AbstractView implements
      */
     public function getPackage(): ?PackageInterface
     {
+        if ($this->package !== null) {
+            return $this->package;
+        }
+
         /** @var int|string|null $pkgId */
         $pkgId = $this->request->getParam(self::PARAM_PKG_ID);
         $pkgId = $pkgId !== null && is_numeric($pkgId)
@@ -163,6 +181,8 @@ class ViewView extends AbstractView implements
                     $package = $this->packageRepository->getById($pkgId);
 
                     if (Tokenizer::isEqual($pkgToken, $package->getToken())) {
+                        $this->package = $package;
+
                         return $package;
                     }
 
@@ -190,6 +210,10 @@ class ViewView extends AbstractView implements
      */
     public function getLabel(): ?LabelInterface
     {
+        if ($this->label !== null) {
+            return $this->label;
+        }
+
         /** @var PackageInterface|null $package */
         $package = $this->getPackage();
 
@@ -202,6 +226,8 @@ class ViewView extends AbstractView implements
                 $label = $this->labelRepository->getById($labelId);
 
                 if ($label->getId()) {
+                    $this->label = $label;
+
                     return $label;
                 }
 
@@ -230,6 +256,10 @@ class ViewView extends AbstractView implements
      */
     public function getSimpleReturn(): ?SimpleReturnInterface
     {
+        if ($this->rma !== null) {
+            return $this->rma;
+        }
+
         /** @var PackageInterface $package */
         $package = $this->getPackage();
 
@@ -242,6 +272,8 @@ class ViewView extends AbstractView implements
                 $rma = $this->simpleReturnRepository->getById($pkgId);
 
                 if ($rma->getId()) {
+                    $this->rma = $rma;
+
                     return $rma;
                 }
 
@@ -268,6 +300,10 @@ class ViewView extends AbstractView implements
      */
     public function getOrder(): ?OrderInterface
     {
+        if ($this->order !== null) {
+            return $this->order;
+        }
+
         /** @var SimpleReturnInterface|null $rma */
         $rma = $this->getSimpleReturn();
 
@@ -282,6 +318,8 @@ class ViewView extends AbstractView implements
                 $orders = $this->orderAdapter->getOrdersByFields($fields);
 
                 if (!empty($orders)) {
+                    $this->order = $orders[0];
+
                     return $orders[0];
                 }
 
@@ -354,30 +392,6 @@ class ViewView extends AbstractView implements
 
         return $this->urlBuilder->getUrl(
             'simplereturns/label/generate',
-            $params
-        );
-    }
-
-    /**
-     * @return string
-     */
-    public function getViewLabelUrl(): string
-    {
-        /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
-
-        /** @var LabelInterface|null $label */
-        $label = $this->getLabel();
-
-        if ($label !== null) {
-            $params['label_id'] = $label->getId();
-            $params['token'] = $label->getToken();
-        }
-
-        return $this->urlBuilder->getUrl(
-            'simplereturns/label/view',
             $params
         );
     }
