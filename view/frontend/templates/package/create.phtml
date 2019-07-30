@@ -43,6 +43,9 @@ $weightUnits = $viewModel->getWeightUnits();
             <fieldset class="fieldset simplereturns_package" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                 <div class="label request_label">
                     <span><?= $block->escapeHtml(__('Generate Shipping Label')) ?></span>
+                    <span class="tooltip">
+                        <a href="#" data-tooltip="You can defer this step until later">&#9432;</a>
+                    </span>
                 </div>
                 <div class="field request_label toggle optional">
                     <input type="checkbox"
