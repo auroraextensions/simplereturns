@@ -115,18 +115,42 @@ class CreateView extends AbstractView implements
     }
 
     /**
-     * Get frontend label for field type by key.
+     * @return string
+     */
+    public function getShippingMethod(): string
+    {
+        return $this->moduleConfig->getShippingMethod();
+    }
+
+    /**
+     * Get frontend label for field type by key(s).
      *
      * @param string $type
      * @param string $key
+     * @param string|null $subkey
      * @param string
      */
-    public function getFrontLabel(string $type, string $key): string
+    public function getFrontLabel(
+        string $type,
+        string $key,
+        string $subkey = null
+    ): string
     {
         /** @var array $labels */
-        $labels = $this->moduleConfig->getSettings()->getData($type);
+        $labels = $this->moduleConfig
+            ->getSettings()
+            ->getData($type);
 
-        return $labels[$key] ?? $key;
+        /** @var string|array $label */
+        $label = $labels[$key] ?? $key;
+
+        if ($subkey !== null) {
+            $label = is_array($label) && isset($label[$subkey])
+                ? $label[$subkey]
+                : $label;
+        }
+
+        return $label;
     }
 
     /**

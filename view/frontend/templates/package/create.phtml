@@ -44,7 +44,7 @@ $weightUnits = $viewModel->getWeightUnits();
                 <div class="label request_label">
                     <span><?= $block->escapeHtml(__('Generate Shipping Label')) ?></span>
                     <span class="tooltip">
-                        <a href="#" data-tooltip="You can defer this step until later">&#9432;</a>
+                        <button type="button" data-tooltip="You can defer this step for later">&#9432;</button>
                     </span>
                 </div>
                 <div class="field request_label toggle optional">
@@ -63,15 +63,55 @@ $weightUnits = $viewModel->getWeightUnits();
     <div class="details">
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('#%1', $order->getRealOrderId())) ?></span>
+            <span class="value">
+                <?= $block->escapeHtml(
+                    __(
+                        '#%1',
+                        $order->getRealOrderId()
+                    )
+                ) ?>
+            </span>
         </div>
         <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Package Carrier')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('%1', $viewModel->getFrontLabel('carriers', $carrierCode))) ?></span>
+            <span class="title"><?= $block->escapeHtml(__('Shipping Carrier')) ?></span>
+            <span class="value">
+                <?= $block->escapeHtml(
+                    __(
+                        '%1',
+                        $viewModel->getFrontLabel(
+                            'carriers',
+                            $carrierCode
+                        )
+                    )
+                ) ?>
+            </span>
+        </div>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Shipping Method')) ?></span>
+            <span class="value">
+                <?= $block->escapeHtml(
+                    __(
+                        '%1',
+                        $viewModel->getFrontLabel(
+                            'methods',
+                            $carrierCode,
+                            $viewModel->getShippingMethod()
+                        )
+                    )
+                ) ?>
+            </span>
         </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Package Weight')) ?></span>
-            <span class="value"><?= $block->escapeHtml(__('%1 (%2)', $packageWeight, $weightUnits)) ?></span>
+            <span class="value">
+                <?= $block->escapeHtml(
+                    __(
+                        '%1 (%2)',
+                        $packageWeight,
+                        $weightUnits
+                    )
+                ) ?>
+            </span>
         </div>
     </div>
     <div class="actions-toolbar">
