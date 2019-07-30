@@ -23,7 +23,6 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\PackageInterfaceFactory,
     Api\Data\SimpleReturnInterface,
     Api\Data\SimpleReturnInterfaceFactory,
-    Api\LabelRepositoryInterface,
     Api\PackageManagementInterface,
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
@@ -57,9 +56,6 @@ class Generate extends Action implements
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property LabelRepositoryInterface $labelRepository */
-    protected $labelRepository;
-
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
@@ -90,7 +86,6 @@ class Generate extends Action implements
     /**
      * @param Context $context
      * @param ExceptionFactory $exceptionFactory
-     * @param LabelRepositoryInterface $labelRepository
      * @param ModuleConfig $moduleConfig
      * @param PackageInterfaceFactory $packageFactory
      * @param PackageManagementInterface $packageManagement
@@ -105,7 +100,6 @@ class Generate extends Action implements
     public function __construct(
         Context $context,
         ExceptionFactory $exceptionFactory,
-        LabelRepositoryInterface $labelRepository,
         ModuleConfig $moduleConfig,
         PackageInterfaceFactory $packageFactory,
         PackageManagementInterface $packageManagement,
@@ -119,7 +113,6 @@ class Generate extends Action implements
         parent::__construct($context);
         $this->__initialize();
         $this->exceptionFactory = $exceptionFactory;
-        $this->labelRepository = $labelRepository;
         $this->moduleConfig = $moduleConfig;
         $this->packageFactory = $packageFactory;
         $this->packageManagement = $packageManagement;
@@ -169,19 +162,13 @@ class Generate extends Action implements
 
                 /* Create RMA request and generate shipping label. */
                 if ($this->packageManagement->requestToReturnShipment($package)) {
-                    /** @var int $labelId */
-                    $labelId = (int) $package->getLabelId();
-
-                    /** @var LabelInterface $label */
-                    $label = $this->labelRepository->getById($labelId);
-
-                    $params['label_id'] = $label->getId();
-                    $params['token'] = $label->getToken();
+                    $params['pkg_id'] = $package->getId();
+                    $params['token'] = $package->getToken();
                 }
 
                 /** @var string $viewUrl */
                 $viewUrl = $this->urlBuilder->getUrl(
-                    'simplereturns/label/view',
+                    'simplereturns/package/view',
                     $params
                 );
 
