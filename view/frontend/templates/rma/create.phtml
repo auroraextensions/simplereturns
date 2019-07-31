@@ -28,10 +28,10 @@ $reasons = $viewModel->getReasons();
 /** @var array $resolutions */
 $resolutions = $viewModel->getResolutions();
 ?>
-<div class="block simplereturns simplereturns-rma-create">
+<div class="block simplereturns">
     <div class="simplereturns-rma-form">
         <div class="container-form">
-            <form method="POST" action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" id="simplereturns-rma-create-form">
+            <form action="<?= $block->escapeUrl($viewModel->getPostActionUrl()) ?>" enctype="multipart/form-data" method="POST">
                 <?= $block->getBlockHtml('formkey') ?>
                 <fieldset class="fieldset simplereturns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                     <legend class="legend">
@@ -67,6 +67,18 @@ $resolutions = $viewModel->getResolutions();
                         </label>
                         <div class="control">
                             <textarea id="comments" name="simplereturns[comments]"></textarea>
+                        </div>
+                    </div>
+                    <div class="field attachments optional">
+                        <label class="label attachments" for="attachments">
+                            <span><?= $block->escapeHtml(__('Attachments')) ?></span>
+                        </label>
+                        <div class="control">
+                            <input id="attachments"
+                                   name="simplereturns[attachments][]"
+                                   type="file"
+                                   accept="image/jpeg,image/png,image/gif"
+                                   multiple>
                         </div>
                     </div>
                 </fieldset>
