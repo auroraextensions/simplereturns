@@ -40,7 +40,7 @@ use Magento\Framework\{
 };
 use Magento\Sales\{
     Api\Data\OrderInterface,
-    OrderRepositoryInterface
+    Api\OrderRepositoryInterface
 };
 
 class EditView extends AbstractView implements
