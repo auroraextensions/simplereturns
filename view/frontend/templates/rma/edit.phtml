@@ -92,7 +92,7 @@ $resolutions = $viewModel->getResolutions();
                     </div>
                     <div class="secondary">
                         <button class="action cancel" title="<?= $block->escapeHtmlAttr(__('Cancel')) ?>" type="button">
-                            <span><?= $block->escapeHtml(__('Cancel')) ?></span>
+                            <a href="<?= $viewModel->getViewRmaUrl() ?>"><?= $block->escapeHtml(__('Cancel')) ?></a>
                         </button>
                     </div>
                 </div>
