@@ -171,30 +171,6 @@ class ViewView extends AbstractView implements
     }
 
     /**
-     * @return string
-     */
-    public function getViewLabelUrl(): string
-    {
-        /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
-
-        /** @var LabelInterface|null $label */
-        $label = $this->getLabel();
-
-        if ($label !== null) {
-            $params['label_id'] = $label->getId();
-            $params['token'] = $label->getToken();
-        }
-
-        return $this->urlBuilder->getUrl(
-            'simplereturns/label/view',
-            $params
-        );
-    }
-
-    /**
      * Get frontend label for field type by key.
      *
      * @param string $type
