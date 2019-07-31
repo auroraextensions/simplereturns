@@ -171,6 +171,36 @@ class ViewView extends AbstractView implements
     }
 
     /**
+     * @return string
+     */
+    public function getEditRmaUrl(): string
+    {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var int|string|null $rmaId */
+        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
+
+        if ($rmaId !== null) {
+            $params['rma_id'] = $rmaId;
+        }
+
+        /** @var string|null $token */
+        $token = $this->request->getParam(self::PARAM_TOKEN);
+
+        if ($token !== null) {
+            $params['token'] = $token;
+        }
+
+        return $this->urlBuilder->getUrl(
+            'simplereturns/rma/edit',
+            $params
+        );
+    }
+
+    /**
      * Get frontend label for field type by key.
      *
      * @param string $type
