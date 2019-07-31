@@ -212,4 +212,19 @@ class EditView extends AbstractView implements
 
         return $this->urlBuilder->getUrl($route, $params);
     }
+
+    /**
+     * @return bool
+     */
+    public function hasSimpleReturn(): bool
+    {
+        /** @var SimpleReturnInterface|null $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            return true;
+        }
+
+        return false;
+    }
 }
