@@ -124,6 +124,8 @@ interface ModuleComponentInterface
     /** @constant string ROUTE_SIMPLERETURNS_PKG_VIEW */
     /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATE */
     /** @constant string ROUTE_SIMPLERETURNS_RMA_CREATEPOST */
+    /** @constant string ROUTE_SIMPLERETURNS_RMA_EDIT */
+    /** @constant string ROUTE_SIMPLERETURNS_RMA_EDITPOST */
     /** @constant string ROUTE_SIMPLERETURNS_RMA_VIEW */
     /** @constant string ROUTE_SIMPLERETURNS_ORDERS_RESULTS */
     /** @constant string ROUTE_SIMPLERETURNS_ORDERS_SEARCH */
@@ -136,6 +138,8 @@ interface ModuleComponentInterface
     const ROUTE_SIMPLERETURNS_PKG_VIEW = 'simplereturns/package/view';
     const ROUTE_SIMPLERETURNS_RMA_CREATE = 'simplereturns/rma/create';
     const ROUTE_SIMPLERETURNS_RMA_CREATEPOST = 'simplereturns/rma/createPost';
+    const ROUTE_SIMPLERETURNS_RMA_EDIT = 'simplereturns/rma/edit';
+    const ROUTE_SIMPLERETURNS_RMA_EDITPOST = 'simplereturns/rma/editPost';
     const ROUTE_SIMPLERETURNS_RMA_VIEW = 'simplereturns/rma/view';
     const ROUTE_SIMPLERETURNS_ORDERS_RESULTS = 'simplereturns/orders/results';
     const ROUTE_SIMPLERETURNS_ORDERS_SEARCH = 'simplereturns/orders/search';
