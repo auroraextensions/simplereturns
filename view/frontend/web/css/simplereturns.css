@@ -43,6 +43,15 @@ input[readonly] {
   padding: 1rem 0;
 }
 
+.simplereturns .cancel a {
+  color: #333;
+}
+
+.simplereturns .cancel a:focus,
+.simplereturns .cancel a:hover {
+  text-decoration: none;
+}
+
 .simplereturns .details .info,
 .simplereturns .details .thumbnail {
   display: inline-block;
