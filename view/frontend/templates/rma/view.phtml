@@ -61,17 +61,6 @@ $hasPackage = $viewModel->hasPackage();
                 ) ?>
             </span>
         </div>
-        <div class="row">
-            <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
-            <span class="value">
-                <?= $block->escapeHtml(
-                    __(
-                        '#%1',
-                        $order->getRealOrderId()
-                    )
-                ) ?>
-            </span>
-        </div>
         <?php if ($hasPackage): ?>
         <?php /** @var PackageInterface $package */ ?>
         <?php $package = $viewModel->getPackage() ?>
@@ -87,6 +76,17 @@ $hasPackage = $viewModel->hasPackage();
             </span>
         </div>
         <?php endif ?>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
+            <span class="value">
+                <?= $block->escapeHtml(
+                    __(
+                        '#%1',
+                        $order->getRealOrderId()
+                    )
+                ) ?>
+            </span>
+        </div>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Status')) ?></span>
             <span class="value">
