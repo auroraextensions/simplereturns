@@ -41,6 +41,7 @@ $hasPackage = $viewModel->hasPackage();
     <h2><?= $block->escapeHtml(__('View RMA Details for Order #%1', $order->getRealOrderId())) ?></h2>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
     <div class="actions">
+        <a class="action" href="#"><?= $block->escapeHtml(__('Edit RMA Details')) ?></a>
     <?php if ($hasPackage): ?>
         <a class="action" href="<?= $viewModel->getViewPackageUrl() ?>"><?= $block->escapeHtml(__('View Package Details')) ?></a>
     <?php else: ?>
