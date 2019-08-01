@@ -33,14 +33,18 @@ use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
     App\Action\HttpPostActionInterface,
+    App\Filesystem\DirectoryList,
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
     Exception\AlreadyExistsException,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
+    Filesystem,
     HTTP\PhpEnvironment\RemoteAddress,
+    Serialize\Serializer\Json,
     UrlInterface
 };
+use Magento\MediaStorage\Model\File\UploaderFactory;
 
 class CreatePost extends Action implements
     HttpPostActionInterface,
@@ -54,6 +58,9 @@ class CreatePost extends Action implements
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
+    /** @property Filesystem $filesystem */
+    protected $filesystem;
+
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
@@ -65,6 +72,9 @@ class CreatePost extends Action implements
 
     /** @property RemoteAddress $remoteAddress */
     protected $remoteAddress;
+
+    /** @property Json $serializer */
+    protected $serializer;
 
     /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
     protected $simpleReturnFactory;
@@ -81,10 +91,13 @@ class CreatePost extends Action implements
     /**
      * @param Context $context
      * @param ExceptionFactory $exceptionFactory
+     * @param Filesystem $filesystem
+     * @param UploaderFactory $fileUploaderFactory
      * @param FormKeyValidator $formKeyValidator
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
+     * @param Json $serializer
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param Tokenizer $tokenizer
@@ -94,10 +107,13 @@ class CreatePost extends Action implements
     public function __construct(
         Context $context,
         ExceptionFactory $exceptionFactory,
+        Filesystem $filesystem,
+        UploaderFactory $fileUploaderFactory,
         FormKeyValidator $formKeyValidator,
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
+        Json $serializer,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         Tokenizer $tokenizer,
@@ -106,10 +122,13 @@ class CreatePost extends Action implements
         parent::__construct($context);
         $this->__initialize();
         $this->exceptionFactory = $exceptionFactory;
+        $this->filesystem = $filesystem;
+        $this->fileUploaderFactory = $fileUploaderFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->remoteAddress = $remoteAddress;
+        $this->serializer = $serializer;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->tokenizer = $tokenizer;
@@ -153,6 +172,10 @@ class CreatePost extends Action implements
             /** @var string|null $comments */
             $comments = $params['comments'] ?? null;
             $comments = !empty($comments) ? $comments : null;
+
+            /** @var array $attachments */
+            $attachments = $request->getFiles('attachments') ?? [];
+            $attachments = !empty($attachments) ? $attachments : null;
 
             /** @var array $fields */
             $fields = [
@@ -206,6 +229,48 @@ class CreatePost extends Action implements
                             'remote_ip'  => $remoteIp,
                             'token'      => $token,
                         ];
+
+                        /* Include file metadata, if needed. */
+                        if ($attachments !== null) {
+                            /** @var array $metadata */
+                            $metadata = [];
+
+                            /** @var string $mediaPath */
+                            $mediaPath = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath();
+                            $mediaPath = rtrim($mediaPath, '/');
+
+                            /** @var array $attachment */
+                            foreach ($attachments as $attachment) {
+                                /** @var string $savePath */
+                                $savePath = $mediaPath . self::SAVE_PATH;
+
+                                /** @var Magento\MediaStorage\Model\File\Uploader $uploader */
+                                $uploader = $this->fileUploaderFactory
+                                    ->create(['fileId' => $attachment])
+                                    ->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']) /** @todo: Pull file extensions dynamically. */
+                                    ->setAllowCreateFolders(true)
+                                    ->setAllowRenameFiles(true)
+                                    ->setFilesDispersion(true);
+
+                                /** @var string $filename */
+                                $filename = str_replace(
+                                    ' ',
+                                    '_',
+                                    $attachment['name']
+                                );
+
+                                /** @var array $result */
+                                $result = $uploader->save($savePath, $filename);
+
+                                /* Include file metadata with RMA entry. */
+                                $metadata[] = [
+                                    'name' => $result['name'],
+                                    'path' => $result['path'],
+                                ];
+                            }
+
+                            $data['attachments'] = $this->serializer->serialize($metadata);
+                        }
 
                         /** @var int $rmaId */
                         $rmaId = $this->simpleReturnRepository->save(
