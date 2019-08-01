@@ -9,6 +9,7 @@
             "reason": true,
             "resolution": true,
             "comments": true,
+            "attachments": true,
             "remote_ip": true,
             "token": true
         },
