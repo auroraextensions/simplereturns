@@ -145,6 +145,9 @@ interface ModuleComponentInterface
     const ROUTE_SIMPLERETURNS_ORDERS_SEARCH = 'simplereturns/orders/search';
     const ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST = 'simplereturns/orders/searchPost';
 
+    /** @constant string SAVE_PATH */
+    const SAVE_PATH = '/simplereturns/';
+
     /** @constant string SQL_COLUMN_LABEL_PRIMARY_FIELD */
     /** @constant string SQL_COLUMN_PKG_PRIMARY_FIELD */
     /** @constant string SQL_COLUMN_RMA_PRIMARY_FIELD */
