@@ -24,15 +24,17 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Exception;
 
 use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use Exception;
 use Magento\Framework\{
     ObjectManagerInterface,
     Phrase
 };
+use Throwable;
 
 final class ExceptionFactory implements ModuleComponentInterface
 {
     /** @constant string BASE_TYPE */
-    const BASE_TYPE = \Exception::class;
+    const BASE_TYPE = Exception::class;
 
     /** @property ObjectManagerInterface $objectManager */
     protected $objectManager;
@@ -53,7 +55,7 @@ final class ExceptionFactory implements ModuleComponentInterface
      *
      * @param string|null $type
      * @param Phrase|null $message
-     * @return mixed
+     * @return Throwable
      * @throws Exception
      */
     public function create(
@@ -66,8 +68,8 @@ final class ExceptionFactory implements ModuleComponentInterface
         /* If no message was given, set default message. */
         $message = $message ?? __(self::ERROR_DEFAULT_MESSAGE);
 
-        if ($type !== self::BASE_TYPE && !is_subclass_of($type, self::BASE_TYPE)) {
-            throw new \Exception(
+        if (!is_subclass_of($type, Throwable::class)) {
+            throw new Exception(
                 __(
                     self::ERROR_INVALID_EXCEPTION_TYPE,
                     $type
@@ -75,10 +77,10 @@ final class ExceptionFactory implements ModuleComponentInterface
             );
         }
 
-        if (!is_subclass_of($type, self::BASE_TYPE)) {
-            $arguments['message'] = $message->__toString();
-        } else {
+        if ($type !== self::BASE_TYPE) {
             $arguments['phrase'] = $message;
+        } else {
+            $arguments['message'] = $message->__toString();
         }
 
         return $this->objectManager->create($type, $arguments);
