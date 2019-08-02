@@ -18,41 +18,20 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Security;
 
-use Magento\Framework\Math\Random as Generator;
-
 class Token
 {
-    /** @constant string CHARS_HEX */
-    const CHARS_HEX = '0123456789abcdef';
-
     /** @constant string HASH_ALGO */
     const HASH_ALGO = 'sha512';
-
-    /** @property Generator $generator */
-    protected $generator;
-
-    /**
-     * @param Generator $generator
-     * @return void
-     */
-    public function __construct(Generator $generator)
-    {
-        $this->generator = $generator;
-    }
 
     /**
      * Create token of specified length and charset.
      *
      * @param int $length
-     * @param string $chars
      * @return string
      */
-    public function createToken(
-        int $length = 64,
-        string $chars = self::CHARS_HEX
-    ): string
+    public static function createToken(int $length = 32): string
     {
-        return $this->generator->getRandomString($length, $chars);
+        return bin2hex(random_bytes($length));
     }
 
     /**
