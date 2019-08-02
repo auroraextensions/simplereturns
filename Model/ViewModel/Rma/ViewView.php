@@ -49,6 +49,9 @@ class ViewView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    /** @property LabelInterface $label */
+    protected $label;
+
     /** @property LabelRepositoryInterface $labelRepository */
     protected $labelRepository;
 
@@ -58,11 +61,20 @@ class ViewView extends AbstractView implements
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
+    /** @property OrderInterface $order */
+    protected $order;
+
     /** @property OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
+    /** @property PackageInterface $package */
+    protected $package;
+
     /** @property PackageRepositoryInterface $packageRepository */
     protected $packageRepository;
+
+    /** @property SimpleReturnInterface $rma */
+    protected $rma;
 
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
@@ -216,30 +228,6 @@ class ViewView extends AbstractView implements
     }
 
     /**
-     * Get associated order.
-     *
-     * @return OrderInterface|null
-     * @throws NoSuchEntityException
-     */
-    public function getOrder(): ?OrderInterface
-    {
-        /** @var SimpleReturnInterface $rma */
-        $rma = $this->getSimpleReturn();
-
-        if ($rma !== null) {
-            try {
-                return $this->orderRepository->get($rma->getOrderId());
-            } catch (NoSuchEntityException $e) {
-                /* No action required. */
-            } catch (LocalizedException $e) {
-                /* No action required. */
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Get associated SimpleReturn data object.
      *
      * @return SimpleReturnInterface|null
@@ -247,6 +235,10 @@ class ViewView extends AbstractView implements
      */
     public function getSimpleReturn(): ?SimpleReturnInterface
     {
+        if ($this->rma !== null) {
+            return $this->rma;
+        }
+
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
         $rmaId = $rmaId !== null && is_numeric($rmaId)
@@ -264,6 +256,8 @@ class ViewView extends AbstractView implements
                     $rma = $this->simpleReturnRepository->getById($rmaId);
 
                     if (Tokenizer::isEqual($token, $rma->getToken())) {
+                        $this->rma = $rma;
+
                         return $rma;
                     }
 
@@ -285,10 +279,50 @@ class ViewView extends AbstractView implements
     }
 
     /**
+     * Get associated order.
+     *
+     * @return OrderInterface|null
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function getOrder(): ?OrderInterface
+    {
+        if ($this->order !== null) {
+            return $this->order;
+        }
+
+        /** @var SimpleReturnInterface $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            try {
+                /** @var OrderInterface $order */
+                $order = $this->orderRepository->get($rma->getOrderId());
+
+                if ($order->getId()) {
+                    $this->order = $order;
+
+                    return $order;
+                }
+            } catch (NoSuchEntityException $e) {
+                /* No action required. */
+            } catch (LocalizedException $e) {
+                /* No action required. */
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return PackageInterface|null
      */
     public function getPackage(): ?PackageInterface
     {
+        if ($this->package !== null) {
+            return $this->package;
+        }
+
         /** @var SimpleReturnInterface|null $rma */
         $rma = $this->getSimpleReturn();
 
@@ -301,7 +335,14 @@ class ViewView extends AbstractView implements
 
             if ($pkgId !== null) {
                 try {
-                    return $this->packageRepository->getById($pkgId);
+                    /** @var PackageInterface $package */
+                    $package = $this->packageRepository->getById($pkgId);
+
+                    if ($package->getId()) {
+                        $this->package = $package;
+
+                        return $package;
+                    }
                 } catch (NoSuchEntityException $e) {
                     /* No action required. */
                 } catch (LocalizedException $e) {
@@ -318,12 +359,23 @@ class ViewView extends AbstractView implements
      */
     public function getLabel(): ?LabelInterface
     {
+        if ($this->label !== null) {
+            return $this->label;
+        }
+
         /** @var PackageInterface|null $package */
         $package = $this->getPackage();
 
         if ($package !== null) {
             try {
-                return $this->labelRepository->get($package);
+                /** @var LabelInterface $label */
+                $label = $this->labelRepository->get($package);
+
+                if ($label->getId()) {
+                    $this->label = $label;
+
+                    return $label;
+                }
             } catch (NoSuchEntityException $e) {
                 /* No action required. */
             } catch (LocalizedException $e) {
