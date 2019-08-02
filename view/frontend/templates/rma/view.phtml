@@ -34,6 +34,9 @@ $rma = $viewModel->getSimpleReturn();
 /** @var OrderInterface $order */
 $order = $viewModel->getOrder();
 
+/** @var array $attachments */
+$attachments = $viewModel->getAttachments();
+
 /** @var bool $hasPackage */
 $hasPackage = $viewModel->hasPackage();
 ?>
@@ -123,6 +126,16 @@ $hasPackage = $viewModel->hasPackage();
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Comments')) ?></span>
             <span class="value"><?= $block->escapeHtml($rma->getComments()) ?></span>
+        </div>
+        <div class="row">
+            <span class="title"><?= $block->escapeHtml(__('Attachments')) ?></span>
+            <span class="value attachments">
+            <?php foreach ($attachments as $attachment): ?>
+                <div class="attachment">
+                    <img src="<?= $block->escapeUrl($attachment) ?>" width="150"/>
+                </div>
+            <?php endforeach ?>
+            </span>
         </div>
     </div>
 </div>
