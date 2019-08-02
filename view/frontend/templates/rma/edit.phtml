@@ -37,6 +37,9 @@ $reasons = $viewModel->getReasons();
 
 /** @var array $resolutions */
 $resolutions = $viewModel->getResolutions();
+
+/** @var array $attachments */
+$attachments = $viewModel->getAttachments();
 ?>
 <div class="block simplereturns">
     <div class="simplereturns-rma-form">
@@ -81,6 +84,16 @@ $resolutions = $viewModel->getResolutions();
                         </label>
                         <div class="control">
                             <textarea id="comments" name="simplereturns[comments]"><?= $block->escapeHtml($rma->getComments()) ?></textarea>
+                        </div>
+                    </div>
+                    <div class="field comments optional">
+                        <label class="label attachments" for="attachments">
+                            <span><?= $block->escapeHtml(__('Attachments')) ?></span>
+                        </label>
+                        <div class="control">
+                        <?php foreach ($attachments as $token => $attachment): ?>
+                            <img data-token="<?= $block->escapeHtmlAttr($token) ?>" src="<?= $block->escapeUrl($attachment) ?>"/>
+                        <?php endforeach ?>
                         </div>
                     </div>
                 </fieldset>
