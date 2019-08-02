@@ -81,9 +81,6 @@ class CreatePost extends Action implements
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property Tokenizer $tokenizer */
-    protected $tokenizer;
-
     /** @property UrlInterface $urlBuilder */
     protected $urlBuilder;
 
@@ -98,7 +95,6 @@ class CreatePost extends Action implements
      * @param RemoteAddress $remoteAddress
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
-     * @param Tokenizer $tokenizer
      * @param UrlInterface $urlBuilder
      * @return void
      */
@@ -113,7 +109,6 @@ class CreatePost extends Action implements
         RemoteAddress $remoteAddress,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
-        Tokenizer $tokenizer,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
@@ -127,7 +122,6 @@ class CreatePost extends Action implements
         $this->remoteAddress = $remoteAddress;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
-        $this->tokenizer = $tokenizer;
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -193,7 +187,7 @@ class CreatePost extends Action implements
                         $remoteIp = $this->remoteAddress->getRemoteAddress();
 
                         /** @var string $token */
-                        $token = $this->tokenizer->createToken();
+                        $token = Tokenizer::createToken();
 
                         /** @var string $carrierCode */
                         $carrierCode = $this->moduleConfig->getShippingCarrier();

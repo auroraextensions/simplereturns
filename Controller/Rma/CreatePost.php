@@ -82,9 +82,6 @@ class CreatePost extends Action implements
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property Tokenizer $tokenizer */
-    protected $tokenizer;
-
     /** @property UrlInterface $urlBuilder */
     protected $urlBuilder;
 
@@ -100,7 +97,6 @@ class CreatePost extends Action implements
      * @param Json $serializer
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
-     * @param Tokenizer $tokenizer
      * @param UrlInterface $urlBuilder
      * @return void
      */
@@ -116,7 +112,6 @@ class CreatePost extends Action implements
         Json $serializer,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
-        Tokenizer $tokenizer,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
@@ -131,7 +126,6 @@ class CreatePost extends Action implements
         $this->serializer = $serializer;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
-        $this->tokenizer = $tokenizer;
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -214,7 +208,7 @@ class CreatePost extends Action implements
                         $remoteIp = $this->remoteAddress->getRemoteAddress();
 
                         /** @var string $token */
-                        $token = $this->tokenizer->createToken();
+                        $token = Tokenizer::createToken();
 
                         /** @var string $status */
                         $status = $this->moduleConfig->getDefaultStatus();
@@ -236,7 +230,9 @@ class CreatePost extends Action implements
                             $metadata = [];
 
                             /** @var string $mediaPath */
-                            $mediaPath = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath();
+                            $mediaPath = $this->filesystem
+                                ->getDirectoryRead(DirectoryList::MEDIA)
+                                ->getAbsolutePath();
                             $mediaPath = rtrim($mediaPath, '/');
 
                             /** @var array $attachment */
@@ -262,8 +258,11 @@ class CreatePost extends Action implements
                                 /** @var array $result */
                                 $result = $uploader->save($savePath, $filename);
 
+                                /** @var string $fileKey */
+                                $fileKey = Tokenizer::createToken();
+
                                 /* Include file metadata with RMA entry. */
-                                $metadata[] = $result['file'];
+                                $metadata[$fileKey] = $result['file'];
                             }
 
                             $data['attachments'] = $this->serializer->serialize($metadata);
