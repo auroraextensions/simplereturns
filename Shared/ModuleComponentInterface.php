@@ -94,6 +94,7 @@ interface ModuleComponentInterface
     const LABEL_CACHE_ID = 'SIMPLERETURNS_RETURN_LABEL_CONTENT_PER_ORDER';
 
     /** @constant string PARAM_EMAIL */
+    /** @constant string PARAM_ATTACHMENT_KEY */
     /** @constant string PARAM_ORDER_ID */
     /** @constant string PARAM_PROTECT_CODE */
     /** @constant string PARAM_LABEL_ID */
@@ -102,6 +103,7 @@ interface ModuleComponentInterface
     /** @constant string PARAM_TOKEN */
     /** @constant string PARAM_ZIP_CODE */
     const PARAM_EMAIL = 'email';
+    const PARAM_ATTACHMENT_KEY = 'attachment_key';
     const PARAM_ORDER_ID = 'order_id';
     const PARAM_PROTECT_CODE = 'code';
     const PARAM_LABEL_ID = 'label_id';
