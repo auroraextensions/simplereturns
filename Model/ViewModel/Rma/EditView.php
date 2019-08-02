@@ -35,6 +35,7 @@ use Magento\Framework\{
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
     Message\ManagerInterface as MessageManagerInterface,
+    Serialize\Serializer\Json,
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
@@ -42,6 +43,7 @@ use Magento\Sales\{
     Api\Data\OrderInterface,
     Api\OrderRepositoryInterface
 };
+use Magento\Store\Model\StoreManagerInterface;
 
 class EditView extends AbstractView implements
     ArgumentInterface,
@@ -59,8 +61,14 @@ class EditView extends AbstractView implements
     /** @property OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
+    /** @property Json $serializer */
+    protected $serializer;
+
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
+
+    /** @property StoreManagerInterface $storeManager */
+    protected $storeManager;
 
     /**
      * @param ConfigHelper $configHelper
@@ -72,7 +80,9 @@ class EditView extends AbstractView implements
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param OrderRepositoryInterface $orderRepository
+     * @param Json $serializer
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param StoreManagerInterface $storeManager
      * @return void
      */
     public function __construct(
@@ -85,7 +95,9 @@ class EditView extends AbstractView implements
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
         OrderRepositoryInterface $orderRepository,
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        Json $serializer,
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        StoreManagerInterface $storeManager
     ) {
         parent::__construct(
             $configHelper,
@@ -99,7 +111,69 @@ class EditView extends AbstractView implements
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->orderRepository = $orderRepository;
+        $this->serializer = $serializer;
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->storeManager = $storeManager;
+    }
+
+    /**
+     * @param string $route
+     * @return string
+     */
+    public function getPostActionUrl(
+        string $route = self::ROUTE_SIMPLERETURNS_RMA_EDITPOST
+    ): string
+    {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var int|string|null $rmaId */
+        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
+
+        if ($rmaId !== null) {
+            $params['rma_id'] = $rmaId;
+        }
+
+        /** @var string|null $token */
+        $token = $this->request->getParam(self::PARAM_TOKEN);
+
+        if ($token !== null) {
+            $params['token'] = $token;
+        }
+
+        return $this->urlBuilder->getUrl($route, $params);
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewRmaUrl(): string
+    {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var int|string|null $rmaId */
+        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
+
+        if ($rmaId !== null) {
+            $params['rma_id'] = $rmaId;
+        }
+
+        /** @var string|null $token */
+        $token = $this->request->getParam(self::PARAM_TOKEN);
+
+        if ($token !== null) {
+            $params['token'] = $token;
+        }
+
+        return $this->urlBuilder->getUrl(
+            'simplereturns/rma/view',
+            $params
+        );
     }
 
     /**
@@ -170,6 +244,48 @@ class EditView extends AbstractView implements
     /**
      * @return array
      */
+    public function getAttachments(): array
+    {
+        /** @var array $attachments */
+        $attachments = [];
+
+        /** @var SimpleReturnInterface|null $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            /** @var string|null $data */
+            $data = $rma->getAttachments();
+
+            if ($data !== null) {
+                /** @var array $entries */
+                $entries = $this->serializer->unserialize($data);
+
+                /** @var string $baseUrl */
+                $baseUrl = $this->storeManager
+                    ->getStore()
+                    ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+                $baseUrl = rtrim($baseUrl, '/');
+
+                /** @var string $mediaUrl */
+                $mediaUrl = $baseUrl . self::SAVE_PATH;
+                $mediaUrl = rtrim($mediaUrl, '/');
+
+                /** @var string $key */
+                /** @var string $entry */
+                foreach ($entries as $key => $entry) {
+                    /** @var string $imageUrl */
+                    $imageUrl = $mediaUrl . $entry;
+                    $attachments[$key] = $imageUrl;
+                }
+            }
+        }
+
+        return $attachments;
+    }
+
+    /**
+     * @return array
+     */
     public function getReasons(): array
     {
         return $this->moduleConfig->getReasons();
@@ -181,66 +297,6 @@ class EditView extends AbstractView implements
     public function getResolutions(): array
     {
         return $this->moduleConfig->getResolutions();
-    }
-
-    /**
-     * @param string $route
-     * @return string
-     */
-    public function getPostActionUrl(
-        string $route = self::ROUTE_SIMPLERETURNS_RMA_EDITPOST
-    ): string
-    {
-        /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
-
-        /** @var int|string|null $rmaId */
-        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
-
-        if ($rmaId !== null) {
-            $params['rma_id'] = $rmaId;
-        }
-
-        /** @var string|null $token */
-        $token = $this->request->getParam(self::PARAM_TOKEN);
-
-        if ($token !== null) {
-            $params['token'] = $token;
-        }
-
-        return $this->urlBuilder->getUrl($route, $params);
-    }
-
-    /**
-     * @return string
-     */
-    public function getViewRmaUrl(): string
-    {
-        /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
-
-        /** @var int|string|null $rmaId */
-        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
-
-        if ($rmaId !== null) {
-            $params['rma_id'] = $rmaId;
-        }
-
-        /** @var string|null $token */
-        $token = $this->request->getParam(self::PARAM_TOKEN);
-
-        if ($token !== null) {
-            $params['token'] = $token;
-        }
-
-        return $this->urlBuilder->getUrl(
-            'simplereturns/rma/view',
-            $params
-        );
     }
 
     /**

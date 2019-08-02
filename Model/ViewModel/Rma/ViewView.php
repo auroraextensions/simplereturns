@@ -429,11 +429,12 @@ class ViewView extends AbstractView implements
                 $mediaUrl = $baseUrl . self::SAVE_PATH;
                 $mediaUrl = rtrim($mediaUrl, '/');
 
+                /** @var string $key */
                 /** @var string $entry */
-                foreach ($entries as $entry) {
+                foreach ($entries as $key => $entry) {
                     /** @var string $imageUrl */
                     $imageUrl = $mediaUrl . $entry;
-                    $attachments[] = $imageUrl;
+                    $attachments[$key] = $imageUrl;
                 }
             }
         }
