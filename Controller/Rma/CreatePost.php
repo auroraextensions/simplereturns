@@ -263,10 +263,7 @@ class CreatePost extends Action implements
                                 $result = $uploader->save($savePath, $filename);
 
                                 /* Include file metadata with RMA entry. */
-                                $metadata[] = [
-                                    'name' => $result['name'],
-                                    'path' => $result['path'],
-                                ];
+                                $metadata[] = $result['file'];
                             }
 
                             $data['attachments'] = $this->serializer->serialize($metadata);
