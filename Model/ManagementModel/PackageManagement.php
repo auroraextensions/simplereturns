@@ -102,9 +102,6 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
     /** @property StoreManagerInterface $storeManager */
     protected $storeManager;
 
-    /** @property Tokenizer $tokenizer */
-    protected $tokenizer;
-
     /**
      * @param CarrierFactory $carrierFactory
      * @param DataObjectFactory $dataObjectFactory
@@ -121,7 +118,6 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      * @param ShipmentRequestFactory $shipmentRequestFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param StoreManagerInterface $storeManager
-     * @param Tokenizer $tokenizer
      * @return void
      */
     public function __construct(
@@ -139,8 +135,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
         RemoteAddress $remoteAddress,
         ShipmentRequestFactory $shipmentRequestFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
-        StoreManagerInterface $storeManager,
-        Tokenizer $tokenizer
+        StoreManagerInterface $storeManager
     ) {
         $this->carrierFactory = $carrierFactory;
         $this->dataObjectFactory = $dataObjectFactory;
@@ -157,7 +152,6 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
         $this->shipmentRequestFactory = $shipmentRequestFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->storeManager = $storeManager;
-        $this->tokenizer = $tokenizer;
     }
 
     /**
@@ -419,7 +413,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                         $trackingNumber = $shipmentInfo['tracking_number'] ?? null;
 
                         /** @var string $token */
-                        $token = $this->tokenizer->createToken();
+                        $token = Tokenizer::createToken();
 
                         /** @var int $labelId */
                         $labelId = $this->labelRepository->save(
