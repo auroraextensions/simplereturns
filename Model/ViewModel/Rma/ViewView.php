@@ -37,6 +37,7 @@ use Magento\Framework\{
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
     Message\ManagerInterface as MessageManagerInterface,
+    Serialize\Serializer\Json,
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
@@ -44,6 +45,7 @@ use Magento\Sales\{
     Api\Data\OrderInterface,
     Api\OrderRepositoryInterface
 };
+use Magento\Store\Model\StoreManagerInterface;
 
 class ViewView extends AbstractView implements
     ArgumentInterface,
@@ -76,8 +78,14 @@ class ViewView extends AbstractView implements
     /** @property SimpleReturnInterface $rma */
     protected $rma;
 
+    /** @property Json $serializer */
+    protected $serializer;
+
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
+
+    /** @property StoreManagerInterface $storeManager */
+    protected $storeManager;
 
     /** @property Tokenizer $tokenizer */
     protected $tokenizer;
@@ -93,7 +101,9 @@ class ViewView extends AbstractView implements
      * @param ModuleConfig $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
      * @param PackageRepositoryInterface $packageRepository
+     * @param Json $serializer
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param StoreManagerInterface $storeManager
      * @param Tokenizer $tokenizer
      * @return void
      */
@@ -108,7 +118,9 @@ class ViewView extends AbstractView implements
         ModuleConfig $moduleConfig,
         OrderRepositoryInterface $orderRepository,
         PackageRepositoryInterface $packageRepository,
+        Json $serializer,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
+        StoreManagerInterface $storeManager,
         Tokenizer $tokenizer
     ) {
         parent::__construct(
@@ -124,7 +136,9 @@ class ViewView extends AbstractView implements
         $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
         $this->packageRepository = $packageRepository;
+        $this->serializer = $serializer;
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->storeManager = $storeManager;
         $this->tokenizer = $tokenizer;
     }
 
@@ -384,6 +398,47 @@ class ViewView extends AbstractView implements
         }
 
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttachments(): array
+    {
+        /** @var array $attachments */
+        $attachments = [];
+
+        /** @var SimpleReturnInterface|null $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            /** @var string|null $data */
+            $data = $rma->getAttachments();
+
+            if ($data !== null) {
+                /** @var array $entries */
+                $entries = $this->serializer->unserialize($data);
+
+                /** @var string $baseUrl */
+                $baseUrl = $this->storeManager
+                    ->getStore()
+                    ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+                $baseUrl = rtrim($baseUrl, '/');
+
+                /** @var string $mediaUrl */
+                $mediaUrl = $baseUrl . self::SAVE_PATH;
+                $mediaUrl = rtrim($mediaUrl, '/');
+
+                /** @var string $entry */
+                foreach ($entries as $entry) {
+                    /** @var string $imageUrl */
+                    $imageUrl = $mediaUrl . $entry;
+                    $attachments[] = $imageUrl;
+                }
+            }
+        }
+
+        return $attachments;
     }
 
     /**
