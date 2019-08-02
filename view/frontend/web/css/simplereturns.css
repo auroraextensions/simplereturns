@@ -43,6 +43,19 @@ input[readonly] {
   padding: 1rem 0;
 }
 
+.simplereturns .attachments {
+  display: block !important;
+}
+
+.simplereturns .attachments .attachment {
+  display: inline-block;
+}
+
+.simplereturns .attachments .attachment img {
+  max-height: 150px !important;
+  max-width: 150px !important;
+}
+
 .simplereturns .cancel a {
   color: #333;
 }
@@ -140,4 +153,5 @@ input[readonly] {
 
 .simplereturns .row .value {
   font-weight: 300;
+  margin-bottom: 10px;
 }
