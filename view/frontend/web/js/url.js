@@ -23,17 +23,17 @@ define(['jquery'], function ($) {
          * @return {String}
          */
         bindParams: function (url, params) {
-            var parts;
+            var keys, parts;
 
+            /** @var {Array} keys */
+            keys = Object.keys(params);
+
+            /** @var {Array} parts */
             parts = url.split('/');
             parts = parts.filter(Boolean);
 
-            $.each(parts, function (key, value) {
-                value = value.replace(':', '');
-
-                if (params[value]) {
-                    parts[key] = params[value];
-                }
+            $.each(keys, function (key) {
+                parts.push(key, params[key]);
             });
 
             return parts.join('/');
