@@ -158,7 +158,7 @@ class DeletePost extends Action implements
 
         /** @var int|string|null $attachmentKey */
         $attachmentKey = $request->getQuery(self::PARAM_ATTACHMENT_KEY);
-        $attachmentKey = !empty($attachmentKey) ? $attachmentKey : null;
+        $attachmentKey = !empty($attachmentKey) ? trim($attachmentKey) : null;
 
         try {
             /** @var SimpleReturnInterface $rma */
@@ -183,7 +183,7 @@ class DeletePost extends Action implements
                 $data = $this->serializer->serialize($entries);
 
                 $this->simpleReturnRepository->save(
-                    $rma->setAttachments($data);
+                    $rma->setAttachments($data)
                 );
             }
         } catch (NoSuchEntityException $e) {
