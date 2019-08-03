@@ -24,7 +24,8 @@ var config = {
     },
     map: {
         '*': {
-            labelPrint: 'AuroraExtensions_SimpleReturns/js/print'
+            labelPrint: 'AuroraExtensions_SimpleReturns/js/print',
+            simpleReturnsDeleteAttachment: 'AuroraExtensions_SimpleReturns/js/action/rma/delete-attachment'
         }
     }
 };

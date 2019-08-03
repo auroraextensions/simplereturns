@@ -154,11 +154,13 @@ class DeletePost extends Action implements
 
         /** @var int|string|null $token */
         $token = $request->getParam(self::PARAM_TOKEN);
-        $token = !empty($token) ? $token : null;
+        $token = $token !== null && !empty($token) ? $token : null;
 
         /** @var int|string|null $attachmentKey */
-        $attachmentKey = $request->getQuery(self::PARAM_ATTACHMENT_KEY);
-        $attachmentKey = !empty($attachmentKey) ? trim($attachmentKey) : null;
+        $attachmentKey = $request->getParam(self::PARAM_ATTACH_KEY);
+        $attachmentKey = $token !== null && !empty($attachmentKey)
+            ? trim($attachmentKey)
+            : null;
 
         try {
             /** @var SimpleReturnInterface $rma */
