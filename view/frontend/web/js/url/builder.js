@@ -1,5 +1,5 @@
 /**
- * url.js
+ * builder.js
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,10 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       Aurora Extensions EULA
  */
-define(['jquery'], function ($) {
+define([
+    'jquery',
+    'AuroraExtensions_SimpleReturns/js/utils/string'
+], function ($, stringUtil) {
     'use strict';
 
     return {
@@ -40,27 +43,9 @@ define(['jquery'], function ($) {
          * @return {String}
          */
         getUrl: function (url, params) {
-            url = this.trim(url);
+            url = stringUtil.trim(url);
 
             return this.bindParams(url, params);
-        },
-        /**
-         * @param {String} value
-         * @param {String} delim
-         * @return {String}
-         */
-        trim: function (value, delim) {
-            delim = delim || '/';
-
-            while (value.charAt(0) === delim) {
-                value = value.slice(1);
-            }
-
-            while (value.charAt(value.length - 1) === delim) {
-                value = value.slice(0, value.length - 1);
-            }
-
-            return value;
         }
     };
 });
