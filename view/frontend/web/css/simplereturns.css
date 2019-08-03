@@ -49,11 +49,19 @@ input[readonly] {
 
 .simplereturns .attachments .attachment {
   display: inline-block;
+  height: 100px;
+  margin: 5px;
+  position: relative;
+  width: 100px;
 }
 
 .simplereturns .attachments .attachment img {
-  max-height: 150px !important;
-  max-width: 150px !important;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .simplereturns .cancel a {
