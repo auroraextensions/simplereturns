@@ -49,8 +49,7 @@ define([
                 }
             );
 
-            console.log('delete-attachment.js: result =>');
-            console.log(storage.post(postUrl));
+            return storage.post(targetUrl);
         }
     });
 
