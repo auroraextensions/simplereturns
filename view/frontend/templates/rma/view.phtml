@@ -127,6 +127,7 @@ $hasPackage = $viewModel->hasPackage();
             <span class="title"><?= $block->escapeHtml(__('Comments')) ?></span>
             <span class="value"><?= $block->escapeHtml($rma->getComments()) ?></span>
         </div>
+        <?php if ($viewModel->hasAttachments()): ?>
         <div class="row">
             <span class="title"><?= $block->escapeHtml(__('Attachments')) ?></span>
             <span class="value attachments">
@@ -137,5 +138,6 @@ $hasPackage = $viewModel->hasPackage();
             <?php endforeach ?>
             </span>
         </div>
+        <?php endif ?>
     </div>
 </div>

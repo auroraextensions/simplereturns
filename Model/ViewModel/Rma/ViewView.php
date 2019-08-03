@@ -445,6 +445,14 @@ class ViewView extends AbstractView implements
     /**
      * @return bool
      */
+    public function hasAttachments(): bool
+    {
+        return (bool)(count($this->getAttachments()));
+    }
+
+    /**
+     * @return bool
+     */
     public function hasLabel(): bool
     {
         /** @var LabelInterface|null $label */
