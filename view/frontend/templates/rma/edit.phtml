@@ -91,9 +91,13 @@ $attachments = $viewModel->getAttachments();
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
                         </label>
                         <div class="control">
-                        <?php foreach ($attachments as $token => $attachment): ?>
-                            <img data-token="<?= $block->escapeHtmlAttr($token) ?>" src="<?= $block->escapeUrl($attachment) ?>"/>
-                        <?php endforeach ?>
+                            <div class="attachments">
+                            <?php foreach ($attachments as $token => $attachment): ?>
+                                <div class="attachment">
+                                    <img data-token="<?= $block->escapeHtmlAttr($token) ?>" src="<?= $block->escapeUrl($attachment) ?>"/>
+                                </div>
+                            <?php endforeach ?>
+                            </div>
                         </div>
                     </div>
                 </fieldset>
