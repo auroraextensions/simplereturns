@@ -23,7 +23,7 @@ define([
 
     $.widget('mage.simpleReturnsDragAndDrop', {
         options: {
-            attachKey: null,
+            attachKey: '',
             dropzone: '.dropzone',
             routePath: 'simplereturns/rma_attachment/createPost'
         },
@@ -31,13 +31,11 @@ define([
          * @return {void}
          */
         _create: function () {
-            var attachKey, dropzone,
-                routePath, settings,
-                targetUrl;
+            var attachKey, settings, targetUrl;
 
             /** @var {String} targetUrl */
             targetUrl = urlBuilder.getUrl(
-                routePath,
+                this.options.routePath,
                 {
                     'rma_id': urlParser.getParamValue('rma_id'),
                     'token': urlParser.getParamValue('token'),
@@ -48,7 +46,8 @@ define([
             /** @var {Object} settings */
             settings = {
                 url: targetUrl,
-                uploadMultiple: true
+                uploadMultiple: true,
+                clickable: true
             };
 
             /** @var {Object} dropzone */
