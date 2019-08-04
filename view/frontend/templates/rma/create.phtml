@@ -69,17 +69,11 @@ $resolutions = $viewModel->getResolutions();
                             <textarea id="comments" name="simplereturns[comments]"></textarea>
                         </div>
                     </div>
-                    <div class="field attachments optional">
+                    <div class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{}}'>
                         <label class="label attachments" for="attachments">
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
                         </label>
-                        <div class="control">
-                            <input id="attachments"
-                                   name="attachments[]"
-                                   type="file"
-                                   accept="image/jpeg,image/png,image/gif"
-                                   multiple>
-                        </div>
+                        <div class="control dropzone"></div>
                     </div>
                 </fieldset>
                 <div class="actions-toolbar">
