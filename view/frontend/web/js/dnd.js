@@ -21,39 +21,77 @@ define([
 ], function ($, Dropzone, urlBuilder, urlParser) {
     'use strict';
 
-    $.widget('mage.simpleReturnsDragAndDrop', {
+    /** @var {Object} widget */
+    var widget = {
+        /** @property {String} name */
+        name: 'simpleReturnsDragAndDrop',
+        /** @property {String} container */
+        container: 'mage',
+        /**
+         * @property {Object} options
+         */
         options: {
             attachKey: '',
             dropzone: '.dropzone',
-            routePath: 'simplereturns/rma_attachment/createPost'
+            targetPath: '/simplereturns/rma_attachment/createPost/'
+        },
+        /**
+         * @return {String}
+         */
+        getUrn: function () {
+            return this.container + '.' + this.name;
         },
         /**
          * @return {void}
          */
         _create: function () {
-            var attachKey, settings, targetUrl;
+            var onError, onFinish, targetPath;
 
-            /** @var {String} targetUrl */
-            targetUrl = urlBuilder.getUrl(
-                this.options.routePath,
-                {
-                    'rma_id': urlParser.getParamValue('rma_id'),
-                    'token': urlParser.getParamValue('token'),
-                    'attach_key': attachKey
-                }
-            );
+            /** @var {String} targetPath */
+            targetPath = this.options.targetPath;
 
-            /** @var {Object} settings */
-            settings = {
-                url: targetUrl,
+            /** @var {Function} onError */
+            onError = this.onError.bind(this);
+
+            /** @var {Function} onFinish */
+            onFinish = this.onFinish.bind(this);
+
+            /* Prevent Dropzone from attaching twice. */
+            Dropzone.autoDiscover = false;
+
+            /* Extend Dropzone configuration. */
+            Dropzone.options.attachmentDropzone = {
+                url: targetPath,
+                maxFilesize: 5,
                 uploadMultiple: true,
-                clickable: true
+                paramName: 'attachments',
+                error: onError,
+                success: onFinish
             };
 
-            /** @var {Object} dropzone */
-            $(this.options.dropzone).dropzone(settings);
+            $(this.options.dropzone).dropzone(Dropzone.options.attachmentDropzone);
+        },
+        /**
+         * @return {void}
+         */
+        onError: function () {
+            /** @todo: Work on implementation. */
+        },
+        /**
+         * @param {File} file
+         * @param {String} data
+         * @param {ProgressEvent} response
+         * @return {void}
+         */
+        onFinish: function (file, data, response) {
+            /** @todo: Work on implementation. */
         }
-    });
+    };
 
-    return $.mage.simpleReturnsDragAndDrop;
+    $.widget(
+        widget.getUrn.call(widget),
+        widget
+    );
+
+    return $[widget.container][widget.name];
 });
