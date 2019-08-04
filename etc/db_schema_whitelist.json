@@ -9,7 +9,6 @@
             "reason": true,
             "resolution": true,
             "comments": true,
-            "attachments": true,
             "remote_ip": true,
             "token": true
         },
@@ -22,6 +21,21 @@
             "PRIMARY": true
         }
     },
+    "simplereturns_rma_attachment": {
+        "column": {
+            "attachment_id": true,
+            "rma_id": true,
+            "filename": true,
+            "mimetype": true,
+            "token": true
+        },
+        "index": {
+            "SIMPLERETURNS_RMA_ATTACHMENT_RMA_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
     "simplereturns_package": {
         "column": {
             "package_id": true,
@@ -30,9 +44,6 @@
             "carrier_code": true,
             "container_type": true,
             "description": true,
-            "dimension_units": true,
-            "weight_units": true,
-            "weight": true,
             "remote_ip": true,
             "token": true
         },

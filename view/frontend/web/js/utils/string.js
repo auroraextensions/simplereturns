@@ -25,12 +25,16 @@ define([], function () {
         trim: function (value, delim) {
             delim = delim || '/';
 
-            while (value.charAt(0) === delim) {
-                value = value.slice(1);
-            }
+            if (value) {
+                /* trim-left */
+                while (value.charAt(0) === delim) {
+                    value = value.slice(1);
+                }
 
-            while (value.charAt(value.length - 1) === delim) {
-                value = value.slice(0, value.length - 1);
+                /* trim-right */
+                while (value.charAt(value.length - 1) === delim) {
+                    value = value.slice(0, value.length - 1);
+                }
             }
 
             return value;

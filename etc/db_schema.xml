@@ -28,9 +28,8 @@
         <column xsi:type="varchar" name="reason" nullable="true" length="64" comment="Reason"/>
         <column xsi:type="varchar" name="resolution" nullable="true" length="32" comment="Resolution"/>
         <column xsi:type="mediumtext" name="comments" nullable="true" comment="Comments"/>
-        <column xsi:type="mediumtext" name="attachments" nullable="true" comment="Attachments"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
-        <column xsi:type="varchar" name="token" nullable="true" length="128" comment="RMA Token"/>
+        <column xsi:type="varchar" name="token" nullable="true" length="128" comment="Token"/>
         <constraint xsi:type="foreign" referenceId="SIMPLERETURNS_RMA_PACKAGE_ID_SIMPLERETURNS_PACKAGE_PACKAGE_ID"
                     table="simplreturns_rma" column="package_id" referenceTable="simplereturns_package"
                     referenceColumn="package_id" onDelete="CASCADE"/>
@@ -44,19 +43,30 @@
             <column name="package_id"/>
         </index>
     </table>
+    <table name="simplereturns_rma_attachment" resource="default" engine="innodb" comment="Simple Returns RMA Attachments">
+        <column xsi:type="smallint" name="attachment_id" padding="5" unsigned="true" nullable="false" identity="true"
+                comment="Attachment ID"/>
+        <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="true" comment="RMA ID"/>
+        <column xsi:type="varchar" name="filename" nullable="true" length="1024" comment="Filename"/>
+        <column xsi:type="varchar" name="mimetype" nullable="true" length="32" comment="MIME Type"/>
+        <column xsi:type="varchar" name="token" nullable="true" length="128" comment="Token"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="attachment_id"/>
+        </constraint>
+        <index referenceId="SIMPLERETURNS_RMA_ATTACHMENT_RMA_ID" indexType="btree">
+            <column name="rma_id"/>
+        </index>
+    </table>
     <table name="simplereturns_package" resource="default" engine="innodb" comment="Simple Returns Packages">
         <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" identity="true"
                 comment="Package ID"/>
         <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="false" comment="RMA ID"/>
         <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="true" comment="Label ID"/>
-        <column xsi:type="varchar" name="carrier_code" nullable="true" length="32" comment="Shipping Carrier Code"/>
-        <column xsi:type="varchar" name="container_type" nullable="true" length="32" comment="Package Container Type"/>
-        <column xsi:type="varchar" name="description" nullable="true" length="128" comment="Package Description"/>
-        <column xsi:type="varchar" name="dimension_units" nullable="true" length="32" comment="Package Dimension Units"/>
-        <column xsi:type="varchar" name="weight_units" nullable="true" length="32" comment="Package Weight Units"/>
-        <column xsi:type="smallint" name="weight" padding="5" unsigned="true" nullable="true" comment="Package Weight"/>
+        <column xsi:type="varchar" name="carrier_code" nullable="true" length="32" comment="Carrier Code"/>
+        <column xsi:type="varchar" name="container_type" nullable="true" length="32" comment="Container Type"/>
+        <column xsi:type="varchar" name="description" nullable="true" length="128" comment="Description"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
-        <column xsi:type="varchar" name="token" nullable="true" length="128" comment="Package Token"/>
+        <column xsi:type="varchar" name="token" nullable="true" length="128" comment="Token"/>
         <constraint xsi:type="foreign" referenceId="SIMPLERETURNS_PACKAGE_LABEL_ID_SIMPLERETURNS_LABEL_LABEL_ID"
                     table="simplreturns_package" column="label_id" referenceTable="simplereturns_label"
                     referenceColumn="label_id" onDelete="CASCADE"/>
@@ -75,9 +85,9 @@
                 comment="Label ID"/>
         <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
         <column xsi:type="blob" name="image" nullable="true" comment="Label Image"/>
-        <column xsi:type="varchar" name="tracking_number" nullable="true" length="128" comment="Label Tracking Number"/>
+        <column xsi:type="varchar" name="tracking_number" nullable="true" length="128" comment="Tracking Number"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
-        <column xsi:type="varchar" name="token" nullable="true" length="128" comment="Label Token"/>
+        <column xsi:type="varchar" name="token" nullable="true" length="128" comment="Token"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="label_id"/>
         </constraint>
