@@ -73,7 +73,9 @@ $resolutions = $viewModel->getResolutions();
                         <label class="label attachments" for="attachments">
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
                         </label>
-                        <div class="control dropzone"></div>
+                        <div class="control dropzone">
+                            <div class="dz-message"><?= $block->escapeHtml(__('Drag and drop files or click to upload.')) ?></div>
+                        </div>
                     </div>
                 </fieldset>
                 <div class="actions-toolbar">
