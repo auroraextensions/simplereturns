@@ -86,19 +86,11 @@ $attachments = $viewModel->getAttachments();
                             <textarea id="comments" name="simplereturns[comments]"><?= $block->escapeHtml($rma->getComments()) ?></textarea>
                         </div>
                     </div>
-                    <div class="field uploads optional">
+                    <div class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{}}'>
                         <label class="label attachments" for="attachments">
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
                         </label>
-                        <div class="control">
-                            <div class="attachments">
-                            <?php foreach ($attachments as $key => $attachment): ?>
-                                <div class="attachment" data-mage-init='{"simpleReturnsDeleteAttachment":{"attachKey":"<?= $block->escapeHtmlAttr($key) ?>"}}'>
-                                    <img src="<?= $block->escapeUrl($attachment) ?>"/>
-                                </div>
-                            <?php endforeach ?>
-                            </div>
-                        </div>
+                        <div class="control dropzone"></div>
                     </div>
                 </fieldset>
                 <div class="actions-toolbar">
