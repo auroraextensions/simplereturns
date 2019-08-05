@@ -41,7 +41,9 @@ interface ModuleComponentInterface
     const COLUMN_HEADERS_KEY = 'column_headers';
 
     /** @constant string DATA_PERSISTOR_KEY */
+    /** @constant string DATA_GROUP_KEY */
     const DATA_PERSISTOR_KEY = 'simplereturns_data';
+    const DATA_GROUP_KEY = 'simplereturns_group_key';
 
     /** @constant string DEFAULT_FRONT_NAME */
     /** @constant string DEFAULT_SCRIPT_NAME */
