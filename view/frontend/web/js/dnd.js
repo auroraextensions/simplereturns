@@ -21,8 +21,10 @@ define([
 ], function ($, Dropzone, urlBuilder, urlParser) {
     'use strict';
 
+    var widget, urn;
+
     /** @var {Object} widget */
-    var widget = {
+    widget = {
         /** @property {String} name */
         name: 'simpleReturnsDragAndDrop',
         /** @property {String} container */
@@ -61,12 +63,13 @@ define([
 
             /* Extend Dropzone configuration. */
             Dropzone.options.attachmentDropzone = {
-                url: targetPath,
-                maxFilesize: 5,
-                uploadMultiple: true,
-                paramName: 'attachments',
+                addRemoveLinks: true,
                 error: onError,
-                success: onFinish
+                maxFilesize: 5,
+                paramName: 'attachments',
+                success: onFinish,
+                uploadMultiple: true,
+                url: targetPath
             };
 
             $(this.options.dropzone).dropzone(Dropzone.options.attachmentDropzone);
@@ -88,10 +91,10 @@ define([
         }
     };
 
-    $.widget(
-        widget.getUrn.call(widget),
-        widget
-    );
+    /** @var {String} urn */
+    urn = widget.getUrn.call(widget);
+
+    $.widget(urn, widget);
 
     return $[widget.container][widget.name];
 });

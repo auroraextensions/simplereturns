@@ -19,8 +19,10 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\AttachmentInterface,
     Api\Data\SimpleReturnInterface,
     Api\Data\SimpleReturnInterfaceFactory,
+    Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
@@ -34,6 +36,7 @@ use Magento\Framework\{
     App\Action\Context,
     App\Action\HttpPostActionInterface,
     App\Filesystem\DirectoryList,
+    App\Request\DataPersistorInterface,
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
     Exception\AlreadyExistsException,
@@ -54,6 +57,12 @@ class CreatePost extends Action implements
     use Redirector {
         Redirector::__initialize as protected;
     }
+
+    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    protected $attachmentRepository;
+
+    /** @property DataPersistorInterface $dataPersistor */
+    protected $dataPersistor;
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
@@ -87,6 +96,8 @@ class CreatePost extends Action implements
 
     /**
      * @param Context $context
+     * @param AttachmentRepositoryInterface $attachmentRepository
+     * @param DataPersistorInterface $dataPersistor
      * @param ExceptionFactory $exceptionFactory
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
@@ -102,6 +113,8 @@ class CreatePost extends Action implements
      */
     public function __construct(
         Context $context,
+        AttachmentRepositoryInterface $attachmentRepository,
+        DataPersistorInterface $dataPersistor,
         ExceptionFactory $exceptionFactory,
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
@@ -116,6 +129,8 @@ class CreatePost extends Action implements
     ) {
         parent::__construct($context);
         $this->__initialize();
+        $this->attachmentRepository = $attachmentRepository;
+        $this->dataPersistor = $dataPersistor;
         $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
@@ -167,9 +182,8 @@ class CreatePost extends Action implements
             $comments = $params['comments'] ?? null;
             $comments = !empty($comments) ? $comments : null;
 
-            /** @var array $attachments */
-            $attachments = $request->getFiles('attachments') ?? [];
-            $attachments = !empty($attachments) ? $attachments : null;
+            /** @var string|null $groupKey */
+            $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
 
             /** @var array $fields */
             $fields = [
@@ -224,54 +238,39 @@ class CreatePost extends Action implements
                             'token'      => $token,
                         ];
 
-                        /* Include file metadata, if needed. */
-                        if ($attachments !== null) {
-                            /** @var array $metadata */
-                            $metadata = [];
-
-                            /** @var string $mediaPath */
-                            $mediaPath = $this->filesystem
-                                ->getDirectoryRead(DirectoryList::MEDIA)
-                                ->getAbsolutePath();
-                            $mediaPath = rtrim($mediaPath, '/');
-
-                            /** @var array $attachment */
-                            foreach ($attachments as $attachment) {
-                                /** @var string $savePath */
-                                $savePath = $mediaPath . self::SAVE_PATH;
-
-                                /** @var Magento\MediaStorage\Model\File\Uploader $uploader */
-                                $uploader = $this->fileUploaderFactory
-                                    ->create(['fileId' => $attachment])
-                                    ->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']) /** @todo: Pull file extensions dynamically. */
-                                    ->setAllowCreateFolders(true)
-                                    ->setAllowRenameFiles(true)
-                                    ->setFilesDispersion(true);
-
-                                /** @var string $filename */
-                                $filename = str_replace(
-                                    ' ',
-                                    '_',
-                                    $attachment['name']
-                                );
-
-                                /** @var array $result */
-                                $result = $uploader->save($savePath, $filename);
-
-                                /** @var string $fileKey */
-                                $fileKey = Tokenizer::createToken();
-
-                                /* Include file metadata with RMA entry. */
-                                $metadata[$fileKey] = $result['file'];
-                            }
-
-                            $data['attachments'] = $this->serializer->serialize($metadata);
-                        }
-
                         /** @var int $rmaId */
                         $rmaId = $this->simpleReturnRepository->save(
                             $rma->addData($data)
                         );
+
+                        /* Update attachments with new RMA ID. */
+                        if ($groupKey !== null) {
+                            /** @var array $metadata */
+                            $metadata = $this->serializer->unserialize(
+                                $this->dataPersistor->get($groupKey)
+                                    ?? $this->serializer->serialize([])
+                            );
+
+                            foreach ($metadata as $metadatum) {
+                                /** @var int|string|null $attachmentId */
+                                $attachmentId = $metadatum['attachment_id'] ?? null;
+                                $attachmentId = $attachmentId !== null && is_numeric($attachmentId)
+                                    ? (int) $attachmentId
+                                    : null;
+
+                                if ($attachmentId !== null) {
+                                    /** @var AttachmentInterface $attachment */
+                                    $attachment = $this->attachmentRepository->getById($attachmentId);
+
+                                    $this->attachmentRepository->save(
+                                        $attachment->setRmaId($rmaId)
+                                    );
+                                }
+                            }
+
+                            /* Clear key from session. */
+                            $this->dataPersistor->clear(self::DATA_GROUP_KEY);
+                        }
 
                         /** @var string $viewUrl */
                         $viewUrl = $this->urlBuilder->getUrl(

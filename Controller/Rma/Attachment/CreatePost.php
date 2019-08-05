@@ -1,6 +1,6 @@
 <?php
 /**
- * DeletePost.php
+ * CreatePost.php
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,10 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\AttachmentInterface,
+    Api\Data\AttachmentInterfaceFactory,
     Api\Data\SimpleReturnInterface,
+    Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
@@ -33,10 +36,10 @@ use Magento\Framework\{
     App\Action\Context,
     App\Action\HttpPostActionInterface,
     App\Filesystem\DirectoryList,
+    App\Request\DataPersistorInterface,
     Controller\Result\JsonFactory as ResultJsonFactory,
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
-    Exception\AlreadyExistsException,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
     Filesystem,
@@ -46,7 +49,7 @@ use Magento\Framework\{
 };
 use Magento\MediaStorage\Model\File\UploaderFactory;
 
-class DeletePost extends Action implements
+class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
@@ -54,6 +57,15 @@ class DeletePost extends Action implements
     use Redirector {
         Redirector::__initialize as protected;
     }
+
+    /** @property AttachmentInterfaceFactory $attachmentFactory */
+    protected $attachmentFactory;
+
+    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    protected $attachmentRepository;
+
+    /** @property DataPersistorInterface $dataPersistor */
+    protected $dataPersistor;
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
@@ -87,6 +99,9 @@ class DeletePost extends Action implements
 
     /**
      * @param Context $context
+     * @param AttachmentInterfaceFactory $attachmentFactory
+     * @param AttachmentRepositoryInterface $attachmentRepository
+     * @param DataPersistorInterface $dataPersistor
      * @param ExceptionFactory $exceptionFactory
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
@@ -102,6 +117,9 @@ class DeletePost extends Action implements
      */
     public function __construct(
         Context $context,
+        AttachmentInterfaceFactory $attachmentFactory,
+        AttachmentRepositoryInterface $attachmentRepository,
+        DataPersistorInterface $dataPersistor,
         ExceptionFactory $exceptionFactory,
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
@@ -116,6 +134,9 @@ class DeletePost extends Action implements
     ) {
         parent::__construct($context);
         $this->__initialize();
+        $this->attachmentFactory = $attachmentFactory;
+        $this->attachmentRepository = $attachmentRepository;
+        $this->dataPersistor = $dataPersistor;
         $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
@@ -130,7 +151,7 @@ class DeletePost extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_attachment_deletePost action.
+     * Execute simplereturns_rma_attachment_createPost action.
      *
      * @return Magento\Framework\Controller\Result\Json
      */
@@ -146,53 +167,92 @@ class DeletePost extends Action implements
             return $resultJson;
         }
 
-        /** @var int|string|null $rmaId */
-        $rmaId = $request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        /** @var int $error */
+        $error = 0;
 
-        /** @var int|string|null $token */
-        $token = $request->getParam(self::PARAM_TOKEN);
-        $token = $token !== null && !empty($token) ? $token : null;
+        /** @var array $attachment */
+        $attachments = $request->getFiles('attachments') ?? [];
 
-        /** @var int|string|null $attachmentKey */
-        $attachmentKey = $request->getParam(self::PARAM_ATTACH_KEY);
-        $attachmentKey = $token !== null && !empty($attachmentKey)
-            ? trim($attachmentKey)
-            : null;
+        /** @var array $metadata */
+        $metadata = [];
 
-        try {
-            /** @var SimpleReturnInterface $rma */
-            $rma = $this->simpleReturnRepository->getById($rmaId);
+        /** @var string $mediaPath */
+        $mediaPath = $this->filesystem
+            ->getDirectoryRead(DirectoryList::MEDIA)
+            ->getAbsolutePath();
+        $mediaPath = rtrim($mediaPath, '/');
 
-            /** @var string|null $data */
-            $data = $rma->getAttachments();
+        /** @var string $savePath */
+        $savePath = $mediaPath . self::SAVE_PATH;
 
-            if ($data !== null) {
-                /** @var array $entries */
-                $entries = $this->serializer->unserialize($data);
+        /** @var string|null $groupKey */
+        $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
 
-                /** @var string $key */
-                /** @var string $entry */
-                foreach ($entries as $key => $entry) {
-                    if ($key === $attachmentKey) {
-                        unset($entries[$key]);
-                    }
-                }
+        if (!$groupKey) {
+            /* Generate new key for metadata lookup. */
+            $groupKey = Tokenizer::createToken();
 
-                /* Updated, serialized entries. */
-                $data = $this->serializer->serialize($entries);
-
-                $this->simpleReturnRepository->save(
-                    $rma->setAttachments($data)
-                );
-            }
-        } catch (NoSuchEntityException $e) {
-            /** @todo: Set error details on $resultJson. */
-        } catch (LocalizedException $e) {
-            /** @todo: Set error details on $resultJson. */
+            /**
+             * By storing the key in the session, we can allow
+             * a user to upload files and store them before an
+             * associated RMA record has been created.
+             */
+            $this->dataPersistor->set(self::DATA_GROUP_KEY, $groupKey);
         }
+
+        /** @var array $attachment */
+        foreach ($attachments as $attachment) {
+            /** @var string $filename */
+            $filename = str_replace(
+                ' ',
+                '_',
+                $attachment['name']
+            );
+
+            try {
+                /** @var Magento\MediaStorage\Model\File\Uploader $uploader */
+                $uploader = $this->fileUploaderFactory
+                    ->create(['fileId' => $attachment])
+                    ->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']) /** @todo: Pull file extensions dynamically. */
+                    ->setAllowCreateFolders(true)
+                    ->setAllowRenameFiles(true)
+                    ->setFilesDispersion(true);
+
+                /** @var array $result */
+                $result = $uploader->save($savePath, $filename);
+
+                /** @var AttachmentInterface $entity */
+                $entity = $this->attachmentFactory->create();
+
+                /** @var array $entityData */
+                $entityData = [
+                    'filename' => $result['name'],
+                    'mimetype' => $result['type'],
+                    'path'     => $result['file'],
+                    'token'    => Tokenizer::createToken(),
+                ];
+
+                /** @var int $attachmentId */
+                $attachmentId = $this->attachmentRepository->save(
+                    $entity->addData($entityData)
+                );
+
+                $metadata[] = [
+                    'attachment_id' => $attachmentId,
+                ];
+            } catch (LocalizedException $e) {
+                $error = 1;
+            } catch (\Exception $e) {
+                $error = 1;
+            }
+        }
+
+        $this->dataPersistor->set(
+            $groupKey,
+            $this->serializer->serialize($metadata)
+        );
+
+        $resultJson->setData(['error' => $error]);
 
         return $resultJson;
     }

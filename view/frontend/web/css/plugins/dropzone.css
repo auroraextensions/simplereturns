@@ -221,9 +221,14 @@
     .dropzone .dz-preview .dz-remove {
       font-size: 14px;
       text-align: center;
+      text-transform: uppercase;
       display: block;
       cursor: pointer;
-      border: none; }
+      color: #e02b27;
+      border: none;
+      visibility: hidden; }
+      .dropzone .dz-preview:hover .dz-remove {
+        visibility: visible; }
       .dropzone .dz-preview .dz-remove:hover {
         text-decoration: underline; }
     .dropzone .dz-preview:hover .dz-details {
