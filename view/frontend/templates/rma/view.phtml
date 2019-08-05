@@ -133,7 +133,9 @@ $hasPackage = $viewModel->hasPackage();
             <span class="value attachments">
             <?php foreach ($attachments as $attachment): ?>
                 <div class="attachment">
-                    <img src="<?= $block->escapeUrl($attachment) ?>"/>
+                    <a href="<?= $block->escapeUrl($attachment) ?>" target="_blank">
+                        <img src="<?= $block->escapeUrl($attachment) ?>"/>
+                    </a>
                 </div>
             <?php endforeach ?>
             </span>
