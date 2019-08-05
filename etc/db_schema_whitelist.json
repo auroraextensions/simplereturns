@@ -26,6 +26,7 @@
             "attachment_id": true,
             "rma_id": true,
             "filename": true,
+            "path": true,
             "mimetype": true,
             "token": true
         },
