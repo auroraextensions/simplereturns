@@ -19,24 +19,31 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
 use AuroraExtensions\SimpleReturns\{
-    Api\AbstractCollectionInterface,
     Api\AttachmentRepositoryInterface,
     Api\Data\AttachmentInterface,
     Api\Data\AttachmentInterfaceFactory,
     Exception\ExceptionFactory,
     Model\DataModel\Attachment,
     Model\ResourceModel\Attachment as AttachmentResource,
+    Model\ResourceModel\Attachment\CollectionFactory,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
     Api\SearchResultsInterface,
+    Api\SearchResultsInterfaceFactory,
     Exception\NoSuchEntityException
 };
 
-class AttachmentRepository extends AbstractRepository implements
-    AttachmentRepositoryInterface,
-    ModuleComponentInterface
+class AttachmentRepository implements AttachmentRepositoryInterface, ModuleComponentInterface
 {
+    use AbstractRepositoryTrait;
+
+    /** @property CollectionFactory $collectionFactory */
+    protected $collectionFactory;
+
+    /** @property SearchResultsInterfaceFactory $searchResultsFactory */
+    protected $searchResultsFactory;
+
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
@@ -47,7 +54,7 @@ class AttachmentRepository extends AbstractRepository implements
     protected $attachmentResource;
 
     /**
-     * @param AbstractCollectionInterfaceFactory $collectionFactory
+     * @param CollectionFactory $collectionFactory
      * @param SearchResultsInterfaceFactory $searchResultsFactory
      * @param ExceptionFactory $exceptionFactory
      * @param AttachmentInterfaceFactory $attachmentFactory
@@ -55,17 +62,14 @@ class AttachmentRepository extends AbstractRepository implements
      * @return void
      */
     public function __construct(
-        $collectionFactory,
-        $searchResultsFactory,
+        CollectionFactory $collectionFactory,
+        SearchResultsInterfaceFactory $searchResultsFactory,
         ExceptionFactory $exceptionFactory,
         AttachmentInterfaceFactory $attachmentFactory,
         AttachmentResource $attachmentResource
     ) {
-        parent::__construct(
-            $collectionFactory,
-            $searchResultsFactory
-        );
-
+        $this->collectionFactory = $collectionFactory;
+        $this->searchResultsFactory = $searchResultsFactory;
         $this->exceptionFactory = $exceptionFactory;
         $this->attachmentFactory = $attachmentFactory;
         $this->attachmentResource = $attachmentResource;
