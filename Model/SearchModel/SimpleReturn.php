@@ -49,6 +49,7 @@ class SimpleReturn implements ModuleComponentInterface
      * @param ExceptionFactory $exceptionFactory
      * @param FilterBuilder $filterBuilder
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @return void
      */
     public function __construct(
@@ -92,7 +93,7 @@ class SimpleReturn implements ModuleComponentInterface
             /** @var NoSuchEntityException $exception */
             $exception = $this->exceptionFactory->create(
                 LocalizedException::class,
-                __('Unable to locate any matching orders.')
+                __('Unable to locate any matching RMAs.')
             );
 
             throw $exception;
