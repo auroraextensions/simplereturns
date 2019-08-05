@@ -67,6 +67,17 @@ interface AttachmentInterface
     /**
      * @return string|null
      */
+    public function getPath(): ?string;
+
+    /**
+     * @param string $path
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface
+     */
+    public function setPath(string $path): AttachmentInterface;
+
+    /**
+     * @return string|null
+     */
     public function getMimeType(): ?string;
 
     /**
@@ -74,4 +85,15 @@ interface AttachmentInterface
      * @return \AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface
      */
     public function setMimeType(string $mimeType): AttachmentInterface;
+
+    /**
+     * @return string|null
+     */
+    public function getToken(): ?string;
+
+    /**
+     * @param string $token
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface
+     */
+    public function setToken(string $token): AttachmentInterface;
 }

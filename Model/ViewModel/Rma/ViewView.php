@@ -28,6 +28,7 @@ use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Security\Token as Tokenizer,
+    Model\SearchModel\Attachment as AttachmentAdapter,
     Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
@@ -51,6 +52,9 @@ class ViewView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    /** @property AttachmentAdapter $attachmentAdapter */
+    protected $attachmentAdapter;
+
     /** @property LabelInterface $label */
     protected $label;
 
@@ -96,6 +100,7 @@ class ViewView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param AttachmentAdapter $attachmentAdapter
      * @param LabelRepositoryInterface $labelRepository
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
@@ -113,6 +118,7 @@ class ViewView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
+        AttachmentAdapter $attachmentAdapter,
         LabelRepositoryInterface $labelRepository,
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
@@ -131,6 +137,7 @@ class ViewView extends AbstractView implements
             $data
         );
 
+        $this->attachmentAdapter = $attachmentAdapter;
         $this->labelRepository = $labelRepository;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
@@ -405,41 +412,39 @@ class ViewView extends AbstractView implements
      */
     public function getAttachments(): array
     {
-        /** @var array $attachments */
-        $attachments = [];
+        /** @var array $results */
+        $results = [];
 
         /** @var SimpleReturnInterface|null $rma */
         $rma = $this->getSimpleReturn();
 
         if ($rma !== null) {
-            /** @var string|null $data */
-            $data = $rma->getAttachments();
+            /** @var string $baseUrl */
+            $baseUrl = $this->storeManager
+                ->getStore()
+                ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+            $baseUrl = rtrim($baseUrl, '/');
 
-            if ($data !== null) {
-                /** @var array $entries */
-                $entries = $this->serializer->unserialize($data);
+            /** @var string $mediaUrl */
+            $mediaUrl = $baseUrl . self::SAVE_PATH;
+            $mediaUrl = rtrim($mediaUrl, '/');
 
-                /** @var string $baseUrl */
-                $baseUrl = $this->storeManager
-                    ->getStore()
-                    ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
-                $baseUrl = rtrim($baseUrl, '/');
+            /** @var array $fields */
+            $fields = [
+                'rma_id' => $rma->getId(),
+            ];
 
-                /** @var string $mediaUrl */
-                $mediaUrl = $baseUrl . self::SAVE_PATH;
-                $mediaUrl = rtrim($mediaUrl, '/');
+            /** @var array $attachments */
+            $attachments = $this->attachmentAdapter
+                ->getAttachmentsByFields($fields);
 
-                /** @var string $key */
-                /** @var string $entry */
-                foreach ($entries as $key => $entry) {
-                    /** @var string $imageUrl */
-                    $imageUrl = $mediaUrl . $entry;
-                    $attachments[$key] = $imageUrl;
-                }
+            /** @var AttachmentInterface $attachment */
+            foreach ($attachments as $attachment) {
+                $results[] = ($mediaUrl . $attachment->getPath());
             }
         }
 
-        return $attachments;
+        return $results;
     }
 
     /**
