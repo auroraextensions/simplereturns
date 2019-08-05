@@ -19,8 +19,8 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\SearchModel;
 
 use AuroraExtensions\SimpleReturns\{
-    Api\Data\AttachmentInterface,
     Api\AttachmentRepositoryInterface,
+    Api\Data\AttachmentInterface,
     Exception\ExceptionFactory,
     Shared\ModuleComponentInterface
 };
@@ -83,11 +83,11 @@ class Attachment implements ModuleComponentInterface
         }
 
         try {
-            /** @var AttachmentInterface[] $rmas */
-            $rmas = $this->getRecordsByFilters($filters);
+            /** @var AttachmentInterface[] $attachments */
+            $attachments = $this->getRecordsByFilters($filters);
 
-            if (!empty($rmas)) {
-                return $rmas;
+            if (!empty($attachments)) {
+                return $attachments;
             }
 
             /** @var NoSuchEntityException $exception */
