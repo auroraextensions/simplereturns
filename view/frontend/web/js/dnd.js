@@ -35,7 +35,11 @@ define([
         options: {
             attachKey: '',
             dropzone: '.dropzone',
-            targetPath: '/simplereturns/rma_attachment/createPost/'
+            preload: false,
+            preloadPath: '/simplereturns/rma_attachment/search/',
+            targetPath: '/simplereturns/rma_attachment/createPost/',
+            rmaId: null,
+            token: null
         },
         /**
          * @return {String}
@@ -72,6 +76,11 @@ define([
                 url: targetPath
             };
 
+            /* Preload existing images. Intended for edit page. */
+            if (this.options.preload) {
+                Dropzone.options.attachmentDropzone.init = this.preload.bind(this);
+            }
+
             $(this.options.dropzone).dropzone(Dropzone.options.attachmentDropzone);
         },
         /**
@@ -88,6 +97,68 @@ define([
          */
         onFinish: function (file, data, response) {
             /** @todo: Work on implementation. */
+        },
+        /**
+         * @return {void}
+         */
+        preload: function () {
+            var callback, rmaId,
+                token, url;
+
+            /** @var {String} rmaId */
+            rmaId = this.options.rmaId
+                ? this.options.rmaId
+                : urlParser.getParamValue('rma_id');
+
+            /** @var {String} token */
+            token = this.options.token
+                ? this.options.token
+                : urlParser.getParamValue('token');
+
+            /** @var {String} url */
+            url = urlBuilder.getUrl(
+                this.options.preloadPath,
+                {
+                    'rma_id': rmaId,
+                    'token': token
+                }
+            );
+
+            /** @var {Function} callback */
+            callback = this.onPreloadResponse
+                .bind(Dropzone.options.attachmentDropzone);
+
+            $.get(url, callback);
+        },
+        /**
+         * @param {Object} data
+         * @return {void}
+         * @this {Dropzone.options.attachmentDropzone}
+         */
+        onPreloadResponse: function (data) {
+            var self, file;
+
+            data = data || false;
+
+            if (!data) {
+                return null;
+            }
+
+            /** @var {this} self */
+            self = this;
+
+            $.each(data, function (key, value) {
+                /** @var {Object} file */
+                file = {
+                    name: value.name,
+                    path: value.path,
+                    size: value.size
+                };
+
+                self.emit('addedfile', file);
+                self.options.thumbnail.call(self, file, file.path);
+                self.emit('complete', file);
+            });
         }
     };
 
