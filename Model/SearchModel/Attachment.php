@@ -68,7 +68,7 @@ class Attachment implements ModuleComponentInterface
      * @param array $fields
      * @return AttachmentInterface[]
      */
-    public function getAttachmentsByFields(array $fields = []): array
+    public function getRecordsByFields(array $fields = []): array
     {
         /** @var array $filters */
         $filters = [];
@@ -84,7 +84,7 @@ class Attachment implements ModuleComponentInterface
 
         try {
             /** @var AttachmentInterface[] $rmas */
-            $rmas = $this->getAttachmentsByFilters($filters);
+            $rmas = $this->getRecordsByFilters($filters);
 
             if (!empty($rmas)) {
                 return $rmas;
@@ -110,7 +110,7 @@ class Attachment implements ModuleComponentInterface
      * @param array $filters
      * @return array
      */
-    public function getAttachmentsByFilters(array $filters = []): array
+    public function getRecordsByFilters(array $filters = []): array
     {
         /** @var SearchCriteria $criteria */
         $criteria = $this->searchCriteriaBuilder
