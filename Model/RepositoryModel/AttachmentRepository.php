@@ -83,7 +83,7 @@ class AttachmentRepository extends AbstractRepository implements
         $this->attachmentResource->load(
             $attachment,
             $token,
-            self::SQL_COLUMN_RMA_ATTACHMENT_TOKEN_FIELD
+            self::SQL_COLUMN_ATTACHMENT_TOKEN_FIELD
         );
 
         if (!$attachment->getId()) {
