@@ -130,7 +130,7 @@ class DeletePost extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_createPost action.
+     * Execute simplereturns_rma_attachment_deletePost action.
      *
      * @return Magento\Framework\Controller\Result\Json
      */

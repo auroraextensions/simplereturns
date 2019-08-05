@@ -185,10 +185,11 @@ class CreatePost extends Action implements
         /** @var string $savePath */
         $savePath = $mediaPath . self::SAVE_PATH;
 
-        /** @var string $groupKey */
+        /** @var string|null $groupKey */
         $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
 
         if (!$groupKey) {
+            /* Generate new key for metadata lookup. */
             $groupKey = Tokenizer::createToken();
 
             /**
@@ -246,7 +247,11 @@ class CreatePost extends Action implements
             }
         }
 
-        $this->dataPersistor->set($groupKey, $metadata);
+        $this->dataPersistor->set(
+            $groupKey,
+            $this->serializer->serialize($metadata)
+        );
+
         $resultJson->setData(['error' => $error]);
 
         return $resultJson;
