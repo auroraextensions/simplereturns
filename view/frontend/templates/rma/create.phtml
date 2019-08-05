@@ -69,7 +69,7 @@ $resolutions = $viewModel->getResolutions();
                             <textarea id="comments" name="simplereturns[comments]"></textarea>
                         </div>
                     </div>
-                    <div class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{}}'>
+                    <div id="attachment-dropzone" class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{}}'>
                         <label class="label attachments" for="attachments">
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
                         </label>
