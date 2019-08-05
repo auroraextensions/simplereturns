@@ -61,12 +61,6 @@
             <argument name="searchResultsFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterfaceFactory</argument>
         </arguments>
     </type>
-    <type name="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AttachmentRepository">
-        <arguments>
-            <argument name="collectionFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ResourceModel\Attachment\CollectionFactory</argument>
-            <argument name="searchResultsFactory" xsi:type="object">AuroraExtensions\SimpleReturns\Api\Data\AttachmentSearchResultsInterfaceFactory</argument>
-        </arguments>
-    </type>
     <type name="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config">
         <arguments>
             <argument name="data" xsi:type="array">
