@@ -436,7 +436,7 @@ class ViewView extends AbstractView implements
 
             /** @var array $attachments */
             $attachments = $this->attachmentAdapter
-                ->getAttachmentsByFields($fields);
+                ->getRecordsByFields($fields);
 
             /** @var AttachmentInterface $attachment */
             foreach ($attachments as $attachment) {
