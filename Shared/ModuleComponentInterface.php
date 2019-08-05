@@ -154,16 +154,22 @@ interface ModuleComponentInterface
     /** @constant string SQL_COLUMN_PKG_PRIMARY_FIELD */
     /** @constant string SQL_COLUMN_RMA_PRIMARY_FIELD */
     /** @constant string SQL_COLUMN_RMA_ORDER_ID_FIELD */
+    /** @constant string SQL_COLUMN_ATTACHMENT_PRIMARY_FIELD */
+    /** @constant string SQL_COLUMN_ATTACHMENT_TOKEN_FIELD */
     /** @constant string SQL_TABLE_ENTITY_LABEL */
     /** @constant string SQL_TABLE_ENTITY_PKG */
     /** @constant string SQL_TABLE_ENTITY_RMA */
+    /** @constant string SQL_TABLE_ENTITY_ATTACHMENT */
     const SQL_COLUMN_LABEL_PRIMARY_FIELD = 'label_id';
     const SQL_COLUMN_PKG_PRIMARY_FIELD = 'package_id';
     const SQL_COLUMN_RMA_PRIMARY_FIELD = 'rma_id';
     const SQL_COLUMN_RMA_ORDER_ID_FIELD = 'order_id';
+    const SQL_COLUMN_ATTACHMENT_PRIMARY_FIELD = 'attachment_id';
+    const SQL_COLUMN_ATTACHMENT_TOKEN_FIELD = 'token';
     const SQL_TABLE_ENTITY_LABEL = 'simplereturns_label';
     const SQL_TABLE_ENTITY_PKG = 'simplereturns_package';
     const SQL_TABLE_ENTITY_RMA = 'simplereturns_rma';
+    const SQL_TABLE_ENTITY_ATTACHMENT = 'simplereturns_rma_attachment';
 
     /** @constant string XML_LAYOUT_HANDLE_NOROUTE */
     const XML_LAYOUT_HANDLE_NOROUTE = 'simplereturns_noroute';
