@@ -225,7 +225,10 @@
       display: block;
       cursor: pointer;
       color: #e02b27;
-      border: none; }
+      border: none;
+      visibility: hidden; }
+      .dropzone .dz-preview:hover .dz-remove {
+        visibility: visible; }
       .dropzone .dz-preview .dz-remove:hover {
         text-decoration: underline; }
     .dropzone .dz-preview:hover .dz-details {
