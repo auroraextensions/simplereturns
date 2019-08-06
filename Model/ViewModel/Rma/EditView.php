@@ -19,13 +19,17 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\AttachmentInterface,
     Api\Data\SimpleReturnInterface,
+    Api\AttachmentManagementInterface,
+    Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\AdapterModel\Security\Token as Tokenizer,
+    Model\SearchModel\Attachment as AttachmentAdapter,
     Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
@@ -50,6 +54,15 @@ class EditView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    /** @property AttachmentAdapter $attachmentAdapter */
+    protected $attachmentAdapter;
+
+    /** @property AttachmentManagementInterface $attachmentManagement */
+    protected $attachmentManagement;
+
+    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    protected $attachmentRepository;
+
     /** @property FormKey $formKey */
     protected $formKey;
 
@@ -59,11 +72,17 @@ class EditView extends AbstractView implements
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
+    /** @property OrderInterface $order */
+    protected $order;
+
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
     /** @property OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
+
+    /** @property SimpleReturnInterface $rma */
+    protected $rma;
 
     /** @property Json $serializer */
     protected $serializer;
@@ -80,6 +99,9 @@ class EditView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param AttachmentAdapter $attachmentAdapter
+     * @param AttachmentManagementInterface $attachmentManagement
+     * @param AttachmentRepositoryInterface $attachmentRepository
      * @param FormKey $formKey
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
@@ -96,6 +118,9 @@ class EditView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
+        AttachmentAdapter $attachmentAdapter,
+        AttachmentManagementInterface $attachmentManagement,
+        AttachmentRepositoryInterface $attachmentRepository,
         FormKey $formKey,
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
@@ -113,6 +138,9 @@ class EditView extends AbstractView implements
             $data
         );
 
+        $this->attachmentAdapter = $attachmentAdapter;
+        $this->attachmentManagement = $attachmentManagement;
+        $this->attachmentRepository = $attachmentRepository;
         $this->formKey = $formKey;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
@@ -189,6 +217,10 @@ class EditView extends AbstractView implements
      */
     public function getSimpleReturn(): ?SimpleReturnInterface
     {
+        if ($this->rma !== null) {
+            return $this->rma;
+        }
+
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
         $rmaId = $rmaId !== null && is_numeric($rmaId)
@@ -206,6 +238,8 @@ class EditView extends AbstractView implements
                     $rma = $this->simpleReturnRepository->getById($rmaId);
 
                     if (Tokenizer::isEqual($token, $rma->getToken())) {
+                        $this->rma = $rma;
+
                         return $rma;
                     }
 
@@ -232,12 +266,23 @@ class EditView extends AbstractView implements
      */
     public function getOrder(): ?OrderInterface
     {
+        if ($this->order !== null) {
+            return $this->order;
+        }
+
         /** @var SimpleReturnInterface $rma */
         $rma = $this->getSimpleReturn();
 
         if ($rma !== null) {
             try {
-                return $this->orderRepository->get($rma->getOrderId());
+                /** @var OrderInterface $order */
+                $order = $this->orderRepository->get($rma->getOrderId());
+
+                if ($order->getId()) {
+                    $this->order = $order;
+
+                    return $order;
+                }
             } catch (NoSuchEntityException $e) {
                 /* No action required. */
             } catch (LocalizedException $e) {
@@ -246,6 +291,59 @@ class EditView extends AbstractView implements
         }
 
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFiles(): array
+    {
+        /** @var array $files */
+        $files = [];
+
+        /** @var SimpleReturnInterface $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            try {
+                /** @var AttachmentInterface[] $attachments */
+                $attachments = $this->attachmentAdapter
+                    ->getRecordsByFields(['rma_id' => $rma->getId()]);
+
+                /** @var AttachmentInterface $attachment */
+                foreach ($attachments as $attachment) {
+                    /** @var string $dataUri */
+                    $dataUri = $this->attachmentManagement
+                        ->getFileDataUri($attachment);
+
+                    /** @var string $fileUrl */
+                    $fileUrl = $this->attachmentManagement
+                        ->getFileUrl($attachment);
+
+                    $files[] = [
+                        'blob' => $dataUri,
+                        'name' => $attachment->getFilename(),
+                        'size' => $attachment->getFilesize(),
+                        'type' => $attachment->getMimeType(),
+                        'url'  => $fileUrl,
+                    ];
+                }
+            } catch (NoSuchEntityException $e) {
+                /* No action required. */
+            } catch (LocalizedException $e) {
+                /* No action required. */
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSerializedFiles(): string
+    {
+        return $this->serializer->serialize($this->getFiles());
     }
 
     /**
