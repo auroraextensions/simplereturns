@@ -32,6 +32,7 @@ use AuroraExtensions\SimpleReturns\{
 };
 use Magento\Framework\{
     App\RequestInterface,
+    Data\Form\FormKey,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
     Message\ManagerInterface as MessageManagerInterface,
@@ -49,6 +50,9 @@ class EditView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    /** @property FormKey $formKey */
+    protected $formKey;
+
     /** @property MessageManagerInterface $messageManager */
     protected $messageManager;
 
@@ -76,6 +80,7 @@ class EditView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param FormKey $formKey
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
@@ -91,6 +96,7 @@ class EditView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
+        FormKey $formKey,
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
@@ -107,6 +113,7 @@ class EditView extends AbstractView implements
             $data
         );
 
+        $this->formKey = $formKey;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
@@ -242,45 +249,11 @@ class EditView extends AbstractView implements
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getAttachments(): array
+    public function getFormKey(): string
     {
-        /** @var array $attachments */
-        $attachments = [];
-
-        /** @var SimpleReturnInterface|null $rma */
-        $rma = $this->getSimpleReturn();
-
-        if ($rma !== null) {
-            /** @var string|null $data */
-            $data = $rma->getAttachments();
-
-            if ($data !== null) {
-                /** @var array $entries */
-                $entries = $this->serializer->unserialize($data);
-
-                /** @var string $baseUrl */
-                $baseUrl = $this->storeManager
-                    ->getStore()
-                    ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
-                $baseUrl = rtrim($baseUrl, '/');
-
-                /** @var string $mediaUrl */
-                $mediaUrl = $baseUrl . self::SAVE_PATH;
-                $mediaUrl = rtrim($mediaUrl, '/');
-
-                /** @var string $key */
-                /** @var string $entry */
-                foreach ($entries as $key => $entry) {
-                    /** @var string $imageUrl */
-                    $imageUrl = $mediaUrl . $entry;
-                    $attachments[$key] = $imageUrl;
-                }
-            }
-        }
-
-        return $attachments;
+        return $this->formKey->getFormKey();
     }
 
     /**
