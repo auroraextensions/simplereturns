@@ -182,9 +182,6 @@ class CreatePost extends Action implements
             $comments = $params['comments'] ?? null;
             $comments = !empty($comments) ? $comments : null;
 
-            /** @var string|null $groupKey */
-            $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
-
             /** @var array $fields */
             $fields = [
                 self::FIELD_INCREMENT_ID => $orderId,
@@ -243,6 +240,9 @@ class CreatePost extends Action implements
                             $rma->addData($data)
                         );
 
+                        /** @var string|null $groupKey */
+                        $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
+
                         /* Update attachments with new RMA ID. */
                         if ($groupKey !== null) {
                             /** @var array $metadata */
@@ -251,6 +251,7 @@ class CreatePost extends Action implements
                                     ?? $this->serializer->serialize([])
                             );
 
+                            /** @var array $metadatum */
                             foreach ($metadata as $metadatum) {
                                 /** @var int|string|null $attachmentId */
                                 $attachmentId = $metadatum['attachment_id'] ?? null;
@@ -268,7 +269,10 @@ class CreatePost extends Action implements
                                 }
                             }
 
-                            /* Clear key from session. */
+                            /* Clear attachment metadata from session. */
+                            $this->dataPersistor->clear($groupKey);
+
+                            /* Clear group key from session. */
                             $this->dataPersistor->clear(self::DATA_GROUP_KEY);
                         }
 

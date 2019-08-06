@@ -29,59 +29,73 @@ define([
         name: 'simpleReturnsDragAndDrop',
         /** @property {String} container */
         container: 'mage',
+        /** @property {Object|null} dropzone */
+        dropzone: null,
         /**
          * @property {Object} options
          */
         options: {
-            attachKey: '',
-            dropzone: '.dropzone',
+            createPath: '/simplereturns/rma_attachment/createPost/',
+            formKey: null,
             preload: false,
-            preloadPath: '/simplereturns/rma_attachment/search/',
-            targetPath: '/simplereturns/rma_attachment/createPost/',
             rmaId: null,
+            searchPath: '/simplereturns/rma_attachment/searchPost/',
+            selector: '.dropzone',
             token: null
+        },
+        /**
+         * @return {void}
+         */
+        _create: function () {
+            var createPath, options;
+
+            /** @var {String} createPath */
+            createPath = this.options.createPath;
+
+            /** @var {Object} options */
+            options = {
+                addRemoveLinks: true,
+                error: this.onError.bind(this),
+                maxFilesize: 100,
+                paramName: 'attachments',
+                success: this.onFinish.bind(this),
+                uploadMultiple: true,
+                url: createPath
+            };
+
+            /* Preload existing images. Intended for edit page. */
+            if (this.options.preload) {
+                options.init = this.preload.bind(this);
+            }
+
+            /* Prevent Dropzone from attaching twice. */
+            Dropzone.autoDiscover = false;
+
+            /* Set dropzone configuration. */
+            Dropzone.options.attachmentDropzone = options;
+
+            this.setDropzone(new Dropzone(this.options.selector, options));
+        },
+        /**
+         * @return {Object}
+         */
+        getDropzone: function () {
+            return this.dropzone;
+        },
+        /**
+         * @param {Object} dropzone
+         * @return {this}
+         */
+        setDropzone: function (dropzone) {
+            this.dropzone = dropzone;
+
+            return this;
         },
         /**
          * @return {String}
          */
         getUrn: function () {
             return this.container + '.' + this.name;
-        },
-        /**
-         * @return {void}
-         */
-        _create: function () {
-            var onError, onFinish, targetPath;
-
-            /** @var {String} targetPath */
-            targetPath = this.options.targetPath;
-
-            /** @var {Function} onError */
-            onError = this.onError.bind(this);
-
-            /** @var {Function} onFinish */
-            onFinish = this.onFinish.bind(this);
-
-            /* Prevent Dropzone from attaching twice. */
-            Dropzone.autoDiscover = false;
-
-            /* Extend Dropzone configuration. */
-            Dropzone.options.attachmentDropzone = {
-                addRemoveLinks: true,
-                error: onError,
-                maxFilesize: 5,
-                paramName: 'attachments',
-                success: onFinish,
-                uploadMultiple: true,
-                url: targetPath
-            };
-
-            /* Preload existing images. Intended for edit page. */
-            if (this.options.preload) {
-                Dropzone.options.attachmentDropzone.init = this.preload.bind(this);
-            }
-
-            $(this.options.dropzone).dropzone(Dropzone.options.attachmentDropzone);
         },
         /**
          * @return {void}
@@ -102,7 +116,8 @@ define([
          * @return {void}
          */
         preload: function () {
-            var callback, rmaId,
+            var data, formKey,
+                rmaId, settings,
                 token, url;
 
             /** @var {String} rmaId */
@@ -115,28 +130,40 @@ define([
                 ? this.options.token
                 : urlParser.getParamValue('token');
 
+            /** @var {String|null|undefined} formKey */
+            formKey = this.options.formKey
+                ? this.options.formKey
+                : window.FORM_KEY;
+
+            /** @var {Object} data */
+            data = {
+                'rma_id': rmaId,
+                'token': token,
+                'form_key': formKey
+            };
+
+            /** @var {Object} settings */
+            settings = {
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                method: 'POST',
+                error: this.onPreloadError.bind(this),
+                success: this.onPreloadResponse.bind(this)
+            };
+
             /** @var {String} url */
-            url = urlBuilder.getUrl(
-                this.options.preloadPath,
-                {
-                    'rma_id': rmaId,
-                    'token': token
-                }
-            );
+            url = this.options.searchPath;
 
-            /** @var {Function} callback */
-            callback = this.onPreloadResponse
-                .bind(Dropzone.options.attachmentDropzone);
-
-            $.get(url, callback);
+            $.ajax(url, settings);
+        },
+        onPreloadError: function () {
         },
         /**
          * @param {Object} data
          * @return {void}
-         * @this {Dropzone.options.attachmentDropzone}
          */
         onPreloadResponse: function (data) {
-            var self, file;
+            var dz, file;
 
             data = data || false;
 
@@ -144,20 +171,19 @@ define([
                 return null;
             }
 
-            /** @var {this} self */
-            self = this;
+            /** @var {Object} dz */
+            dz = this.getDropzone();
 
             $.each(data, function (key, value) {
                 /** @var {Object} file */
                 file = {
                     name: value.name,
-                    path: value.path,
                     size: value.size
                 };
 
-                self.emit('addedfile', file);
-                self.options.thumbnail.call(self, file, file.path);
-                self.emit('complete', file);
+                dz.emit('addedfile', file);
+                dz.options.thumbnail.call(dz, file, value.path);
+                dz.emit('complete', file);
             });
         }
     };

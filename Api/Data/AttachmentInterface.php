@@ -65,6 +65,17 @@ interface AttachmentInterface
     public function setFilename(string $filename): AttachmentInterface;
 
     /**
+     * @return int|null
+     */
+    public function getFilesize(): ?int;
+
+    /**
+     * @param int $filesize
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface
+     */
+    public function setFilesize(int $filesize): AttachmentInterface;
+
+    /**
      * @return string|null
      */
     public function getPath(): ?string;

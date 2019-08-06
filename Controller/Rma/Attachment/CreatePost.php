@@ -173,9 +173,6 @@ class CreatePost extends Action implements
         /** @var array $attachment */
         $attachments = $request->getFiles('attachments') ?? [];
 
-        /** @var array $metadata */
-        $metadata = [];
-
         /** @var string $mediaPath */
         $mediaPath = $this->filesystem
             ->getDirectoryRead(DirectoryList::MEDIA)
@@ -199,6 +196,12 @@ class CreatePost extends Action implements
              */
             $this->dataPersistor->set(self::DATA_GROUP_KEY, $groupKey);
         }
+
+        /** @var string|array $metadata */
+        $metadata = $this->dataPersistor->get($groupKey);
+        $metadata = $metadata !== null
+            ? $this->serializer->unserialize($metadata)
+            : [];
 
         /** @var array $attachment */
         foreach ($attachments as $attachment) {
@@ -227,6 +230,7 @@ class CreatePost extends Action implements
                 /** @var array $entityData */
                 $entityData = [
                     'filename' => $result['name'],
+                    'filesize' => $result['size'],
                     'mimetype' => $result['type'],
                     'path'     => $result['file'],
                     'token'    => Tokenizer::createToken(),
