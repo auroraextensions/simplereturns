@@ -75,7 +75,7 @@ class AttachmentManagement implements AttachmentManagementInterface, ModuleCompo
 
         /** @var string|bool $fileData */
         $fileData = $this->fileHandler->read($realPath);
-        $fileData = $fileData !== false ? base64_encode($fileData) ? '';
+        $fileData = $fileData !== false ? base64_encode($fileData) : '';
 
         return 'data:' . $attachment->getMimeType() . ';base64,' . $fileData;
     }
