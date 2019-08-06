@@ -25,4 +25,10 @@ interface AttachmentManagementInterface
      * @return string
      */
     public function getFileDataUri(Data\AttachmentInterface $attachment): string;
+
+    /**
+     * @param \AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface $attachment
+     * @return string
+     */
+    public function getFileUrl(Data\AttachmentInterface $attachment): string;
 }

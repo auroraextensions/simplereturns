@@ -81,6 +81,27 @@ class AttachmentManagement implements AttachmentManagementInterface, ModuleCompo
     }
 
     /**
+     * Get attachment file URL.
+     *
+     * @param AttachmentInterface $attachment
+     * @return string
+     */
+    public function getFileUrl(AttachmentInterface $attachment): string
+    {
+        /** @var string $baseUrl */
+        $baseUrl = $this->storeManager
+            ->getStore()
+            ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+        $baseUrl = rtrim($baseUrl, '/');
+
+        /** @var string $mediaUrl */
+        $mediaUrl = $baseUrl . self::SAVE_PATH;
+        $mediaUrl = rtrim($mediaUrl, '/');
+
+        return ($mediaUrl . $attachment->getPath());
+    }
+
+    /**
      * @return string
      */
     public function getMediaPath(): string
