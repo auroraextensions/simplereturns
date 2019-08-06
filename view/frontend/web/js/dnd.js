@@ -37,6 +37,7 @@ define([
          */
         options: {
             createPath: '/simplereturns/rma_attachment/createPost/',
+            deletePath: '/simplereturns/rma_attachment/deletePost/',
             files: [],
             formKey: null,
             preload: false,
@@ -74,8 +75,30 @@ define([
             this.setDropzone(new Dropzone(this.options.selector, options));
 
             if (this.options.preload) {
-                this.preload.call(this);
+                this.preload();
             }
+
+            this.initialize();
+        },
+        /**
+         * @return {void}
+         */
+        initialize: function () {
+            var callback;
+
+            this.options.rmaId = !!this.options.rmaId
+                ? this.options.rmaId
+                : urlParser.getParamValue('rma_id');
+
+            this.options.token = !!this.options.token
+                ? this.options.token
+                : urlParser.getParamValue('token');
+
+            /** @var {Function} callback */
+            callback = this.onRemovedFile.bind(this);
+
+            this.getDropzone()
+                .on('removedfile', callback);
         },
         /**
          * @return {Object}
@@ -117,7 +140,8 @@ define([
          * @return {void}
          */
         preload: function () {
-            var blob, buffer, dz, mock, files;
+            var blob, buffer,
+                dz, mock, files;
 
             /** @var {Array} files */
             files = this.options.files;
@@ -136,10 +160,10 @@ define([
                     size: value.size
                 };
 
-                /** @var {ArrayBuffer} buffer */
+                /** @var {Uint8Array} buffer */
                 buffer = dataTypes.fromDataUriToBinary(value.blob);
 
-                /** @var {String} blob */
+                /** @var {File} blob */
                 blob = new File(
                     [buffer],
                     value.name,
@@ -152,6 +176,13 @@ define([
             });
         },
         onPreloadError: function () {
+            /** @todo: Work on implementation. */
+        },
+        /**
+         * @param {File} file
+         * @return {void}
+         */
+        onRemovedFile: function (file) {
             /** @todo: Work on implementation. */
         }
     };
