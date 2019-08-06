@@ -35,17 +35,28 @@ define([
                 parts.push(key, value);
             });
 
-            return parts.join('/');
+            return ('/' + parts.join('/') + '/');
         },
         /**
          * @param {String} url
          * @param {Object} params
+         * @param {Boolean} abs
          * @return {String}
          */
-        getUrl: function (url, params) {
-            url = stringUtil.trim(url);
+        getUrl: function (url, params, abs) {
+            var result;
 
-            return this.bindParams(url, params);
+            url = stringUtil.trim(url);
+            abs = abs || false;
+
+            /** @var {String} result */
+            result = this.bindParams(url, params);
+
+            if (abs) {
+                result = document.location.origin + result;
+            }
+
+            return result;
         }
     };
 });
