@@ -86,11 +86,13 @@ $attachments = $viewModel->getAttachments();
                             <textarea id="comments" name="simplereturns[comments]"><?= $block->escapeHtml($rma->getComments()) ?></textarea>
                         </div>
                     </div>
-                    <div class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{"preload":true}}'>
+                    <div id="attachment-dropzone" class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{"preload":true}}'>
                         <label class="label attachments" for="attachments">
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
                         </label>
-                        <div class="control dropzone"></div>
+                        <div class="control dropzone">
+                            <div class="dz-message"><?= $block->escapeHtml(__('Drag and drop files or click to upload.')) ?></div>
+                        </div>
                     </div>
                 </fieldset>
                 <div class="actions-toolbar">
