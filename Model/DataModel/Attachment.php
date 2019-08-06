@@ -112,6 +112,31 @@ class Attachment extends AbstractModel implements
     }
 
     /**
+     * @return int|null
+     */
+    public function getFilesize(): ?int
+    {
+        /** @var int|string|null $filesize */
+        $filesize = $this->getData('filesize') ?? null;
+        $filesize = $filesize !== null && is_numeric($filesize)
+            ? (int) $filesize
+            : null;
+
+        return $filesize;
+    }
+
+    /**
+     * @param int $filesize
+     * @return AttachmentInterface
+     */
+    public function setFilesize(int $filesize): AttachmentInterface
+    {
+        $this->setData('filesize', $filesize);
+
+        return $this;
+    }
+
+    /**
      * @return string|null
      */
     public function getPath(): ?string
