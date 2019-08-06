@@ -38,6 +38,8 @@
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\LabelRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Label"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentManagementInterface"
+                type="AuroraExtensions\SimpleReturns\Model\ManagementModel\AttachmentManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AttachmentRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Attachment"/>

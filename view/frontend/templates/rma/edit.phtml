@@ -40,6 +40,9 @@ $resolutions = $viewModel->getResolutions();
 
 /** @var string $formKey */
 $formKey = $viewModel->getFormKey();
+
+/** @var string $files */
+$files = $viewModel->getSerializedFiles();
 ?>
 <div class="block simplereturns">
     <div class="simplereturns-rma-form">
@@ -86,7 +89,7 @@ $formKey = $viewModel->getFormKey();
                             <textarea id="comments" name="simplereturns[comments]"><?= $block->escapeHtml($rma->getComments()) ?></textarea>
                         </div>
                     </div>
-                    <div id="attachment-dropzone" class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{"formKey":"<?= $block->escapeHtml($formKey) ?>","preload":true}}'>
+                    <div id="attachment-dropzone" class="field attachments optional">
                         <label class="label attachments" for="attachments">
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
                         </label>
@@ -95,6 +98,17 @@ $formKey = $viewModel->getFormKey();
                         </div>
                     </div>
                 </fieldset>
+                <script type="text/x-magento-init">
+                    {
+                        "#attachment-dropzone": {
+                            "simpleReturnsDragAndDrop": {
+                                "files": <?= /* @noEscape */ $files ?>,
+                                "formKey": "<?= $block->escapeHtml($formKey) ?>",
+                                "preload": true
+                            }
+                        }
+                    }
+                </script>
                 <div class="actions-toolbar">
                     <div class="primary">
                         <button class="action submit" title="<?= $block->escapeHtmlAttr(__('Submit')) ?>" type="submit">

@@ -17,8 +17,9 @@ define([
     'jquery',
     'dropzone',
     'AuroraExtensions_SimpleReturns/js/url/builder',
-    'AuroraExtensions_SimpleReturns/js/url/parser'
-], function ($, Dropzone, urlBuilder, urlParser) {
+    'AuroraExtensions_SimpleReturns/js/url/parser',
+    'AuroraExtensions_SimpleReturns/js/utils/dataTypes'
+], function ($, Dropzone, urlBuilder, urlParser, dataTypes) {
     'use strict';
 
     var widget, urn;
@@ -36,6 +37,7 @@ define([
          */
         options: {
             createPath: '/simplereturns/rma_attachment/createPost/',
+            files: [],
             formKey: null,
             preload: false,
             rmaId: null,
@@ -63,11 +65,6 @@ define([
                 url: createPath
             };
 
-            /* Preload existing images. Intended for edit page. */
-            if (this.options.preload) {
-                options.init = this.preload.bind(this);
-            }
-
             /* Prevent Dropzone from attaching twice. */
             Dropzone.autoDiscover = false;
 
@@ -75,6 +72,10 @@ define([
             Dropzone.options.attachmentDropzone = options;
 
             this.setDropzone(new Dropzone(this.options.selector, options));
+
+            if (this.options.preload) {
+                this.preload.call(this);
+            }
         },
         /**
          * @return {Object}
@@ -116,75 +117,42 @@ define([
          * @return {void}
          */
         preload: function () {
-            var data, formKey,
-                rmaId, settings,
-                token, url;
+            var blob, buffer, dz, mock, files;
 
-            /** @var {String} rmaId */
-            rmaId = this.options.rmaId
-                ? this.options.rmaId
-                : urlParser.getParamValue('rma_id');
+            /** @var {Array} files */
+            files = this.options.files;
 
-            /** @var {String} token */
-            token = this.options.token
-                ? this.options.token
-                : urlParser.getParamValue('token');
-
-            /** @var {String|null|undefined} formKey */
-            formKey = this.options.formKey
-                ? this.options.formKey
-                : window.FORM_KEY;
-
-            /** @var {Object} data */
-            data = {
-                'rma_id': rmaId,
-                'token': token,
-                'form_key': formKey
-            };
-
-            /** @var {Object} settings */
-            settings = {
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                method: 'POST',
-                error: this.onPreloadError.bind(this),
-                success: this.onPreloadResponse.bind(this)
-            };
-
-            /** @var {String} url */
-            url = this.options.searchPath;
-
-            $.ajax(url, settings);
-        },
-        onPreloadError: function () {
-        },
-        /**
-         * @param {Object} data
-         * @return {void}
-         */
-        onPreloadResponse: function (data) {
-            var dz, file;
-
-            data = data || false;
-
-            if (!data) {
+            if (!files.length) {
                 return null;
             }
 
             /** @var {Object} dz */
             dz = this.getDropzone();
 
-            $.each(data, function (key, value) {
-                /** @var {Object} file */
-                file = {
+            $.each(files, function (key, value) {
+                /** @var {Object} mock */
+                mock = {
                     name: value.name,
                     size: value.size
                 };
 
-                dz.emit('addedfile', file);
-                dz.options.thumbnail.call(dz, file, value.path);
-                dz.emit('complete', file);
+                /** @var {ArrayBuffer} buffer */
+                buffer = dataTypes.fromDataUriToBinary(value.blob);
+
+                /** @var {String} blob */
+                blob = new File(
+                    [buffer],
+                    value.name,
+                    {
+                        type: value.type
+                    }
+                );
+
+                dz.addFile(blob);
             });
+        },
+        onPreloadError: function () {
+            /** @todo: Work on implementation. */
         }
     };
 
