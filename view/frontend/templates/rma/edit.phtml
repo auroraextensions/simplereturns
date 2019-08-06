@@ -38,8 +38,8 @@ $reasons = $viewModel->getReasons();
 /** @var array $resolutions */
 $resolutions = $viewModel->getResolutions();
 
-/** @var array $attachments */
-$attachments = $viewModel->getAttachments();
+/** @var string $formKey */
+$formKey = $viewModel->getFormKey();
 ?>
 <div class="block simplereturns">
     <div class="simplereturns-rma-form">
@@ -86,7 +86,7 @@ $attachments = $viewModel->getAttachments();
                             <textarea id="comments" name="simplereturns[comments]"><?= $block->escapeHtml($rma->getComments()) ?></textarea>
                         </div>
                     </div>
-                    <div id="attachment-dropzone" class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{"preload":true}}'>
+                    <div id="attachment-dropzone" class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{"formKey":"<?= $block->escapeHtml($formKey) ?>","preload":true}}'>
                         <label class="label attachments" for="attachments">
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
                         </label>
