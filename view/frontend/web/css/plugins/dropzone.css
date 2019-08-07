@@ -245,14 +245,21 @@
 }
 
 .dropzone .dz-init {
+  background-color: #fefefe;
   bottom: 0;
   height: 100%;
   left: 0;
+  opacity: 0.9;
   position: absolute;
   right: 0;
   top: 0;
   width: 100%;
   z-index: 99999;
+}
+
+.dropzone .dz-init-complete,
+.dropzone .dz-hide-message {
+  display: none !important;
 }
 
 .dropzone.dz-clickable {

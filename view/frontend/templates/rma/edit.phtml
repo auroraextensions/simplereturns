@@ -94,7 +94,6 @@ $files = $viewModel->getSerializedFiles();
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
                         </label>
                         <div class="control dropzone">
-                            <div class="dz-message"><?= $block->escapeHtml(__('Drag and drop files or click to upload.')) ?></div>
                             <div class="dz-init">
                                 <div class="loading">
                                     <div class="loading-bar"></div>
@@ -103,6 +102,7 @@ $files = $viewModel->getSerializedFiles();
                                     <div class="loading-bar"></div>
                                 </div>
                             </div>
+                            <div class="dz-message dz-hide-message"><?= $block->escapeHtml(__('Drag and drop files or click to upload.')) ?></div>
                         </div>
                     </div>
                 </fieldset>
