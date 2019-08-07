@@ -228,6 +228,7 @@
       border: none;
       visibility: hidden; }
       .dropzone .dz-preview:hover .dz-remove {
+        margin: 10px auto;
         visibility: visible; }
       .dropzone .dz-preview .dz-remove:hover {
         text-decoration: underline; }
