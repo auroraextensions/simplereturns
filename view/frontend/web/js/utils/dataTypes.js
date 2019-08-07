@@ -23,7 +23,7 @@ define([], function () {
          * @param {String} dataUri
          * @return {Array}
          */
-        fromDataUriToBinary: function (dataUri) {
+        dataUriToBinary: function (dataUri) {
             var binary, buffer,
                 index, length,
                 start, value;
