@@ -214,6 +214,9 @@ define([
 
                 self.initFile(blob);
             });
+
+            $('.dz-init').addClass('dz-init-complete');
+            $('.dz-message').removeClass('dz-hide-message');
         },
         /**
          * @param {File} file
