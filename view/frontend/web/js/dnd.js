@@ -161,7 +161,7 @@ define([
                 };
 
                 /** @var {Uint8Array} buffer */
-                buffer = dataTypes.fromDataUriToBinary(value.blob);
+                buffer = dataTypes.dataUriToBinary(value.blob);
 
                 /** @var {File} blob */
                 blob = new File(
