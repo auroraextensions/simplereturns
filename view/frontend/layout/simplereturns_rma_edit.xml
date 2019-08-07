@@ -20,6 +20,7 @@
     <head>
         <css src="AuroraExtensions_SimpleReturns::css/simplereturns.css"/>
         <css src="AuroraExtensions_SimpleReturns::css/plugins/dropzone.css"/>
+        <css src="AuroraExtensions_SimpleReturns::css/progress.css"/>
     </head>
     <body>
         <referenceBlock name="catalog.compare.sidebar" remove="true"/>
