@@ -321,11 +321,12 @@ class EditView extends AbstractView implements
                         ->getFileUrl($attachment);
 
                     $files[] = [
-                        'blob' => $dataUri,
-                        'name' => $attachment->getFilename(),
-                        'size' => $attachment->getFilesize(),
-                        'type' => $attachment->getMimeType(),
-                        'url'  => $fileUrl,
+                        'blob'  => $dataUri,
+                        'name'  => $attachment->getFilename(),
+                        'size'  => $attachment->getFilesize(),
+                        'token' => $attachment->getToken(),
+                        'type'  => $attachment->getMimeType(),
+                        'url'   => $fileUrl,
                     ];
                 }
             } catch (NoSuchEntityException $e) {
