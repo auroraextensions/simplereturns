@@ -183,37 +183,35 @@ define([
             /** @var {Array} files */
             files = this.options.files;
 
-            if (!files.length) {
-                return null;
+            if (files.length) {
+                /** @var {Object} dz */
+                dz = this.getDropzone();
+
+                /** @var {this} self */
+                self = this;
+
+                $.each(files, function (key, value) {
+                    /** @var {Object} mock */
+                    mock = {
+                        name: value.name,
+                        size: value.size
+                    };
+
+                    /** @var {Uint8Array} buffer */
+                    buffer = dataTypes.dataUriToBinary(value.blob);
+
+                    /** @var {File} blob */
+                    blob = new File(
+                        [buffer],
+                        value.name,
+                        {
+                            type: value.type
+                        }
+                    );
+
+                    self.initFile(blob);
+                });
             }
-
-            /** @var {Object} dz */
-            dz = this.getDropzone();
-
-            /** @var {this} self */
-            self = this;
-
-            $.each(files, function (key, value) {
-                /** @var {Object} mock */
-                mock = {
-                    name: value.name,
-                    size: value.size
-                };
-
-                /** @var {Uint8Array} buffer */
-                buffer = dataTypes.dataUriToBinary(value.blob);
-
-                /** @var {File} blob */
-                blob = new File(
-                    [buffer],
-                    value.name,
-                    {
-                        type: value.type
-                    }
-                );
-
-                self.initFile(blob);
-            });
 
             $('.dz-init').addClass('dz-init-complete');
             $('.dz-message').removeClass('dz-hide-message');
@@ -238,8 +236,6 @@ define([
                 clickEvent.stopPropagation();
 
                 dz.removeFile(file);
-
-                console.log('Inside click event handler.');
             });
 
             file.previewElement.appendChild(button);

@@ -342,7 +342,7 @@
 }
 
 .dropzone .dz-preview:hover .dz-remove {
-  margin: 10px auto;
+  margin: auto;
   visibility: visible;
 }
 

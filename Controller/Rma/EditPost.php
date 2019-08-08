@@ -19,8 +19,10 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\AttachmentInterface,
     Api\Data\SimpleReturnInterface,
     Api\Data\SimpleReturnInterfaceFactory,
+    Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
@@ -33,12 +35,14 @@ use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
     App\Action\HttpPostActionInterface,
+    App\Request\DataPersistorInterface,
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
     Exception\AlreadyExistsException,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
     HTTP\PhpEnvironment\RemoteAddress,
+    Serialize\Serializer\Json,
     UrlInterface
 };
 
@@ -50,6 +54,12 @@ class EditPost extends Action implements
     use Redirector {
         Redirector::__initialize as protected;
     }
+
+    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    protected $attachmentRepository;
+
+    /** @property DataPersistorInterface $dataPersistor */
+    protected $dataPersistor;
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
@@ -66,6 +76,9 @@ class EditPost extends Action implements
     /** @property RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
+    /** @property Json $serializer */
+    protected $serializer;
+
     /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
     protected $simpleReturnFactory;
 
@@ -80,11 +93,14 @@ class EditPost extends Action implements
 
     /**
      * @param Context $context
+     * @param AttachmentRepositoryInterface $attachmentRepository
+     * @param DataPersistorInterface $dataPersistor
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
+     * @param Json $serializer
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param Tokenizer $tokenizer
@@ -93,11 +109,14 @@ class EditPost extends Action implements
      */
     public function __construct(
         Context $context,
+        AttachmentRepositoryInterface $attachmentRepository,
+        DataPersistorInterface $dataPersistor,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
+        Json $serializer,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         Tokenizer $tokenizer,
@@ -105,11 +124,14 @@ class EditPost extends Action implements
     ) {
         parent::__construct($context);
         $this->__initialize();
+        $this->attachmentRepository = $attachmentRepository;
+        $this->dataPersistor = $dataPersistor;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->remoteAddress = $remoteAddress;
+        $this->serializer = $serializer;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->tokenizer = $tokenizer;
@@ -177,6 +199,42 @@ class EditPost extends Action implements
                     $this->simpleReturnRepository->save(
                         $rma->setData($data)
                     );
+
+                    /** @var string|null $groupKey */
+                    $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
+
+                    /* Update attachments with new RMA ID. */
+                    if ($groupKey !== null) {
+                        /** @var array $metadata */
+                        $metadata = $this->serializer->unserialize(
+                            $this->dataPersistor->get($groupKey)
+                                ?? $this->serializer->serialize([])
+                        );
+
+                        /** @var array $metadatum */
+                        foreach ($metadata as $metadatum) {
+                            /** @var int|string|null $attachmentId */
+                            $attachmentId = $metadatum['attachment_id'] ?? null;
+                            $attachmentId = $attachmentId !== null && is_numeric($attachmentId)
+                                ? (int) $attachmentId
+                                : null;
+
+                            if ($attachmentId !== null) {
+                                /** @var AttachmentInterface $attachment */
+                                $attachment = $this->attachmentRepository->getById($attachmentId);
+
+                                $this->attachmentRepository->save(
+                                    $attachment->setRmaId($rmaId)
+                                );
+                            }
+                        }
+
+                        /* Clear attachment metadata from session. */
+                        $this->dataPersistor->clear($groupKey);
+
+                        /* Clear group key from session. */
+                        $this->dataPersistor->clear(self::DATA_GROUP_KEY);
+                    }
 
                     /** @var string $viewUrl */
                     $viewUrl = $this->urlBuilder->getUrl(
