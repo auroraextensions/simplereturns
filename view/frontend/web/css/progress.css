@@ -17,32 +17,33 @@
 }
 
 .loading-bar:nth-child(1) {
-  animation-delay: 0;
-  background-color: #3498db;
+  background-color: #3e29c7;
 }
 
 .loading-bar:nth-child(2) {
   animation-delay: 0.09s;
-  background-color: #c0392b;
+  background-color: #1b0c7d;
 }
 
 .loading-bar:nth-child(3) {
-  animation-delay: .18s;
-  background-color: #f1c40f;
+  animation-delay: 0.18s;
+  background-color: #1b0c7d;
 }
 
 .loading-bar:nth-child(4) {
-  animation-delay: .27s;
-  background-color: #27ae60;
+  animation-delay: 0.27s;
+  background-color: #3e29c7;
 }
 
 @keyframes loading {
   0% {
     transform: scale(1);
   }
+
   20% {
     transform: scale(1, 2.2);
   }
+
   40% {
     transform: scale(1);
   }
