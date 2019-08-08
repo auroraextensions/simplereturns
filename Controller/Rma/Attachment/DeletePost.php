@@ -19,7 +19,9 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\AttachmentInterface,
     Api\Data\SimpleReturnInterface,
+    Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
@@ -55,6 +57,9 @@ class DeletePost extends Action implements
         Redirector::__initialize as protected;
     }
 
+    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    protected $attachmentRepository;
+
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
@@ -87,6 +92,7 @@ class DeletePost extends Action implements
 
     /**
      * @param Context $context
+     * @param AttachmentRepositoryInterface $attachmentRepository
      * @param ExceptionFactory $exceptionFactory
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
@@ -102,6 +108,7 @@ class DeletePost extends Action implements
      */
     public function __construct(
         Context $context,
+        AttachmentRepositoryInterface $attachmentRepository,
         ExceptionFactory $exceptionFactory,
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
@@ -116,6 +123,7 @@ class DeletePost extends Action implements
     ) {
         parent::__construct($context);
         $this->__initialize();
+        $this->attachmentRepository = $attachmentRepository;
         $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
@@ -136,6 +144,15 @@ class DeletePost extends Action implements
      */
     public function execute()
     {
+        /** @var int $error */
+        $error = 0;
+
+        /** @var string|null $message */
+        $message = null;
+
+        /** @var array $response */
+        $response = [];
+
         /** @var Magento\Framework\App\RequestInterface $request */
         $request = $this->getRequest();
 
@@ -143,57 +160,61 @@ class DeletePost extends Action implements
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
+            $response['error'] = $error++;
+            $response['message'] = __('Invalid: Must be POST request.')->__toString();
+            $resultJson->setData($response);
+
             return $resultJson;
         }
 
+        /** @var string $content */
+        $content = $request->getContent()
+            ?? $this->serializer->serialize([]);
+
+        /** @var array $data */
+        $data = $this->serializer->unserialize($content);
+
         /** @var int|string|null $rmaId */
-        $rmaId = $request->getParam(self::PARAM_RMA_ID);
+        $rmaId = $data['rma_id'] ?? null;
         $rmaId = $rmaId !== null && is_numeric($rmaId)
             ? (int) $rmaId
             : null;
 
-        /** @var int|string|null $token */
-        $token = $request->getParam(self::PARAM_TOKEN);
-        $token = $token !== null && !empty($token) ? $token : null;
+        if ($rmaId !== null) {
+            /** @var string|null $token */
+            $token = $data['token'] ?? null;
+            $token = !empty($token) ? $token : null;
 
-        /** @var int|string|null $attachmentKey */
-        $attachmentKey = $request->getParam(self::PARAM_ATTACH_KEY);
-        $attachmentKey = $token !== null && !empty($attachmentKey)
-            ? trim($attachmentKey)
-            : null;
+            if ($token !== null) {
+                /** @var string|null $fileKey */
+                $fileKey = $data['file_key'] ?? null;
+                $fileKey = $fileKey !== null && Tokenizer::isHex($fileKey)
+                    ? trim($fileKey)
+                    : null;
 
-        try {
-            /** @var SimpleReturnInterface $rma */
-            $rma = $this->simpleReturnRepository->getById($rmaId);
-
-            /** @var string|null $data */
-            $data = $rma->getAttachments();
-
-            if ($data !== null) {
-                /** @var array $entries */
-                $entries = $this->serializer->unserialize($data);
-
-                /** @var string $key */
-                /** @var string $entry */
-                foreach ($entries as $key => $entry) {
-                    if ($key === $attachmentKey) {
-                        unset($entries[$key]);
+                if ($fileKey !== null) {
+                    try {
+                        /** @var AttachmentInterface $attachment */
+                        $attachment = $this->attachmentRepository->get($fileKey);
+                        $this->attachmentRepository->delete($attachment);
+                    } catch (NoSuchEntityException $e) {
+                        $error++;
+                        $message = __($e->getMessage())->__toString();
+                    } catch (LocalizedException $e) {
+                        $error++;
+                        $message = __($e->getMessage())->__toString();
                     }
                 }
-
-                /* Updated, serialized entries. */
-                $data = $this->serializer->serialize($entries);
-
-                $this->simpleReturnRepository->save(
-                    $rma->setAttachments($data)
-                );
             }
-        } catch (NoSuchEntityException $e) {
-            /** @todo: Set error details on $resultJson. */
-        } catch (LocalizedException $e) {
-            /** @todo: Set error details on $resultJson. */
         }
 
+        $response['error'] = $error;
+
+        if ($message !== null) {
+            $response['message'] = $message;
+        }
+
+        $resultJson->setData($response);
         return $resultJson;
     }
 }
