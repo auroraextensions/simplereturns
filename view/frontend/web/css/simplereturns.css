@@ -45,6 +45,7 @@ input[readonly] {
 
 .simplereturns .attachments {
   display: block !important;
+  padding: 1rem 0;
 }
 
 .simplereturns .attachments .attachment {
