@@ -129,7 +129,7 @@ define([
          * @return {void}
          */
         initialize: function () {
-            var dz, onFileAdded, onFileRemoved;
+            var dz, func;
 
             this.options.rmaId = !!this.options.rmaId
                 ? this.options.rmaId
@@ -142,14 +142,10 @@ define([
             /** @var {Object} dz */
             dz = this.getDropzone();
 
-            /** @var {Function} onFileAdded */
-            onFileAdded = this.onFileAdded.bind(this);
+            /** @var {Function} func */
+            func = this.onFileAdded.bind(this);
 
-            /** @var {Function} onFileRemoved */
-            onFileRemoved = this.onFileRemoved.bind(this);
-
-            dz.on('addedfile', onFileAdded);
-            dz.on('removedfile', onFileRemoved);
+            dz.on('addedfile', func);
         },
         /**
          * @return {Object}
@@ -181,7 +177,9 @@ define([
                 mock, self;
 
             /** @var {Array} files */
-            files = this.options.files;
+            files = !!this.options.files
+                ? this.options.files
+                : [];
 
             if (files.length) {
                 /** @var {Object} dz */
@@ -208,6 +206,7 @@ define([
                             type: value.type
                         }
                     );
+                    blob.token = value.token;
 
                     self.initFile(blob);
                 });
@@ -221,7 +220,7 @@ define([
          * @return {void}
          */
         onFileAdded: function (file) {
-            var button, dz;
+            var button, dz, func;
 
             /** @var {Object} dz */
             dz = this.getDropzone();
@@ -231,21 +230,75 @@ define([
             button.setAttribute('class', 'dz-remove');
             button.setAttribute('type', 'button');
 
-            button.addEventListener('click', function (clickEvent) {
-                clickEvent.preventDefault();
-                clickEvent.stopPropagation();
+            /** @var {Function} func */
+            func = this.onRemoveFile.bind(this, file);
 
-                dz.removeFile(file);
-            });
-
+            button.addEventListener('click', func);
             file.previewElement.appendChild(button);
         },
         /**
          * @param {File} file
+         * @param {MouseEvent} clickEvent
          * @return {void}
          */
-        onFileRemoved: function (file) {
-            /** @todo: Work on implementation. */
+        onRemoveFile: function (file, clickEvent) {
+            var dz, data, key, url;
+
+            clickEvent.preventDefault();
+            clickEvent.stopPropagation();
+
+            /** @var {String} key */
+            key = file.token;
+
+            /** @var {Object} dz */
+            dz = this.getDropzone();
+
+            /**
+             * Remove the given file, which will
+             * trigger the 'removedfile' event
+             * and clear the file from the list.
+             */
+            dz.removeFile(file);
+
+            /** @var {String} url */
+            url = this.options.deletePath;
+
+            this.options.rmaId = !!this.options.rmaId
+                ? this.options.rmaId
+                : urlParser.getParamValue('rma_id');
+
+            this.options.token = !!this.options.token
+                ? this.options.token
+                : urlParser.getParamValue('token');
+
+            /** @var {String} data */
+            data = JSON.stringify({
+                'file_key': key,
+                'rma_id': this.options.rmaId,
+                'token': this.options.token
+            });
+
+            $.ajax(url, {
+                contentType: 'application/json',
+                data: data,
+                error: this.onDeleteError.bind(this),
+                method: 'POST',
+                success: this.onDeleteSuccess.bind(this)
+            });
+        },
+        /**
+         * @param {Object} response
+         * @return {void}
+         */
+        onDeleteError: function (response) {
+            /** @todo: Implement this method. */
+        },
+        /**
+         * @param {Object} response
+         * @return {void}
+         */
+        onDeleteSuccess: function (response) {
+            /** @todo: Implement this method. */
         }
     };
 
