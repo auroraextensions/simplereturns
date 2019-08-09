@@ -240,7 +240,7 @@
   background: white;
   border: 3px dotted rgba(0, 0, 0, 0.5);
   border-radius: 3px;
-  height: 250px;
+  min-height: 250px;
   padding: 20px;
 }
 
@@ -410,17 +410,24 @@
 }
 
 .dropzone .dz-preview .dz-image {
+  border: 1px dotted #e1e1e1;
   border-radius: 20px;
-  overflow: hidden;
-  width: 120px;
-  height: 120px;
-  position: relative;
   display: block;
+  height: 120px;
+  overflow: hidden;
+  position: relative;
+  width: 120px;
   z-index: 10;
 }
 
 .dropzone .dz-preview .dz-image img {
+  bottom: 0;
   display: block;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .dropzone .dz-preview.dz-success .dz-success-mark {
