@@ -15,6 +15,8 @@
  * @license       Aurora Extensions EULA
  */
 
+use Magento\Framework\Pricing\Helper\Data as PriceHelper;
+
 /** @var Magento\Framework\View\Element\Template $block */
 /** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Orders\ResultsView $viewModel */
 $viewModel = $block->getViewModel();
@@ -26,8 +28,8 @@ $email = $viewModel->getEmail();
 $orderId = $viewModel->getOrderId();
 $zipCode = $viewModel->getZipCode();
 
-/** @var Magento\Framework\Pricing\Helper\Data $priceHelper */
-$priceHelper = $this->helper('Magento\Framework\Pricing\Helper\Data');
+/** @var PriceHelper $priceHelper */
+$priceHelper = $this->helper(PriceHelper::class);
 ?>
 <div class="block simplereturns-orders-results">
     <?php if ($viewModel->hasOrders()): ?>
@@ -49,13 +51,13 @@ $priceHelper = $this->helper('Magento\Framework\Pricing\Helper\Data');
                         <td class="col order-total"><?= $block->escapeHtml($priceHelper->currency($order->getGrandTotal(), true, false)) ?></td>
                         <td class="col order-status"><em><?= $block->escapeHtml($order->getStatusLabel()) ?></em></td>
                         <td class="col return-label">
-                            <?php if ($viewModel->isOrderPrepaidEligible($order)): ?>
+                            <?php if ($viewModel->isOrderEligible($order)): ?>
                                 <a
                                     href="<?= $block->escapeHtmlAttr($viewModel->getReturnLabelUrl($order)) ?>"
                                     class="print-label"
                                     target="_blank"
-                                    data-order="<?= $block->escapeHtml($order->getRealOrderId()) ?>"
-                                    aria-label="<?= $block->escapeHtml(__('Get return label for order %1', $order->getRealOrderId())) ?>"
+                                    data-order="<?= $block->escapeHtmlAttr($order->getRealOrderId()) ?>"
+                                    aria-label="<?= $block->escapeHtmlAttr(__('Get return label for order %1', $order->getRealOrderId())) ?>"
                                 ><?= $block->escapeHtml(__('Get Return Label')) ?></a>
                             <?php endif ?>
                         </td>

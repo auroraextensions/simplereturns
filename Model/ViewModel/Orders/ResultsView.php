@@ -21,6 +21,7 @@ namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Orders;
 use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
+    Model\ValidatorModel\Sales\Order\EligibilityValidator,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
@@ -37,12 +38,16 @@ class ResultsView extends AbstractView implements
     /** @property array $errors */
     protected $errors = [];
 
+    /** @property EligibilityValidator $validator */
+    protected $validator;
+
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param EligibilityValidator $validator
      * @return void
      */
     public function __construct(
@@ -50,19 +55,21 @@ class ResultsView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = []
+        array $data = [],
+        EligibilityValidator $validator
     ) {
         parent::__construct(
             $configHelper,
             $exceptionFactory,
             $request,
-            $urlBuilder
+            $urlBuilder,
+            $data
         );
+
+        $this->validator = $validator;
     }
 
     /**
-     * Get return label URL.
-     *
      * @param OrderInterface $order
      * @return string
      */
@@ -79,8 +86,6 @@ class ResultsView extends AbstractView implements
     }
 
     /**
-     * Check if customer has existing orders.
-     *
      * @return bool
      */
     public function hasOrders(): bool
@@ -92,14 +97,11 @@ class ResultsView extends AbstractView implements
     }
 
     /**
-     * Check if order is eligible for prepaid return labels.
-     *
      * @param OrderInterface $order
      * @return bool
-     * @todo: Implement this method.
      */
-    public function isOrderPrepaidEligible(OrderInterface $order): bool
+    public function isOrderEligible(OrderInterface $order): bool
     {
-        return true;
+        return $this->validator->isOrderEligible($order);
     }
 }
