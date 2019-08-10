@@ -57,6 +57,7 @@ class EligibilityValidator implements ModuleComponentInterface
      * @param DateTimeFactory $dateTimeFactory
      * @param ExceptionFactory $exceptionFactory
      * @param MessageManagerInterface $messageManager
+     * @param ModuleConfig $moduleConfig
      * @param ProductRepositoryInterface $productRepository
      * @return void
      */
@@ -65,12 +66,14 @@ class EligibilityValidator implements ModuleComponentInterface
         DateTimeFactory $dateTimeFactory,
         ExceptionFactory $exceptionFactory,
         MessageManagerInterface $messageManager,
+        ModuleConfig $moduleConfig,
         ProductRepositoryInterface $productRepository
     ) {
         $this->currency = $currency;
         $this->dateTimeFactory = $dateTimeFactory;
         $this->exceptionFactory = $exceptionFactory;
         $this->messageManager = $messageManager;
+        $this->moduleConfig = $moduleConfig;
         $this->productRepository = $productRepository;
     }
 
