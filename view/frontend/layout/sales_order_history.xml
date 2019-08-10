@@ -24,7 +24,7 @@
                 <argument name="template" xsi:type="string">AuroraExtensions_SimpleReturns::sales/order/history.phtml</argument>
             </action>
             <arguments>
-                <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ListView</argument>
+                <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\HistoryView</argument>
             </arguments>
         </referenceBlock>
     </body>
