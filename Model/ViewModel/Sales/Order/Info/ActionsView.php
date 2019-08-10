@@ -1,6 +1,6 @@
 <?php
 /**
- * InfoView.php
+ * ActionsView.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,7 +16,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order;
+namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\Info;
 
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
@@ -34,7 +34,7 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
-class InfoView extends AbstractView implements
+class ActionsView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
