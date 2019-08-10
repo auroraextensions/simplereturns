@@ -16,16 +16,22 @@
  */
 
 /**
+ * @use AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\Info\ActionsView
+ * @use Magento\Sales\Api\Data\OrderInterface
+ * @use Magento\Sales\Block\Order\Info\Buttons
+ */
+
+/**
  * @see Magento_Sales::order/info/buttons.phtml
- * @var Magento\Sales\Block\Order\Info\Buttons $block
+ * @var Buttons $block
  */
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Sales\Helper\Reorder as ReorderHelper;
 
-/** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\InfoView */
+/** @var ActionsView $viewModel */
 $viewModel = $block->getViewModel();
 
-/** @var Magento\Sales\Api\Data\OrderInterface $order */
+/** @var OrderInterface $order */
 $order = $block->getOrder();
 ?>
 <div class="actions">

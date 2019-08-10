@@ -16,13 +16,19 @@
  */
 
 /**
+ * @use AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\HistoryView
+ * @use Magento\Sales\Api\Data\OrderInterface
+ * @use Magento\Sales\Block\Order\History
+ */
+
+/**
  * @see Magento_Sales::order/history.phtml
- * @var Magento\Sales\Block\Order\History $block
+ * @var History $block
  */
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Sales\Helper\Reorder as ReorderHelper;
 
-/** @var AuroraExtensions\SimpleReturns\Model\ViewModel\OrdersView $viewModel */
+/** @var HistoryView $viewModel */
 $viewModel = $block->getViewModel();
 
 /** @var OrderInterface[] $orders */
@@ -48,35 +54,44 @@ $count = count($orders);
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($orders as $order): ?>
-                    <tr>
-                        <td data-th="<?= $block->escapeHtml(__('Order #')) ?>" class="col id"><?= $order->getRealOrderId() ?></td>
-                        <td data-th="<?= $block->escapeHtml(__('Date')) ?>" class="col date"><?= $block->formatDate($order->getCreatedAt()) ?></td>
-                        <?php $extra = $block->getChildBlock('extra.container'); ?>
-                        <?php if ($extra): ?>
-                            <?php $extra->setOrder($order) ?>
-                            <?= $extra->getChildHtml() ?>
-                        <?php endif ?>
-                        <td data-th="<?= $block->escapeHtml(__('Ship To')) ?>" class="col shipping"><?= $order->getShippingAddress() ? $block->escapeHtml($order->getShippingAddress()->getName()) : '&nbsp;' ?></td>
-                        <td data-th="<?= $block->escapeHtml(__('Order Total')) ?>" class="col total"><?= $order->formatPrice($order->getGrandTotal()) ?></td>
-                        <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col status"><?= $order->getStatusLabel() ?></td>
-                        <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col actions">
-                            <a class="action view" href="<?= $block->getViewUrl($order) ?>">
-                                <span><?= __('View Order') ?></span>
+            <?php /** @var OrderInterface $order */ ?>
+            <?php foreach ($orders as $order): ?>
+                <tr>
+                    <td data-th="<?= $block->escapeHtmlAttr(__('Order #')) ?>" class="col id"><?= $order->getRealOrderId() ?></td>
+                    <td data-th="<?= $block->escapeHtmlAttr(__('Date')) ?>" class="col date"><?= $block->formatDate($order->getCreatedAt()) ?></td>
+                    <?php $extra = $block->getChildBlock('extra.container'); ?>
+                    <?php if ($extra): ?>
+                        <?php $extra->setOrder($order) ?>
+                        <?= $extra->getChildHtml() ?>
+                    <?php endif ?>
+                    <?php /** @var string $recipient */ ?>
+                    <?php $recipient = $order->getShippingAddress() ? $block->escapeHtml($order->getShippingAddress()->getName()) : '&nbsp;' ?>
+                    <td data-th="<?= $block->escapeHtmlAttr(__('Ship To')) ?>" class="col shipping"><?= $recipient ?></td>
+                    <td data-th="<?= $block->escapeHtmlAttr(__('Order Total')) ?>" class="col total"><?= $order->formatPrice($order->getGrandTotal()) ?></td>
+                    <td data-th="<?= $block->escapeHtmlAttr(__('Status')) ?>" class="col status"><?= $order->getStatusLabel() ?></td>
+                    <td data-th="<?= $block->escapeHtmlAttr(__('Actions')) ?>" class="col actions">
+                        <a class="action view" href="<?= $block->getViewUrl($order) ?>">
+                            <span><?= __('View Order') ?></span>
+                        </a>
+                        <?php if ($this->helper(ReorderHelper::class)->canReorder($order->getEntityId())) : ?>
+                            <a class="action order" href="#" data-post="<?= $this->helper(PostHelper::class)->getPostData($block->getReorderUrl($order)) ?>">
+                                <span><?= __('Reorder') ?></span>
                             </a>
-                            <?php if ($this->helper(ReorderHelper::class)->canReorder($order->getEntityId())) : ?>
-                                <a class="action order" href="#" data-post="<?= $this->helper(PostHelper::class)->getPostData($block->getReorderUrl($order)) ?>">
-                                    <span><?= __('Reorder') ?></span>
-                                </a>
-                            <?php endif ?>
-                            <?php if ($viewModel->isOrderPrepaidEligible($order)): ?>
-                                <a class="action print-return-label" href="<?= $viewModel->getReturnLabelUrl($order) ?>" target="_blank">
-                                    <span><?= __('Print Return Label') ?></span>
-                                </a>
-                            <?php endif ?>
-                        </td>
-                    </tr>
-                <?php endforeach ?>
+                        <?php endif ?>
+                        <?php /** @var bool $hasSimpleReturn */ ?>
+                        <?php $hasSimpleReturn = $viewModel->hasSimpleReturn($order) ?>
+                        <?php if ($hasSimpleReturn): ?>
+                            <a class="action simplereturns-rma-view" href="<?= $viewModel->getRmaViewUrl($order) ?>" target="_blank">
+                                <span><?= __('View Return') ?></span>
+                            </a>
+                        <?php elseif ($viewModel->isOrderEligible($order)): ?>
+                            <a class="action simplereturns-rma-create" href="<?= $viewModel->getRmaCreateUrl($order) ?>" target="_blank">
+                                <span><?= __('Return or replace items') ?></span>
+                            </a>
+                        <?php endif ?>
+                    </td>
+                </tr>
+            <?php endforeach ?>
             </tbody>
         </table>
     </div>

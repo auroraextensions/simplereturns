@@ -1,6 +1,6 @@
 <?php
 /**
- * InfoView.php
+ * HistoryView.php
  *
  * NOTICE OF LICENSE
  *
@@ -23,23 +23,28 @@ use AuroraExtensions\SimpleReturns\{
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
+    Model\ValidatorModel\Sales\Order\EligibilityValidator,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
     App\RequestInterface,
+    Exception\LocalizedException,
     Exception\NoSuchEntityException,
     UrlInterface,
     View\Element\Block\ArgumentInterface
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
-class InfoView extends AbstractView implements
+class HistoryView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
+
+    /** @property EligibilityValidator $validator */
+    protected $validator;
 
     /**
      * @param ConfigHelper $configHelper
@@ -48,6 +53,7 @@ class InfoView extends AbstractView implements
      * @param UrlInterface $urlBuilder
      * @param array $data
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param EligibilityValidator $validator
      * @return void
      */
     public function __construct(
@@ -56,7 +62,8 @@ class InfoView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        EligibilityValidator $validator
     ) {
         parent::__construct(
             $configHelper,
@@ -67,6 +74,7 @@ class InfoView extends AbstractView implements
         );
 
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->validator = $validator;
     }
 
     /**
@@ -83,6 +91,8 @@ class InfoView extends AbstractView implements
                 return $rma;
             }
         } catch (NoSuchEntityException $e) {
+            /* No action required. */
+        } catch (LocalizedException $e) {
             /* No action required. */
         }
 
@@ -138,5 +148,14 @@ class InfoView extends AbstractView implements
                 '_secure' => true,
             ]
         );
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return bool
+     */
+    public function isOrderEligible(OrderInterface $order): bool
+    {
+        return $this->validator->isOrderEligible($order);
     }
 }
