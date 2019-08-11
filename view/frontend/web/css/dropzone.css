@@ -285,7 +285,12 @@
 }
 
 .dropzone .dz-actions {
-  padding: 5px;
+  bottom: -1.5rem;
+  margin: auto;
+  padding: 3px;
+  position: absolute;
+  z-index: 99999;
+  width: 100%;
 }
 
 .dropzone .dz-message {
@@ -320,7 +325,7 @@
 }
 
 .dropzone .dz-preview.dz-image-preview {
-  background: white;
+  background: #fff;
 }
 
 .dropzone .dz-preview.dz-image-preview .dz-details {
@@ -336,12 +341,12 @@
   color: #e02b27;
   cursor: pointer;
   display: block;
-  font-size: 14px;
+  font-size: 1rem;
   margin: auto;
+  padding: 2px 10px;
   text-align: center;
   text-transform: uppercase;
   visibility: hidden;
-  width: 100%;
 }
 
 .dropzone .dz-preview:hover .dz-remove {
