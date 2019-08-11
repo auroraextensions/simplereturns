@@ -46,4 +46,6 @@
 "Unable to locate label(s) for the requested package.","Unable to locate label(s) for the requested package."
 "404 File not found","404 File not found"
 "The default status when an RMA request is created.","The default status when an RMA request is created."
+"You can defer this step until later","You can defer this step until later"
 "Drag and drop files or click to upload.","Drag and drop files or click to upload."
+"Once approved, you can create the return package and generate the shipping label.","Once approved, you can create the return package and generate the shipping label."
