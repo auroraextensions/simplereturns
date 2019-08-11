@@ -20,6 +20,16 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
+                <resource id="AuroraExtensions_SimpleReturns::rma" title="RMA" translate="title" sortOrder="10">
+                    <resource id="AuroraExtensions_SimpleReturns::rma_operations" title="Operations" translate="title" sortOrder="10">
+                        <resource id="AuroraExtensions_SimpleReturns::rma_returns" title="Returns" translate="title" sortOrder="10">
+                            <resource id="AuroraExtensions_SimpleReturns::rma_actions" title="Actions" translate="title" sortOrder="10">
+                                <resource id="AuroraExtensions_SimpleReturns::create" title="Create" translate="title" sortOrder="10"/>
+                                <resource id="AuroraExtensions_SimpleReturns::view" title="View" translate="title" sortOrder="20"/>
+                            </resource>
+                        </resource>
+                    </resource>
+                </resource>
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
