@@ -56,6 +56,11 @@ input[readonly] {
   width: 100px;
 }
 
+.simplereturns .attachments .attachment.framed {
+  border: 1px solid rgba(229, 229, 229, 0.25);
+  border-radius: 2px;
+}
+
 .simplereturns .attachments .attachment img {
   bottom: 0;
   left: 0;
