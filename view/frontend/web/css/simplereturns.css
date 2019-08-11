@@ -38,6 +38,11 @@ input[readonly] {
   vertical-align: middle;
 }
 
+.simplereturns .actions .disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .simplereturns .actions-toolbar,
 .simplereturns .details {
   padding: 1rem 0;

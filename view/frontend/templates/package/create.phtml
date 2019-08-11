@@ -44,7 +44,7 @@ $weightUnits = $viewModel->getWeightUnits();
                 <div class="label request_label">
                     <span><?= $block->escapeHtml(__('Generate Shipping Label')) ?></span>
                     <span class="tooltip">
-                        <button type="button" data-tooltip="You can defer this step for later">&#9432;</button>
+                        <button type="button" data-tooltip="<?= $block->escapeHtmlAttr(__('You can defer this step until later')) ?>">&#9432;</button>
                     </span>
                 </div>
                 <div class="field request_label toggle optional">
