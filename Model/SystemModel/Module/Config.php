@@ -37,37 +37,37 @@ use Magento\Usps\Model\Carrier as USPS;
 class Config
 {
     /** @constant string DEFAULT_RETURNS_RECIPIENT_FIRST_NAME */
-    const DEFAULT_RETURNS_RECIPIENT_FIRST_NAME = 'Customer';
+    public const DEFAULT_RETURNS_RECIPIENT_FIRST_NAME = 'Customer';
 
     /** @constant string DEFAULT_RETURNS_RECIPIENT_LAST_NAME */
-    const DEFAULT_RETURNS_RECIPIENT_LAST_NAME = 'Service';
+    public const DEFAULT_RETURNS_RECIPIENT_LAST_NAME = 'Service';
 
     /** @constant int DEFAULT_RETURNS_ORDER_AGE_MAXIMUM */
-    const DEFAULT_RETURNS_ORDER_AGE_MAXIMUM = 30;
+    public const DEFAULT_RETURNS_ORDER_AGE_MAXIMUM = 30;
 
     /** @constant float DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM */
-    const DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM = 1000.00;
+    public const DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM = 1000.00;
 
     /** @constant float DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM */
-    const DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM = 50.00;
+    public const DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM = 50.00;
 
     /** @constant float DEFAULT_PACKAGE_WEIGHT */
-    const DEFAULT_PACKAGE_WEIGHT = 5.00;
+    public const DEFAULT_PACKAGE_WEIGHT = 5.00;
 
     /** @constant string DEFAULT_RMA_STATUS_CODE */
-    const DEFAULT_RMA_STATUS_CODE = 'pending';
+    public const DEFAULT_RMA_STATUS_CODE = 'pending';
 
     /** @constant string DEFAULT_FEDEX_CONTAINER_CODE */
-    const DEFAULT_FEDEX_CONTAINER_CODE = 'FEDEX_BOX';
+    public const DEFAULT_FEDEX_CONTAINER_CODE = 'FEDEX_BOX';
 
     /** @constant string DEFAULT_FEDEX_METHOD_CODE */
-    const DEFAULT_FEDEX_METHOD_CODE = 'FEDEX_GROUND';
+    public const DEFAULT_FEDEX_METHOD_CODE = 'FEDEX_GROUND';
 
     /** @constant string DEFAULT_UPS_CONTAINER_CODE */
-    const DEFAULT_UPS_CONTAINER_CODE = '00';
+    public const DEFAULT_UPS_CONTAINER_CODE = '00';
 
     /** @constant string DEFAULT_UPS_METHOD_CODE */
-    const DEFAULT_UPS_METHOD_CODE = '03';
+    public const DEFAULT_UPS_METHOD_CODE = '03';
 
     /** @var array $containerMethods */
     protected $containerMethods = [
