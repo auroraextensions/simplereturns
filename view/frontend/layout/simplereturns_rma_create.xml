@@ -18,8 +18,8 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
+        <css src="AuroraExtensions_SimpleReturns::css/dropzone.css"/>
         <css src="AuroraExtensions_SimpleReturns::css/simplereturns.css"/>
-        <css src="AuroraExtensions_SimpleReturns::css/plugins/dropzone.css"/>
     </head>
     <body>
         <referenceBlock name="catalog.compare.sidebar" remove="true"/>
