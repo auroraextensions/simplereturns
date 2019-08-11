@@ -44,11 +44,11 @@ $order = $block->getOrder();
         </a>
     <?php endif ?>
     <?php if ($viewModel->hasSimpleReturn($order)): ?>
-        <a class="action view-rma" href="<?= $block->escapeUrl($viewModel->getRmaViewUrl($order)) ?>" target="_blank">
+        <a class="action view-rma" href="<?= $block->escapeUrl($viewModel->getRmaViewUrl($order)) ?>">
             <span><?= $block->escapeHtml(__('View Return')) ?></span>
         </a>
     <?php else: ?>
-        <a class="action create-rma" href="<?= $block->escapeUrl($viewModel->getRmaCreateUrl($order)) ?>" target="_blank">
+        <a class="action create-rma" href="<?= $block->escapeUrl($viewModel->getRmaCreateUrl($order)) ?>">
             <span><?= $block->escapeHtml(__('Return or replace items')) ?></span>
         </a>
     <?php endif ?>
