@@ -494,4 +494,23 @@ class ViewView extends AbstractView implements
 
         return false;
     }
+
+    /**
+     * @return bool
+     */
+    public function isRequestApproved(): bool
+    {
+        /** @var SimpleReturnInterface|null $rma */
+        $rma = $this->getSimpleReturn();
+
+        if ($rma !== null) {
+            /** @var string $status */
+            $status = $rma->getStatus()
+                ?? ModuleConfig::DEFAULT_RMA_STATUS_CODE;
+
+            return ($status === 'approved');
+        }
+
+        return false;
+    }
 }
