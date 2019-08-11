@@ -258,8 +258,9 @@
 }
 
 .dropzone .dz-init-complete,
-.dropzone .dz-hide-message {
-  display: none !important;
+.dropzone .dz-hide-message,
+.dropzone.dz-started .dz-message {
+  display: none;
 }
 
 .dropzone.dz-clickable {
@@ -275,16 +276,16 @@
   cursor: pointer;
 }
 
-.dropzone.dz-started .dz-message {
-  display: none;
-}
-
 .dropzone.dz-drag-hover {
   border-style: solid;
 }
 
 .dropzone.dz-drag-hover .dz-message {
   opacity: 0.5;
+}
+
+.dropzone .dz-actions {
+  padding: 5px;
 }
 
 .dropzone .dz-message {
@@ -340,6 +341,7 @@
   text-align: center;
   text-transform: uppercase;
   visibility: hidden;
+  width: 100%;
 }
 
 .dropzone .dz-preview:hover .dz-remove {
@@ -348,7 +350,7 @@
 }
 
 .dropzone .dz-preview .dz-remove:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .dropzone .dz-preview:hover .dz-details {
