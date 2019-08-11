@@ -44,8 +44,7 @@ define([
             rmaId: null,
             searchPath: '/simplereturns/rma_attachment/searchPost/',
             selector: '.dropzone',
-            token: null,
-            tokens: []
+            token: null
         },
         /**
          * @return {void}
@@ -220,21 +219,23 @@ define([
          * @return {void}
          */
         onFileAdded: function (file) {
-            var button, dz, func;
+            var actions, button, dz, func;
 
             /** @var {Object} dz */
             dz = this.getDropzone();
 
             /** @var {HTMLButtonElement} button */
-            button = Dropzone.createElement('<button>REMOVE</button>');
-            button.setAttribute('class', 'dz-remove');
-            button.setAttribute('type', 'button');
+            button = Dropzone.createElement('<button class="dz-remove" type="button">REMOVE</button>');
+
+            /** @var {HTMLDivElement} actions */
+            actions = Dropzone.createElement('<div class="dz-actions"></div>');
+            actions.appendChild(button);
 
             /** @var {Function} func */
             func = this.onRemoveFile.bind(this, file);
 
             button.addEventListener('click', func);
-            file.previewElement.appendChild(button);
+            file.previewElement.appendChild(actions);
         },
         /**
          * @param {File} file
