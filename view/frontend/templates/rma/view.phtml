@@ -39,6 +39,9 @@ $attachments = $viewModel->getAttachments();
 
 /** @var bool $hasPackage */
 $hasPackage = $viewModel->hasPackage();
+
+/** @var bool $isApproved */
+$isApproved = $viewModel->isRequestApproved();
 ?>
 <div class="block simplereturns">
     <h2><?= $block->escapeHtml(__('View RMA Details for Order #%1', $order->getRealOrderId())) ?></h2>
@@ -48,7 +51,14 @@ $hasPackage = $viewModel->hasPackage();
         <?php if ($hasPackage): ?>
         <a class="action" href="<?= $viewModel->getViewPackageUrl() ?>"><?= $block->escapeHtml(__('View Package Details')) ?></a>
         <?php else: ?>
-        <a class="action" href="<?= $viewModel->getCreatePackageUrl() ?>"><?= $block->escapeHtml(__('Create Package')) ?></a>
+            <?php if ($isApproved): ?>
+            <a class="action" href="<?= $viewModel->getCreatePackageUrl() ?>"><?= $block->escapeHtml(__('Create Package')) ?></a>
+            <?php else: ?>
+            <a class="action disabled" href="<?= $viewModel->getCreatePackageUrl() ?>"><?= $block->escapeHtml(__('Create Package')) ?></a>
+            <span class="tooltip">
+                <button type="button" data-tooltip="<?= $block->escapeHtmlAttr(__('Once approved, you can create the return package and generate the shipping label.')) ?>">&#9432;</button>
+            </span>
+            <?php endif ?>
         <?php endif ?>
     </div>
     <h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
