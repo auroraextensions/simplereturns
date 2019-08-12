@@ -19,10 +19,13 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma;
 
 use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use Magento\Backend\{
+    App\Action,
+    App\Action\Context
+};
 use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
     App\Action\HttpGetActionInterface,
+    App\Action\HttpPostActionInterface,
     View\Result\PageFactory
 };
 
