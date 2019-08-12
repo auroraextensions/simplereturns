@@ -25,5 +25,20 @@
              dependsOnModule="AuroraExtensions_SimpleReturns"
              resource="AuroraExtensions_SimpleReturns::rma"
              sortOrder="20"/>
+        <add id="AuroraExtensions_SimpleReturns::rma_operation"
+             title="Operations"
+             translate="title"
+             module="AuroraExtensions_SimpleReturns"
+             parent="AuroraExtensions_SimpleReturns::rma"
+             resource="AuroraExtensions_SimpleReturns::rma_operation"
+             sortOrder="10"/>
+        <add id="AuroraExtensions_SimpleReturns::rma_return"
+             title="Returns"
+             translate="title"
+             module="AuroraExtensions_SimpleReturns"
+             sortOrder="10"
+             parent="AuroraExtensions_SimpleReturns::rma_operation"
+             resource="AuroraExtensions_SimpleReturns::rma_return"
+             action="simplereturns/rma/view"/>
     </menu>
 </config>
