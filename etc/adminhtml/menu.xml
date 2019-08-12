@@ -39,6 +39,6 @@
              sortOrder="10"
              parent="AuroraExtensions_SimpleReturns::rma_operation"
              resource="AuroraExtensions_SimpleReturns::rma_return"
-             action="simplereturns/rma/view"/>
+             action="simplereturns/rma/list"/>
     </menu>
 </config>
