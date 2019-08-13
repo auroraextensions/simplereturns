@@ -126,4 +126,18 @@
             <argument name="key" xsi:type="string">methods</argument>
         </arguments>
     </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Ui\DataProvider\SimpleReturn\Collection"
+                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">simplereturns_rma</argument>
+            <argument name="resourceModel" xsi:type="string">AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="simplereturns_rma_grid_datasource" xsi:type="string">AuroraExtensions\SimpleReturns\Ui\DataProvider\SimpleReturn\Collection</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

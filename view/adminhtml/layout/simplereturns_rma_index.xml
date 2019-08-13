@@ -19,9 +19,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Magento\Backend\Block\Template"
-                   name="simplereturns_rma_index"
-                   template="AuroraExtensions_SimpleReturns::rma/index.phtml"/>
+            <uiComponent name="simplereturns_rma_grid"/>
         </referenceContainer>
     </body>
 </page>
