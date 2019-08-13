@@ -31,6 +31,8 @@ use AuroraExtensions\SimpleReturns\{
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
+use DateTime;
+use DateTimeFactory;
 use Magento\Framework\{
     App\Action\Action,
     App\Action\Context,
@@ -45,6 +47,7 @@ use Magento\Framework\{
     Filesystem,
     HTTP\PhpEnvironment\RemoteAddress,
     Serialize\Serializer\Json,
+    Stdlib\DateTime as StdlibDateTime,
     UrlInterface
 };
 use Magento\MediaStorage\Model\File\UploaderFactory;
@@ -63,6 +66,9 @@ class CreatePost extends Action implements
 
     /** @property DataPersistorInterface $dataPersistor */
     protected $dataPersistor;
+
+    /** @property DateTimeFactory $dateTimeFactory */
+    protected $dateTimeFactory;
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
@@ -98,6 +104,7 @@ class CreatePost extends Action implements
      * @param Context $context
      * @param AttachmentRepositoryInterface $attachmentRepository
      * @param DataPersistorInterface $dataPersistor
+     * @param DateTimeFactory $dateTimeFactory
      * @param ExceptionFactory $exceptionFactory
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
@@ -115,6 +122,7 @@ class CreatePost extends Action implements
         Context $context,
         AttachmentRepositoryInterface $attachmentRepository,
         DataPersistorInterface $dataPersistor,
+        DateTimeFactory $dateTimeFactory,
         ExceptionFactory $exceptionFactory,
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
@@ -131,6 +139,7 @@ class CreatePost extends Action implements
         $this->__initialize();
         $this->attachmentRepository = $attachmentRepository;
         $this->dataPersistor = $dataPersistor;
+        $this->dateTimeFactory = $dateTimeFactory;
         $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
@@ -224,6 +233,9 @@ class CreatePost extends Action implements
                         /** @var string $status */
                         $status = $this->moduleConfig->getDefaultStatus();
 
+                        /** @var DateTime $createdTime */
+                        $createdTime = $this->dateTimeFactory->create();
+
                         /** @var array $data */
                         $data = [
                             'order_id'   => $orderId,
@@ -233,6 +245,7 @@ class CreatePost extends Action implements
                             'comments'   => $comments,
                             'remote_ip'  => $remoteIp,
                             'token'      => $token,
+                            'created_at' => $createdTime,
                         ];
 
                         /** @var int $rmaId */
