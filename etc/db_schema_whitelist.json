@@ -10,7 +10,9 @@
             "resolution": true,
             "comments": true,
             "remote_ip": true,
-            "token": true
+            "token": true,
+            "created_at": true,
+            "updated_at": true
         },
         "index": {
             "SIMPLERETURNS_RMA_ORDER_ID": true,
@@ -29,7 +31,9 @@
             "filesize": true,
             "path": true,
             "mimetype": true,
-            "token": true
+            "token": true,
+            "created_at": true,
+            "updated_at": true
         },
         "index": {
             "SIMPLERETURNS_RMA_ATTACHMENT_RMA_ID": true
@@ -47,7 +51,9 @@
             "container_type": true,
             "description": true,
             "remote_ip": true,
-            "token": true
+            "token": true,
+            "created_at": true,
+            "updated_at": true
         },
         "index": {
             "SIMPLERETURNS_PACKAGE_RMA_ID": true,
@@ -65,7 +71,9 @@
             "image": true,
             "tracking_number": true,
             "remote_ip": true,
-            "token": true
+            "token": true,
+            "created_at": true,
+            "updated_at": true
         },
         "index": {
             "SIMPLERETURNS_LABEL_PACKAGE_ID": true
