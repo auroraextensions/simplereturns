@@ -20,98 +20,95 @@
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
             <item name="provider" xsi:type="string">simplereturns_rma_grid.simplereturns_rma_grid_datasource</item>
-            <item name="deps" xsi:type="string">simplereturns_rma_grid.simplereturns_rma_grid_datasource</item>
-        </item>
-        <item name="spinner" xsi:type="string">simplereturns_rma_grid_columns</item>
-        <item name="buttons" xsi:type="array">
-            <item name="add" xsi:type="array">
-                <item name="name" xsi:type="string">add</item>
-                <item name="label" xsi:type="string" translate="true">Create RMA Request</item>
-                <item name="class" xsi:type="string">primary</item>
-                <item name="url" xsi:type="string">*/*/new</item>
-            </item>
         </item>
     </argument>
-    <dataSource name="simplereturns_rma_grid_datasource">
-        <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">AuroraExtensions\SimpleReturns\Ui\DataProvider\SimpleReturnDataProvider</argument>
-            <argument name="name" xsi:type="string">simplereturns_rma_grid_datasource</argument>
-            <argument name="primaryFieldName" xsi:type="string">rma_id</argument>
-            <argument name="requestFieldName" xsi:type="string">id</argument>
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="component" xsi:type="string">Magento_Ui/js/grid/provider</item>
-                    <item name="update_url" xsi:type="url" path="mui/index/render"/>
-                    <item name="storageConfig" xsi:type="array">
-                        <item name="indexField" xsi:type="string">rma_id</item>
-                    </item>
-                </item>
-            </argument>
-        </argument>
+    <settings>
+        <buttons>
+            <button name="add">
+                <url path="simplereturns/rma/create"/>
+                <class>primary</class>
+                <label translate="true">Create New RMA</label>
+                <aclResource>AuroraExtensions_SimpleReturns::create</aclResource>
+            </button>
+        </buttons>
+        <spinner>simplereturns_rma_grid_columns</spinner>
+        <deps>
+            <dep>simplereturns_rma_grid.simplereturns_rma_grid_datasource</dep>
+        </deps>
+    </settings>
+    <dataSource name="simplereturns_rma_grid_datasource" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>AuroraExtensions_SimpleReturns::rma_return</aclResource>
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\SimpleReturnDataProvider" name="simplereturns_rma_grid_datasource">
+            <settings>
+                <primaryFieldName>rma_id</primaryFieldName>
+                <requestFieldName>id</requestFieldName>
+            </settings>
+        </dataProvider>
     </dataSource>
     <columns name="simplereturns_rma_grid_columns">
         <selectionsColumn name="ids">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="indexField" xsi:type="string">rma_id</item>
-                </item>
-            </argument>
+            <settings>
+                <indexField>rma_id</indexField>
+            </settings>
         </selectionsColumn>
         <column name="rma_id">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="filter" xsi:type="string">text</item>
-                    <item name="sorting" xsi:type="string">asc</item>
-                    <item name="label" xsi:type="string" translate="true">RMA ID</item>
-                </item>
-            </argument>
+            <settings>
+                <filter>text</filter>
+                <label translate="true">RMA ID</label>
+            </settings>
+        </column>
+        <column name="store_id">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Store ID</label>
+            </settings>
         </column>
         <column name="status">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="filter" xsi:type="string">text</item>
-                    <item name="sorting" xsi:type="string">asc</item>
-                    <item name="label" xsi:type="string" translate="true">Status</item>
-                </item>
-            </argument>
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Status</label>
+                <sorting>desc</sorting>
+            </settings>
         </column>
         <column name="reason">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="filter" xsi:type="string">text</item>
-                    <item name="sorting" xsi:type="string">asc</item>
-                    <item name="label" xsi:type="string" translate="true">Reason</item>
-                </item>
-            </argument>
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Reason</label>
+            </settings>
         </column>
         <column name="resolution">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Resolution</label>
+            </settings>
+        </column>
+        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <dataType>date</dataType>
+                <filter>dateRange</filter>
+                <label translate="true">Created</label>
+            </settings>
+        </column>
+        <column name="updated_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <dataType>date</dataType>
+                <filter>dateRange</filter>
+                <label translate="true">Updated</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="Magento\Sales\Ui\Component\Listing\Column\ViewAction">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="filter" xsi:type="string">text</item>
-                    <item name="sorting" xsi:type="string">asc</item>
-                    <item name="label" xsi:type="string" translate="true">Resolution</item>
+                    <item name="viewUrlPath" xsi:type="string">simplereturns/rma/view</item>
+                    <item name="urlEntityParamName" xsi:type="string">rma_id</item>
                 </item>
             </argument>
-        </column>
-        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="filter" xsi:type="string">dateRange</item>
-                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/date</item>
-                    <item name="dataType" xsi:type="string">date</item>
-                    <item name="label" xsi:type="string" translate="true">Created</item>
-                </item>
-            </argument>
-        </column>
-        <column name="updated_at" class="Magento\Ui\Component\Listing\Columns\Date">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="filter" xsi:type="string">dateRange</item>
-                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/date</item>
-                    <item name="dataType" xsi:type="string">date</item>
-                    <item name="label" xsi:type="string" translate="true">Modified</item>
-                </item>
-            </argument>
-        </column>
+            <settings>
+                <indexField>rma_id</indexField>
+            </settings>
+        </actionsColumn>
     </columns>
 </listing>
