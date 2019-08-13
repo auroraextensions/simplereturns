@@ -1,6 +1,6 @@
 <?php
 /**
- * ViewAction.php
+ * Actions.php
  *
  * NOTICE OF LICENSE
  *
@@ -25,25 +25,33 @@ use Magento\Framework\{
 };
 use Magento\Ui\Component\Listing\Columns\Column;
 
-class ViewAction extends Column
+class Actions extends Column
 {
     /** @property UrlInterface $urlBuilder */
     protected $urlBuilder;
 
+    /**
+     * @param ContextInterface $context
+     * @param UiComponentFactory $uiComponentFactory,
+     * @param array $components
+     * @param array $data
+     * @param UrlInterface $urlBuilder
+     * @return void
+     */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
-        UrlInterface $urlBuilder,
         array $components = [],
-        array $data = []
+        array $data = [],
+        UrlInterface $urlBuilder
     ) {
         parent::__construct(
             $context,
             $uiComponentFactory,
-            $urlBuilder,
             $components,
             $data
         );
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
