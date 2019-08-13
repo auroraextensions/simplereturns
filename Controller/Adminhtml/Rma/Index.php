@@ -1,6 +1,6 @@
 <?php
 /**
- * List.php
+ * Index.php
  *
  * NOTICE OF LICENSE
  *
@@ -29,10 +29,13 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class List extends Action implements
+class Index extends Action implements
     HttpGetActionInterface,
     ModuleComponentInterface
 {
+    /** @constant string ADMIN_RESOURCE */
+    public const ADMIN_RESOURCE = 'AuroraExtensions_SimpleReturns::rma';
+
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
 
@@ -56,6 +59,10 @@ class List extends Action implements
      */
     public function execute()
     {
-        return $this->resultPageFactory->create();
+        /** @var Page $resultPage */
+        $resultPage = $this->resultPageFactory->create();
+        $resultPage->getConfig()->getTitle()->prepend(__('Simple Returns'));
+
+        return $resultPage;
     }
 }
