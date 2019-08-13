@@ -20,6 +20,7 @@
     <module name="AuroraExtensions_SimpleReturns" setup_version="1.0.0">
         <sequence>
             <module name="AuroraExtensions_Polyfill"/>
+            <module name="Magento_Backend"/>
         </sequence>
     </module>
 </config>
