@@ -111,7 +111,7 @@
                 <label translate="true">Updated</label>
             </settings>
         </column>
-        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\ViewAction">
+        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Actions">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="viewUrlPath" xsi:type="string">simplereturns/rma/view</item>
