@@ -63,18 +63,34 @@ class Actions extends Column
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
                 if (isset($item['rma_id'])) {
+                    /** @var string $viewUrlPath */
                     $viewUrlPath = $this->getData('config/viewUrlPath') ?: '#';
+
+                    /** @var string $editUrlPath */
+                    $editUrlPath = $this->getData('config/editUrlPath') ?: '#';
+
+                    /** @var string $urlEntityParamName */
                     $urlEntityParamName = $this->getData('config/urlEntityParamName') ?: 'rma_id';
+
                     $item[$this->getData('name')] = [
                         'view' => [
                             'href' => $this->urlBuilder->getUrl(
                                 $viewUrlPath,
                                 [
-                                    $urlEntityParamName => $item['rma_id']
+                                    $urlEntityParamName => $item['rma_id'],
                                 ]
                             ),
-                            'label' => __('View')
-                        ]
+                            'label' => __('View'),
+                        ],
+                        'edit' => [
+                            'href' => $this->urlBuilder->getUrl(
+                                $editUrlPath,
+                                [
+                                    $urlEntityParamName => $item['rma_id'],
+                                ]
+                            ),
+                            'label' => __('Edit'),
+                        ],
                     ];
                 }
             }
