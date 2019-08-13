@@ -22,7 +22,7 @@
             <item name="provider" xsi:type="string">simplereturns_rma_grid.simplereturns_rma_grid_datasource</item>
             <item name="deps" xsi:type="string">simplereturns_rma_grid.simplereturns_rma_grid_datasource</item>
         </item>
-        <item name="spinner" xsi:type="string">simplereturns_rma_columns</item>
+        <item name="spinner" xsi:type="string">simplereturns_rma_grid_columns</item>
         <item name="buttons" xsi:type="array">
             <item name="add" xsi:type="array">
                 <item name="name" xsi:type="string">add</item>
@@ -34,7 +34,7 @@
     </argument>
     <dataSource name="simplereturns_rma_grid_datasource">
         <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider</argument>
+            <argument name="class" xsi:type="string">AuroraExtensions\SimpleReturns\Ui\DataProvider\SimpleReturnDataProvider</argument>
             <argument name="name" xsi:type="string">simplereturns_rma_grid_datasource</argument>
             <argument name="primaryFieldName" xsi:type="string">rma_id</argument>
             <argument name="requestFieldName" xsi:type="string">id</argument>
@@ -49,7 +49,7 @@
             </argument>
         </argument>
     </dataSource>
-    <columns name="simplereturns_rma_columns">
+    <columns name="simplereturns_rma_grid_columns">
         <selectionsColumn name="ids">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">

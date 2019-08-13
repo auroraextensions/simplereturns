@@ -23,6 +23,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
+    Model\SystemModel\Module\Config as ModuleConfig,
     Model\ValidatorModel\Sales\Order\EligibilityValidator,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
@@ -40,6 +41,9 @@ class ListView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    /** @property ModuleConfig $moduleConfig */
+    protected $moduleConfig;
+
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
@@ -52,6 +56,7 @@ class ListView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param ModuleConfig $moduleConfig
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param EligibilityValidator $validator
      * @return void
@@ -62,6 +67,7 @@ class ListView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
+        ModuleConfig $moduleConfig,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         EligibilityValidator $validator
     ) {
@@ -73,8 +79,24 @@ class ListView extends AbstractView implements
             $data
         );
 
+        $this->moduleConfig = $moduleConfig;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->validator = $validator;
+    }
+
+    /**
+     * Get frontend label for field type by key.
+     *
+     * @param string $type
+     * @param string $key
+     * @param string
+     */
+    public function getFrontLabel(string $type, string $key): string
+    {
+        /** @var array $labels */
+        $labels = $this->moduleConfig->getSettings()->getData($type);
+
+        return $labels[$key] ?? $key;
     }
 
     /**
