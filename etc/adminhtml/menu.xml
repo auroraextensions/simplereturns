@@ -24,7 +24,7 @@
              module="AuroraExtensions_SimpleReturns"
              dependsOnModule="AuroraExtensions_SimpleReturns"
              resource="AuroraExtensions_SimpleReturns::rma"
-             sortOrder="20"/>
+             sortOrder="18"/>
         <add id="AuroraExtensions_SimpleReturns::rma_operation"
              title="Operations"
              translate="title"
