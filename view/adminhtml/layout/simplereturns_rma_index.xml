@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * simplereturns_rma_list.xml
+ * simplereturns_rma_index.xml
  *
  * NOTICE OF LICENSE
  *
@@ -20,8 +20,8 @@
     <body>
         <referenceContainer name="content">
             <block class="Magento\Backend\Block\Template"
-                   name="simplereturns_rma_list"
-                   template="AuroraExtensions_SimpleReturns::rma/list.phtml"/>
+                   name="simplereturns_rma_index"
+                   template="AuroraExtensions_SimpleReturns::rma/index.phtml"/>
         </referenceContainer>
     </body>
 </page>
