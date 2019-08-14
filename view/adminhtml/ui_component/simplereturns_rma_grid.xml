@@ -72,12 +72,6 @@
                 <label translate="true">RMA ID</label>
             </settings>
         </column>
-        <column name="store_id">
-            <settings>
-                <filter>text</filter>
-                <label translate="true">Store ID</label>
-            </settings>
-        </column>
         <column name="status">
             <settings>
                 <filter>text</filter>

@@ -61,7 +61,7 @@ class Index extends Action implements
     {
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->getConfig()->getTitle()->prepend(__('Simple Returns'));
+        $resultPage->getConfig()->getTitle()->prepend(__('Returns'));
 
         return $resultPage;
     }
