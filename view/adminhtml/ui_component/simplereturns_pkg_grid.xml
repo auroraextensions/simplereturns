@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * simplereturns_pkg_grid.xml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">simplereturns_pkg_grid.simplereturns_pkg_grid_datasource</item>
+        </item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="add">
+                <url path="simplereturns/package/create"/>
+                <class>primary</class>
+                <label translate="true">Create New Package</label>
+                <aclResource>AuroraExtensions_SimpleReturns::rma_package</aclResource>
+            </button>
+        </buttons>
+        <spinner>simplereturns_pkg_grid_columns</spinner>
+        <deps>
+            <dep>simplereturns_pkg_grid.simplereturns_pkg_grid_datasource</dep>
+        </deps>
+    </settings>
+    <dataSource name="simplereturns_pkg_grid_datasource" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>AuroraExtensions_SimpleReturns::rma_return</aclResource>
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\PackageDataProvider" name="simplereturns_pkg_grid_datasource">
+            <settings>
+                <primaryFieldName>pkg_id</primaryFieldName>
+                <requestFieldName>pkg_id</requestFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <columns name="simplereturns_pkg_grid_columns">
+        <settings>
+            <childDefaults>
+                <param name="fieldAction" xsi:type="array">
+                    <item name="provider" xsi:type="string">simplereturns_pkg_grid.simplereturns_pkg_grid.simplereturns_pkg_grid_columns.actions</item>
+                    <item name="target" xsi:type="string">applyAction</item>
+                    <item name="params" xsi:type="array">
+                        <item name="0" xsi:type="string">view</item>
+                        <item name="1" xsi:type="string">${ $.$data.rowIndex }</item>
+                    </item>
+                </param>
+            </childDefaults>
+        </settings>
+        <selectionsColumn name="ids">
+            <settings>
+                <indexField>pkg_id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="pkg_id">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Package ID</label>
+            </settings>
+        </column>
+        <column name="rma_id">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">RMA ID</label>
+            </settings>
+        </column>
+        <column name="carrier_code">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Carrier</label>
+            </settings>
+        </column>
+        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <dataType>date</dataType>
+                <filter>dateRange</filter>
+                <label translate="true">Created</label>
+            </settings>
+        </column>
+        <column name="updated_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <dataType>date</dataType>
+                <filter>dateRange</filter>
+                <label translate="true">Updated</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Package\Actions">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="viewUrlPath" xsi:type="string">simplereturns/package/view</item>
+                    <item name="editUrlPath" xsi:type="string">simplereturns/package/edit</item>
+                    <item name="urlEntityParamName" xsi:type="string">pkg_id</item>
+                </item>
+            </argument>
+            <settings>
+                <indexField>pkg_id</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>
