@@ -26,8 +26,11 @@
                             <resource id="AuroraExtensions_SimpleReturns::actions" title="Actions" translate="title" sortOrder="10">
                                 <resource id="AuroraExtensions_SimpleReturns::create" title="Create" translate="title" sortOrder="10"/>
                                 <resource id="AuroraExtensions_SimpleReturns::view" title="View" translate="title" sortOrder="20"/>
+                                <resource id="AuroraExtensions_SimpleReturns::edit" title="Edit" translate="title" sortOrder="30"/>
+                                <resource id="AuroraExtensions_SimpleReturns::delete" title="Delete" translate="title" sortOrder="40"/>
                             </resource>
                         </resource>
+                        <resource id="AuroraExtensions_SimpleReturns::rma_package" title="Packages" translate="title" sortOrder="20"/>
                     </resource>
                 </resource>
                 <resource id="Magento_Backend::stores">
