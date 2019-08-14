@@ -25,7 +25,6 @@ use Magento\Backend\{
 };
 use Magento\Framework\{
     App\Action\HttpGetActionInterface,
-    App\Action\HttpPostActionInterface,
     View\Result\PageFactory
 };
 

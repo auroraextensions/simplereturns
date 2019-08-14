@@ -21,6 +21,7 @@ namespace AuroraExtensions\SimpleReturns\Model\DataModel;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterface,
     Model\ResourceModel\Label as LabelResourceModel,
+    Shared\Component\FormatterTrait,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\Model\AbstractModel;
@@ -29,23 +30,14 @@ class Label extends AbstractModel implements
     LabelInterface,
     ModuleComponentInterface
 {
+    use FormatterTrait;
+
     /**
      * @return void
      */
     public function _construct()
     {
         $this->_init(LabelResourceModel::class);
-    }
-
-    /**
-     * @return string
-     */
-    public function getFrontId(): string
-    {
-        return sprintf(
-            self::FORMAT_FRONT_ID,
-            $this->getId()
-        );
     }
 
     /**

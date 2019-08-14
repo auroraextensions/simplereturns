@@ -21,6 +21,7 @@ namespace AuroraExtensions\SimpleReturns\Model\DataModel;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Model\ResourceModel\SimpleReturn as SimpleReturnResourceModel,
+    Shared\Component\FormatterTrait,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\Model\AbstractModel;
@@ -30,23 +31,14 @@ class SimpleReturn extends AbstractModel implements
     SimpleReturnInterface,
     ModuleComponentInterface
 {
+    use FormatterTrait;
+
     /**
      * @return void
      */
     public function _construct()
     {
         $this->_init(SimpleReturnResourceModel::class);
-    }
-
-    /**
-     * @return string
-     */
-    public function getFrontId(): string
-    {
-        return sprintf(
-            self::FORMAT_FRONT_ID,
-            $this->getId()
-        );
     }
 
     /**

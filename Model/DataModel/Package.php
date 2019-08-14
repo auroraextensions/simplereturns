@@ -22,6 +22,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterface,
     Api\Data\PackageInterface,
     Model\ResourceModel\Package as PackageResourceModel,
+    Shared\Component\FormatterTrait,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\Model\AbstractModel;
@@ -31,23 +32,14 @@ class Package extends AbstractModel implements
     PackageInterface,
     ModuleComponentInterface
 {
+    use FormatterTrait;
+
     /**
      * @return void
      */
     public function _construct()
     {
         $this->_init(PackageResourceModel::class);
-    }
-
-    /**
-     * @return string
-     */
-    public function getFrontId(): string
-    {
-        return sprintf(
-            self::FORMAT_FRONT_ID,
-            $this->getId()
-        );
     }
 
     /**

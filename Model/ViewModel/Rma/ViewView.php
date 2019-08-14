@@ -182,6 +182,39 @@ class ViewView extends AbstractView implements
     /**
      * @return string
      */
+    public function getViewCustomerUrl(): string
+    {
+        /** @var array $params */
+        $params = [
+            '_secure' => true,
+        ];
+
+        /** @var OrderInterface|null $order */
+        $order = $this->getOrder();
+
+        if ($order !== null) {
+            /** @var bool $isGuest */
+            $isGuest = (bool) $order->getCustomerIsGuest();
+
+            if (!$isGuest) {
+                /** @var int|string|null $customerId */
+                $customerId = $order->getCustomerId();
+
+                if ($customerId !== null) {
+                    $params['id'] = $customerId;
+                }
+            }
+        }
+
+        return $this->urlBuilder->getUrl(
+            'customer/index/edit',
+            $params
+        );
+    }
+
+    /**
+     * @return string
+     */
     public function getViewPackageUrl(): string
     {
         /** @var array $params */
