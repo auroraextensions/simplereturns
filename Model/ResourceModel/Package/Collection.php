@@ -20,7 +20,7 @@ namespace AuroraExtensions\SimpleReturns\Model\ResourceModel\Package;
 
 use AuroraExtensions\SimpleReturns\{
     Api\AbstractCollectionInterface,
-    Model\Package as PackageDataModel,
+    Model\DataModel\Package as PackageDataModel,
     Model\ResourceModel\Package as PackageResourceModel
 };
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
