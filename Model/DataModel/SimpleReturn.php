@@ -69,41 +69,26 @@ class SimpleReturn extends AbstractModel implements
     }
 
     /**
-     * @return OrderInterface
+     * @return int|null
      */
-    public function getOrder(): OrderInterface
+    public function getPackageId(): ?int
     {
-        return $this->getData('order');
+        /** @var int|string|null $pkgId */
+        $pkgId = $this->getData('pkg_id') ?? null;
+        $pkgId = $pkgId !== null && is_numeric($pkgId)
+            ? (int) $pkgId
+            : null;
+
+        return $pkgId;
     }
 
     /**
-     * @param OrderInterface $order
+     * @param int|null $pkgId
      * @return $this
      */
-    public function setOrder(OrderInterface $order): SimpleReturnInterface
+    public function setPackageId(?int $pkgId): SimpleReturnInterface
     {
-        $this->setData('order', $order);
-
-        return $this;
-    }
-
-    /**
-     * @return PackageInterface[]
-     */
-    public function getPackages(): array
-    {
-        return $this->getData('packages');
-    }
-
-    /**
-     * @param PackageInterface[] $packages
-     * @return $this
-     */
-    public function setPackages(
-        array $packages = []
-    ): SimpleReturnInterface
-    {
-        $this->setData('packages', $packages);
+        $this->setData('pkg_id', $pkgId);
 
         return $this;
     }
