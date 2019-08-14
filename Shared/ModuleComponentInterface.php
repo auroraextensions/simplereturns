@@ -163,7 +163,7 @@ interface ModuleComponentInterface
     /** @constant string SQL_TABLE_ENTITY_RMA */
     /** @constant string SQL_TABLE_ENTITY_ATTACHMENT */
     const SQL_COLUMN_LABEL_PRIMARY_FIELD = 'label_id';
-    const SQL_COLUMN_PKG_PRIMARY_FIELD = 'package_id';
+    const SQL_COLUMN_PKG_PRIMARY_FIELD = 'pkg_id';
     const SQL_COLUMN_RMA_PRIMARY_FIELD = 'rma_id';
     const SQL_COLUMN_RMA_ORDER_ID_FIELD = 'order_id';
     const SQL_COLUMN_ATTACHMENT_PRIMARY_FIELD = 'attachment_id';
