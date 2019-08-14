@@ -45,26 +45,15 @@ interface SimpleReturnInterface
     public function setCreatedAt($createdAt);
 
     /**
-     * @return OrderInterface
+     * @return int|null
      */
-    public function getOrder(): OrderInterface;
+    public function getPackageId(): ?int;
 
     /**
-     * @param OrderInterface $order
+     * @param int|null $pkgId
      * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
      */
-    public function setOrder(OrderInterface $order): SimpleReturnInterface;
-
-    /**
-     * @return PackageInterface[]
-     */
-    public function getPackages(): array;
-
-    /**
-     * @param array $packages
-     * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
-     */
-    public function setPackages(array $packages): SimpleReturnInterface;
+    public function setPackageId(?int $pkgId): SimpleReturnInterface;
 
     /**
      * @return string
