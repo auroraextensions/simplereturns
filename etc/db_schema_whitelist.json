@@ -4,7 +4,7 @@
             "rma_id": true,
             "store_id": true,
             "order_id": true,
-            "package_id": true,
+            "pkg_id": true,
             "status": true,
             "reason": true,
             "resolution": true,
@@ -44,7 +44,7 @@
     },
     "simplereturns_package": {
         "column": {
-            "package_id": true,
+            "pkg_id": true,
             "rma_id": true,
             "label_id": true,
             "carrier_code": true,
@@ -67,7 +67,7 @@
     "simplereturns_label": {
         "column": {
             "label_id": true,
-            "package_id": true,
+            "pkg_id": true,
             "image": true,
             "tracking_number": true,
             "remote_ip": true,
