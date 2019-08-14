@@ -111,6 +111,7 @@
                     <item name="viewUrlPath" xsi:type="string">simplereturns/rma/view</item>
                     <item name="editUrlPath" xsi:type="string">simplereturns/rma/edit</item>
                     <item name="urlEntityParamName" xsi:type="string">rma_id</item>
+                    <item name="urlSecretParamName" xsi:type="string">token</item>
                 </item>
             </argument>
             <settings>
