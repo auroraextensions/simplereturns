@@ -214,8 +214,8 @@ class CreatePost extends Action implements
 
                         /** @var array $rmaData */
                         $rmaData = [
-                            'rma_id'     => $rmaId,
-                            'package_id' => $pkgId,
+                            'rma_id' => $rmaId,
+                            'pkg_id' => $pkgId,
                         ];
 
                         /* Update RMA with newly created package ID. */
