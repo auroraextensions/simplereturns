@@ -30,6 +30,9 @@ class Actions extends Column
     /** @property string $paramKey */
     protected $paramKey;
 
+    /** @property string $tokenKey */
+    protected $tokenKey;
+
     /** @property UrlInterface $urlBuilder */
     protected $urlBuilder;
 
@@ -40,6 +43,7 @@ class Actions extends Column
      * @param array $data
      * @param UrlInterface $urlBuilder
      * @param string $paramKey
+     * @param string $tokenKey
      * @return void
      */
     public function __construct(
@@ -48,7 +52,8 @@ class Actions extends Column
         array $components = [],
         array $data = [],
         UrlInterface $urlBuilder,
-        string $paramKey = null
+        string $paramKey = null,
+        string $tokenKey = null
     ) {
         parent::__construct(
             $context,
@@ -58,6 +63,7 @@ class Actions extends Column
         );
         $this->urlBuilder = $urlBuilder;
         $this->paramKey = $paramKey ?? 'entity_id';
+        $this->tokenKey = $tokenKey ?? 'token';
     }
 
     /**
@@ -79,12 +85,17 @@ class Actions extends Column
                     $urlEntityParamName = $this->getData('config/urlEntityParamName')
                         ?? $this->paramKey;
 
+                    /** @var string $urlSecretParamName */
+                    $urlSecretParamName = $this->getData('config/urlSecretParamName')
+                        ?? $this->tokenKey;
+
                     $item[$this->getData('name')] = [
                         'view' => [
                             'href' => $this->urlBuilder->getUrl(
                                 $viewUrlPath,
                                 [
-                                    $urlEntityParamName => $item[$this->paramKey],
+                                    $urlEntityParamName => $item[$urlEntityParamName],
+                                    $urlSecretParamName => $item[$urlSecretParamName],
                                 ]
                             ),
                             'label' => __('View'),
@@ -93,7 +104,8 @@ class Actions extends Column
                             'href' => $this->urlBuilder->getUrl(
                                 $editUrlPath,
                                 [
-                                    $urlEntityParamName => $item[$this->paramKey],
+                                    $urlEntityParamName => $item[$urlEntityParamName],
+                                    $urlSecretParamName => $item[$urlSecretParamName],
                                 ]
                             ),
                             'label' => __('Edit'),
