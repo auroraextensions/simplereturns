@@ -44,7 +44,7 @@
         <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\SimpleReturnDataProvider" name="simplereturns_rma_grid_datasource">
             <settings>
                 <primaryFieldName>rma_id</primaryFieldName>
-                <requestFieldName>id</requestFieldName>
+                <requestFieldName>rma_id</requestFieldName>
             </settings>
         </dataProvider>
     </dataSource>
