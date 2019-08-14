@@ -27,6 +27,9 @@ use Magento\Ui\Component\Listing\Columns\Column;
 
 class Actions extends Column
 {
+    /** @property string $paramKey */
+    protected $paramKey;
+
     /** @property UrlInterface $urlBuilder */
     protected $urlBuilder;
 
@@ -36,6 +39,7 @@ class Actions extends Column
      * @param array $components
      * @param array $data
      * @param UrlInterface $urlBuilder
+     * @param string $paramKey
      * @return void
      */
     public function __construct(
@@ -43,7 +47,8 @@ class Actions extends Column
         UiComponentFactory $uiComponentFactory,
         array $components = [],
         array $data = [],
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        string $paramKey = null
     ) {
         parent::__construct(
             $context,
@@ -52,6 +57,7 @@ class Actions extends Column
             $data
         );
         $this->urlBuilder = $urlBuilder;
+        $this->paramKey = $paramKey ?? 'entity_id';
     }
 
     /**
@@ -62,22 +68,23 @@ class Actions extends Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                if (isset($item['rma_id'])) {
+                if (isset($item[$this->paramKey])) {
                     /** @var string $viewUrlPath */
-                    $viewUrlPath = $this->getData('config/viewUrlPath') ?: '#';
+                    $viewUrlPath = $this->getData('config/viewUrlPath') ?? '#';
 
                     /** @var string $editUrlPath */
-                    $editUrlPath = $this->getData('config/editUrlPath') ?: '#';
+                    $editUrlPath = $this->getData('config/editUrlPath') ?? '#';
 
                     /** @var string $urlEntityParamName */
-                    $urlEntityParamName = $this->getData('config/urlEntityParamName') ?: 'rma_id';
+                    $urlEntityParamName = $this->getData('config/urlEntityParamName')
+                        ?? $this->paramKey;
 
                     $item[$this->getData('name')] = [
                         'view' => [
                             'href' => $this->urlBuilder->getUrl(
                                 $viewUrlPath,
                                 [
-                                    $urlEntityParamName => $item['rma_id'],
+                                    $urlEntityParamName => $item[$this->paramKey],
                                 ]
                             ),
                             'label' => __('View'),
@@ -86,7 +93,7 @@ class Actions extends Column
                             'href' => $this->urlBuilder->getUrl(
                                 $editUrlPath,
                                 [
-                                    $urlEntityParamName => $item['rma_id'],
+                                    $urlEntityParamName => $item[$this->paramKey],
                                 ]
                             ),
                             'label' => __('Edit'),

@@ -23,7 +23,7 @@
                 comment="RMA ID"/>
         <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" comment="Store ID"/>
         <column xsi:type="smallint" name="order_id" padding="5" unsigned="true" nullable="false" comment="Order ID"/>
-        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
+        <column xsi:type="smallint" name="pkg_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
         <column xsi:type="varchar" name="status" nullable="true" length="32" comment="Status"/>
         <column xsi:type="varchar" name="reason" nullable="true" length="64" comment="Reason"/>
         <column xsi:type="varchar" name="resolution" nullable="true" length="32" comment="Resolution"/>
@@ -35,8 +35,8 @@
         <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
                 comment="Updated At"/>
         <constraint xsi:type="foreign" referenceId="SIMPLERETURNS_RMA_PACKAGE_ID_SIMPLERETURNS_PACKAGE_PACKAGE_ID"
-                    table="simplreturns_rma" column="package_id" referenceTable="simplereturns_package"
-                    referenceColumn="package_id" onDelete="CASCADE"/>
+                    table="simplreturns_rma" column="pkg_id" referenceTable="simplereturns_package"
+                    referenceColumn="pkg_id" onDelete="CASCADE"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="rma_id"/>
         </constraint>
@@ -44,7 +44,7 @@
             <column name="order_id"/>
         </index>
         <index referenceId="SIMPLERETURNS_RMA_PKG_ID" indexType="btree">
-            <column name="package_id"/>
+            <column name="pkg_id"/>
         </index>
     </table>
     <table name="simplereturns_rma_attachment" resource="default" engine="innodb" comment="Simple Returns RMA Attachments">
@@ -68,7 +68,7 @@
         </index>
     </table>
     <table name="simplereturns_package" resource="default" engine="innodb" comment="Simple Returns Packages">
-        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="false" identity="true"
+        <column xsi:type="smallint" name="pkg_id" padding="5" unsigned="true" nullable="false" identity="true"
                 comment="Package ID"/>
         <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="false" comment="RMA ID"/>
         <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="true" comment="Label ID"/>
@@ -85,7 +85,7 @@
                     table="simplreturns_package" column="label_id" referenceTable="simplereturns_label"
                     referenceColumn="label_id" onDelete="CASCADE"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
-            <column name="package_id"/>
+            <column name="pkg_id"/>
         </constraint>
         <index referenceId="SIMPLERETURNS_PKG_RMA_ID" indexType="btree">
             <column name="rma_id"/>
@@ -97,7 +97,7 @@
     <table name="simplereturns_label" resource="default" engine="innodb" comment="Simple Returns Labels">
         <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="false" identity="true"
                 comment="Label ID"/>
-        <column xsi:type="smallint" name="package_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
+        <column xsi:type="smallint" name="pkg_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
         <column xsi:type="blob" name="image" nullable="true" comment="Label Image"/>
         <column xsi:type="varchar" name="tracking_number" nullable="true" length="128" comment="Tracking Number"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
@@ -110,7 +110,7 @@
             <column name="label_id"/>
         </constraint>
         <index referenceId="SIMPLERETURNS_LABEL_PKG_ID" indexType="btree">
-            <column name="package_id"/>
+            <column name="pkg_id"/>
         </index>
     </table>
 </schema>

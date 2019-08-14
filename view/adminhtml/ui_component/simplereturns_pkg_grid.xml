@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * simplereturns_rma_grid.xml
+ * simplereturns_pkg_grid.xml
  *
  * NOTICE OF LICENSE
  *
@@ -19,40 +19,40 @@
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">simplereturns_rma_grid.simplereturns_rma_grid_datasource</item>
+            <item name="provider" xsi:type="string">simplereturns_pkg_grid.simplereturns_pkg_grid_datasource</item>
         </item>
     </argument>
     <settings>
         <buttons>
             <button name="add">
-                <url path="simplereturns/rma/create"/>
+                <url path="simplereturns/package/create"/>
                 <class>primary</class>
-                <label translate="true">Create New RMA</label>
-                <aclResource>AuroraExtensions_SimpleReturns::create</aclResource>
+                <label translate="true">Create New Package</label>
+                <aclResource>AuroraExtensions_SimpleReturns::rma_package</aclResource>
             </button>
         </buttons>
-        <spinner>simplereturns_rma_grid_columns</spinner>
+        <spinner>simplereturns_pkg_grid_columns</spinner>
         <deps>
-            <dep>simplereturns_rma_grid.simplereturns_rma_grid_datasource</dep>
+            <dep>simplereturns_pkg_grid.simplereturns_pkg_grid_datasource</dep>
         </deps>
     </settings>
-    <dataSource name="simplereturns_rma_grid_datasource" component="Magento_Ui/js/grid/provider">
+    <dataSource name="simplereturns_pkg_grid_datasource" component="Magento_Ui/js/grid/provider">
         <settings>
             <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>AuroraExtensions_SimpleReturns::rma_return</aclResource>
-        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\SimpleReturnDataProvider" name="simplereturns_rma_grid_datasource">
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\PackageDataProvider" name="simplereturns_pkg_grid_datasource">
             <settings>
-                <primaryFieldName>rma_id</primaryFieldName>
-                <requestFieldName>rma_id</requestFieldName>
+                <primaryFieldName>pkg_id</primaryFieldName>
+                <requestFieldName>pkg_id</requestFieldName>
             </settings>
         </dataProvider>
     </dataSource>
-    <columns name="simplereturns_rma_grid_columns">
+    <columns name="simplereturns_pkg_grid_columns">
         <settings>
             <childDefaults>
                 <param name="fieldAction" xsi:type="array">
-                    <item name="provider" xsi:type="string">simplereturns_rma_grid.simplereturns_rma_grid.simplereturns_rma_grid_columns.actions</item>
+                    <item name="provider" xsi:type="string">simplereturns_pkg_grid.simplereturns_pkg_grid.simplereturns_pkg_grid_columns.actions</item>
                     <item name="target" xsi:type="string">applyAction</item>
                     <item name="params" xsi:type="array">
                         <item name="0" xsi:type="string">view</item>
@@ -63,32 +63,25 @@
         </settings>
         <selectionsColumn name="ids">
             <settings>
-                <indexField>rma_id</indexField>
+                <indexField>pkg_id</indexField>
             </settings>
         </selectionsColumn>
+        <column name="pkg_id">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Package ID</label>
+            </settings>
+        </column>
         <column name="rma_id">
             <settings>
                 <filter>text</filter>
                 <label translate="true">RMA ID</label>
             </settings>
         </column>
-        <column name="status">
+        <column name="carrier_code">
             <settings>
                 <filter>text</filter>
-                <label translate="true">Status</label>
-                <sorting>desc</sorting>
-            </settings>
-        </column>
-        <column name="reason">
-            <settings>
-                <filter>text</filter>
-                <label translate="true">Reason</label>
-            </settings>
-        </column>
-        <column name="resolution">
-            <settings>
-                <filter>text</filter>
-                <label translate="true">Resolution</label>
+                <label translate="true">Carrier</label>
             </settings>
         </column>
         <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
@@ -105,16 +98,16 @@
                 <label translate="true">Updated</label>
             </settings>
         </column>
-        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\SimpleReturn\Actions">
+        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Package\Actions">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="viewUrlPath" xsi:type="string">simplereturns/rma/view</item>
-                    <item name="editUrlPath" xsi:type="string">simplereturns/rma/edit</item>
-                    <item name="urlEntityParamName" xsi:type="string">rma_id</item>
+                    <item name="viewUrlPath" xsi:type="string">simplereturns/package/view</item>
+                    <item name="editUrlPath" xsi:type="string">simplereturns/package/edit</item>
+                    <item name="urlEntityParamName" xsi:type="string">pkg_id</item>
                 </item>
             </argument>
             <settings>
-                <indexField>rma_id</indexField>
+                <indexField>pkg_id</indexField>
             </settings>
         </actionsColumn>
     </columns>

@@ -135,4 +135,16 @@
             </argument>
         </arguments>
     </type>
+    <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\SimpleReturn\Actions"
+                 type="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Actions">
+        <arguments>
+            <argument name="paramKey" xsi:type="string">rma_id</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Package\Actions"
+                 type="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Actions">
+        <arguments>
+            <argument name="paramKey" xsi:type="string">pkg_id</argument>
+        </arguments>
+    </virtualType>
 </config>

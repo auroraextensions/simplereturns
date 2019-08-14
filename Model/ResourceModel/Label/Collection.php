@@ -20,7 +20,7 @@ namespace AuroraExtensions\SimpleReturns\Model\ResourceModel\Label;
 
 use AuroraExtensions\SimpleReturns\{
     Api\AbstractCollectionInterface,
-    Model\Label as LabelDataModel,
+    Model\DataModel\Label as LabelDataModel,
     Model\ResourceModel\Label as LabelResourceModel
 };
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;

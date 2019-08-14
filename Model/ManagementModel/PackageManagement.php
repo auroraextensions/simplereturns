@@ -419,7 +419,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                         $labelId = $this->labelRepository->save(
                             $label->addData(
                                 [
-                                    'package_id'      => $package->getId(),
+                                    'pkg_id'          => $package->getId(),
                                     'image'           => $labelImage,
                                     'tracking_number' => $trackingNumber,
                                     'remote_ip'       => $this->remoteAddress->getRemoteAddress(),
