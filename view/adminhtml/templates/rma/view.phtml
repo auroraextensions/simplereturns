@@ -52,11 +52,6 @@ $customerUrl = $viewModel->getViewCustomerUrl();
     </div>
     <div class="admin__page-section-content">
         <div class="admin__page-section-item rma-information">
-            <div class="admin__page-section-item-title">
-                <span class="title">
-                    <span><?= $block->escapeHtml(__('RMA #%1', $rma->getFrontId())) ?></span>
-                </span>
-            </div>
             <div class="admin__page-section-item-content">
                 <table class="admin__table-secondary rma-information-table">
                     <tr>
@@ -117,10 +112,28 @@ $customerUrl = $viewModel->getViewCustomerUrl();
         </div>
     </div>
 </section>
+<?php if ($hasMedia): ?>
+<section class="admin__page-section simplereturns-rma-attachments">
+    <div class="admin__page-section-item">
+        <div class="admin__page-section-item-title">
+            <span class="title"><?= $block->escapeHtml(__('Attachments')) ?></span>
+        </div>
+        <div class="admin__page-section-item-content">
+            <?php foreach ($attachments as $attachment): ?>
+                <div class="attachment framed">
+                    <a href="<?= $block->escapeUrl($attachment) ?>" target="_blank">
+                        <img src="<?= $block->escapeUrl($attachment) ?>"/>
+                    </a>
+                </div>
+            <?php endforeach ?>
+        </div>
+    </div>
+</section>
+<?php endif ?>
 <section class="admin__page-section simplereturns-rma-customer-info">
     <div class="admin__page-section-item customer-account-information">
         <div class="admin__page-section-item-title">
-            <span class="title"><?= $block->escapeHtml(__('Account Information')) ?></span>
+            <span class="title"><?= $block->escapeHtml(__('Customer Information')) ?></span>
             <div class="actions">
                 <?php if ($customerUrl): ?>
                     <a href="<?= /* @noEscape */ $customerUrl ?>" target="_blank">
