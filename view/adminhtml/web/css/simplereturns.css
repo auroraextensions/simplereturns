@@ -14,6 +14,15 @@
  * @license       Aurora Extensions EULA
  */
 
+.attachment.framed {
+  display: inline-block;
+}
+
+.attachment.framed a {
+  display: inline-block;
+  height: 100%;
+}
+
 .attachment.framed img {
-  max-height: 225px;
+  max-height: 175px;
 }
