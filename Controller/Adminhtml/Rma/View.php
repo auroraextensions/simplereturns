@@ -55,6 +55,10 @@ class View extends Action implements
      */
     public function execute()
     {
-        return $this->resultPageFactory->create();
+        /** @var Page $resultPage */
+        $resultPage = $this->resultPageFactory->create();
+        $resultPage->getConfig()->getTitle()->prepend(__('View RMA Details'));
+
+        return $resultPage;
     }
 }
