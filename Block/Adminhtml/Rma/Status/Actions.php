@@ -20,6 +20,7 @@ namespace AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma\Status;
 
 use AuroraExtensions\SimpleReturns\{
     Model\AdapterModel\Security\Token as Tokenizer,
+    Model\SystemModel\Module\Config as ModuleConfig,
     Shared\ModuleComponentInterface
 };
 use Magento\Backend\{
@@ -33,15 +34,21 @@ class Actions extends Container implements ModuleComponentInterface
     /** @property string $_blockGroup */
     protected $_blockGroup = 'AuroraExtensions_SimpleReturns';
 
+    /** @property ModuleConfig $moduleConfig */
+    protected $moduleConfig;
+
     /**
+     * @param ModuleConfig $moduleConfig
      * @param Context $context
      * @param array $data
      * @return void
      */
     public function __construct(
+        ModuleConfig $moduleConfig,
         Context $context,
         array $data = []
     ) {
+        $this->moduleConfig = $moduleConfig;
         parent::__construct(
             $context,
             $data
@@ -65,7 +72,7 @@ class Actions extends Container implements ModuleComponentInterface
                 'class_name' => SplitButton::class,
                 'id' => 'simplereturns-rma-status-actions',
                 'label' => __('Actions'),
-                'options' => $this->getActionOptions(),
+                'options' => $this->getStatusOptions(),
             ]
         );
     }
@@ -73,22 +80,26 @@ class Actions extends Container implements ModuleComponentInterface
     /**
      * @return array
      */
-    protected function getActionOptions(): array
+    protected function getStatusOptions(): array
     {
-        return [
-            'approved' => [
-                'class' => 'action approved',
-                'id' => 'simplereturns-rma-status-action-approved',
-                'label' => __('Approve'),
-                'onclick' => $this->getOnClickJs('approved') ?? '',
-            ],
-            'canceled' => [
-                'class' => 'action canceled',
-                'id' => 'simplereturns-rma-status-action-canceled',
-                'label' => __('Cancel'),
-                'onclick' => $this->getOnClickJs('cancel') ?? '',
-            ],
-        ];
+        /** @var array $options */
+        $options = [];
+
+        /** @var array $statuses */
+        $statuses = $this->moduleConfig->getStatuses();
+
+        /** @var string $name */
+        /** @var string $label */
+        foreach ($statuses as $name => $label) {
+            $options[] = [
+                'class' => "action {$name}",
+                'id' => "simplereturns-rma-status-action-{$name}",
+                'label' => __($label),
+                'onclick' => $this->getOnClickJs($name),
+            ];
+        }
+
+        return $options;
     }
 
     /**
@@ -111,7 +122,7 @@ class Actions extends Container implements ModuleComponentInterface
             if ($token !== null) {
                 /** @var string $actionUrl */
                 $actionUrl = $this->getUrl(
-                    'simplereturns/rma/editPost',
+                    'simplereturns/rma_status/editPost',
                     [
                         'rma_id' => $rmaId,
                         'token'  => $token,
