@@ -53,14 +53,14 @@ class Edit extends Container implements ModuleComponentInterface
     public function _construct()
     {
         parent::_construct();
-        $this->_objectId = 'simplereturns_rma_actions';
+        $this->_objectId = 'simplereturns_rma_edit';
         $this->_controller = 'adminhtml_rma';
-        $this->setId('simplereturns_rma_view');
+        $this->setId('simplereturns_rma_edit');
 
         $this->addButton(
-            'rma_edit',
+            'simplereturns_rma_edit',
             [
-                'class' => 'edit primary',
+                'class' => 'edit secondary',
                 'id' => 'simplereturns-rma-edit',
                 'label' => __('Edit'),
                 'onclick' => $this->getOnClickJs() ?? '',
@@ -94,7 +94,7 @@ class Edit extends Container implements ModuleComponentInterface
                     ]
                 );
 
-                return "(function () {window.location = '{$editUrl}';})();";
+                return "(function(){window.location='{$editUrl}';})();";
             }
         }
 
