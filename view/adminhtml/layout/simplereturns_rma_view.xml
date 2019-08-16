@@ -21,6 +21,9 @@
         <css src="AuroraExtensions_SimpleReturns::css/simplereturns.css"/>
     </head>
     <body>
+        <referenceBlock name="page.actions.toolbar">
+            <block class="AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma\Edit" name="simplereturns_rma_edit_button"/>
+        </referenceBlock>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
                    name="simplereturns_rma_view"
