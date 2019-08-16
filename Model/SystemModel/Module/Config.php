@@ -137,6 +137,14 @@ class Config
     }
 
     /**
+     * @return array
+     */
+    public function getStatuses(): array
+    {
+        return $this->getSettings()->getData('statuses') ?? [];
+    }
+
+    /**
      * @return DataObject|null
      */
     public function getSettings(): ?DataObject
