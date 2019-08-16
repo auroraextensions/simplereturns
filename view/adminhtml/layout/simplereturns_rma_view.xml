@@ -23,6 +23,7 @@
     <body>
         <referenceBlock name="page.actions.toolbar">
             <block class="AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma\Edit" name="simplereturns_rma_edit_button"/>
+            <block class="AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma\Status\Actions" name="simplereturns_rma_status_action_buttons"/>
         </referenceBlock>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
