@@ -18,12 +18,16 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma;
 
+use AuroraExtensions\SimpleReturns\{
+    Model\AdapterModel\Security\Token as Tokenizer,
+    Shared\ModuleComponentInterface
+};
 use Magento\Backend\{
     Block\Widget\Context,
     Block\Widget\Container
 };
 
-class Edit extends Container
+class Edit extends Container implements ModuleComponentInterface
 {
     /** @property string $_blockGroup */
     protected $_blockGroup = 'AuroraExtensions_SimpleReturns';
@@ -37,7 +41,10 @@ class Edit extends Container
         Context $context,
         array $data = []
     ) {
-        parent::__construct($context, $data);
+        parent::__construct(
+            $context,
+            $data
+        );
     }
 
     /**
@@ -53,13 +60,44 @@ class Edit extends Container
         $this->addButton(
             'rma_edit',
             [
-                'label' => __('Edit'),
-                'class' => 'edit',
+                'class' => 'edit primary',
                 'id' => 'simplereturns-rma-edit',
-                'data_attribute' => [
-                    'url' => 'http://testshop.com/',
-                ]
+                'label' => __('Edit'),
+                'onclick' => $this->getOnClickJs() ?? '',
             ]
         );
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getOnClickJs(): ?string
+    {
+        /** @var int|string|null $rmaId */
+        $rmaId = $this->getRequest()->getParam(self::PARAM_RMA_ID);
+        $rmaId = $rmaId !== null && is_numeric($rmaId)
+            ? (int) $rmaId
+            : null;
+
+        if ($rmaId !== null) {
+            /** @var string|null $token */
+            $token = $this->getRequest()->getParam(self::PARAM_TOKEN);
+            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
+
+            if ($token !== null) {
+                /** @var string $editUrl */
+                $editUrl = $this->getUrl(
+                    'simplereturns/rma/edit',
+                    [
+                        'rma_id' => $rmaId,
+                        'token' => $token,
+                    ]
+                );
+
+                return "(function () {window.location = '{$editUrl}';})();";
+            }
+        }
+
+        return null;
     }
 }
