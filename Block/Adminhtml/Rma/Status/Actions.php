@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit.php
+ * Actions.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,18 +16,19 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma;
+namespace AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma\Status;
 
 use AuroraExtensions\SimpleReturns\{
     Model\AdapterModel\Security\Token as Tokenizer,
     Shared\ModuleComponentInterface
 };
 use Magento\Backend\{
+    Block\Widget\Button\SplitButton,
     Block\Widget\Context,
     Block\Widget\Container
 };
 
-class Edit extends Container implements ModuleComponentInterface
+class Actions extends Container implements ModuleComponentInterface
 {
     /** @property string $_blockGroup */
     protected $_blockGroup = 'AuroraExtensions_SimpleReturns';
@@ -53,25 +54,48 @@ class Edit extends Container implements ModuleComponentInterface
     public function _construct()
     {
         parent::_construct();
-        $this->_objectId = 'simplereturns_rma_edit';
-        $this->_controller = 'adminhtml_rma';
-        $this->setId('simplereturns_rma_edit');
+        $this->_objectId = 'simplereturns_rma_status_actions';
+        $this->_controller = 'adminhtml_rma_status';
+        $this->setId('simplereturns_rma_status_actions');
 
-        $this->addButton(
-            'simplereturns_rma_edit',
+        $this->buttonList->add(
+            'simplereturns_rma_status_actions',
             [
-                'class' => 'edit secondary',
-                'id' => 'simplereturns-rma-edit',
-                'label' => __('Edit'),
-                'onclick' => $this->getOnClickJs() ?? '',
+                'class' => 'actions',
+                'class_name' => SplitButton::class,
+                'id' => 'simplereturns-rma-status-actions',
+                'label' => __('Actions'),
+                'options' => $this->getActionOptions(),
             ]
         );
     }
 
     /**
+     * @return array
+     */
+    protected function getActionOptions(): array
+    {
+        return [
+            'approved' => [
+                'class' => 'action approved',
+                'id' => 'simplereturns-rma-status-action-approved',
+                'label' => __('Approve'),
+                'onclick' => $this->getOnClickJs('approved') ?? '',
+            ],
+            'canceled' => [
+                'class' => 'action canceled',
+                'id' => 'simplereturns-rma-status-action-canceled',
+                'label' => __('Cancel'),
+                'onclick' => $this->getOnClickJs('cancel') ?? '',
+            ],
+        ];
+    }
+
+    /**
+     * @param string $status
      * @return string|null
      */
-    protected function getOnClickJs(): ?string
+    protected function getOnClickJs(string $status): ?string
     {
         /** @var int|string|null $rmaId */
         $rmaId = $this->getRequest()->getParam(self::PARAM_RMA_ID);
@@ -85,16 +109,17 @@ class Edit extends Container implements ModuleComponentInterface
             $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
             if ($token !== null) {
-                /** @var string $editUrl */
-                $editUrl = $this->getUrl(
-                    'simplereturns/rma/edit',
+                /** @var string $actionUrl */
+                $actionUrl = $this->getUrl(
+                    'simplereturns/rma/editPost',
                     [
                         'rma_id' => $rmaId,
-                        'token' => $token,
+                        'token'  => $token,
+                        'status' => $status,
                     ]
                 );
 
-                return "(function(){window.location='{$editUrl}';})();";
+                return "(function(){window.location='{$actionUrl}'})();";
             }
         }
 
