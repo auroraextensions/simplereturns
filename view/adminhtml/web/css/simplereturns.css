@@ -26,3 +26,7 @@
 .attachment.framed img {
   max-height: 175px;
 }
+
+#simplereturns-rma-status-actions-button {
+  pointer-events: none;
+}
