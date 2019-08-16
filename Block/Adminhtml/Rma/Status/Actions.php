@@ -93,7 +93,7 @@ class Actions extends Container implements ModuleComponentInterface
         foreach ($statuses as $name => $label) {
             $options[] = [
                 'class' => "action {$name}",
-                'id' => "simplereturns-rma-status-action-{$name}",
+                'id' => "action-{$name}",
                 'label' => __($label),
                 'onclick' => $this->getOnClickJs($name),
             ];
@@ -130,7 +130,7 @@ class Actions extends Container implements ModuleComponentInterface
                     ]
                 );
 
-                return "(function(){window.location='{$actionUrl}'})();";
+                return "(function(){jQuery.post('{$actionUrl}', function(response){console.log(response);});})();";
             }
         }
 
