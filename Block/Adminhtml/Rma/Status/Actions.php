@@ -28,26 +28,33 @@ use Magento\Backend\{
     Block\Widget\Context,
     Block\Widget\Container
 };
+use Magento\Framework\Data\Form\FormKey;
 
 class Actions extends Container implements ModuleComponentInterface
 {
     /** @property string $_blockGroup */
     protected $_blockGroup = 'AuroraExtensions_SimpleReturns';
 
+    /** @property FormKey $formKey */
+    protected $formKey;
+
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
     /**
+     * @param FormKey $formKey
      * @param ModuleConfig $moduleConfig
      * @param Context $context
      * @param array $data
      * @return void
      */
     public function __construct(
+        FormKey $formKey,
         ModuleConfig $moduleConfig,
         Context $context,
         array $data = []
     ) {
+        $this->formKey = $formKey;
         $this->moduleConfig = $moduleConfig;
         parent::__construct(
             $context,
@@ -71,7 +78,7 @@ class Actions extends Container implements ModuleComponentInterface
                 'class' => 'actions',
                 'class_name' => SplitButton::class,
                 'id' => 'simplereturns-rma-status-actions',
-                'label' => __('Actions'),
+                'label' => __('Status'),
                 'options' => $this->getStatusOptions(),
             ]
         );
@@ -85,6 +92,15 @@ class Actions extends Container implements ModuleComponentInterface
         /** @var array $options */
         $options = [];
 
+        /** @var Magento\Framework\App\RequestInterface $request */
+        $request = $this->getRequest();
+
+        /** @var int|string|null $rmaId */
+        $rmaId = $request->getParam(self::PARAM_RMA_ID);
+        $rmaId = $rmaId !== null && is_numeric($rmaId)
+            ? (int) $rmaId
+            : null;
+
         /** @var array $statuses */
         $statuses = $this->moduleConfig->getStatuses();
 
@@ -93,9 +109,16 @@ class Actions extends Container implements ModuleComponentInterface
         foreach ($statuses as $name => $label) {
             $options[] = [
                 'class' => "action {$name}",
+                'data_attribute' => [
+                    'mage-init' => [
+                        'simpleReturnsRmaEditStatus' => [
+                            'actionUrl' => $this->getActionUrl($name),
+                            'statusCode' => $name,
+                        ],
+                    ],
+                ],
                 'id' => "action-{$name}",
                 'label' => __($label),
-                'onclick' => $this->getOnClickJs($name),
             ];
         }
 
@@ -103,34 +126,33 @@ class Actions extends Container implements ModuleComponentInterface
     }
 
     /**
-     * @param string $status
      * @return string|null
      */
-    protected function getOnClickJs(string $status): ?string
+    protected function getActionUrl(): ?string
     {
+        /** @var Magento\Framework\App\RequestInterface $request */
+        $request = $this->getRequest();
+
         /** @var int|string|null $rmaId */
-        $rmaId = $this->getRequest()->getParam(self::PARAM_RMA_ID);
+        $rmaId = $request->getParam(self::PARAM_RMA_ID);
         $rmaId = $rmaId !== null && is_numeric($rmaId)
             ? (int) $rmaId
             : null;
 
         if ($rmaId !== null) {
             /** @var string|null $token */
-            $token = $this->getRequest()->getParam(self::PARAM_TOKEN);
+            $token = $request->getParam(self::PARAM_TOKEN);
             $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
             if ($token !== null) {
-                /** @var string $actionUrl */
-                $actionUrl = $this->getUrl(
+                return $this->getUrl(
                     'simplereturns/rma_status/editPost',
                     [
+                        'form_key' => $this->formKey->getFormKey(),
                         'rma_id' => $rmaId,
-                        'token'  => $token,
-                        'status' => $status,
+                        'token' => $token,
                     ]
                 );
-
-                return "(function(){jQuery.post('{$actionUrl}', function(response){console.log(response);});})();";
             }
         }
 

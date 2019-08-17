@@ -144,11 +144,11 @@ class DeletePost extends Action implements
      */
     public function execute()
     {
-        /** @var int $error */
-        $error = 0;
+        /** @var bool $error */
+        $error = false;
 
-        /** @var string|null $message */
-        $message = null;
+        /** @var string $message */
+        $message = '';
 
         /** @var array $response */
         $response = [];
@@ -160,8 +160,8 @@ class DeletePost extends Action implements
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
-            $response['error'] = $error++;
-            $response['message'] = __('Invalid: Must be POST request.')->__toString();
+            $response['error'] = true;
+            $response['message'] = __('Invalid method: Must be POST request.')->__toString();
             $resultJson->setData($response);
 
             return $resultJson;
@@ -198,10 +198,10 @@ class DeletePost extends Action implements
                         $attachment = $this->attachmentRepository->get($fileKey);
                         $this->attachmentRepository->delete($attachment);
                     } catch (NoSuchEntityException $e) {
-                        $error++;
+                        $error = true;
                         $message = __($e->getMessage())->__toString();
                     } catch (LocalizedException $e) {
-                        $error++;
+                        $error = true;
                         $message = __($e->getMessage())->__toString();
                     }
                 }
@@ -209,12 +209,9 @@ class DeletePost extends Action implements
         }
 
         $response['error'] = $error;
-
-        if ($message !== null) {
-            $response['message'] = $message;
-        }
-
+        $response['message'] = $message;
         $resultJson->setData($response);
+
         return $resultJson;
     }
 }
