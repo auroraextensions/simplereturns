@@ -60,8 +60,7 @@ define([
          * @return {void}
          */
         onClick: function (clickEvent) {
-            var actionUrl, data, formKey,
-                settings, statusCode;
+            var actionUrl, data, settings, statusCode;
 
             /** @var {String|null} actionUrl */
             actionUrl = this.options.actionUrl;
@@ -79,11 +78,12 @@ define([
 
             /** @var {String} data */
             data = JSON.stringify({
-                status: statusCode
+                'status': statusCode
             });
 
             /** @var {Object} settings */
             settings = {
+                beforeSend: function () {},
                 contentType: 'application/json',
                 data: data,
                 error: this.onError.bind(this),
