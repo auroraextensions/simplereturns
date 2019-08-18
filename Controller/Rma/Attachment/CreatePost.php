@@ -18,6 +18,10 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
+use AuroraExtensions\ImageResizer\{
+    Model\ImageResizerInterface,
+    Model\ImageResizerInterfaceFactory
+};
 use AuroraExtensions\SimpleReturns\{
     Api\Data\AttachmentInterface,
     Api\Data\AttachmentInterfaceFactory,
@@ -76,6 +80,9 @@ class CreatePost extends Action implements
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
+    /** @property ImageResizerInterfaceFactory $imageResizerFactory */
+    protected $imageResizerFactory;
+
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
@@ -106,6 +113,7 @@ class CreatePost extends Action implements
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param ImageResizerInterfaceFactory $imageResizerFactory
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
@@ -124,6 +132,7 @@ class CreatePost extends Action implements
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
         FormKeyValidator $formKeyValidator,
+        ImageResizerInterfaceFactory $imageResizerFactory,
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
@@ -141,6 +150,7 @@ class CreatePost extends Action implements
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->imageResizerFactory = $imageResizerFactory;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->remoteAddress = $remoteAddress;
@@ -227,12 +237,21 @@ class CreatePost extends Action implements
                 /** @var AttachmentInterface $entity */
                 $entity = $this->attachmentFactory->create();
 
+                /** @var ImageResizerInterface $imageResizer */
+                $imageResizer = $this->imageResizerFactory->create(['subdirectory' => self::RESIZE_PATH]);
+
+                /** @var string $imageFile */
+                $imageFile = rtrim(self::SAVE_PATH, '/') . $result['file'];
+
+                /** @var string $resizeFile */
+                $resizeFile = $imageResizer->resize($imageFile);
+
                 /** @var array $entityData */
                 $entityData = [
                     'filename' => $result['name'],
                     'filesize' => $result['size'],
                     'mimetype' => $result['type'],
-                    'path'     => $result['file'],
+                    'path'     => $resizeFile,
                     'token'    => Tokenizer::createToken(),
                 ];
 

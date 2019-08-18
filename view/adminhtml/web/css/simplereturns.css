@@ -16,15 +16,24 @@
 
 .attachment.framed {
   display: inline-block;
+  height: 150px;
+  position: relative;
+  width: 150px;
 }
 
 .attachment.framed a {
   display: inline-block;
   height: 100%;
+  width: 100%;
 }
 
 .attachment.framed img {
-  max-height: 175px;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 #simplereturns-rma-status-actions-button {

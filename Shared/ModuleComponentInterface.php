@@ -120,6 +120,9 @@ interface ModuleComponentInterface
     /** @constant string PREFIX_DATAURI */
     const PREFIX_DATAURI = 'data:image/jpeg;base64,';
 
+    /** @constant string RESIZE_PATH */
+    const RESIZE_PATH = '/thumbnails/';
+
     /** @constant string ROUTE_SALES_GUEST_VIEW */
     /** @constant string ROUTE_SIMPLERETURNS_LABEL_INDEX */
     /** @constant string ROUTE_SIMPLERETURNS_LABEL_VIEW */
