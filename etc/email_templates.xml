@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * email_templates.xml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <!-- adminhtml -->
+    <template id="simplereturns_admin_new_rma_request_email_template"
+              label="New RMA Request"
+              file="rma_request_new.html"
+              type="text"
+              module="AuroraExtensions_SimpleReturns"
+              area="adminhtml"/>
+
+    <!-- frontend -->
+    <template id="simplereturns_customer_new_rma_request_email_template"
+              label="New RMA Request"
+              file="rma_request_new.html"
+              type="html"
+              module="AuroraExtensions_SimpleReturns"
+              area="frontend"/>
+</config>
