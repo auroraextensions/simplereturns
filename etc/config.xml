@@ -36,6 +36,14 @@
             <origin>
                 <company></company>
             </origin>
+            <admin>
+                <rma_request_new_email_identity>general</rma_request_new_email_identity>
+                <rma_request_new_email_template>simplereturns_admin_rma_request_new_email_template</rma_request_new_email_template>
+            </admin>
+            <customer>
+                <rma_request_new_email_identity>general</rma_request_new_email_identity>
+                <rma_request_new_email_template>simplereturns_customer_rma_request_new_email_template</rma_request_new_email_template>
+            </customer>
         </simplereturns>
     </default>
 </config>

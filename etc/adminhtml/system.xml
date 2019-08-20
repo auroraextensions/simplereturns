@@ -27,6 +27,7 @@
             <label>Simple Returns</label>
             <tab>auroraextensions</tab>
             <resource>AuroraExtensions_SimpleReturns::configuration</resource>
+            <!-- General Settings -->
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General Settings</label>
                 <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -34,6 +35,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
+            <!-- RMA Settings -->
             <group id="returns" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>RMA Settings</label>
                 <field id="shipping_carrier" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -76,11 +78,36 @@
                     <comment>The URL to the store return form.</comment>
                 </field>
             </group>
+            <!-- Origin Settings -->
             <group id="origin" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Origin Settings</label>
                 <field id="company" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Company Name</label>
                     <comment>The company name used when creating shipping labels. Overrides the store name.</comment>
+                </field>
+            </group>
+            <!-- Administrator Settings -->
+            <group id="admin" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Administrator Settings</label>
+                <field id="rma_request_new_email_identity" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>New RMA Request Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="rma_request_new_email_template" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>New RMA Request Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+            </group>
+            <!-- Customer Settings -->
+            <group id="customer" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Customer Settings</label>
+                <field id="rma_request_new_email_identity" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>New RMA Request Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="rma_request_new_email_template" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>New RMA Request Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
                 </field>
             </group>
         </section>
