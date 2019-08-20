@@ -230,16 +230,13 @@ class CreatePost extends Action implements
                         /** @var string $token */
                         $token = Tokenizer::createToken();
 
-                        /** @var string $status */
-                        $status = $this->moduleConfig->getDefaultStatus();
-
                         /** @var DateTime $createdTime */
                         $createdTime = $this->dateTimeFactory->create();
 
                         /** @var array $data */
                         $data = [
                             'order_id'   => $orderId,
-                            'status'     => $status,
+                            'status'     => ModuleConfig::DEFAULT_RMA_STATUS_CODE,
                             'reason'     => $reason,
                             'resolution' => $resolution,
                             'comments'   => $comments,
