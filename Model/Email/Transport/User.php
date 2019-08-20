@@ -14,6 +14,8 @@
  * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license        Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Model\Email\Transport;
 
 use AuroraExtensions\SimpleReturns\{
@@ -33,9 +35,6 @@ class User implements ModuleComponentInterface
     /** @property ConfigInterface $backendConfig */
     protected $backendConfig;
 
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
-
     /** @property TransportBuilder $transportBuilder */
     protected $transportBuilder;
 
@@ -53,16 +52,16 @@ class User implements ModuleComponentInterface
     }
 
     /**
-     * Send email notification to administrator.
-     *
      * @param string $template Template configuration ID.
+     * @param string $sender Email sender identity XML path.
      * @param array $variables
      * @param string|null $email
      * @param string|null $name
      * @return $this
      */
-    public function sendEmail(
+    public function send(
         string $template,
+        string $sender,
         array $variables = [],
         string $email = null,
         string $name = null
@@ -73,16 +72,19 @@ class User implements ModuleComponentInterface
             'store' => Store::DEFAULT_STORE_ID,
         ];
 
-        /** @var string $sender */
-        $sender = $this->backendConfig->getValue('simplereturns/email/adminhtml_email_identity');
+        /** @var string $templateId */
+        $templateId = $this->backendConfig->getValue($template);
+
+        /** @var string $identity */
+        $identity = $this->backendConfig->getValue($sender);
 
         /** @var Magento\Framework\Mail\TransportInterface $transport */
         $transport = $this->transportBuilder
-            ->setTemplateIdentifier($this->backendConfig->getValue($template))
+            ->setTemplateIdentifier($templateId)
             ->setTemplateModel(BackendTemplate::class)
             ->setTemplateVars($variables)
             ->setTemplateOptions($options)
-            ->setFrom($sender)
+            ->setFrom($identity)
             ->addTo($email, $name)
             ->getTransport();
 
