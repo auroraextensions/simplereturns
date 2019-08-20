@@ -16,7 +16,10 @@
  */
 namespace AuroraExtensions\SimpleReturns\Model\Email\Transport;
 
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use AuroraExtensions\SimpleReturns\{
+    Model\SystemModel\Config\Module as ModuleConfig,
+    Shared\ModuleComponentInterface
+};
 use Magento\Framework\{
     App\Area,
     App\Config\ScopeConfigInterface,
@@ -49,8 +52,8 @@ class Customer implements ModuleComponentInterface
      * Send email notification to customer.
      *
      * @param Customer $customer
-     * @param string $template
-     * @param string $sender
+     * @param string $template Template configuration ID.
+     * @param string $sender Email sender identity XML path.
      * @param array $variables
      * @param int|string|null $storeId
      * @return $this
@@ -59,6 +62,7 @@ class Customer implements ModuleComponentInterface
     public function sendEmail(
         $customer,
         string $template,
+        string $sender,
         array $variables = [],
         $storeId = null
     ) {
@@ -78,9 +82,9 @@ class Customer implements ModuleComponentInterface
             'store' => $storeId,
         ];
 
-        /** @var string $sender */
-        $sender = $this->scopeConfig->getValue(
-            'simplereturns/email/frontend_email_identity',
+        /** @var string $identity */
+        $identity = $this->scopeConfig->getValue(
+            $sender,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
@@ -96,7 +100,7 @@ class Customer implements ModuleComponentInterface
             ->setTemplateIdentifier($templateId)
             ->setTemplateOptions($options)
             ->setTemplateVars($variables)
-            ->setFrom($sender)
+            ->setFrom($identity)
             ->addTo($email, $name)
             ->getTransport();
 
