@@ -23,7 +23,6 @@
                 <enable>0</enable>
             </general>
             <returns>
-                <default_rma_status>pending</default_rma_status>
                 <shipping_carrier>ups</shipping_carrier>
                 <shipping_method>03</shipping_method>
                 <order_amount_minimum>50.00</order_amount_minimum>
