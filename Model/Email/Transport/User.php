@@ -14,6 +14,8 @@
  * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license        Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Model\Email\Transport;
 
 use AuroraExtensions\SimpleReturns\{
@@ -50,8 +52,6 @@ class User implements ModuleComponentInterface
     }
 
     /**
-     * Send email notification to administrator.
-     *
      * @param string $template Template configuration ID.
      * @param string $sender Email sender identity XML path.
      * @param array $variables
@@ -59,7 +59,7 @@ class User implements ModuleComponentInterface
      * @param string|null $name
      * @return $this
      */
-    public function sendEmail(
+    public function send(
         string $template,
         string $sender,
         array $variables = [],

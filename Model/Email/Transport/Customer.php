@@ -14,6 +14,8 @@
  * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license        Aurora Extensions EULA
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Model\Email\Transport;
 
 use AuroraExtensions\SimpleReturns\{
@@ -25,12 +27,18 @@ use Magento\Framework\{
     App\Config\ScopeConfigInterface,
     Mail\Template\TransportBuilder
 };
-use Magento\Store\Model\ScopeInterface;
+use Magento\Store\{
+    Model\ScopeInterface,
+    Model\StoreManagerInterface
+};
 
 class Customer implements ModuleComponentInterface
 {
     /** @property ScopeConfigInterface $scopeConfig */
     protected $scopeConfig;
+
+    /** @property StoreManagerInterface $storeManager */
+    protected $storeManager;
 
     /** @property TransportBuilder $transportBuilder */
     protected $transportBuilder;
@@ -42,6 +50,7 @@ class Customer implements ModuleComponentInterface
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
+        StoreManagerInterface $storeManager,
         TransportBuilder $transportBuilder
     ) {
         $this->scopeConfig = $scopeConfig;
@@ -49,25 +58,24 @@ class Customer implements ModuleComponentInterface
     }
 
     /**
-     * Send email notification to customer.
-     *
-     * @param Customer $customer
      * @param string $template Template configuration ID.
      * @param string $sender Email sender identity XML path.
      * @param array $variables
-     * @param int|string|null $storeId
+     * @param int $storeId
      * @return $this
      * @see Magento\Customer\Model\Customer::_sendEmailTemplate()
      */
-    public function sendEmail(
-        $customer,
+    public function send(
         string $template,
         string $sender,
         array $variables = [],
-        $storeId = null
+        string $email = null,
+        string $name = null,
+        int $storeId = null
     ) {
         /** @var int|string|null $storeId */
-        $storeId = $storeId ?? $customer->getStoreId();
+        $storeId = $storeId
+            ?? $this->storeManager->getStore()->getId();
 
         /** @var string $templateId */
         $templateId = $this->scopeConfig->getValue(
@@ -88,12 +96,6 @@ class Customer implements ModuleComponentInterface
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
-
-        /** @var string $email */
-        $email = $customer->getEmail();
-
-        /** @var string $name */
-        $name = $customer->getName();
 
         /** @var Magento\Framework\Mail\TransportInterface $transport */
         $transport = $this->transportBuilder
