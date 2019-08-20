@@ -155,25 +155,6 @@ class Config
     /* System configuration settings */
 
     /**
-     * Get default RMA status.
-     *
-     * @param int|string $store
-     * @param string $scope
-     * @return string
-     */
-    public function getDefaultStatus(
-        $store = Store::DEFAULT_STORE_ID,
-        $scope = StoreScopeInterface::SCOPE_STORE
-    ): string
-    {
-        return $this->scopeConfig->getValue(
-            'simplereturns/returns/default_rma_status',
-            $scope,
-            $store
-        ) ?? self::DEFAULT_RMA_STATUS_CODE;
-    }
-
-    /**
      * Check if module is enabled for given store.
      *
      * @param int|string $store

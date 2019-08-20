@@ -17,7 +17,7 @@
 namespace AuroraExtensions\SimpleReturns\Model\Email\Transport;
 
 use AuroraExtensions\SimpleReturns\{
-    Model\Email\AbstractTransport,
+    Model\SystemModel\Config\Module as ModuleConfig,
     Shared\ModuleComponentInterface
 };
 use Magento\Backend\{
@@ -25,28 +25,47 @@ use Magento\Backend\{
     App\ConfigInterface
 };
 use Magento\Email\Model\BackendTemplate;
-use Magento\Framework\{
-    App\Config\ScopeConfigInterface,
-    Mail\Template\TransportBuilder
-};
+use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Store\Model\Store;
 
-class User extends AbstractTransport implements ModuleComponentInterface
+class User implements ModuleComponentInterface
 {
+    /** @property ConfigInterface $backendConfig */
+    protected $backendConfig;
+
+    /** @property ModuleConfig $moduleConfig */
+    protected $moduleConfig;
+
+    /** @property TransportBuilder $transportBuilder */
+    protected $transportBuilder;
+
+    /**
+     * @param ConfigInterface $backendConfig
+     * @param TransportBuilder $transportBuilder
+     * @return void
+     */
+    public function __construct(
+        ConfigInterface $backendConfig,
+        TransportBuilder $transportBuilder
+    ) {
+        $this->backendConfig = $backendConfig;
+        $this->transportBuilder = $transportBuilder;
+    }
+
     /**
      * Send email notification to administrator.
      *
-     * @param string $templateConfigId
-     * @param array $templateVars
-     * @param string|null $recipientEmail
-     * @param string|null $recipientName
+     * @param string $template Template configuration ID.
+     * @param array $variables
+     * @param string|null $email
+     * @param string|null $name
      * @return $this
      */
-    public function sendEmailNotification(
-        string $templateConfigId,
-        array $templateVars,
-        string $recipientEmail = null,
-        string $recipientName = null
+    public function sendEmail(
+        string $template,
+        array $variables = [],
+        string $email = null,
+        string $name = null
     ) {
         /** @var array $options */
         $options = [
@@ -55,19 +74,19 @@ class User extends AbstractTransport implements ModuleComponentInterface
         ];
 
         /** @var string $sender */
-        $sender = $this->getConfig()->getValue(
-            self::XML_PATH_ADMIN_LOGIN_REQUEST_EMAIL_IDENTITY
-        );
+        $sender = $this->backendConfig->getValue('simplereturns/email/adminhtml_email_identity');
 
-        $this->getTransportBuilder()
-            ->setTemplateIdentifier($this->getConfig()->getValue($templateConfigId))
+        /** @var Magento\Framework\Mail\TransportInterface $transport */
+        $transport = $this->transportBuilder
+            ->setTemplateIdentifier($this->backendConfig->getValue($template))
             ->setTemplateModel(BackendTemplate::class)
-            ->setTemplateVars($templateVars)
+            ->setTemplateVars($variables)
             ->setTemplateOptions($options)
             ->setFrom($sender)
-            ->addTo($recipientEmail, $recipientName)
-            ->getTransport()
-            ->sendMessage();
+            ->addTo($email, $name)
+            ->getTransport();
+
+        $transport->sendMessage();
 
         return $this;
     }
