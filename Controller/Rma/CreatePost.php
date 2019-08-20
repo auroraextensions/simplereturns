@@ -27,6 +27,7 @@ use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\AdapterModel\Security\Token as Tokenizer,
+    Model\Email\Transport\Customer as EmailTransport,
     Model\SystemModel\Module\Config as ModuleConfig,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
@@ -70,6 +71,9 @@ class CreatePost extends Action implements
     /** @property DateTimeFactory $dateTimeFactory */
     protected $dateTimeFactory;
 
+    /** @property EmailTransport $emailTransport */
+    protected $emailTransport;
+
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
@@ -105,6 +109,7 @@ class CreatePost extends Action implements
      * @param AttachmentRepositoryInterface $attachmentRepository
      * @param DataPersistorInterface $dataPersistor
      * @param DateTimeFactory $dateTimeFactory
+     * @param EmailTransport $emailTransport
      * @param ExceptionFactory $exceptionFactory
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
@@ -123,6 +128,7 @@ class CreatePost extends Action implements
         AttachmentRepositoryInterface $attachmentRepository,
         DataPersistorInterface $dataPersistor,
         DateTimeFactory $dateTimeFactory,
+        EmailTransport $emailTransport,
         ExceptionFactory $exceptionFactory,
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
@@ -140,6 +146,7 @@ class CreatePost extends Action implements
         $this->attachmentRepository = $attachmentRepository;
         $this->dataPersistor = $dataPersistor;
         $this->dateTimeFactory = $dateTimeFactory;
+        $this->emailTransport = $emailTransport;
         $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
@@ -285,6 +292,15 @@ class CreatePost extends Action implements
                             /* Clear group key from session. */
                             $this->dataPersistor->clear(self::DATA_GROUP_KEY);
                         }
+
+                        $this->emailTransport->send(
+                            'simplereturns/customer/rma_request_new_email_template',
+                            'simplereturns/customer/rma_request_new_email_identity',
+                            [],
+                            $order->getCustomerEmail(),
+                            $order->getCustomerName(),
+                            (int) $order->getStoreId()
+                        );
 
                         /** @var string $viewUrl */
                         $viewUrl = $this->urlBuilder->getUrl(
