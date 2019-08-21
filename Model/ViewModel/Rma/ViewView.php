@@ -464,7 +464,7 @@ class ViewView extends AbstractView implements
 
             /** @var AttachmentInterface $attachment */
             foreach ($attachments as $attachment) {
-                $results[] = ($baseUrl . $attachment->getPath());
+                $results[] = ($baseUrl . $attachment->getFilePath());
             }
         }
 
