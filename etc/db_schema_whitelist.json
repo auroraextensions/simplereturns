@@ -28,9 +28,10 @@
             "attachment_id": true,
             "rma_id": true,
             "filename": true,
+            "filepath": true,
             "filesize": true,
-            "path": true,
             "mimetype": true,
+            "thumbnail": true,
             "token": true,
             "created_at": true,
             "updated_at": true

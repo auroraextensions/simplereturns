@@ -52,9 +52,10 @@
                 comment="Attachment ID"/>
         <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="true" comment="RMA ID"/>
         <column xsi:type="varchar" name="filename" nullable="true" length="512" comment="Filename"/>
+        <column xsi:type="varchar" name="filepath" nullable="true" length="1024" comment="File Path"/>
         <column xsi:type="int" name="filesize" padding="10" unsigned="true" nullable="true" comment="Filesize"/>
-        <column xsi:type="varchar" name="path" nullable="true" length="1024" comment="Path"/>
         <column xsi:type="varchar" name="mimetype" nullable="true" length="32" comment="MIME Type"/>
+        <column xsi:type="varchar" name="thumbnail" nullable="true" length="1024" comment="Thumbnail Path"/>
         <column xsi:type="varchar" name="token" nullable="true" length="128" comment="Token"/>
         <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
                 comment="Created At"/>
