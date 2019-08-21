@@ -139,18 +139,18 @@ class Attachment extends AbstractModel implements
     /**
      * @return string|null
      */
-    public function getPath(): ?string
+    public function getFilePath(): ?string
     {
-        return $this->getData('path');
+        return $this->getData('filepath');
     }
 
     /**
-     * @param string $path
+     * @param string $filePath
      * @return AttachmentInterface
      */
-    public function setPath(string $path): AttachmentInterface
+    public function setFilePath(string $filePath): AttachmentInterface
     {
-        $this->setData('path', $path);
+        $this->setData('filepath', $filePath);
 
         return $this;
     }

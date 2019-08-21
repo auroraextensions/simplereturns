@@ -78,13 +78,13 @@ interface AttachmentInterface
     /**
      * @return string|null
      */
-    public function getPath(): ?string;
+    public function getFilePath(): ?string;
 
     /**
-     * @param string $path
+     * @param string $filePath
      * @return \AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface
      */
-    public function setPath(string $path): AttachmentInterface;
+    public function setFilePath(string $filePath): AttachmentInterface;
 
     /**
      * @return string|null
