@@ -100,6 +100,17 @@ interface AttachmentInterface
     /**
      * @return string|null
      */
+    public function getThumbnail(): ?string;
+
+    /**
+     * @param string $filePath
+     * @return \AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface
+     */
+    public function setThumbnail(string $filePath): AttachmentInterface;
+
+    /**
+     * @return string|null
+     */
     public function getToken(): ?string;
 
     /**
