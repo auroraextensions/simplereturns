@@ -177,6 +177,25 @@ class Attachment extends AbstractModel implements
     /**
      * @return string|null
      */
+    public function getThumbnail(): ?string
+    {
+        return $this->getData('thumbnail');
+    }
+
+    /**
+     * @param string $filePath
+     * @return AttachmentInterface
+     */
+    public function setThumbnail(string $filePath): AttachmentInterface
+    {
+        $this->setData('thumbnail', $filePath);
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getToken(): ?string
     {
         return $this->getData('token');
