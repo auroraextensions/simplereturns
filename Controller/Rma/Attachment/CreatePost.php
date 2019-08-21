@@ -177,8 +177,8 @@ class CreatePost extends Action implements
             return $resultJson;
         }
 
-        /** @var int $error */
-        $error = 0;
+        /** @var bool $error */
+        $error = false;
 
         /** @var array $attachment */
         $attachments = $request->getFiles('attachments') ?? [];
@@ -238,21 +238,26 @@ class CreatePost extends Action implements
                 $entity = $this->attachmentFactory->create();
 
                 /** @var ImageResizerInterface $imageResizer */
-                $imageResizer = $this->imageResizerFactory->create(['subdirectory' => self::RESIZE_PATH]);
+                $imageResizer = $this->imageResizerFactory->create(
+                    [
+                        'subdirectory' => self::RESIZE_PATH,
+                    ]
+                );
 
                 /** @var string $imageFile */
                 $imageFile = rtrim(self::SAVE_PATH, '/') . $result['file'];
 
-                /** @var string $resizeFile */
-                $resizeFile = $imageResizer->resize($imageFile);
+                /** @var string $thumbnail */
+                $thumbnail = $imageResizer->resize($imageFile);
 
                 /** @var array $entityData */
                 $entityData = [
-                    'filename' => $result['name'],
-                    'filesize' => $result['size'],
-                    'mimetype' => $result['type'],
-                    'path'     => $resizeFile,
-                    'token'    => Tokenizer::createToken(),
+                    'filename'  => $result['name'],
+                    'filepath'  => $result['file'],
+                    'filesize'  => $result['size'],
+                    'mimetype'  => $result['type'],
+                    'thumbnail' => $thumbnail,
+                    'token'     => Tokenizer::createToken(),
                 ];
 
                 /** @var int $attachmentId */
@@ -264,9 +269,9 @@ class CreatePost extends Action implements
                     'attachment_id' => $attachmentId,
                 ];
             } catch (LocalizedException $e) {
-                $error = 1;
+                $error = true;
             } catch (\Exception $e) {
-                $error = 1;
+                $error = true;
             }
         }
 
@@ -274,7 +279,6 @@ class CreatePost extends Action implements
             $groupKey,
             $this->serializer->serialize($metadata)
         );
-
         $resultJson->setData(['error' => $error]);
 
         return $resultJson;
