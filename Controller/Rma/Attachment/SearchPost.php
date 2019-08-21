@@ -142,7 +142,7 @@ class SearchPost extends Action implements
                         $filesize = $attachment->getFilesize();
 
                         /** @var string $imagePath */
-                        $imagePath = $attachment->getPath()
+                        $imagePath = $attachment->getFilePath()
                             ?? ('/' . $filename);
 
                         /** @var string $imageUrl */
