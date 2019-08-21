@@ -458,13 +458,13 @@ class ViewView extends AbstractView implements
                 ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
             $baseUrl = rtrim($baseUrl, '/');
 
-            /** @var array $attachments */
+            /** @var AttachmentInterface[] $attachments */
             $attachments = $this->attachmentAdapter
                 ->getRecordsByFields(['rma_id' => $rma->getId()]);
 
             /** @var AttachmentInterface $attachment */
             foreach ($attachments as $attachment) {
-                $results[] = ($baseUrl . $attachment->getFilePath());
+                $results[] = ($baseUrl . $attachment->getThumbnail());
             }
         }
 
