@@ -238,11 +238,9 @@ class CreatePost extends Action implements
                 $entity = $this->attachmentFactory->create();
 
                 /** @var ImageResizerInterface $imageResizer */
-                $imageResizer = $this->imageResizerFactory->create(
-                    [
-                        'subdirectory' => self::RESIZE_PATH,
-                    ]
-                );
+                $imageResizer = $this->imageResizerFactory->create([
+                    'subdirectory' => self::RESIZE_PATH,
+                ]);
 
                 /** @var string $imageFile */
                 $imageFile = rtrim(self::SAVE_PATH, '/') . $result['file'];
