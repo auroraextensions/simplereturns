@@ -1,3 +1,28 @@
-<!--@subject {{trans "New RMA Request"}} @-->
+<!--@subject {{trans "New RMA Request for Order %order_id" order_id=$orderId}} @-->
+<!--@vars {
+"var orderId": "Order ID",
+"var status": "RMA Status",
+"var reason": "RMA Reason"
+} @-->
+<!--@styles
+@-->
 
-<div>New RMA Request</div>
+{{template config_path="design/email/header"}}
+
+<table cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td class="header">
+            <h3>New RMA Request for Order # {{var orderId}}</h3>
+            <p>Your RMA request has been received. Once it's been reviewed and processed, you'll receive an update with next steps. Thank you.</p>
+        </td>
+    </tr>
+    <tr>
+        <td class="details">
+            <div>Return: # {{var frontId}}</div>
+            <div>Status: {{var status}}</div>
+            <div>Reason: {{var reason}}</div>
+            <div>Resolution: {{var resolution}}</div>
+            <div>Comments: {{var comments}}</div>
+        </td>
+    </tr>
+</table>
