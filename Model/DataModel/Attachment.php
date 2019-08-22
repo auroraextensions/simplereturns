@@ -139,18 +139,18 @@ class Attachment extends AbstractModel implements
     /**
      * @return string|null
      */
-    public function getPath(): ?string
+    public function getFilePath(): ?string
     {
-        return $this->getData('path');
+        return $this->getData('filepath');
     }
 
     /**
-     * @param string $path
+     * @param string $filePath
      * @return AttachmentInterface
      */
-    public function setPath(string $path): AttachmentInterface
+    public function setFilePath(string $filePath): AttachmentInterface
     {
-        $this->setData('path', $path);
+        $this->setData('filepath', $filePath);
 
         return $this;
     }
@@ -170,6 +170,25 @@ class Attachment extends AbstractModel implements
     public function setMimeType(string $mimeType): AttachmentInterface
     {
         $this->setData('mimetype', $mimeType);
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getThumbnail(): ?string
+    {
+        return $this->getData('thumbnail');
+    }
+
+    /**
+     * @param string $filePath
+     * @return AttachmentInterface
+     */
+    public function setThumbnail(string $filePath): AttachmentInterface
+    {
+        $this->setData('thumbnail', $filePath);
 
         return $this;
     }

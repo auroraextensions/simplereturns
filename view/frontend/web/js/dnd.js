@@ -171,7 +171,7 @@ define([
          * @return {void}
          */
         preload: function () {
-            var blob, buffer,
+            var blob, buf,
                 dz, files,
                 mock, self;
 
@@ -194,19 +194,18 @@ define([
                         size: value.size
                     };
 
-                    /** @var {Uint8Array} buffer */
-                    buffer = dataTypes.dataUriToBinary(value.blob);
+                    /** @var {Uint8Array} buf */
+                    buf = dataTypes.dataUriToBinary(value.blob);
 
                     /** @var {File} blob */
                     blob = new File(
-                        [buffer],
+                        [buf],
                         value.name,
                         {
                             type: value.type
                         }
                     );
                     blob.token = value.token;
-
                     self.initFile(blob);
                 });
             }
@@ -243,7 +242,8 @@ define([
          * @return {void}
          */
         onRemoveFile: function (file, clickEvent) {
-            var dz, data, key, url;
+            var dz, data,
+                key, url;
 
             clickEvent.preventDefault();
             clickEvent.stopPropagation();
@@ -305,7 +305,6 @@ define([
 
     /** @var {String} urn */
     urn = widget.getUrn.call(widget);
-
     $.widget(urn, widget);
 
     return $[widget.container][widget.name];

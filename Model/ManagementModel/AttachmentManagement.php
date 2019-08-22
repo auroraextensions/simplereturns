@@ -68,7 +68,8 @@ class AttachmentManagement implements AttachmentManagementInterface, ModuleCompo
     public function getFileDataUri(AttachmentInterface $attachment): string
     {
         /** @var string $filePath */
-        $filePath = $attachment->getPath() ?? ('/' . $attachment->getFilename());
+        $filePath = $attachment->getFilePath()
+            ?? ('/' . $attachment->getFilename());
 
         /** @var string $realPath */
         $realPath = $this->getSavePath() . $filePath;
@@ -98,7 +99,7 @@ class AttachmentManagement implements AttachmentManagementInterface, ModuleCompo
         $mediaUrl = $baseUrl . self::SAVE_PATH;
         $mediaUrl = rtrim($mediaUrl, '/');
 
-        return ($mediaUrl . $attachment->getPath());
+        return ($mediaUrl . $attachment->getFilePath());
     }
 
     /**

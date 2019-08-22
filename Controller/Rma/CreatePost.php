@@ -30,6 +30,7 @@ use AuroraExtensions\SimpleReturns\{
     Model\Email\Transport\Customer as EmailTransport,
     Model\SystemModel\Module\Config as ModuleConfig,
     Shared\Action\Redirector,
+    Shared\Component\LabelFormatterTrait,
     Shared\ModuleComponentInterface
 };
 use DateTime;
@@ -42,6 +43,7 @@ use Magento\Framework\{
     App\Request\DataPersistorInterface,
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
+    Escaper,
     Exception\AlreadyExistsException,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
@@ -57,8 +59,7 @@ class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
-    use Redirector {
+    use LabelFormatterTrait, Redirector {
         Redirector::__initialize as protected;
     }
 
@@ -73,6 +74,9 @@ class CreatePost extends Action implements
 
     /** @property EmailTransport $emailTransport */
     protected $emailTransport;
+
+    /** @property Escaper $escaper */
+    protected $escaper;
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
@@ -110,6 +114,7 @@ class CreatePost extends Action implements
      * @param DataPersistorInterface $dataPersistor
      * @param DateTimeFactory $dateTimeFactory
      * @param EmailTransport $emailTransport
+     * @param Escaper $escaper
      * @param ExceptionFactory $exceptionFactory
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
@@ -129,6 +134,7 @@ class CreatePost extends Action implements
         DataPersistorInterface $dataPersistor,
         DateTimeFactory $dateTimeFactory,
         EmailTransport $emailTransport,
+        Escaper $escaper,
         ExceptionFactory $exceptionFactory,
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
@@ -147,6 +153,7 @@ class CreatePost extends Action implements
         $this->dataPersistor = $dataPersistor;
         $this->dateTimeFactory = $dateTimeFactory;
         $this->emailTransport = $emailTransport;
+        $this->escaper = $escaper;
         $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
@@ -188,15 +195,21 @@ class CreatePost extends Action implements
 
             /** @var string|null $reason */
             $reason = $params['reason'] ?? null;
-            $reason = !empty($reason) ? $reason : null;
+            $reason = $reason !== null && !empty($reason)
+                ? $this->escaper->escapeHtml($reason)
+                : null;
 
             /** @var string|null $resolution */
             $resolution = $params['resolution'] ?? null;
-            $resolution = !empty($resolution) ? $resolution : null;
+            $resolution = $resolution !== null && !empty($resolution)
+                ? $this->escaper->escapeHtml($resolution)
+                : null;
 
             /** @var string|null $comments */
             $comments = $params['comments'] ?? null;
-            $comments = !empty($comments) ? $comments : null;
+            $comments = $comments !== null && !empty($comments)
+                ? $this->escaper->escapeHtml($comments)
+                : null;
 
             /** @var array $fields */
             $fields = [
@@ -293,10 +306,18 @@ class CreatePost extends Action implements
                             $this->dataPersistor->clear(self::DATA_GROUP_KEY);
                         }
 
+                        /* Send New RMA Request email */
                         $this->emailTransport->send(
                             'simplereturns/customer/rma_request_new_email_template',
                             'simplereturns/customer/rma_request_new_email_identity',
-                            [],
+                            [
+                                'orderId' => $order->getRealOrderId(),
+                                'frontId' => $rma->getFrontId(),
+                                'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
+                                'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
+                                'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
+                                'comments' => $this->escaper->escapeHtml($rma->getComments()),
+                            ],
                             $order->getCustomerEmail(),
                             $order->getCustomerName(),
                             (int) $order->getStoreId()
@@ -328,9 +349,9 @@ class CreatePost extends Action implements
 
                 throw $exception;
             } catch (NoSuchEntityException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             } catch (LocalizedException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             }
         }
 
