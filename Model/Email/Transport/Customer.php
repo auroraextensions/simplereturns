@@ -45,6 +45,7 @@ class Customer implements ModuleComponentInterface
 
     /**
      * @param ScopeConfigInterface $scopeConfig
+     * @param StoreManagerInterface $storeManager
      * @param TransportBuilder $transportBuilder
      * @return void
      */
@@ -54,6 +55,7 @@ class Customer implements ModuleComponentInterface
         TransportBuilder $transportBuilder
     ) {
         $this->scopeConfig = $scopeConfig;
+        $this->storeManager = $storeManager;
         $this->transportBuilder = $transportBuilder;
     }
 
