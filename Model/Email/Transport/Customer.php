@@ -59,16 +59,16 @@ class Customer implements ModuleComponentInterface
 
     /**
      * @param string $template Template configuration ID.
-     * @param string $sender Email sender identity XML path.
-     * @param array $variables
+     * @param string $identity Email sender identity XML path.
+     * @param array $params
      * @param int $storeId
      * @return $this
      * @see Magento\Customer\Model\Customer::_sendEmailTemplate()
      */
     public function send(
         string $template,
-        string $sender,
-        array $variables = [],
+        string $identity,
+        array $params = [],
         string $email = null,
         string $name = null,
         int $storeId = null
@@ -90,9 +90,9 @@ class Customer implements ModuleComponentInterface
             'store' => $storeId,
         ];
 
-        /** @var string $identity */
-        $identity = $this->scopeConfig->getValue(
-            $sender,
+        /** @var string $sender */
+        $sender = $this->scopeConfig->getValue(
+            $identity,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
@@ -101,8 +101,8 @@ class Customer implements ModuleComponentInterface
         $transport = $this->transportBuilder
             ->setTemplateIdentifier($templateId)
             ->setTemplateOptions($options)
-            ->setTemplateVars($variables)
-            ->setFrom($identity)
+            ->setTemplateVars($params)
+            ->setFrom($sender)
             ->addTo($email, $name)
             ->getTransport();
 
