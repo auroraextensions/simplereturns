@@ -53,16 +53,16 @@ class User implements ModuleComponentInterface
 
     /**
      * @param string $template Template configuration ID.
-     * @param string $sender Email sender identity XML path.
-     * @param array $variables
+     * @param string $identity Email sender identity XML path.
+     * @param array $params
      * @param string|null $email
      * @param string|null $name
      * @return $this
      */
     public function send(
         string $template,
-        string $sender,
-        array $variables = [],
+        string $identity,
+        array $params = [],
         string $email = null,
         string $name = null
     ) {
@@ -75,16 +75,16 @@ class User implements ModuleComponentInterface
         /** @var string $templateId */
         $templateId = $this->backendConfig->getValue($template);
 
-        /** @var string $identity */
-        $identity = $this->backendConfig->getValue($sender);
+        /** @var string $sender */
+        $sender = $this->backendConfig->getValue($identity);
 
         /** @var Magento\Framework\Mail\TransportInterface $transport */
         $transport = $this->transportBuilder
             ->setTemplateIdentifier($templateId)
             ->setTemplateModel(BackendTemplate::class)
-            ->setTemplateVars($variables)
+            ->setTemplateVars($params)
             ->setTemplateOptions($options)
-            ->setFrom($identity)
+            ->setFrom($sender)
             ->addTo($email, $name)
             ->getTransport();
 

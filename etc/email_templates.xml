@@ -32,4 +32,10 @@
               type="html"
               module="AuroraExtensions_SimpleReturns"
               area="frontend"/>
+    <template id="simplereturns_customer_rma_request_status_update_email_template"
+              label="RMA Request Status Update"
+              file="rma_request_status_update.html"
+              type="html"
+              module="AuroraExtensions_SimpleReturns"
+              area="frontend"/>
 </config>

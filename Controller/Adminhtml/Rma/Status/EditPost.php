@@ -23,6 +23,9 @@ use AuroraExtensions\SimpleReturns\{
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Model\AdapterModel\Security\Token as Tokenizer,
+    Model\Email\Transport\Customer as EmailTransport,
+    Model\SystemModel\Module\Config as ModuleConfig,
+    Shared\Component\LabelFormatterTrait,
     Shared\ModuleComponentInterface
 };
 use Magento\Backend\{
@@ -37,16 +40,28 @@ use Magento\Framework\{
     Exception\NoSuchEntityException,
     Serialize\Serializer\Json as JsonSerializer
 };
+use Magento\Sales\Api\OrderRepositoryInterface;
 
 class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
+    use LabelFormatterTrait;
+
+    /** @property EmailTransport $emailTransport */
+    protected $emailTransport;
+
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
+
+    /** @property ModuleConfig $moduleConfig */
+    protected $moduleConfig;
+
+    /** @property OrderRepositoryInterface $orderRepository */
+    protected $orderRepository;
 
     /** @property ResultJsonFactory $resultJsonFactory */
     protected $resultJsonFactory;
@@ -59,8 +74,11 @@ class EditPost extends Action implements
 
     /**
      * @param Context $context
+     * @param EmailTransport $emailTransport
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param ModuleConfig $moduleConfig
+     * @param OrderRepositoryInterface $orderRepository
      * @param ResultJsonFactory $resultJsonFactory
      * @param JsonSerializer $serializer
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
@@ -68,15 +86,21 @@ class EditPost extends Action implements
      */
     public function __construct(
         Context $context,
+        EmailTransport $emailTransport,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
+        ModuleConfig $moduleConfig,
+        OrderRepositoryInterface $orderRepository,
         ResultJsonFactory $resultJsonFactory,
         JsonSerializer $serializer,
         SimpleReturnRepositoryInterface $simpleReturnRepository
     ) {
         parent::__construct($context);
+        $this->emailTransport = $emailTransport;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->moduleConfig = $moduleConfig;
+        $this->orderRepository = $orderRepository;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->serializer = $serializer;
         $this->simpleReturnRepository = $simpleReturnRepository;
@@ -143,6 +167,30 @@ class EditPost extends Action implements
                         if ($rma->getId()) {
                             $this->simpleReturnRepository->save(
                                 $rma->setStatus($status)
+                            );
+
+                            /** @var OrderInterface $order */
+                            $order = $this->orderRepository->get($rma->getOrderId());
+
+                            /** @var string $email */
+                            $email = $order->getCustomerEmail();
+
+                            /** @var string $name */
+                            $name = $order->getCustomerName();
+
+                            $this->emailTransport->send(
+                                'simplereturns/customer/rma_request_status_update_email_template',
+                                'simplereturns/customer/rma_request_status_update_email_identity',
+                                [
+                                    'orderId' => $order->getRealOrderId(),
+                                    'frontId' => $rma->getFrontId(),
+                                    'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
+                                    'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
+                                    'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
+                                ],
+                                $email,
+                                $name,
+                                (int) $order->getStoreId()
                             );
 
                             $response['error'] = $error;
