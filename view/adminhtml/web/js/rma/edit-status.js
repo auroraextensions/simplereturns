@@ -88,6 +88,7 @@ define([
                 data: data,
                 error: this.onError.bind(this),
                 method: 'POST',
+                showLoader: true,
                 success: this.onSuccess.bind(this)
             };
 
