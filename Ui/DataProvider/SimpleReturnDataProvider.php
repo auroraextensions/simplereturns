@@ -95,7 +95,7 @@ class SimpleReturnDataProvider extends AbstractDataProvider implements
     /**
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         /** @var array $entries */
         $entries = $this->getCollection()->toArray();
