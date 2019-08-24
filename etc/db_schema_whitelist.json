@@ -19,7 +19,7 @@
             "SIMPLERETURNS_RMA_PACKAGE_ID": true
         },
         "constraint": {
-            "SIMPLERETURNS_RMA_PACKAGE_ID_SIMPLERETURNS_PACKAGE_PACKAGE_ID": true,
+            "SIMPLERETURNS_RMA_PKG_ID_SIMPLERETURNS_PACKAGE_PKG_ID": true,
             "PRIMARY": true
         }
     },

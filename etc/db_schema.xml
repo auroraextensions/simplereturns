@@ -34,7 +34,7 @@
                 comment="Created At"/>
         <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
                 comment="Updated At"/>
-        <constraint xsi:type="foreign" referenceId="SIMPLERETURNS_RMA_PACKAGE_ID_SIMPLERETURNS_PACKAGE_PACKAGE_ID"
+        <constraint xsi:type="foreign" referenceId="SIMPLERETURNS_RMA_PKG_ID_SIMPLERETURNS_PACKAGE_PKG_ID"
                     table="simplreturns_rma" column="pkg_id" referenceTable="simplereturns_package"
                     referenceColumn="pkg_id" onDelete="CASCADE"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
