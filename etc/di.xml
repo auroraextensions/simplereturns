@@ -135,6 +135,15 @@
             </argument>
         </arguments>
     </type>
+    <type name="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\SimpleReturnDataProvider">
+        <arguments>
+            <argument name="labels" xsi:type="array">
+                <item name="status" xsi:type="string">statuses</item>
+                <item name="reason" xsi:type="string">reasons</item>
+                <item name="resolution" xsi:type="string">resolutions</item>
+            </argument>
+        </arguments>
+    </type>
     <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\SimpleReturn\Actions"
                  type="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Actions">
         <arguments>
