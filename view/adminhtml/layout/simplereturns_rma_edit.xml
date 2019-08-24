@@ -21,17 +21,8 @@
         <css src="AuroraExtensions_SimpleReturns::css/simplereturns.css"/>
     </head>
     <body>
-        <referenceBlock name="page.actions.toolbar">
-            <block class="AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma\Save" name="simplereturns_rma_save_button"/>
-        </referenceBlock>
         <referenceContainer name="content">
-            <block class="Magento\Framework\View\Element\Template"
-                   name="simplereturns_rma_edit"
-                   template="AuroraExtensions_SimpleReturns::rma/edit.phtml">
-                <arguments>
-                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\EditView</argument>
-                </arguments>
-            </block>
+            <uiComponent name="simplereturns_rma_form"/>
         </referenceContainer>
     </body>
 </page>
