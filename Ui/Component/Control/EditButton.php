@@ -57,6 +57,10 @@ class EditButton implements ButtonProviderInterface
      */
     public function getButtonData()
     {
-        return [];
+        return [
+            'label' => __('Edit'),
+            'class' => 'edit secondary',
+            'sort_order' => 50,
+        ];
     }
 }
