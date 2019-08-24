@@ -27,14 +27,14 @@
         <buttons>
             <button name="save" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\SaveButton"/>
         </buttons>
-        <spinner>simplereturns_rma_form_columns</spinner>
         <deps>
             <dep>simplereturns_rma_form.simplereturns_rma_form_datasource</dep>
         </deps>
     </settings>
-    <dataSource name="simplereturns_rma_form_datasource" component="Magento_Ui/js/grid/provider">
+    <dataSource name="simplereturns_rma_form_datasource" component="Magento_Ui/js/form/provider">
         <settings>
             <submitUrl path="simplereturns/rma/editPost"/>
+            <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>AuroraExtensions_SimpleReturns::rma_return</aclResource>
         <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\SimpleReturnDataProvider" name="simplereturns_rma_form_datasource">
@@ -57,6 +57,39 @@
             <settings>
                 <dataType>text</dataType>
                 <visible>false</visible>
+            </settings>
+        </field>
+        <field name="status" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">rma</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <visible>true</visible>
+            </settings>
+        </field>
+        <field name="reason" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">rma</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <visible>true</visible>
+            </settings>
+        </field>
+        <field name="resolution" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">rma</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <visible>true</visible>
             </settings>
         </field>
     </fieldset>
