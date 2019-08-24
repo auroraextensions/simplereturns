@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * simplereturns_rma_form.xml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Aurora Extensions EULA,
+ * which is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       Aurora Extensions EULA
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">simplereturns_rma_form.simplereturns_rma_form_datasource</item>
+        </item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="save" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\SaveButton"/>
+        </buttons>
+        <spinner>simplereturns_rma_form_columns</spinner>
+        <deps>
+            <dep>simplereturns_rma_form.simplereturns_rma_form_datasource</dep>
+        </deps>
+    </settings>
+    <dataSource name="simplereturns_rma_form_datasource" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <submitUrl path="simplereturns/rma/editPost"/>
+        </settings>
+        <aclResource>AuroraExtensions_SimpleReturns::rma_return</aclResource>
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\SimpleReturnDataProvider" name="simplereturns_rma_form_datasource">
+            <settings>
+                <primaryFieldName>rma_id</primaryFieldName>
+                <requestFieldName>rma_id</requestFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="rma">
+        <settings>
+            <label translate="true">RMA Details</label>
+        </settings>
+        <field name="rma_id" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">rma</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+            </settings>
+        </field>
+    </fieldset>
+</form>
