@@ -27,7 +27,7 @@
             <button name="add">
                 <url path="simplereturns/rma/create"/>
                 <class>primary</class>
-                <label translate="true">Create New RMA</label>
+                <label translate="true">New RMA</label>
                 <aclResource>AuroraExtensions_SimpleReturns::create</aclResource>
             </button>
         </buttons>
@@ -105,7 +105,7 @@
                 <label translate="true">Updated</label>
             </settings>
         </column>
-        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\SimpleReturn\Actions">
+        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma\Actions">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="viewUrlPath" xsi:type="string">simplereturns/rma/view</item>
