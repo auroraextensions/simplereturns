@@ -84,15 +84,15 @@ class SimpleReturnDataProvider extends AbstractDataProvider implements
     }
 
     /**
-     * @param bool $includeKeys
+     * @param bool $preserveKeys
      * @return array
      */
-    public function getLabels(bool $includeKeys = true): array
+    public function getLabels(bool $preserveKeys = true): array
     {
         /** @var array $labels */
         $labels = $this->labels ?? [];
 
-        return $includeKeys ? $labels : array_values($labels);
+        return $preserveKeys ? $labels : array_values($labels);
     }
 
     /**
@@ -104,17 +104,44 @@ class SimpleReturnDataProvider extends AbstractDataProvider implements
             return $this->loadedData;
         }
 
-        /** @var SimpleReturnInterface[] $items */
-        $items = $this->getCollection()->getItems();
+        /** @var SimpleReturnInterface[] $entries */
+        $entries = $this->getCollection()->toArray();
+
+        /** @var array $items */
+        $items = $entries['items'] ?? [];
+
+        /** @var array $keys */
+        $keys = $this->getLabelKeys();
+
+        /** @var array $labels */
+        $labels = $this->getLabels();
+
+        $this->loadedData = [
+            'totalRecords' => $this->count(),
+            'items' => [],
+        ];
 
         /** @var SimpleReturnInterface $rma */
-        foreach ($items as $rma) {
-            /** @var array $result */
-            $result = [];
-            $result['rma'] = $rma->getData();
-            $result['rma_id'] = $rma->getId();
+        foreach ($items as $item) {
+            /** @var string $key */
+            foreach ($keys as $key) {
+                /** @var string|null $labelValue */
+                $labelValue = $item[$key] ?? null;
 
-            $this->loadedData[$rma->getId()] = $result;
+                if ($labelValue !== null) {
+                    /** @var string|null $labelKey */
+                    $labelKey = $labels[$key] ?? null;
+
+                    if ($labelKey !== null) {
+                        $item[$key] = $this->viewModel->getFrontLabel(
+                            $labelKey,
+                            $labelValue
+                        );
+                    }
+                }
+            }
+
+            $this->loadedData['items'][] = $item;
         }
 
         return $this->loadedData;

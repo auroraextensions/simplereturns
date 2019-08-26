@@ -144,7 +144,7 @@
             </argument>
         </arguments>
     </type>
-    <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\SimpleReturn\Actions"
+    <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma\Actions"
                  type="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Actions">
         <arguments>
             <argument name="paramKey" xsi:type="string">rma_id</argument>
