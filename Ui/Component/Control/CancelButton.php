@@ -1,6 +1,6 @@
 <?php
 /**
- * EditButton.php
+ * CancelButton.php
  *
  * NOTICE OF LICENSE
  *
@@ -29,7 +29,7 @@ use Magento\Framework\{
     View\Element\UiComponent\Control\ButtonProviderInterface
 };
 
-class EditButton implements ButtonProviderInterface, ModuleComponentInterface
+class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
 {
     /** @property Escaper $escaper */
     protected $escaper;
@@ -73,9 +73,9 @@ class EditButton implements ButtonProviderInterface, ModuleComponentInterface
             $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
             if ($token !== null) {
-                /** @var string $editUrl */
-                $editUrl = $this->urlBuilder->getUrl(
-                    'simplereturns/rma/edit',
+                /** @var string $cancelUrl */
+                $cancelUrl = $this->urlBuilder->getUrl(
+                    'simplereturns/rma/view',
                     [
                         'rma_id' => $rmaId,
                         'token' => $token,
@@ -83,10 +83,10 @@ class EditButton implements ButtonProviderInterface, ModuleComponentInterface
                 );
 
                 return [
-                    'class' => 'save primary',
-                    'label' => __('Save'),
-                    'onclick' => "(function(){window.location='{$editUrl}';})();",
-                    'sort_order' => 10,
+                    'class' => 'cancel secondary',
+                    'label' => __('Cancel'),
+                    'onclick' => "(function(){window.location='{$cancelUrl}';})();",
+                    'sort_order' => 30,
                 ];
             }
         }
