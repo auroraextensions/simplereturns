@@ -1,6 +1,6 @@
 <?php
 /**
- * SimpleReturnDataProvider.php
+ * DataProvider.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,7 +16,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Form;
+namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma;
 
 use AuroraExtensions\SimpleReturns\{
     Model\ResourceModel\SimpleReturn as SimpleReturnResource,
@@ -28,7 +28,7 @@ use AuroraExtensions\SimpleReturns\{
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
-class SimpleReturnDataProvider extends AbstractDataProvider implements
+class DataProvider extends AbstractDataProvider implements
     \Countable,
     DataProviderInterface,
     ModuleComponentInterface
