@@ -16,7 +16,8 @@
  * @license       Aurora Extensions EULA
  */
 -->
-<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
             <item name="provider" xsi:type="string">simplereturns_rma_grid.simplereturns_rma_grid_datasource</item>
@@ -41,7 +42,7 @@
             <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>AuroraExtensions_SimpleReturns::rma_return</aclResource>
-        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\SimpleReturnDataProvider" name="simplereturns_rma_grid_datasource">
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma\DataProvider" name="simplereturns_rma_grid_datasource">
             <settings>
                 <primaryFieldName>rma_id</primaryFieldName>
                 <requestFieldName>rma_id</requestFieldName>
@@ -69,7 +70,7 @@
         <column name="rma_id">
             <settings>
                 <filter>text</filter>
-                <label translate="true">RMA ID</label>
+                <label translate="true">ID</label>
             </settings>
         </column>
         <column name="status">
