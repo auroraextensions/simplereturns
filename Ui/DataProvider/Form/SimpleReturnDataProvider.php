@@ -100,48 +100,18 @@ class SimpleReturnDataProvider extends AbstractDataProvider implements
      */
     public function getData(): array
     {
+        return [];
+
         if (!empty($this->loadedData)) {
             return $this->loadedData;
         }
 
-        /** @var SimpleReturnInterface[] $entries */
-        $entries = $this->getCollection()->toArray();
-
-        /** @var array $items */
-        $items = $entries['items'] ?? [];
-
-        /** @var array $keys */
-        $keys = $this->getLabelKeys();
-
-        /** @var array $labels */
-        $labels = $this->getLabels();
-
-        $this->loadedData = [
-            'totalRecords' => $this->count(),
-            'items' => [],
-        ];
+        /** @var SimpleReturnInterface[] $items */
+        $items = $this->getCollection()->getItems();
 
         /** @var SimpleReturnInterface $rma */
-        foreach ($items as $item) {
-            /** @var string $key */
-            foreach ($keys as $key) {
-                /** @var string|null $labelValue */
-                $labelValue = $item[$key] ?? null;
-
-                if ($labelValue !== null) {
-                    /** @var string|null $labelKey */
-                    $labelKey = $labels[$key] ?? null;
-
-                    if ($labelKey !== null) {
-                        $item[$key] = $this->viewModel->getFrontLabel(
-                            $labelKey,
-                            $labelValue
-                        );
-                    }
-                }
-            }
-
-            $this->loadedData['items'][] = $item;
+        foreach ($items as $rma) {
+            $this->loadedData[$rma->getId()]['rma'] = $rma->getData();
         }
 
         return $this->loadedData;
