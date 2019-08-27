@@ -22,6 +22,8 @@
         <item name="js_config" xsi:type="array">
             <item name="provider" xsi:type="string">simplereturns_rma_form.simplereturns_rma_form_datasource</item>
         </item>
+        <item name="label" xsi:type="string">RMA Details</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
     </argument>
     <settings>
         <buttons>
@@ -30,23 +32,23 @@
         <deps>
             <dep>simplereturns_rma_form.simplereturns_rma_form_datasource</dep>
         </deps>
+        <dataScope>data</dataScope>
     </settings>
     <dataSource name="simplereturns_rma_form_datasource" component="Magento_Ui/js/form/provider">
         <settings>
-            <submitUrl path="simplereturns/rma/editPost"/>
             <updateUrl path="mui/index/render"/>
         </settings>
-        <aclResource>AuroraExtensions_SimpleReturns::rma_return</aclResource>
-        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\SimpleReturnDataProvider" name="simplereturns_rma_form_datasource">
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma\DataProvider" name="simplereturns_rma_form_datasource">
             <settings>
                 <primaryFieldName>rma_id</primaryFieldName>
                 <requestFieldName>rma_id</requestFieldName>
             </settings>
         </dataProvider>
     </dataSource>
-    <fieldset name="rma">
+    <fieldset name="simplereturns">
         <settings>
-            <label translate="true">RMA Details</label>
+            <collapsible>false</collapsible>
+            <label/>
         </settings>
         <field name="rma_id" formElement="input">
             <argument name="data" xsi:type="array">
@@ -55,7 +57,7 @@
                 </item>
             </argument>
             <settings>
-                <dataType>text</dataType>
+                <dataType>number</dataType>
                 <visible>false</visible>
             </settings>
         </field>
@@ -66,9 +68,20 @@
                 </item>
             </argument>
             <settings>
-                <dataType>text</dataType>
-                <visible>true</visible>
+                <dataType>string</dataType>
+                <label translate="true">Status</label>
+                <required>true</required>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
             </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Rma\Statuses"/>
+                    </settings>
+                </select>
+            </formElements>
         </field>
         <field name="reason" formElement="select">
             <argument name="data" xsi:type="array">
@@ -77,9 +90,16 @@
                 </item>
             </argument>
             <settings>
-                <dataType>text</dataType>
-                <visible>true</visible>
+                <dataType>string</dataType>
+                <label translate="true">Reason</label>
             </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Rma\Reasons"/>
+                    </settings>
+                </select>
+            </formElements>
         </field>
         <field name="resolution" formElement="select">
             <argument name="data" xsi:type="array">
@@ -88,9 +108,16 @@
                 </item>
             </argument>
             <settings>
-                <dataType>text</dataType>
-                <visible>true</visible>
+                <dataType>string</dataType>
+                <label translate="true">Resolution</label>
             </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Rma\Resolutions"/>
+                    </settings>
+                </select>
+            </formElements>
         </field>
     </fieldset>
 </form>
