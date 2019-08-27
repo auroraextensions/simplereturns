@@ -1,6 +1,6 @@
 <?php
 /**
- * SimpleReturnDataProvider.php
+ * DataProvider.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,9 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Form;
+namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma;
 
 use AuroraExtensions\SimpleReturns\{
-    Model\ResourceModel\SimpleReturn as SimpleReturnResource,
     Model\ResourceModel\SimpleReturn\Collection,
     Model\ResourceModel\SimpleReturn\CollectionFactory,
     Model\ViewModel\Rma\ListView as ViewModel,
@@ -28,14 +27,11 @@ use AuroraExtensions\SimpleReturns\{
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
-class SimpleReturnDataProvider extends AbstractDataProvider implements
+class DataProvider extends AbstractDataProvider implements
     \Countable,
     DataProviderInterface,
     ModuleComponentInterface
 {
-    /** @property array $loadedData */
-    protected $loadedData = [];
-
     /** @property ViewModel $viewModel */
     protected $viewModel;
 
@@ -84,15 +80,15 @@ class SimpleReturnDataProvider extends AbstractDataProvider implements
     }
 
     /**
-     * @param bool $includeKeys
+     * @param bool $preserveKeys
      * @return array
      */
-    public function getLabels(bool $includeKeys = true): array
+    public function getLabels(bool $preserveKeys = true): array
     {
         /** @var array $labels */
         $labels = $this->labels ?? [];
 
-        return $includeKeys ? $labels : array_values($labels);
+        return $preserveKeys ? $labels : array_values($labels);
     }
 
     /**
@@ -100,23 +96,47 @@ class SimpleReturnDataProvider extends AbstractDataProvider implements
      */
     public function getData(): array
     {
-        if (!empty($this->loadedData)) {
-            return $this->loadedData;
+        /** @var array $entries */
+        $entries = $this->getCollection()->toArray();
+
+        /** @var array $items */
+        $items = $entries['items'] ?? [];
+
+        /** @var array $keys */
+        $keys = $this->getLabelKeys();
+
+        /** @var array $labels */
+        $labels = $this->getLabels();
+
+        /** @var array $data */
+        $data = [
+            'totalRecords' => $this->count(),
+            'items' => [],
+        ];
+
+        /** @var array $item */
+        foreach ($items as $item) {
+            /** @var string $key */
+            foreach ($keys as $key) {
+                /** @var string|null $labelValue */
+                $labelValue = $item[$key] ?? null;
+
+                if ($labelValue !== null) {
+                    /** @var string|null $labelKey */
+                    $labelKey = $labels[$key] ?? null;
+
+                    if ($labelKey !== null) {
+                        $item[$key] = $this->viewModel->getFrontLabel(
+                            $labelKey,
+                            $labelValue
+                        );
+                    }
+                }
+            }
+
+            $data['items'][] = $item;
         }
 
-        /** @var SimpleReturnInterface[] $items */
-        $items = $this->getCollection()->getItems();
-
-        /** @var SimpleReturnInterface $rma */
-        foreach ($items as $rma) {
-            /** @var array $result */
-            $result = [];
-            $result['rma'] = $rma->getData();
-            $result['rma_id'] = $rma->getId();
-
-            $this->loadedData[$rma->getId()] = $result;
-        }
-
-        return $this->loadedData;
+        return $data;
     }
 }
