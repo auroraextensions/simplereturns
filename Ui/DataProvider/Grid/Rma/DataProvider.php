@@ -1,6 +1,6 @@
 <?php
 /**
- * SimpleReturnDataProvider.php
+ * DataProvider.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,10 +16,9 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Ui\DataProvider;
+namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma;
 
 use AuroraExtensions\SimpleReturns\{
-    Model\ResourceModel\SimpleReturn as SimpleReturnResource,
     Model\ResourceModel\SimpleReturn\Collection,
     Model\ResourceModel\SimpleReturn\CollectionFactory,
     Model\ViewModel\Rma\ListView as ViewModel,
@@ -28,7 +27,7 @@ use AuroraExtensions\SimpleReturns\{
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
-class SimpleReturnDataProvider extends AbstractDataProvider implements
+class DataProvider extends AbstractDataProvider implements
     \Countable,
     DataProviderInterface,
     ModuleComponentInterface
@@ -81,15 +80,15 @@ class SimpleReturnDataProvider extends AbstractDataProvider implements
     }
 
     /**
-     * @param bool $includeKeys
+     * @param bool $preserveKeys
      * @return array
      */
-    public function getLabels(bool $includeKeys = true): array
+    public function getLabels(bool $preserveKeys = true): array
     {
         /** @var array $labels */
         $labels = $this->labels ?? [];
 
-        return $includeKeys ? $labels : array_values($labels);
+        return $preserveKeys ? $labels : array_values($labels);
     }
 
     /**
