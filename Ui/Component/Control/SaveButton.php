@@ -18,49 +18,29 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Control;
 
-use Magento\Framework\{
-    App\RequestInterface,
-    Escaper,
-    UrlInterface,
-    View\Element\UiComponent\Control\ButtonProviderInterface
-};
+use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
 class SaveButton implements ButtonProviderInterface
 {
-    /** @property Escaper $escaper */
-    protected $escaper;
-
-    /** @property RequestInterface $request */
-    protected $request;
-
-    /** @property UrlInterface $urlBuilder */
-    protected $urlBuilder;
-
-    /**
-     * @param Escaper $escaper
-     * @param RequestInterface $request
-     * @param UrlInterface $urlBuilder
-     * @return void
-     */
-    public function __construct(
-        Escaper $escaper,
-        RequestInterface $request,
-        UrlInterface $urlBuilder
-    ) {
-        $this->escaper = $escaper;
-        $this->request = $request;
-        $this->urlBuilder = $urlBuilder;
-    }
-
     /**
      * @return array
      */
     public function getButtonData()
     {
         return [
-            'label' => __('Save'),
             'class' => 'save primary',
+            'data_attribute' => [
+                'form-role' => 'save',
+                'mage-init' => [
+                    'button' => [
+                        'event' => 'save',
+                    ],
+                ],
+            ],
+            'label' => __('Save'),
+            'onclick' => '',
             'sort_order' => 10,
+            'type' => 'submit',
         ];
     }
 }
