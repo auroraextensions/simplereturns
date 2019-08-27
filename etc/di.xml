@@ -25,25 +25,32 @@
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface"
                 type="AuroraExtensions\SimpleReturns\Model\DataModel\SimpleReturn"/>
-    <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface"
+                type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageManagementInterface"
                 type="AuroraExtensions\SimpleReturns\Model\ManagementModel\PackageManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\PackageRepository"/>
-    <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Package"/>
-    <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageInterface"
+                type="AuroraExtensions\SimpleReturns\Model\DataModel\Package"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterface"
+                type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelManagementInterface"
                 type="AuroraExtensions\SimpleReturns\Model\ManagementModel\LabelManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\LabelRepository"/>
-    <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Label"/>
-    <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface"
+                type="AuroraExtensions\SimpleReturns\Model\DataModel\Label"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface"
+                type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentManagementInterface"
                 type="AuroraExtensions\SimpleReturns\Model\ManagementModel\AttachmentManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AttachmentRepository"/>
-    <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface" type="AuroraExtensions\SimpleReturns\Model\DataModel\Attachment"/>
-    <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface"
+                type="AuroraExtensions\SimpleReturns\Model\DataModel\Attachment"/>
+    <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentSearchResultsInterface"
+                type="Magento\Framework\Api\SearchResults"/>
 
     <type name="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository">
         <arguments>
@@ -114,6 +121,18 @@
             <argument name="key" xsi:type="string">statuses</argument>
         </arguments>
     </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Rma\Reasons"
+                 type="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Generic">
+        <arguments>
+            <argument name="key" xsi:type="string">reasons</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Rma\Resolutions"
+                 type="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Generic">
+        <arguments>
+            <argument name="key" xsi:type="string">resolutions</argument>
+        </arguments>
+    </virtualType>
     <virtualType name="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Shipping\Carriers"
                  type="AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Generic">
         <arguments>
@@ -126,7 +145,7 @@
             <argument name="key" xsi:type="string">methods</argument>
         </arguments>
     </virtualType>
-    <type name="AuroraExtensions\SimpleReturns\Ui\DataProvider\SimpleReturnDataProvider">
+    <type name="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma\DataProvider">
         <arguments>
             <argument name="labels" xsi:type="array">
                 <item name="status" xsi:type="string">statuses</item>
@@ -135,7 +154,7 @@
             </argument>
         </arguments>
     </type>
-    <type name="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\SimpleReturnDataProvider">
+    <type name="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma\DataProvider">
         <arguments>
             <argument name="labels" xsi:type="array">
                 <item name="status" xsi:type="string">statuses</item>
