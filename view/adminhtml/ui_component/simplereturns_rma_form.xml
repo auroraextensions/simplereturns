@@ -95,6 +95,10 @@
             <settings>
                 <dataType>string</dataType>
                 <label translate="true">Reason</label>
+                <required>true</required>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
             </settings>
             <formElements>
                 <select>
@@ -113,6 +117,10 @@
             <settings>
                 <dataType>string</dataType>
                 <label translate="true">Resolution</label>
+                <required>true</required>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
             </settings>
             <formElements>
                 <select>
