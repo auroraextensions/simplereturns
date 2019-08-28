@@ -18,44 +18,10 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Control;
 
-use AuroraExtensions\SimpleReturns\{
-    Model\AdapterModel\Security\Token as Tokenizer,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\RequestInterface,
-    Escaper,
-    UrlInterface,
-    View\Element\UiComponent\Control\ButtonProviderInterface
-};
+use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
-class SaveButton implements ButtonProviderInterface, ModuleComponentInterface
+class SaveButton implements ButtonProviderInterface
 {
-    /** @property Escaper $escaper */
-    protected $escaper;
-
-    /** @property RequestInterface $request */
-    protected $request;
-
-    /** @property UrlInterface $urlBuilder */
-    protected $urlBuilder;
-
-    /**
-     * @param Escaper $escaper
-     * @param RequestInterface $request
-     * @param UrlInterface $urlBuilder
-     * @return void
-     */
-    public function __construct(
-        Escaper $escaper,
-        RequestInterface $request,
-        UrlInterface $urlBuilder
-    ) {
-        $this->escaper = $escaper;
-        $this->request = $request;
-        $this->urlBuilder = $urlBuilder;
-    }
-
     /**
      * @return array
      */
@@ -72,41 +38,8 @@ class SaveButton implements ButtonProviderInterface, ModuleComponentInterface
                 ],
             ],
             'label' => __('Save'),
-            'on_click' => $this->getOnClickJs(),
+            'on_click' => '',
             'sort_order' => 10,
         ];
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getOnClickJs(): ?string
-    {
-        /** @var int|string|null $rmaId */
-        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
-
-        if ($rmaId !== null) {
-            /** @var string|null $token */
-            $token = $this->request->getParam(self::PARAM_TOKEN);
-            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
-
-            if ($token !== null) {
-                /** @var string $targetUrl */
-                $targetUrl = $this->urlBuilder->getUrl(
-                    'simplereturns/rma/edit',
-                    [
-                        'rma_id' => $rmaId,
-                        'token' => $token,
-                    ]
-                );
-
-                return "(function(){window.location='{$targetUrl}';})();";
-            }
-        }
-
-        return null;
     }
 }
