@@ -61,6 +61,19 @@ class EditButton implements ButtonProviderInterface, ModuleComponentInterface
      */
     public function getButtonData()
     {
+        return [
+            'class' => 'edit secondary',
+            'label' => __('Edit'),
+            'on_click' => $this->getOnClickJs(),
+            'sort_order' => 20,
+        ];
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getOnClickJs(): ?string
+    {
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
         $rmaId = $rmaId !== null && is_numeric($rmaId)
@@ -73,8 +86,8 @@ class EditButton implements ButtonProviderInterface, ModuleComponentInterface
             $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
             if ($token !== null) {
-                /** @var string $editUrl */
-                $editUrl = $this->urlBuilder->getUrl(
+                /** @var string $targetUrl */
+                $targetUrl = $this->urlBuilder->getUrl(
                     'simplereturns/rma/edit',
                     [
                         'rma_id' => $rmaId,
@@ -82,15 +95,10 @@ class EditButton implements ButtonProviderInterface, ModuleComponentInterface
                     ]
                 );
 
-                return [
-                    'class' => 'save primary',
-                    'label' => __('Save'),
-                    'onclick' => "(function(){window.location='{$editUrl}';})();",
-                    'sort_order' => 10,
-                ];
+                return "(function(){window.location='{$targetUrl}';})();";
             }
         }
 
-        return [];
+        return null;
     }
 }

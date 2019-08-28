@@ -61,6 +61,19 @@ class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
      */
     public function getButtonData()
     {
+        return [
+            'class' => 'cancel secondary',
+            'label' => __('Cancel'),
+            'on_click' => $this->getOnClickJs(),
+            'sort_order' => 30,
+        ];
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getOnClickJs(): ?string
+    {
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
         $rmaId = $rmaId !== null && is_numeric($rmaId)
@@ -73,8 +86,8 @@ class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
             $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
             if ($token !== null) {
-                /** @var string $cancelUrl */
-                $cancelUrl = $this->urlBuilder->getUrl(
+                /** @var string $targetUrl */
+                $targetUrl = $this->urlBuilder->getUrl(
                     'simplereturns/rma/view',
                     [
                         'rma_id' => $rmaId,
@@ -82,15 +95,10 @@ class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
                     ]
                 );
 
-                return [
-                    'class' => 'cancel secondary',
-                    'label' => __('Cancel'),
-                    'onclick' => "(function(){window.location='{$cancelUrl}';})();",
-                    'sort_order' => 30,
-                ];
+                return "(function(){window.location='{$targetUrl}';})();";
             }
         }
 
-        return [];
+        return null;
     }
 }
