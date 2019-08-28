@@ -39,3 +39,14 @@
 #simplereturns-rma-status-actions-button {
   pointer-events: none;
 }
+
+#simplereturns-rma-comments {
+  border-left: 3px solid #eee;
+  margin: auto;
+  padding: 2rem;
+  width: 60%;
+}
+
+#simplereturns-rma-comments > span {
+  font-style: italic;
+}
