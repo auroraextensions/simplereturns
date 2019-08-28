@@ -1,5 +1,5 @@
 /**
- * edit-status.js
+ * status.js
  *
  * NOTICE OF LICENSE
  *
