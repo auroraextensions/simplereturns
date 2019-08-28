@@ -130,5 +130,12 @@
                 </select>
             </formElements>
         </field>
+        <container name="comments">
+            <htmlContent>
+                <block acl="AuroraExtensions_SimpleReturns::rma_return"
+                       class="Magento\Framework\View\Element\Template"
+                       name="simplereturns_rma_comments"/>
+            </htmlContent>
+        </container>
     </fieldset>
 </form>
