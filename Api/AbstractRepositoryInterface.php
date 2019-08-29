@@ -18,10 +18,10 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Api;
 
-use Magento\Framework\Api\{
-    SearchCriteriaInterface,
-    SearchResultsInterface,
-    Search\FilterGroup
+use Magento\Framework\{
+    Api\SearchCriteriaInterface,
+    Api\SearchResultsInterface,
+    Api\Search\FilterGroup
 };
 
 interface AbstractRepositoryInterface
