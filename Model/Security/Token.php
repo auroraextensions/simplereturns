@@ -16,15 +16,15 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Security;
+namespace AuroraExtensions\SimpleReturns\Model\Security;
 
 class Token
 {
     /** @constant string HASH_ALGO */
-    const HASH_ALGO = 'sha512';
+    public const HASH_ALGO = 'sha512';
 
     /**
-     * Create token of specified length and charset.
+     * Create token of specified length.
      *
      * @param int $length
      * @return string
