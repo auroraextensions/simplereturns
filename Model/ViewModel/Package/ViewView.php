@@ -29,7 +29,7 @@ use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\AdapterModel\Security\Token as Tokenizer,
+    Model\Security\Token as Tokenizer,
     Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface

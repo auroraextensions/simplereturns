@@ -27,7 +27,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
-    Model\AdapterModel\Security\Token as Tokenizer,
+    Model\Security\Token as Tokenizer,
     Model\SearchModel\Attachment as AttachmentAdapter,
     Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,

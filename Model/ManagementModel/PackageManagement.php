@@ -28,7 +28,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\LabelRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
-    Model\AdapterModel\Security\Token as Tokenizer,
+    Model\Security\Token as Tokenizer,
     Model\AdapterModel\Shipping\Carrier\CarrierFactory,
     Model\SystemModel\Module\Config as ModuleConfig,
     Shared\ModuleComponentInterface
