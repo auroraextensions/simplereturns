@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Control;
 
 use AuroraExtensions\SimpleReturns\{
-    Model\AdapterModel\Security\Token as Tokenizer,
+    Model\Security\Token as Tokenizer,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{

@@ -22,7 +22,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
-    Model\AdapterModel\Security\Token as Tokenizer,
+    Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
     Model\SystemModel\Module\Config as ModuleConfig,
     Shared\Component\LabelFormatterTrait,
