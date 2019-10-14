@@ -5,6 +5,7 @@ Simplified RMA for Magento Open Source.
 ## Table of Contents
 
 + [Description](#description)
++ [Installation](#installation)
 
 ## Description
 
