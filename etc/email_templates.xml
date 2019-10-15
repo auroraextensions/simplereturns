@@ -5,15 +5,15 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Aurora Extensions EULA,
- * which is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the MIT License, which
+ * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
  * @package       AuroraExtensions_SimpleReturns
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       Aurora Extensions EULA
+ * @license       MIT License
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
