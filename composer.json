@@ -1,6 +1,6 @@
 {
   "name": "auroraextensions/simplereturns",
-  "description": "Simplified RMA module for Magento Open Source.",
+  "description": "Simplified RMA for Magento Open Source.",
   "type": "magento2-module",
   "license": "MIT",
   "authors": [
