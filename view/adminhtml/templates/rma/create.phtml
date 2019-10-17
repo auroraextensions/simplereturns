@@ -15,21 +15,9 @@
  * @license       MIT License
  */
 
-/**
- * @use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface
- * @use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
- * @use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
- * @use AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView
- * @use Magento\Framework\View\Element\Template
- * @use Magento\Sales\Api\Data\OrderInterface
- */
-
 /** @var Magento\Framework\View\Element\Template $block */
 /** @var AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\CreateView $viewModel */
 $viewModel = $block->getViewModel();
-
-/** @var Magento\Sales\Api\Data\OrderInterface $order */
-$order = $viewModel->getOrder();
 
 /** @var array $reasons */
 $reasons = $viewModel->getReasons();
@@ -44,7 +32,7 @@ $resolutions = $viewModel->getResolutions();
                 <?= $block->getBlockHtml('formkey') ?>
                 <fieldset class="fieldset simplereturns" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
                     <legend class="legend">
-                        <span><?= $block->escapeHtml(__('Create Return for Order #%1', $order->getRealOrderId())) ?></span>
+                        <span><?= $block->escapeHtml(__('Create New RMA')) ?></span>
                     </legend>
                     <div class="field reason required">
                         <label class="label reason" for="reason">
