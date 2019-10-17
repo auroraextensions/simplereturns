@@ -33,14 +33,14 @@
              parent="AuroraExtensions_SimpleReturns::rma"
              resource="AuroraExtensions_SimpleReturns::rma_operation"
              sortOrder="10"/>
-        <add id="AuroraExtensions_SimpleReturns::rma_return"
+        <add id="AuroraExtensions_SimpleReturns::rma_request"
              title="Returns"
              translate="title"
              module="AuroraExtensions_SimpleReturns"
              dependsOnModule="AuroraExtensions_SimpleReturns"
              sortOrder="10"
              parent="AuroraExtensions_SimpleReturns::rma_operation"
-             resource="AuroraExtensions_SimpleReturns::rma_return"
+             resource="AuroraExtensions_SimpleReturns::rma_request"
              action="simplereturns/rma/index"/>
         <add id="AuroraExtensions_SimpleReturns::rma_package"
              title="Packages"
