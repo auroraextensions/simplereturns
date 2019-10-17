@@ -23,12 +23,7 @@
     <body>
         <referenceContainer name="content">
             <uiComponent name="simplereturns_rma_form"/>
-
             <referenceBlock name="simplereturns_rma_comments">
-                <!-- @see https://github.com/magento/magento2/issues/3356 -->
-                <action method="setTemplate">
-                    <argument name="template" xsi:type="string">AuroraExtensions_SimpleReturns::rma/comments.phtml</argument>
-                </action>
                 <arguments>
                     <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\EditView</argument>
                 </arguments>
