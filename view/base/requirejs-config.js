@@ -15,17 +15,11 @@
  */
 var config = {
     paths: {
-        'jquery.print': 'AuroraExtensions_SimpleReturns/js/plugins/jquery.print'
-    },
-    shim: {
-        'jquery.print': {
-            'deps': ['jquery']
-        }
+        'dropzone': 'AuroraExtensions_SimpleReturns/js/plugins/dropzone'
     },
     map: {
         '*': {
-            labelPrint: 'AuroraExtensions_SimpleReturns/js/print',
-            simpleReturnsDeleteAttachment: 'AuroraExtensions_SimpleReturns/js/action/rma/delete-attachment'
+            simpleReturnsDragAndDrop: 'AuroraExtensions_SimpleReturns/js/dnd'
         }
     }
 };
