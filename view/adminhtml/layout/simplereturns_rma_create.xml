@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * simplereturns_rma_edit.xml
+ * simplereturns_rma_create.xml
  *
  * NOTICE OF LICENSE
  *
@@ -25,7 +25,7 @@
             <uiComponent name="simplereturns_rma_form"/>
             <referenceBlock name="simplereturns_rma_comments">
                 <arguments>
-                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\EditView</argument>
+                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\CreateView</argument>
                 </arguments>
             </referenceBlock>
         </referenceContainer>

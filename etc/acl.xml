@@ -22,7 +22,7 @@
             <resource id="Magento_Backend::admin">
                 <resource id="AuroraExtensions_SimpleReturns::rma" title="RMA" translate="title" sortOrder="10">
                     <resource id="AuroraExtensions_SimpleReturns::rma_operation" title="Operations" translate="title" sortOrder="10">
-                        <resource id="AuroraExtensions_SimpleReturns::rma_return" title="Returns" translate="title" sortOrder="10">
+                        <resource id="AuroraExtensions_SimpleReturns::rma_request" title="Returns" translate="title" sortOrder="10">
                             <resource id="AuroraExtensions_SimpleReturns::actions" title="Actions" translate="title" sortOrder="10">
                                 <resource id="AuroraExtensions_SimpleReturns::create" title="Create" translate="title" sortOrder="10"/>
                                 <resource id="AuroraExtensions_SimpleReturns::view" title="View" translate="title" sortOrder="20"/>

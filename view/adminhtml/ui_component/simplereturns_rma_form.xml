@@ -132,9 +132,10 @@
         </field>
         <container name="comments">
             <htmlContent>
-                <block acl="AuroraExtensions_SimpleReturns::rma_return"
+                <block acl="AuroraExtensions_SimpleReturns::rma_request"
                        class="Magento\Framework\View\Element\Template"
-                       name="simplereturns_rma_comments"/>
+                       name="simplereturns_rma_comments"
+                       template="AuroraExtensions_SimpleReturns::rma/comments.phtml"/>
             </htmlContent>
         </container>
     </fieldset>
