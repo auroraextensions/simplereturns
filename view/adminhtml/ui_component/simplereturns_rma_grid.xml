@@ -41,7 +41,7 @@
         <settings>
             <updateUrl path="mui/index/render"/>
         </settings>
-        <aclResource>AuroraExtensions_SimpleReturns::rma_return</aclResource>
+        <aclResource>AuroraExtensions_SimpleReturns::rma_request</aclResource>
         <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma\DataProvider" name="simplereturns_rma_grid_datasource">
             <settings>
                 <primaryFieldName>rma_id</primaryFieldName>
