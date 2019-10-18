@@ -386,7 +386,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                     'recipient_address_postal_code'            => $returnsAddress->getPostcode(),
                     'recipient_address_country_code'           => $returnsAddress->getCountryId(),
                     'shipping_method'                          => $this->moduleConfig->getShippingMethod($storeId),
-                    'package_weight'                           => $this->getPackageWeight($originShipment, $storeId),
+                    'package_weight'                           => $this->getPackageWeight($order, $storeId),
                     'packages'                                 => $this->createShipmentPackages($package),
                     'base_currency_code'                       => $currencyCode,
                     'store_id'                                 => $storeId,
@@ -430,15 +430,13 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
 
                         /** @var int $labelId */
                         $labelId = $this->labelRepository->save(
-                            $label->addData(
-                                [
-                                    'pkg_id'          => $package->getId(),
-                                    'image'           => $labelImage,
-                                    'tracking_number' => $trackingNumber,
-                                    'remote_ip'       => $this->remoteAddress->getRemoteAddress(),
-                                    'token'           => $token,
-                                ]
-                            )
+                            $label->addData([
+                                'pkg_id'          => $package->getId(),
+                                'image'           => $labelImage,
+                                'tracking_number' => $trackingNumber,
+                                'remote_ip'       => $this->remoteAddress->getRemoteAddress(),
+                                'token'           => $token,
+                            ])
                         );
                         $package->setLabelId($labelId);
                         $this->packageRepository->save($package);
@@ -456,14 +454,14 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                 throw $e;
             } catch (LocalizedException $e) {
                 throw $e;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 throw $e;
             }
         } catch (NoSuchEntityException $e) {
             /* No action required. */
         } catch (LocalizedException $e) {
             /* No action required. */
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             /* No action required. */
         }
 
@@ -471,16 +469,16 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
     }
 
     /**
-     * @param Shipment $shipment
+     * @param OrderInterface $order
      * @param int $store
      * @return float
      */
-    public function getPackageWeight($shipment, int $store): float
+    public function getPackageWeight(OrderInterface $order, int $store): float
     {
         /** @var float $weight */
-        $weight = $shipment->getWeight() ?? $this->moduleConfig->getPackageWeight($store);
+        $weight = (float)($order->getWeight() ?? $this->moduleConfig->getPackageWeight($store));
 
-        return (float) $weight;
+        return $weight;
     }
 
     /**
