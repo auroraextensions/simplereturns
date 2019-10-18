@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ManagementModel;
 
+use Exception;
 use AuroraExtensions\SimpleReturns\{
     Api\PackageManagementInterface,
     Api\PackageRepositoryInterface,
@@ -27,6 +28,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\LabelRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\Psr\Log\LoggerTrait,
     Exception\ExceptionFactory,
     Model\Security\Token as Tokenizer,
     Model\AdapterModel\Shipping\Carrier\CarrierFactory,
@@ -54,9 +56,12 @@ use Magento\Shipping\{
     Model\Shipment\ReturnShipment
 };
 use Magento\Store\Model\StoreManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class PackageManagement implements PackageManagementInterface, ModuleComponentInterface
 {
+    use LoggerTrait;
+
     /** @property CarrierFactory $carrierFactory */
     protected $carrierFactory;
 
@@ -109,6 +114,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      * @param ExceptionFactory $exceptionFactory
      * @param LabelInterfaceFactory $labelFactory
      * @param LabelRepositoryInterface $labelRepository
+     * @param LoggerInterface $logger
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
@@ -127,6 +133,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
         ExceptionFactory $exceptionFactory,
         LabelInterfaceFactory $labelFactory,
         LabelRepositoryInterface $labelRepository,
+        LoggerInterface $logger,
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
         OrderRepositoryInterface $orderRepository,
@@ -143,6 +150,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
         $this->exceptionFactory = $exceptionFactory;
         $this->labelFactory = $labelFactory;
         $this->labelRepository = $labelRepository;
+        $this->logger = $logger;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
@@ -194,43 +202,44 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
             $visibleItems = $order->getAllVisibleItems();
 
             foreach ($visibleItems as $item) {
-                $items[] = $item->toArray(); }
+                $items[] = $item->toArray();
+            }
 
             /** @var string $description */
             $description = $this->getOrderComment($order);
 
-            /** @var array $containers */
-            $containers = $carrierModel->getContainerTypes(
-                $this->dataObjectFactory->create(
-                    [
-                        'method' => $this->moduleConfig->getShippingMethod($storeId),
-                    ]
-                )
+            /** @var string $containerCode */
+            $containerCode = $this->moduleConfig->getContainerCode(
+                $carrierCode,
+                $storeId
             );
 
-            /** @var string $container */
-            $container = $this->moduleConfig->getContainerCode(
+            /** @var string $containerType */
+            $containerType = $this->moduleConfig->getContainerType(
                 $carrierCode,
-                (int) $storeId
+                $containerCode,
+                $storeId
             );
 
             /** @var array $params */
             $params = [
-                'container'       => '00', /** @todo: Set up mapping for container type values. */
-                'description'     => $description,
+                'container' => $containerType,
+                'description' => $description,
                 'dimension_units' => $this->getDimensionUnit(),
-                'weight_units'    => $this->getWeightUnit(),
-                'weight'          => $packageWeight,
+                'weight_units' => $this->getWeightUnit(),
+                'weight' => $packageWeight,
             ];
 
             $packages[] = [
                 'params' => $params,
-                'items'  => $items,
+                'items' => $items,
             ];
         } catch (NoSuchEntityException $e) {
-            /* No action required. */
+            $this->getLogger()->error($e->getMessage());
         } catch (LocalizedException $e) {
-            /* No action required. */
+            $this->getLogger()->error($e->getMessage());
+        } catch (Exception $e) {
+            $this->getLogger()->error($e->getMessage());
         }
 
         return $packages;
@@ -262,7 +271,8 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
             $returnsAddress = $this->moduleConfig->getOriginInfo($storeId);
 
             /** @var Shipment $originShipment */
-            $originShipment = $order->getShipmentsCollection()->getFirstItem();
+            $originShipment = $order->getShipmentsCollection()
+                ->getFirstItem();
 
             /** @var string $carrierCode */
             $carrierCode = $this->moduleConfig->getShippingCarrier($storeId);
@@ -271,7 +281,10 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
             $carrierModel = $this->carrierFactory->create($carrierCode);
 
             /** @var string $currencyCode */
-            $currencyCode = $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+            $currencyCode = $this->storeManager
+                ->getStore()
+                ->getCurrentCurrency()
+                ->getCode();
 
             /** @var Region|null $shipperRegion */
             $shipperRegion = $this->regionCollectionFactory->create()

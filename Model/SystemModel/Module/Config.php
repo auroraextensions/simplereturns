@@ -31,7 +31,10 @@ use Magento\Store\{
     Model\ScopeInterface as StoreScopeInterface,
     Model\Store
 };
-use Magento\Ups\Model\Carrier as UPS;
+use Magento\Ups\{
+    Helper\Config as UpsHelper,
+    Model\Carrier as UPS
+};
 use Magento\Usps\Model\Carrier as USPS;
 
 class Config
@@ -58,23 +61,34 @@ class Config
     public const DEFAULT_RMA_STATUS_CODE = 'pending';
 
     /** @constant string DEFAULT_FEDEX_CONTAINER_CODE */
-    public const DEFAULT_FEDEX_CONTAINER_CODE = 'FEDEX_BOX';
+    public const DEFAULT_FEDEX_CONTAINER_CODE = 'YOUR_PACKAGING';
 
     /** @constant string DEFAULT_FEDEX_METHOD_CODE */
     public const DEFAULT_FEDEX_METHOD_CODE = 'FEDEX_GROUND';
 
     /** @constant string DEFAULT_UPS_CONTAINER_CODE */
-    public const DEFAULT_UPS_CONTAINER_CODE = '00';
+    public const DEFAULT_UPS_CONTAINER_CODE = 'CP';
+
+    /** @constant string DEFAULT_UPS_CONTAINER_TYPE */
+    public const DEFAULT_UPS_CONTAINER_TYPE = '00';
 
     /** @constant string DEFAULT_UPS_METHOD_CODE */
     public const DEFAULT_UPS_METHOD_CODE = '03';
 
-    /** @var array $containerMethods */
-    protected $containerMethods = [
-        DHL::CODE   => 'getDhlContainer',
-        Fedex::CODE => 'getFedexContainer',
-        UPS::CODE   => 'getUpsContainer',
-        USPS::CODE  => 'getUspsContainer',
+    /** @var array $containerCodeMethods */
+    protected $containerCodeMethods = [
+        DHL::CODE   => 'getDhlContainerCode',
+        Fedex::CODE => 'getFedexContainerCode',
+        UPS::CODE   => 'getUpsContainerCode',
+        USPS::CODE  => 'getUspsContainerCode',
+    ];
+
+    /** @var array $containerTypeMethods */
+    protected $containerTypeMethods = [
+        DHL::CODE   => 'getDhlContainerType',
+        Fedex::CODE => 'getFedexContainerType',
+        UPS::CODE   => 'getUpsContainerType',
+        USPS::CODE  => 'getUspsContainerType',
     ];
 
     /** @property DataObjectFactory $dataObjectFactory */
@@ -86,19 +100,25 @@ class Config
     /** @property DataObject $settings */
     protected $settings;
 
+    /** @property UpsHelper $upsHelper */
+    protected $upsHelper;
+
     /**
      * @param DataObjectFactory $dataObjectFactory
      * @param ScopeConfigInterface $scopeConfig
+     * @param UpsHelper $upsHelper
      * @param array $data
      * @return void
      */
     public function __construct(
         DataObjectFactory $dataObjectFactory,
         ScopeConfigInterface $scopeConfig,
+        UpsHelper $upsHelper,
         array $data = []
     ) {
         $this->dataObjectFactory = $dataObjectFactory;
         $this->scopeConfig = $scopeConfig;
+        $this->upsHelper = $upsHelper;
         $this->settings = $this->dataObjectFactory->create($data);
     }
 
@@ -250,33 +270,51 @@ class Config
     }
 
     /**
-     * @param string $code
+     * @param string $carrier
      * @param int $store
      * @param string $scope
      * @return string
      */
     public function getContainerCode(
+        string $carrier,
+        int $store = Store::DEFAULT_STORE_ID,
+        string $scope = StoreScopeInterface::SCOPE_STORE
+    ): string
+    {
+        /** @var string $method */
+        $method = $this->containerCodeMethods[$carrier];
+
+        return $this->{$method}($store, $scope);
+    }
+
+    /**
+     * @param string $carrier
+     * @param string $code
+     * @param int $store
+     * @param string $scope
+     * @return string
+     */
+    public function getContainerType(
+        string $carrier,
         string $code,
         int $store = Store::DEFAULT_STORE_ID,
         string $scope = StoreScopeInterface::SCOPE_STORE
     ): string
     {
         /** @var string $method */
-        $method = $this->containerMethods[$code];
+        $method = $this->containerTypeMethods[$carrier];
 
-        return $this->{$method}($store, $scope);
+        return $this->{$method}($code, $store, $scope);
     }
 
     /**
-     * Get shipping packaging for Fedex shipping method.
-     *
-     * @param int|string $store
+     * @param int $store
      * @param string $scope
      * @return string
      */
-    public function getFedexContainer(
-        $store = Store::DEFAULT_STORE_ID,
-        $scope = StoreScopeInterface::SCOPE_STORE
+    public function getFedexContainerCode(
+        int $store = Store::DEFAULT_STORE_ID,
+        string $scope = StoreScopeInterface::SCOPE_STORE
     ): string
     {
         return $this->scopeConfig->getValue(
@@ -287,15 +325,28 @@ class Config
     }
 
     /**
-     * Get shipping packaging for UPS shipping method.
-     *
-     * @param int|string $store
+     * @param string $code
+     * @param int $store
      * @param string $scope
      * @return string
      */
-    public function getUpsContainer(
-        $store = Store::DEFAULT_STORE_ID,
-        $scope = StoreScopeInterface::SCOPE_STORE
+    public function getFedexContainerType(
+        string $code,
+        int $store = Store::DEFAULT_STORE_ID,
+        string $scope = StoreScopeInterface::SCOPE_STORE
+    ): string
+    {
+        return $this->getFedexContainerCode($store, $scope);
+    }
+
+    /**
+     * @param int $store
+     * @param string $scope
+     * @return string
+     */
+    public function getUpsContainerCode(
+        int $store = Store::DEFAULT_STORE_ID,
+        string $scope = StoreScopeInterface::SCOPE_STORE
     ): string
     {
         return $this->scopeConfig->getValue(
@@ -303,6 +354,21 @@ class Config
             $scope,
             $store
         ) ?? self::DEFAULT_UPS_CONTAINER_CODE;
+    }
+
+    /**
+     * @param string $code
+     * @param int $store
+     * @param string $scope
+     * @return string
+     */
+    public function getUpsContainerType(
+        string $code,
+        int $store = Store::DEFAULT_STORE_ID,
+        string $scope = StoreScopeInterface::SCOPE_STORE
+    ): string
+    {
+        return $this->upsHelper->getCode('container', $code);
     }
 
     /**
