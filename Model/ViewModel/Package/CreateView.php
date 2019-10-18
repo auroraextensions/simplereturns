@@ -245,23 +245,13 @@ class CreateView extends AbstractView implements
      */
     public function getPackageWeight(): string
     {
-        /** @var Shipment $shipment */
-        $shipment = $this->getShipment();
+        /** @var OrderInterface $order */
+        $order = $this->getOrder();
 
-        /** @var float|string $weight */
-        $weight = $shipment->getWeight() ?? $this->moduleConfig->getPackageWeight();
+        /** @var float $weight */
+        $weight = (float)($order->getWeight() ?? $this->moduleConfig->getPackageWeight());
 
-        return number_format((float) $weight, 2);
-    }
-
-    /**
-     * @return Shipment
-     */
-    public function getShipment()
-    {
-        return $this->getOrder()
-            ->getShipmentsCollection()
-            ->getFirstItem();
+        return number_format($weight, 2);
     }
 
     /**
