@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\SystemModel\Module;
 
+use AuroraExtensions\SimpleReturns\Spec\System\Module\ConfigInterface;
 use Magento\Dhl\Model\Carrier as DHL;
 use Magento\Fedex\Model\Carrier as Fedex;
 use Magento\Framework\{
@@ -37,7 +38,7 @@ use Magento\Ups\{
 };
 use Magento\Usps\Model\Carrier as USPS;
 
-class Config
+class Config implements ConfigInterface
 {
     /** @constant string DEFAULT_RETURNS_RECIPIENT_FIRST_NAME */
     public const DEFAULT_RETURNS_RECIPIENT_FIRST_NAME = 'Customer';
