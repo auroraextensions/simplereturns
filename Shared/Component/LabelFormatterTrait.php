@@ -14,8 +14,13 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       MIT License
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Shared\Component;
 
+/**
+ * @todo: Decouple from ModuleConfigTrait.
+ */
 trait LabelFormatterTrait
 {
     /**
@@ -28,7 +33,7 @@ trait LabelFormatterTrait
     public function getFrontLabel(string $type, string $key): string
     {
         /** @var array $labels */
-        $labels = $this->moduleConfig
+        $labels = $this->getConfig()
             ->getSettings()
             ->getData($type);
 

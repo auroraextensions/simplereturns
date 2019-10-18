@@ -22,6 +22,9 @@ use AuroraExtensions\SimpleReturns\Spec\System\Module\ConfigInterface;
 
 trait ModuleConfigTrait
 {
+    /** @property ConfigInterface $moduleConfig */
+    protected $moduleConfig;
+
     /**
      * @return ConfigInterface
      */
