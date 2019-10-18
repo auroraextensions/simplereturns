@@ -26,11 +26,12 @@ use AuroraExtensions\SimpleReturns\{
     Api\PackageManagementInterface,
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Model\Security\Token as Tokenizer,
-    Model\SystemModel\Module\Config as ModuleConfig,
     Shared\Action\Redirector,
-    Shared\ModuleComponentInterface
+    Shared\ModuleComponentInterface,
+    Spec\System\Module\ConfigInterface
 };
 use Magento\Framework\{
     App\Action\Action,
@@ -49,8 +50,7 @@ class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
-    use Redirector {
+    use ModuleConfigTrait, Redirector {
         Redirector::__initialize as protected;
     }
 
@@ -59,9 +59,6 @@ class CreatePost extends Action implements
 
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
-
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
 
     /** @property PackageInterfaceFactory $packageFactory */
     protected $packageFactory;
@@ -88,7 +85,7 @@ class CreatePost extends Action implements
      * @param Context $context
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
-     * @param ModuleConfig $moduleConfig
+     * @param ConfigInterface $moduleConfig
      * @param PackageInterfaceFactory $packageFactory
      * @param PackageManagementInterface $packageManagement
      * @param PackageRepositoryInterface $packageRepository
@@ -102,7 +99,7 @@ class CreatePost extends Action implements
         Context $context,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
-        ModuleConfig $moduleConfig,
+        ConfigInterface $moduleConfig,
         PackageInterfaceFactory $packageFactory,
         PackageManagementInterface $packageManagement,
         PackageRepositoryInterface $packageRepository,
@@ -190,7 +187,8 @@ class CreatePost extends Action implements
                         $token = Tokenizer::createToken();
 
                         /** @var string $carrierCode */
-                        $carrierCode = $this->moduleConfig->getShippingCarrier();
+                        $carrierCode = $this->getConfig()
+                            ->getShippingCarrier();
 
                         /** @var array $pkgData */
                         $pkgData = [

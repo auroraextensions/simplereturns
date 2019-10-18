@@ -21,14 +21,15 @@ namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
-    Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface
+    Shared\ModuleComponentInterface,
+    Spec\System\Module\ConfigInterface
 };
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\{
@@ -45,14 +46,13 @@ class CreateView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
+    use ModuleConfigTrait;
+
     /** @property DirectoryHelper $directoryHelper */
     protected $directoryHelper;
 
     /** @property MessageManagerInterface $messageManager */
     protected $messageManager;
-
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
 
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
@@ -71,7 +71,7 @@ class CreateView extends AbstractView implements
      * @param array $data
      * @param DirectoryHelper $directoryHelper
      * @param MessageManagerInterface $messageManager
-     * @param ModuleConfig $moduleConfig
+     * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param Tokenizer $tokenizer
@@ -85,7 +85,7 @@ class CreateView extends AbstractView implements
         array $data = [],
         DirectoryHelper $directoryHelper,
         MessageManagerInterface $messageManager,
-        ModuleConfig $moduleConfig,
+        ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         Tokenizer $tokenizer
@@ -111,7 +111,7 @@ class CreateView extends AbstractView implements
      */
     public function getShippingCarrier(): string
     {
-        return $this->moduleConfig->getShippingCarrier();
+        return $this->getConfig()->getShippingCarrier();
     }
 
     /**
@@ -119,7 +119,7 @@ class CreateView extends AbstractView implements
      */
     public function getShippingMethod(): string
     {
-        return $this->moduleConfig->getShippingMethod();
+        return $this->getConfig()->getShippingMethod();
     }
 
     /**
@@ -137,7 +137,7 @@ class CreateView extends AbstractView implements
     ): string
     {
         /** @var array $labels */
-        $labels = $this->moduleConfig
+        $labels = $this->getConfig()
             ->getSettings()
             ->getData($type);
 
@@ -249,7 +249,7 @@ class CreateView extends AbstractView implements
         $order = $this->getOrder();
 
         /** @var float $weight */
-        $weight = (float)($order->getWeight() ?? $this->moduleConfig->getPackageWeight());
+        $weight = (float)($order->getWeight() ?? $this->getConfig()->getPackageWeight());
 
         return number_format($weight, 2);
     }

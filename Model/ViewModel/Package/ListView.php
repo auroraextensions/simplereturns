@@ -19,11 +19,13 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
 
 use AuroraExtensions\SimpleReturns\{
+    Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
-    Model\SystemModel\Module\Config as ModuleConfig,
     Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface
+    Shared\Component\LabelFormatterTrait,
+    Shared\ModuleComponentInterface,
+    Spec\System\Module\ConfigInterface
 };
 use Magento\Framework\{
     App\RequestInterface,
@@ -35,8 +37,7 @@ class ListView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    use ModuleConfigTrait, LabelFormatterTrait;
 
     /**
      * @param ConfigHelper $configHelper
@@ -44,7 +45,7 @@ class ListView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
-     * @param ModuleConfig $moduleConfig
+     * @param ConfigInterface $moduleConfig
      * @return void
      */
     public function __construct(
@@ -53,7 +54,7 @@ class ListView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
-        ModuleConfig $moduleConfig
+        ConfigInterface $moduleConfig
     ) {
         parent::__construct(
             $configHelper,
@@ -62,24 +63,6 @@ class ListView extends AbstractView implements
             $urlBuilder,
             $data
         );
-
         $this->moduleConfig = $moduleConfig;
-    }
-
-    /**
-     * Get frontend label for field type by key.
-     *
-     * @param string $type
-     * @param string $key
-     * @param string
-     */
-    public function getFrontLabel(string $type, string $key): string
-    {
-        /** @var array $labels */
-        $labels = $this->moduleConfig
-            ->getSettings()
-            ->getData($type);
-
-        return $labels[$key] ?? $key;
     }
 }

@@ -24,10 +24,11 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Shipping\Carrier;
 
 use AuroraExtensions\SimpleReturns\{
+    Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Exception\InvalidCarrierException,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\ModuleComponentInterface
+    Shared\ModuleComponentInterface,
+    Spec\System\Module\ConfigInterface
 };
 use Magento\Dhl\Model\Carrier as DHL;
 use Magento\Fedex\Model\Carrier as Fedex;
@@ -42,6 +43,8 @@ use Magento\Usps\Model\Carrier as USPS;
 
 class CarrierFactory implements ModuleComponentInterface
 {
+    use ModuleConfigTrait;
+
     /** @property array $carriers */
     protected $carriers = [
         DHL::CODE   => DHL::class,
@@ -56,23 +59,20 @@ class CarrierFactory implements ModuleComponentInterface
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
-
     /** @property ObjectManagerInterface $objectManager */
     protected $objectManager;
 
     /**
      * @param DataObjectFactory $dataObjectFactory
      * @param ExceptionFactory $exceptionFactory
-     * @param ModuleConfig $moduleConfig
+     * @param ConfigInterface $moduleConfig
      * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function __construct(
         DataObjectFactory $dataObjectFactory,
         ExceptionFactory $exceptionFactory,
-        ModuleConfig $moduleConfig,
+        ConfigInterface $moduleConfig,
         ObjectManagerInterface $objectManager
     ) {
         $this->dataObjectFactory = $dataObjectFactory;
@@ -91,7 +91,7 @@ class CarrierFactory implements ModuleComponentInterface
     public function create(string $code): CarrierInterface
     {
         /** @var array $codes */
-        $codes = array_keys($this->moduleConfig->getCarriers());
+        $codes = array_keys($this->getConfig()->getCarriers());
 
         if (!in_array($code, $codes)) {
             /** @var InvalidCarrierException $exception */

@@ -21,12 +21,13 @@ namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma\Status;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
-    Model\SystemModel\Module\Config as ModuleConfig,
     Shared\Component\LabelFormatterTrait,
-    Shared\ModuleComponentInterface
+    Shared\ModuleComponentInterface,
+    Spec\System\Module\ConfigInterface
 };
 use Magento\Backend\{
     App\Action,
@@ -46,7 +47,7 @@ class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use LabelFormatterTrait;
+    use ModuleConfigTrait, LabelFormatterTrait;
 
     /** @property EmailTransport $emailTransport */
     protected $emailTransport;
@@ -56,9 +57,6 @@ class EditPost extends Action implements
 
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
-
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
 
     /** @property OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
@@ -77,7 +75,7 @@ class EditPost extends Action implements
      * @param EmailTransport $emailTransport
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
-     * @param ModuleConfig $moduleConfig
+     * @param ConfigInterface $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
      * @param ResultJsonFactory $resultJsonFactory
      * @param JsonSerializer $serializer
@@ -89,7 +87,7 @@ class EditPost extends Action implements
         EmailTransport $emailTransport,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
-        ModuleConfig $moduleConfig,
+        ConfigInterface $moduleConfig,
         OrderRepositoryInterface $orderRepository,
         ResultJsonFactory $resultJsonFactory,
         JsonSerializer $serializer,

@@ -24,12 +24,13 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterfaceFactory,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
-    Model\SystemModel\Module\Config as ModuleConfig,
     Shared\Action\Redirector,
-    Shared\ModuleComponentInterface
+    Shared\ModuleComponentInterface,
+    Spec\System\Module\ConfigInterface
 };
 use Magento\Framework\{
     App\Action\Action,
@@ -50,8 +51,7 @@ class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
-    use Redirector {
+    use ModuleConfigTrait, Redirector {
         Redirector::__initialize as protected;
     }
 
@@ -66,9 +66,6 @@ class EditPost extends Action implements
 
     /** @property FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
-
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
 
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
@@ -97,7 +94,7 @@ class EditPost extends Action implements
      * @param DataPersistorInterface $dataPersistor
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
-     * @param ModuleConfig $moduleConfig
+     * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
      * @param Json $serializer
@@ -113,7 +110,7 @@ class EditPost extends Action implements
         DataPersistorInterface $dataPersistor,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
-        ModuleConfig $moduleConfig,
+        ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
         Json $serializer,

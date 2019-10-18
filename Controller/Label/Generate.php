@@ -28,7 +28,6 @@ use AuroraExtensions\SimpleReturns\{
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Model\Security\Token as Tokenizer,
-    Model\SystemModel\Module\Config as ModuleConfig,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
@@ -55,9 +54,6 @@ class Generate extends Action implements
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
-
-    /** @property ModuleConfig $moduleConfig */
-    protected $moduleConfig;
 
     /** @property PackageInterfaceFactory $packageFactory */
     protected $packageFactory;
@@ -86,7 +82,6 @@ class Generate extends Action implements
     /**
      * @param Context $context
      * @param ExceptionFactory $exceptionFactory
-     * @param ModuleConfig $moduleConfig
      * @param PackageInterfaceFactory $packageFactory
      * @param PackageManagementInterface $packageManagement
      * @param PackageRepositoryInterface $packageRepository
@@ -100,7 +95,6 @@ class Generate extends Action implements
     public function __construct(
         Context $context,
         ExceptionFactory $exceptionFactory,
-        ModuleConfig $moduleConfig,
         PackageInterfaceFactory $packageFactory,
         PackageManagementInterface $packageManagement,
         PackageRepositoryInterface $packageRepository,
@@ -113,7 +107,6 @@ class Generate extends Action implements
         parent::__construct($context);
         $this->__initialize();
         $this->exceptionFactory = $exceptionFactory;
-        $this->moduleConfig = $moduleConfig;
         $this->packageFactory = $packageFactory;
         $this->packageManagement = $packageManagement;
         $this->packageRepository = $packageRepository;
