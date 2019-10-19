@@ -177,4 +177,11 @@
             <argument name="paramKey" xsi:type="string">pkg_id</argument>
         </arguments>
     </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="simplereturns_order_grid_data_source" xsi:type="string">Magento\Sales\Model\ResourceModel\Order\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
