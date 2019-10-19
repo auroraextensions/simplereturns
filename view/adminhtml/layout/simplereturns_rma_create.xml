@@ -22,13 +22,7 @@
     </head>
     <body>
         <referenceContainer name="content">
-            <block class="Magento\Framework\View\Element\Template"
-                   name="simplereturns_rma_create"
-                   template="AuroraExtensions_SimpleReturns::rma/create.phtml">
-                <arguments>
-                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\CreateView</argument>
-                </arguments>
-            </block>
+            <uiComponent name="simplereturns_order_grid"/>
         </referenceContainer>
     </body>
 </page>
