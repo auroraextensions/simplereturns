@@ -22,7 +22,7 @@
     </head>
     <body>
         <referenceContainer name="content">
-            <uiComponent name="simplereturns_order_grid"/>
+            <uiComponent name="simplereturns_rma_form"/>
         </referenceContainer>
     </body>
 </page>
