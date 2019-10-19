@@ -177,6 +177,8 @@
             <argument name="paramKey" xsi:type="string">pkg_id</argument>
         </arguments>
     </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Order\SelectAction"
+                 type="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Action"></virtualType>
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
