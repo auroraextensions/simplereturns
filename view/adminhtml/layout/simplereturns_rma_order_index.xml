@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * simplereturns_rma_create.xml
+ * simplereturns_rma_order_index.xml
  *
  * NOTICE OF LICENSE
  *
@@ -17,12 +17,9 @@
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <head>
-        <css src="AuroraExtensions_SimpleReturns::css/simplereturns.css"/>
-    </head>
     <body>
         <referenceContainer name="content">
-            <uiComponent name="simplereturns_rma_form"/>
+            <uiComponent name="simplereturns_order_grid"/>
         </referenceContainer>
     </body>
 </page>

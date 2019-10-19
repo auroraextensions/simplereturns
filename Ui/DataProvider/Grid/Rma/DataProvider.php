@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma;
 
+use Countable;
 use AuroraExtensions\SimpleReturns\{
     Model\ResourceModel\SimpleReturn\Collection,
     Model\ResourceModel\SimpleReturn\CollectionFactory,
@@ -28,7 +29,7 @@ use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterfac
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
 class DataProvider extends AbstractDataProvider implements
-    \Countable,
+    Countable,
     DataProviderInterface,
     ModuleComponentInterface
 {

@@ -22,7 +22,6 @@ use AuroraExtensions\SimpleReturns\{
     Model\ResourceModel\SimpleReturn as SimpleReturnResource,
     Model\ResourceModel\SimpleReturn\Collection,
     Model\ResourceModel\SimpleReturn\CollectionFactory,
-    Model\ViewModel\Rma\ListView as ViewModel,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
@@ -36,9 +35,6 @@ class DataProvider extends AbstractDataProvider implements
     /** @property array $loadedData */
     protected $loadedData = [];
 
-    /** @property ViewModel $viewModel */
-    protected $viewModel;
-
     /**
      * @param string $name
      * @param string $primaryFieldName
@@ -46,7 +42,6 @@ class DataProvider extends AbstractDataProvider implements
      * @param array $meta
      * @param array $data
      * @param CollectionFactory $collectionFactory
-     * @param ViewModel $viewModel
      * @param array $labels
      * @return void
      */
@@ -57,7 +52,6 @@ class DataProvider extends AbstractDataProvider implements
         array $meta = [],
         array $data = [],
         CollectionFactory $collectionFactory,
-        ViewModel $viewModel,
         array $labels = []
     ) {
         parent::__construct(
@@ -68,7 +62,6 @@ class DataProvider extends AbstractDataProvider implements
             $data
         );
         $this->collection = $collectionFactory->create();
-        $this->viewModel = $viewModel;
         $this->labels = $labels;
     }
 
