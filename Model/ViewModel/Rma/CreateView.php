@@ -134,6 +134,27 @@ class CreateView extends AbstractView implements
     }
 
     /**
+     * @return string|null
+     */
+    public function getViewOrderUrl(): ?string
+    {
+        /** @var OrderInterface $order */
+        $order = $this->getOrder();
+
+        if ($order !== null) {
+            return $this->urlBuilder->getUrl(
+                'sales/order/view',
+                [
+                    'order_id' => $order->getId(),
+                    '_secure' => true,
+                ]
+            );
+        }
+
+        return null;
+    }
+
+    /**
      * @return array
      */
     public function getReasons(): array
