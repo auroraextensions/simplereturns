@@ -24,5 +24,17 @@ $order = $viewModel->getOrder();
 
 /** @var string $orderId */
 $orderId = $order->getRealOrderId();
+
+/** @var string $orderUrl */
+$orderUrl = $viewModel->getViewOrderUrl() ?? '#';
 ?>
-<a class="simplereturns-order-link" href="#"><?= $block->escapeHtml(__('Order #%1', $orderId)) ?></a>
+<div class="simplereturns__container">
+    <div class="simplereturns__field">
+        <div class="simplereturns__field-label">
+            <span><?= $block->escapeHtml(__('Order')) ?></span>
+        </div>
+        <div class="simplereturns__field-control">
+            <a class="simplereturns-order-link" href="<?= $block->escapeUrl($orderUrl) ?>"><?= $block->escapeHtml(__('#%1', $orderId)) ?></a>
+        </div>
+    </div>
+</div>
