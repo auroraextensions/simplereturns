@@ -50,3 +50,43 @@
 #simplereturns-rma-comments > span {
   font-style: italic;
 }
+
+.simplereturns-rma-form-before-html-content {
+  padding: 2rem;
+}
+
+.simplereturns__container {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.simplereturns__container > .simplereturns__field {
+  position: relative;
+}
+
+.simplereturns__container > .simplereturns__field > .simplereturns__field-control {
+  width: calc((100%) * 0.5 - 30px);
+  float: left;
+}
+
+.simplereturns__container > .simplereturns__field > .simplereturns__field-label {
+  width: calc((100%) * 0.25 - 30px);
+  float: left;
+  margin-left: 30px;
+}
+
+.simplereturns__container > .simplereturns__field > .simplereturns__field-label span {
+  float: right;
+  padding-right: 2rem;
+}
+
+.simplereturns__field:not(.simplereturns__field-option) > .simplereturns__field-label {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 2rem;
+  padding: 0;
+  white-space: nowrap;
+}

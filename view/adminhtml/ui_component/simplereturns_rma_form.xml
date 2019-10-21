@@ -48,7 +48,12 @@
             </settings>
         </dataProvider>
     </dataSource>
-    <htmlContent name="simplereturns_rma_form_before">
+    <htmlContent name="simplereturns_rma_form_before_html_content">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="additionalClasses" xsi:type="string">simplereturns-rma-form-before-html-content</item>
+            </item>
+        </argument>
         <block class="Magento\Framework\View\Element\Template"
                name="simplereturns_rma_form_before"
                template="AuroraExtensions_SimpleReturns::container/empty.phtml"/>
@@ -149,7 +154,12 @@
             </settings>
         </field>
     </fieldset>
-    <htmlContent name="simplereturns_rma_form_after">
+    <htmlContent name="simplereturns_rma_form_after_html_content">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="additionalClasses" xsi:type="string">simplereturns-rma-form-after-html-content</item>
+            </item>
+        </argument>
         <block class="Magento\Framework\View\Element\Template"
                name="simplereturns_rma_form_after"
                template="AuroraExtensions_SimpleReturns::container/empty.phtml"/>
