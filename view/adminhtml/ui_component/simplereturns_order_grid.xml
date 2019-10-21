@@ -197,12 +197,10 @@
                 <visible>false</visible>
             </settings>
         </column>
-        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Order\SelectAction">
+        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Order">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="actionPath" xsi:type="string">simplereturns/rma/create</item>
-                    <item name="entityKey" xsi:type="string">entity_id</item>
-                    <item name="secretKey" xsi:type="string">customer_id</item>
                 </item>
             </argument>
             <settings>

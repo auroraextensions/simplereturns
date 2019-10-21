@@ -23,6 +23,15 @@
     <body>
         <referenceContainer name="content">
             <uiComponent name="simplereturns_rma_form"/>
+            <referenceBlock name="simplereturns_rma_form_before">
+                <block class="Magento\Framework\View\Element\Template"
+                       name="simplereturns_rma_form_order_link"
+                       template="AuroraExtensions_SimpleReturns::rma/order_link.phtml">
+                    <arguments>
+                        <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\CreateView</argument>
+                    </arguments>
+                </block>
+            </referenceBlock>
         </referenceContainer>
     </body>
 </page>
