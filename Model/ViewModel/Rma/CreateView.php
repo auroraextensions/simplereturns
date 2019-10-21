@@ -46,6 +46,9 @@ class CreateView extends AbstractView implements
     /** @property ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
+    /** @property OrderInterface $order */
+    protected $order;
+
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
@@ -77,7 +80,6 @@ class CreateView extends AbstractView implements
             $urlBuilder,
             $data
         );
-
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
@@ -89,6 +91,10 @@ class CreateView extends AbstractView implements
      */
     public function getOrder(): ?OrderInterface
     {
+        if ($this->order !== null) {
+            return $this->order;
+        }
+
         /** @var int|string $orderId */
         $orderId = $this->request->getParam(self::PARAM_ORDER_ID);
 
@@ -107,7 +113,9 @@ class CreateView extends AbstractView implements
                 $orders = $this->orderAdapter->getOrdersByFields($fields);
 
                 if (!empty($orders)) {
-                    return $orders[0];
+                    $this->order = $orders[0];
+
+                    return $this->order;
                 }
 
                 /** @var NoSuchEntityException $exception */
