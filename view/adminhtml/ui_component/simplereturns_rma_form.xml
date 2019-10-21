@@ -48,6 +48,11 @@
             </settings>
         </dataProvider>
     </dataSource>
+    <htmlContent name="simplereturns_rma_form_before">
+        <block class="Magento\Framework\View\Element\Template"
+               name="simplereturns_rma_form_before"
+               template="AuroraExtensions_SimpleReturns::container/empty.phtml"/>
+    </htmlContent>
     <fieldset name="simplereturns">
         <settings>
             <collapsible>false</collapsible>
@@ -144,4 +149,9 @@
             </settings>
         </field>
     </fieldset>
+    <htmlContent name="simplereturns_rma_form_after">
+        <block class="Magento\Framework\View\Element\Template"
+               name="simplereturns_rma_form_after"
+               template="AuroraExtensions_SimpleReturns::container/empty.phtml"/>
+    </htmlContent>
 </form>
