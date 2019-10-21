@@ -19,7 +19,7 @@
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">simplereturns_pkg_grid.simplereturns_pkg_grid_datasource</item>
+            <item name="provider" xsi:type="string">simplereturns_pkg_grid.simplereturns_pkg_grid_data_source</item>
         </item>
     </argument>
     <settings>
@@ -33,15 +33,15 @@
         </buttons>
         <spinner>simplereturns_pkg_grid_columns</spinner>
         <deps>
-            <dep>simplereturns_pkg_grid.simplereturns_pkg_grid_datasource</dep>
+            <dep>simplereturns_pkg_grid.simplereturns_pkg_grid_data_source</dep>
         </deps>
     </settings>
-    <dataSource name="simplereturns_pkg_grid_datasource" component="Magento_Ui/js/grid/provider">
+    <dataSource name="simplereturns_pkg_grid_data_source" component="Magento_Ui/js/grid/provider">
         <settings>
             <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>AuroraExtensions_SimpleReturns::rma_request</aclResource>
-        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\PackageDataProvider" name="simplereturns_pkg_grid_datasource">
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\PackageDataProvider" name="simplereturns_pkg_grid_data_source">
             <settings>
                 <primaryFieldName>pkg_id</primaryFieldName>
                 <requestFieldName>pkg_id</requestFieldName>
