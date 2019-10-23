@@ -364,7 +364,7 @@ class ViewView extends AbstractView implements
                 if (!empty($orders)) {
                     $this->order = $orders[0];
 
-                    return $orders[0];
+                    return $this->order;
                 }
 
                 /** @var NoSuchEntityException $exception */
