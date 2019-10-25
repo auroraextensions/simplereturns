@@ -299,10 +299,8 @@ class CreatePost extends Action implements
                                 }
                             }
 
-                            /* Clear attachment metadata from session. */
+                            /* Clear attachment metadata, group key from session. */
                             $this->dataPersistor->clear($groupKey);
-
-                            /* Clear group key from session. */
                             $this->dataPersistor->clear(self::DATA_GROUP_KEY);
                         }
 
