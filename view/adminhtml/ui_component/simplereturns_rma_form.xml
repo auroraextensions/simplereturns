@@ -30,15 +30,13 @@
             <button name="save" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\SaveButton"/>
             <button name="cancel" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\CancelButton"/>
         </buttons>
-        <ajaxSave>true</ajaxSave>
-        <ajaxSaveType>simple</ajaxSaveType>
-        <dataScope>data</dataScope>
         <deps>
             <dep>simplereturns_rma_form.simplereturns_rma_form_data_source</dep>
         </deps>
     </settings>
     <dataSource name="simplereturns_rma_form_data_source" component="Magento_Ui/js/form/provider">
         <settings>
+            <submitUrl path="simplereturns/rma/createPost"/>
             <updateUrl path="mui/index/render"/>
         </settings>
         <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma\DataProvider" name="simplereturns_rma_form_data_source">
@@ -70,7 +68,7 @@
                 </item>
             </argument>
             <settings>
-                <dataType>number</dataType>
+                <dataType>text</dataType>
                 <visible>false</visible>
             </settings>
         </field>
