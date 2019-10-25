@@ -16,7 +16,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Controller\Rma;
+namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma;
 
 use AuroraExtensions\SimpleReturns\{
     Api\Data\AttachmentInterface,
@@ -178,11 +178,11 @@ class CreatePost extends Action implements
         $request = $this->getRequest();
 
         if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+            return $this->getRedirectToPath('*/*/dashboard');
         }
 
         /** @var array|null $params */
-        $params = $request->getPost('simplereturns');
+        $params = $request->getPost();
 
         if ($params !== null) {
             /** @var int|string|null $orderId */
@@ -353,6 +353,6 @@ class CreatePost extends Action implements
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+        return $this->getRedirectToPath('*/*/dashboard');
     }
 }

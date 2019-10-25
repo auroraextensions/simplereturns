@@ -31,9 +31,6 @@ use Magento\Framework\{
 
 class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
 {
-    /** @property Escaper $escaper */
-    protected $escaper;
-
     /** @property RequestInterface $request */
     protected $request;
 
@@ -41,17 +38,14 @@ class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
     protected $urlBuilder;
 
     /**
-     * @param Escaper $escaper
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @return void
      */
     public function __construct(
-        Escaper $escaper,
         RequestInterface $request,
         UrlInterface $urlBuilder
     ) {
-        $this->escaper = $escaper;
         $this->request = $request;
         $this->urlBuilder = $urlBuilder;
     }
@@ -64,7 +58,7 @@ class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
         return [
             'class' => 'cancel secondary',
             'label' => __('Cancel'),
-            'on_click' => $this->getOnClickJs(),
+            'on_click' => $this->getOnClickJs() ?? '',
             'sort_order' => 30,
         ];
     }
