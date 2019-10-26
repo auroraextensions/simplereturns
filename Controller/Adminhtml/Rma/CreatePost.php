@@ -24,6 +24,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterfaceFactory,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
@@ -40,8 +41,7 @@ use Magento\Framework\{
     App\Action\Context,
     App\Action\HttpPostActionInterface,
     App\Filesystem\DirectoryList,
-    App\Request\DataPersistorInterface,
-    Controller\Result\Redirect as ResultRedirect,
+    Controller\Result\JsonFactory as ResultJsonFactory,
     Data\Form\FormKey\Validator as FormKeyValidator,
     Escaper,
     Exception\AlreadyExistsException,
@@ -59,15 +59,12 @@ class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use LabelFormatterTrait, Redirector {
+    use LabelFormatterTrait, ModuleConfigTrait, Redirector {
         Redirector::__initialize as protected;
     }
 
     /** @property AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
-
-    /** @property DataPersistorInterface $dataPersistor */
-    protected $dataPersistor;
 
     /** @property DateTimeFactory $dateTimeFactory */
     protected $dateTimeFactory;
@@ -96,6 +93,9 @@ class CreatePost extends Action implements
     /** @property RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
+    /** @property ResultJsonFactory $resultJsonFactory */
+    protected $resultJsonFactory;
+
     /** @property Json $serializer */
     protected $serializer;
 
@@ -111,7 +111,6 @@ class CreatePost extends Action implements
     /**
      * @param Context $context
      * @param AttachmentRepositoryInterface $attachmentRepository
-     * @param DataPersistorInterface $dataPersistor
      * @param DateTimeFactory $dateTimeFactory
      * @param EmailTransport $emailTransport
      * @param Escaper $escaper
@@ -122,6 +121,7 @@ class CreatePost extends Action implements
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
+     * @param ResultJsonFactory $resultJsonFactory
      * @param Json $serializer
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
@@ -131,7 +131,6 @@ class CreatePost extends Action implements
     public function __construct(
         Context $context,
         AttachmentRepositoryInterface $attachmentRepository,
-        DataPersistorInterface $dataPersistor,
         DateTimeFactory $dateTimeFactory,
         EmailTransport $emailTransport,
         Escaper $escaper,
@@ -142,6 +141,7 @@ class CreatePost extends Action implements
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
+        ResultJsonFactory $resultJsonFactory,
         Json $serializer,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
@@ -150,7 +150,6 @@ class CreatePost extends Action implements
         parent::__construct($context);
         $this->__initialize();
         $this->attachmentRepository = $attachmentRepository;
-        $this->dataPersistor = $dataPersistor;
         $this->dateTimeFactory = $dateTimeFactory;
         $this->emailTransport = $emailTransport;
         $this->escaper = $escaper;
@@ -161,6 +160,7 @@ class CreatePost extends Action implements
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->remoteAddress = $remoteAddress;
+        $this->resultJsonFactory = $resultJsonFactory;
         $this->serializer = $serializer;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
@@ -177,182 +177,171 @@ class CreatePost extends Action implements
         /** @var Magento\Framework\App\RequestInterface $request */
         $request = $this->getRequest();
 
-        if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            return $this->getRedirectToPath('*/*/dashboard');
+        /** @var array $response */
+        $response = [];
+
+        /** @var Magento\Framework\Controller\Result\Json $resultJson */
+        $resultJson = $this->resultJsonFactory->create();
+
+        if (!$request->isPost()) {
+            return $this->resultJsonFactory->create()->setData([
+                'errors' => true,
+                'message' => __('Invalid request type. Must be POST request.'),
+            ]);
         }
 
-        /** @var array|null $params */
-        $params = $request->getPost();
+        if (!$this->formKeyValidator->validate($request)) {
+            return $this->resultJsonFactory->create()->setData([
+                'errors' => true,
+                'message' => __('Invalid form key.'),
+            ]);
+        }
 
-        if ($params !== null) {
-            /** @var int|string|null $orderId */
-            $orderId = $request->getParam(self::PARAM_ORDER_ID);
-            $orderId = !empty($orderId) ? $orderId : null;
+        /** @var int|string|null $orderId */
+        $orderId = $request->getParam(self::PARAM_ORDER_ID);
+        $orderId = !empty($orderId) ? $orderId : null;
 
-            /** @var string|null $protectCode */
-            $protectCode = $request->getParam(self::PARAM_PROTECT_CODE);
-            $protectCode = !empty($protectCode) ? $protectCode : null;
+        /** @var string|null $protectCode */
+        $protectCode = $request->getParam(self::PARAM_PROTECT_CODE);
+        $protectCode = !empty($protectCode) ? $protectCode : null;
 
-            /** @var string|null $reason */
-            $reason = $params['reason'] ?? null;
-            $reason = $reason !== null && !empty($reason)
-                ? $this->escaper->escapeHtml($reason)
-                : null;
+        /** @var string|null $reason */
+        $reason = $request->getPostValue('reason');
+        $reason = $reason !== null && !empty($reason)
+            ? $this->escaper->escapeHtml($reason)
+            : null;
 
-            /** @var string|null $resolution */
-            $resolution = $params['resolution'] ?? null;
-            $resolution = $resolution !== null && !empty($resolution)
-                ? $this->escaper->escapeHtml($resolution)
-                : null;
+        /** @var string|null $resolution */
+        $resolution = $request->getPostValue('resolution');
+        $resolution = $resolution !== null && !empty($resolution)
+            ? $this->escaper->escapeHtml($resolution)
+            : null;
 
-            /** @var string|null $comments */
-            $comments = $params['comments'] ?? null;
-            $comments = $comments !== null && !empty($comments)
-                ? $this->escaper->escapeHtml($comments)
-                : null;
+        /** @var string|null $comments */
+        $comments = $request->getPostValue('comments');
+        $comments = $comments !== null && !empty($comments)
+            ? $this->escaper->escapeHtml($comments)
+            : null;
 
-            /** @var array $fields */
-            $fields = [
-                self::FIELD_INCREMENT_ID => $orderId,
-                self::FIELD_PROTECT_CODE => $protectCode,
-            ];
+        /** @var array $fields */
+        $fields = [
+            self::FIELD_INCREMENT_ID => $orderId,
+            self::FIELD_PROTECT_CODE => $protectCode,
+        ];
 
-            try {
-                /** @var OrderInterface[] $orders */
-                $orders = $this->orderAdapter->getOrdersByFields($fields);
+        try {
+            /** @var OrderInterface[] $orders */
+            $orders = $this->orderAdapter->getOrdersByFields($fields);
 
-                if (!empty($orders)) {
-                    /** @var OrderInterface $order */
-                    $order = $orders[0];
+            if (!empty($orders)) {
+                /** @var OrderInterface $order */
+                $order = $orders[0];
 
-                    try {
-                        /** @var SimpleReturn $rma */
-                        $rma = $this->simpleReturnRepository->get($order);
+                try {
+                    /** @var SimpleReturn $rma */
+                    $rma = $this->simpleReturnRepository->get($order);
 
-                        /** @note Consider possible redirect to RMA view page. */
-                        if ($rma->getId()) {
-                            /** @var AlreadyExistsException $exception */
-                            $exception = $this->exceptionFactory->create(
-                                AlreadyExistsException::class,
-                                __('An RMA request already exists for this order.')
-                            );
-
-                            throw $exception;
-                        }
-                    /* RMA doesn't exist, continue processing. */
-                    } catch (NoSuchEntityException $e) {
-                        /** @var SimpleReturn $rma */
-                        $rma = $this->simpleReturnFactory->create();
-
-                        /** @var string $remoteIp */
-                        $remoteIp = $this->remoteAddress->getRemoteAddress();
-
-                        /** @var string $token */
-                        $token = Tokenizer::createToken();
-
-                        /** @var DateTime $createdTime */
-                        $createdTime = $this->dateTimeFactory->create();
-
-                        /** @var array $data */
-                        $data = [
-                            'order_id'   => $orderId,
-                            'status'     => ModuleConfig::DEFAULT_RMA_STATUS_CODE,
-                            'reason'     => $reason,
-                            'resolution' => $resolution,
-                            'comments'   => $comments,
-                            'remote_ip'  => $remoteIp,
-                            'token'      => $token,
-                            'created_at' => $createdTime,
-                        ];
-
-                        /** @var int $rmaId */
-                        $rmaId = $this->simpleReturnRepository->save(
-                            $rma->addData($data)
+                    /** @note Consider possible redirect to RMA view page. */
+                    if ($rma->getId()) {
+                        /** @var AlreadyExistsException $exception */
+                        $exception = $this->exceptionFactory->create(
+                            AlreadyExistsException::class,
+                            __('An RMA request already exists for this order.')
                         );
 
-                        /** @var string|null $groupKey */
-                        $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
-
-                        /* Update attachments with new RMA ID. */
-                        if ($groupKey !== null) {
-                            /** @var array $metadata */
-                            $metadata = $this->serializer->unserialize(
-                                $this->dataPersistor->get($groupKey)
-                                    ?? $this->serializer->serialize([])
-                            );
-
-                            /** @var array $metadatum */
-                            foreach ($metadata as $metadatum) {
-                                /** @var int|string|null $attachmentId */
-                                $attachmentId = $metadatum['attachment_id'] ?? null;
-                                $attachmentId = $attachmentId !== null && is_numeric($attachmentId)
-                                    ? (int) $attachmentId
-                                    : null;
-
-                                if ($attachmentId !== null) {
-                                    /** @var AttachmentInterface $attachment */
-                                    $attachment = $this->attachmentRepository->getById($attachmentId);
-
-                                    $this->attachmentRepository->save(
-                                        $attachment->setRmaId($rmaId)
-                                    );
-                                }
-                            }
-
-                            /* Clear attachment metadata, group key from session. */
-                            $this->dataPersistor->clear($groupKey);
-                            $this->dataPersistor->clear(self::DATA_GROUP_KEY);
-                        }
-
-                        /* Send New RMA Request email */
-                        $this->emailTransport->send(
-                            'simplereturns/customer/rma_request_new_email_template',
-                            'simplereturns/customer/rma_request_new_email_identity',
-                            [
-                                'orderId' => $order->getRealOrderId(),
-                                'frontId' => $rma->getFrontId(),
-                                'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
-                                'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
-                                'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
-                                'comments' => $this->escaper->escapeHtml($rma->getComments()),
-                            ],
-                            $order->getCustomerEmail(),
-                            $order->getCustomerName(),
-                            (int) $order->getStoreId()
-                        );
-
-                        /** @var string $viewUrl */
-                        $viewUrl = $this->urlBuilder->getUrl(
-                            'simplereturns/rma/view',
-                            [
-                                'rma_id'  => $rmaId,
-                                'token'   => $token,
-                                '_secure' => true,
-                            ]
-                        );
-
-                        return $this->getRedirectToUrl($viewUrl);
-                    } catch (AlreadyExistsException $e) {
-                        throw $e;
-                    } catch (LocalizedException $e) {
-                        throw $e;
+                        throw $exception;
                     }
+                /* RMA doesn't exist, continue processing. */
+                } catch (NoSuchEntityException $e) {
+                    /** @var SimpleReturn $rma */
+                    $rma = $this->simpleReturnFactory->create();
+
+                    /** @var string $remoteIp */
+                    $remoteIp = $this->remoteAddress->getRemoteAddress();
+
+                    /** @var string $token */
+                    $token = Tokenizer::createToken();
+
+                    /** @var DateTime $createdTime */
+                    $createdTime = $this->dateTimeFactory->create();
+
+                    /** @var array $data */
+                    $data = [
+                        'order_id'   => $orderId,
+                        'status'     => ModuleConfig::DEFAULT_RMA_STATUS_CODE,
+                        'reason'     => $reason,
+                        'resolution' => $resolution,
+                        'comments'   => $comments,
+                        'remote_ip'  => $remoteIp,
+                        'token'      => $token,
+                        'created_at' => $createdTime,
+                    ];
+
+                    /** @var int $rmaId */
+                    $rmaId = $this->simpleReturnRepository->save(
+                        $rma->addData($data)
+                    );
+
+                    /* Send New RMA Request email */
+                    $this->emailTransport->send(
+                        'simplereturns/customer/rma_request_new_email_template',
+                        'simplereturns/customer/rma_request_new_email_identity',
+                        [
+                            'orderId' => $order->getRealOrderId(),
+                            'frontId' => $rma->getFrontId(),
+                            'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
+                            'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
+                            'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
+                            'comments' => $this->escaper->escapeHtml($rma->getComments()),
+                        ],
+                        $order->getCustomerEmail(),
+                        $order->getCustomerName(),
+                        (int) $order->getStoreId()
+                    );
+
+                    /** @var string $viewUrl */
+                    $viewUrl = $this->urlBuilder->getUrl(
+                        'simplereturns/rma/view',
+                        [
+                            'rma_id'  => $rmaId,
+                            'token'   => $token,
+                            '_secure' => true,
+                        ]
+                    );
+
+                    $response = [
+                        'success' => true,
+                        'messages' => [__('Successfully created RMA.')],
+                        'redirectUrl' => $viewUrl,
+                    ];
+
+                    return $resultJson->setData($response);
+                } catch (AlreadyExistsException $e) {
+                    throw $e;
+                } catch (LocalizedException $e) {
+                    throw $e;
                 }
-
-                /** @var LocalizedException $exception */
-                $exception = $this->exceptionFactory->create(
-                    LocalizedException::class,
-                    __('Unable to create RMA request.')
-                );
-
-                throw $exception;
-            } catch (NoSuchEntityException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
-            } catch (LocalizedException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
             }
+
+            /** @var LocalizedException $exception */
+            $exception = $this->exceptionFactory->create(
+                LocalizedException::class,
+                __('Unable to create RMA request.')
+            );
+
+            throw $exception;
+        } catch (NoSuchEntityException $e) {
+            $response = [
+                'error' => true,
+                'messages' => [$e->getMessage()],
+            ];
+        } catch (LocalizedException $e) {
+            $response = [
+                'error' => true,
+                'messages' => [$e->getMessage()],
+            ];
         }
 
-        return $this->getRedirectToPath('*/*/dashboard');
+        return $resultJson->setData($response);
     }
 }
