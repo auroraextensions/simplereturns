@@ -25,7 +25,14 @@ use AuroraExtensions\SimpleReturns\{
     Model\ResourceModel\SimpleReturn\CollectionFactory,
     Shared\ModuleComponentInterface
 };
-use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
+use Magento\Framework\{
+    Api\FilterBuilder,
+    Api\Search\SearchCriteria,
+    Api\Search\SearchCriteriaBuilder,
+    Api\Search\SearchResultInterface,
+    App\RequestInterface,
+    View\Element\UiComponent\DataProvider\DataProviderInterface
+};
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
 class DataProvider extends AbstractDataProvider implements
@@ -33,8 +40,23 @@ class DataProvider extends AbstractDataProvider implements
     DataProviderInterface,
     ModuleComponentInterface
 {
+    /** @constant string WILDCARD */
+    public const WILDCARD = '*';
+
+    /** @property FilterBuilder $filterBuilder */
+    protected $filterBuilder;
+
+    /** @property array $labels */
+    protected $labels;
+
     /** @property array $loadedData */
     protected $loadedData = [];
+
+    /** @property RequestInterface $request */
+    protected $request;
+
+    /** @property SearchCriteriaBuilder $searchCriteriaBuilder */
+    protected $searchCriteriaBuilder;
 
     /**
      * @param string $name
@@ -43,7 +65,10 @@ class DataProvider extends AbstractDataProvider implements
      * @param array $meta
      * @param array $data
      * @param CollectionFactory $collectionFactory
+     * @param FilterBuilder $filterBuilder
      * @param array $labels
+     * @param RequestInterface $request
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @return void
      */
     public function __construct(
@@ -53,7 +78,10 @@ class DataProvider extends AbstractDataProvider implements
         array $meta = [],
         array $data = [],
         CollectionFactory $collectionFactory,
-        array $labels = []
+        FilterBuilder $filterBuilder,
+        array $labels = [],
+        RequestInterface $request,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         parent::__construct(
             $name,
@@ -63,7 +91,40 @@ class DataProvider extends AbstractDataProvider implements
             $data
         );
         $this->collection = $collectionFactory->create();
+        $this->filterBuilder = $filterBuilder;
         $this->labels = $labels;
+        $this->request = $request;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->prepareSubmitUrl();
+    }
+
+    /**
+     * @return void
+     */
+    protected function prepareSubmitUrl(): void
+    {
+        if (isset($this->data['config']['filter_url_params'])) {
+            /** @var string $paramName */
+            /** @var mixed $paramValue */
+            foreach ($this->data['config']['filter_url_params'] as $paramName => $paramValue) {
+                $paramValue = $paramValue !== static::WILDCARD
+                    ? $paramValue
+                    : $this->request->getParam($paramName);
+
+                if ($paramValue) {
+                    $this->data['config']['submit_url'] = sprintf(
+                        '%s%s/%s/',
+                        $this->data['config']['submit_url'],
+                        $paramName,
+                        $paramValue
+                    );
+
+                    $this->searchCriteriaBuilder->addFilter(
+                        $this->filterBuilder->setField($paramName)->setValue($paramValue)->setConditionType('eq')->create()
+                    );
+                }
+            }
+        }
     }
 
     /**
