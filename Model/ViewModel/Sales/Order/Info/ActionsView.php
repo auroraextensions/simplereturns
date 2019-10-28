@@ -23,6 +23,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
+    Model\ValidatorModel\Sales\Order\EligibilityValidator,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
 };
@@ -41,6 +42,9 @@ class ActionsView extends AbstractView implements
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
+    /** @property EligibilityValidator $validator */
+    protected $validator;
+
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
@@ -48,6 +52,7 @@ class ActionsView extends AbstractView implements
      * @param UrlInterface $urlBuilder
      * @param array $data
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param EligibilityValidator $validator
      * @return void
      */
     public function __construct(
@@ -56,7 +61,8 @@ class ActionsView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        EligibilityValidator $validator
     ) {
         parent::__construct(
             $configHelper,
@@ -67,6 +73,7 @@ class ActionsView extends AbstractView implements
         );
 
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->validator = $validator;
     }
 
     /**
@@ -138,5 +145,14 @@ class ActionsView extends AbstractView implements
                 '_secure' => true,
             ]
         );
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return bool
+     */
+    public function isOrderEligible(OrderInterface $order): bool
+    {
+        return $this->validator->isOrderEligible($order);
     }
 }
