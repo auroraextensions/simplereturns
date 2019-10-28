@@ -33,6 +33,7 @@ class SaveButton implements ButtonProviderInterface
                 'form-role' => 'save',
                 'mage-init' => [
                     'button' => ['event' => 'save'],
+                    'simpleReturnsRmaFormRedirect' => [],
                 ],
             ],
             'label' => __('Save'),

@@ -1,5 +1,5 @@
 /**
- * requirejs-config.js
+ * redirect.js
  *
  * NOTICE OF LICENSE
  *
@@ -13,11 +13,22 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       MIT License
  */
-var config = {
-    map: {
-        '*': {
-            simpleReturnsRmaEditStatus: 'AuroraExtensions_SimpleReturns/js/rma/edit/status',
-            simpleReturnsRmaFormRedirect: 'AuroraExtensions_SimpleReturns/js/rma/form/redirect'
-        }
-    }
-};
+define([
+    'jquery'
+], function ($) {
+    'use strict';
+
+    return function () {
+        $.ajaxSetup({
+            /**
+             * @param {Object} response
+             * @return {void}
+             */
+            success: function (response) {
+                if (response.isSimpleReturnsAjax) {
+                    window.location.href = response.viewUrl;
+                }
+            }
+        });
+    };
+});
