@@ -16,7 +16,8 @@
 var config = {
     map: {
         '*': {
-            simpleReturnsRmaEditStatus: 'AuroraExtensions_SimpleReturns/js/rma/edit/status'
+            simpleReturnsRmaEditStatus: 'AuroraExtensions_SimpleReturns/js/rma/edit/status',
+            simpleReturnsRmaFormRedirect: 'AuroraExtensions_SimpleReturns/js/rma/form/redirect'
         }
     }
 };
