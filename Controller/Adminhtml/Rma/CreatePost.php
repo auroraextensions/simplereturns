@@ -205,6 +205,12 @@ class CreatePost extends Action implements
         $protectCode = $request->getParam(self::PARAM_PROTECT_CODE);
         $protectCode = !empty($protectCode) ? $protectCode : null;
 
+        /** @var string|null $status */
+        $status = $request->getPostValue('status');
+        $status = $status !== null && !empty($status)
+            ? $this->escaper->escapeHtml($status)
+            : null;
+
         /** @var string|null $reason */
         $reason = $request->getPostValue('reason');
         $reason = $reason !== null && !empty($reason)
@@ -268,7 +274,7 @@ class CreatePost extends Action implements
                     /** @var array $data */
                     $data = [
                         'order_id'   => $orderId,
-                        'status'     => ModuleConfig::DEFAULT_RMA_STATUS_CODE,
+                        'status'     => $status,
                         'reason'     => $reason,
                         'resolution' => $resolution,
                         'comments'   => $comments,
@@ -309,13 +315,12 @@ class CreatePost extends Action implements
                         ]
                     );
 
-                    $response = [
+                    return $resultJson->setData([
                         'success' => true,
-                        'messages' => [__('Successfully created RMA.')],
-                        'redirectUrl' => $viewUrl,
-                    ];
-
-                    return $resultJson->setData($response);
+                        'isSimpleReturnsAjax' => true,
+                        'message' => __('Successfully created RMA.'),
+                        'viewUrl' => $viewUrl,
+                    ]);
                 } catch (AlreadyExistsException $e) {
                     throw $e;
                 } catch (LocalizedException $e) {
