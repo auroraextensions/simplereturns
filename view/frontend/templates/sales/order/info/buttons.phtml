@@ -16,12 +16,8 @@
  */
 
 /**
- * @use AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\Info\ActionsView
- * @use Magento\Sales\Api\Data\OrderInterface
- * @use Magento\Sales\Block\Order\Info\Buttons
- */
-
-/**
+ * @see AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\Info\ActionsView
+ * @see Magento\Sales\Block\Order\Info\Buttons
  * @see Magento_Sales::order/info/buttons.phtml
  * @var Buttons $block
  */
@@ -31,7 +27,7 @@ use Magento\Sales\Helper\Reorder as ReorderHelper;
 /** @var ActionsView $viewModel */
 $viewModel = $block->getViewModel();
 
-/** @var OrderInterface $order */
+/** @var Magento\Sales\Api\Data\OrderInterface $order */
 $order = $block->getOrder();
 ?>
 <div class="actions">
@@ -43,14 +39,16 @@ $order = $block->getOrder();
             <span><?= $block->escapeHtml(__('Reorder')) ?></span>
         </a>
     <?php endif ?>
-    <?php if ($viewModel->hasSimpleReturn($order)): ?>
-        <a class="action view-rma" href="<?= $block->escapeUrl($viewModel->getRmaViewUrl($order)) ?>">
-            <span><?= $block->escapeHtml(__('View Return')) ?></span>
-        </a>
-    <?php else: ?>
-        <a class="action create-rma" href="<?= $block->escapeUrl($viewModel->getRmaCreateUrl($order)) ?>">
-            <span><?= $block->escapeHtml(__('Return or replace items')) ?></span>
-        </a>
+    <?php if ($viewModel->isOrderEligible($order)): ?>
+        <?php if ($viewModel->hasSimpleReturn($order)): ?>
+            <a class="action view-rma" href="<?= $block->escapeUrl($viewModel->getRmaViewUrl($order)) ?>">
+                <span><?= $block->escapeHtml(__('View RMA request')) ?></span>
+            </a>
+        <?php else: ?>
+            <a class="action create-rma" href="<?= $block->escapeUrl($viewModel->getRmaCreateUrl($order)) ?>">
+                <span><?= $block->escapeHtml(__('Return or replace items')) ?></span>
+            </a>
+        <?php endif ?>
     <?php endif ?>
     <a class="action print"
        href="<?= $block->escapeUrl($block->getPrintUrl($order)) ?>"
