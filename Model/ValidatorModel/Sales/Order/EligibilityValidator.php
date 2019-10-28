@@ -105,7 +105,9 @@ class EligibilityValidator implements ModuleComponentInterface
         $ageLimit = $this->moduleConfig->getOrderAgeMaximum($order->getStoreId());
 
         /** @var DateTime $createdDateTime */
-        $createdDateTime = $this->dateTimeFactory->create(['time' => $order->getCreatedAt()]);
+        $createdDateTime = $this->dateTimeFactory->create([
+            'time' => $order->getCreatedAt()
+        ]);
 
         /** @var DateTime $currentDateTime */
         $currentDateTime = $this->dateTimeFactory->create();
