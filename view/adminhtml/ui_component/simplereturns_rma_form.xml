@@ -43,7 +43,7 @@
                 <param name="order_id">*</param>
                 <param name="code">*</param>
             </filterUrlParams>
-            <submitUrl path="simplereturns/rma/createPost"/>
+            <submitUrl path="simplereturns/rma/:action"/>
         </settings>
         <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma\DataProvider" name="simplereturns_rma_form_data_source">
             <settings>
@@ -68,22 +68,12 @@
             <label/>
         </settings>
         <field name="rma_id" formElement="input">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">rma</item>
-                </item>
-            </argument>
             <settings>
                 <dataType>text</dataType>
                 <visible>false</visible>
             </settings>
         </field>
         <field name="status" formElement="select">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">rma</item>
-                </item>
-            </argument>
             <settings>
                 <dataType>string</dataType>
                 <label translate="true">Status</label>
@@ -101,11 +91,6 @@
             </formElements>
         </field>
         <field name="reason" formElement="select">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">rma</item>
-                </item>
-            </argument>
             <settings>
                 <dataType>string</dataType>
                 <label translate="true">Reason</label>
@@ -123,11 +108,6 @@
             </formElements>
         </field>
         <field name="resolution" formElement="select">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">rma</item>
-                </item>
-            </argument>
             <settings>
                 <dataType>string</dataType>
                 <label translate="true">Resolution</label>
@@ -145,11 +125,6 @@
             </formElements>
         </field>
         <field name="comments" formElement="textarea">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">rma</item>
-                </item>
-            </argument>
             <settings>
                 <dataScope>comments</dataScope>
                 <dataType>string</dataType>
