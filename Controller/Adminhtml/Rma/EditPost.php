@@ -37,9 +37,11 @@ use Magento\Framework\{
     App\Action\HttpPostActionInterface,
     Controller\Result\JsonFactory as ResultJsonFactory,
     Data\Form\FormKey\Validator as FormKeyValidator,
+    Escaper,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
-    Serialize\Serializer\Json as JsonSerializer
+    Serialize\Serializer\Json as JsonSerializer,
+    UrlInterface
 };
 use Magento\Sales\Api\OrderRepositoryInterface;
 
@@ -51,6 +53,9 @@ class EditPost extends Action implements
 
     /** @property EmailTransport $emailTransport */
     protected $emailTransport;
+
+    /** @property Escaper $escaper */
+    protected $escaper;
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
@@ -70,9 +75,13 @@ class EditPost extends Action implements
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
+    /** @property UrlInterface $urlBuilder */
+    protected $urlBuilder;
+
     /**
      * @param Context $context
      * @param EmailTransport $emailTransport
+     * @param Escaper $escaper
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
      * @param ConfigInterface $moduleConfig
@@ -80,21 +89,25 @@ class EditPost extends Action implements
      * @param ResultJsonFactory $resultJsonFactory
      * @param JsonSerializer $serializer
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param UrlInterface $urlBuilder
      * @return void
      */
     public function __construct(
         Context $context,
         EmailTransport $emailTransport,
+        Escaper $escaper,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
         ConfigInterface $moduleConfig,
         OrderRepositoryInterface $orderRepository,
         ResultJsonFactory $resultJsonFactory,
         JsonSerializer $serializer,
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
         $this->emailTransport = $emailTransport;
+        $this->escaper = $escaper;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->moduleConfig = $moduleConfig;
@@ -102,6 +115,7 @@ class EditPost extends Action implements
         $this->resultJsonFactory = $resultJsonFactory;
         $this->serializer = $serializer;
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -109,12 +123,6 @@ class EditPost extends Action implements
      */
     public function execute()
     {
-        /** @var bool $error */
-        $error = false;
-
-        /** @var string $message */
-        $message = '';
-
         /** @var array $response */
         $response = [];
 
@@ -124,20 +132,23 @@ class EditPost extends Action implements
         /** @var Json $resultJson */
         $resultJson = $this->resultJsonFactory->create();
 
-        if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            $response['error'] = true;
-            $response['message'] = __('Invalid method: Must be POST request.')->__toString();
-            $resultJson->setData($response);
+        if (!$request->isPost()) {
+            $resultJson->setData([
+                'error' => true,
+                'message' => __('Invalid method: Must be POST request.'),
+            ]);
 
             return $resultJson;
         }
 
-        /** @var string $content */
-        $content = $request->getContent()
-            ?? $this->serializer->serialize([]);
+        if (!$this->formKeyValidator->validate($request)) {
+            $resultJson->setData([
+                'error' => true,
+                'message' => __('Invalid form key.'),
+            ]);
 
-        /** @var array $data */
-        $data = $this->serializer->unserialize($content);
+            return $resultJson;
+        }
 
         /** @var int|string|null $rmaId */
         $rmaId = $request->getParam(self::PARAM_RMA_ID);
@@ -152,66 +163,93 @@ class EditPost extends Action implements
 
             if ($token !== null) {
                 /** @var string|null $status */
-                $status = $data['status'] ?? null;
+                $status = $request->getPostValue('status');
                 $status = $status !== null ? trim($status) : null;
 
-                /** @todo: Ensure given status value is permissible. */
+                /** @var string|null $reason */
+                $reason = $request->getPostValue('reason');
+                $reason = $reason !== null ? trim($reason) : null;
 
-                if ($status !== null) {
-                    try {
-                        /** @var SimpleReturnInterface $rma */
-                        $rma = $this->simpleReturnRepository->getById($rmaId);
+                /** @var string|null $resolution */
+                $resolution = $request->getPostValue('resolution');
+                $resolution = $resolution !== null ? trim($resolution) : null;
 
-                        if ($rma->getId()) {
-                            $this->simpleReturnRepository->save(
-                                $rma->setStatus($status)
-                            );
+                /** @var string|null $comments */
+                $comments = $request->getPostValue('comments');
+                $comments = $resolution !== null && !empty($comments)
+                    ? $this->escaper->escapeHtml($comments)
+                    : null;
 
-                            /** @var OrderInterface $order */
-                            $order = $this->orderRepository->get($rma->getOrderId());
+                try {
+                    /** @var SimpleReturnInterface $rma */
+                    $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                            /** @var string $email */
-                            $email = $order->getCustomerEmail();
+                    if ($rma->getId()) {
+                        $rma->addData([
+                            'status' => $status,
+                            'reason' => $reason,
+                            'resolution' => $resolution,
+                            'comments' => $comments,
+                        ]);
+                        $this->simpleReturnRepository->save($rma);
 
-                            /** @var string $name */
-                            $name = $order->getCustomerName();
+                        /** @var OrderInterface $order */
+                        $order = $this->orderRepository->get($rma->getOrderId());
 
-                            $this->emailTransport->send(
-                                'simplereturns/customer/rma_request_status_update_email_template',
-                                'simplereturns/customer/rma_request_status_update_email_identity',
-                                [
-                                    'orderId' => $order->getRealOrderId(),
-                                    'frontId' => $rma->getFrontId(),
-                                    'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
-                                    'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
-                                    'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
-                                ],
-                                $email,
-                                $name,
-                                (int) $order->getStoreId()
-                            );
+                        /** @var string $email */
+                        $email = $order->getCustomerEmail();
 
-                            $response['error'] = $error;
-                            $response['message'] = $message;
-                            $resultJson->setData($response);
+                        /** @var string $name */
+                        $name = $order->getCustomerName();
 
-                            return $resultJson;
-                        }
-                    } catch (NoSuchEntityException $e) {
-                        $error = true;
-                        $message = __($e->getMessage())->__toString();
-                    } catch (LocalizedException $e) {
-                        $error = true;
-                        $message = __($e->getMessage())->__toString();
+                        $this->emailTransport->send(
+                            'simplereturns/customer/rma_request_status_update_email_template',
+                            'simplereturns/customer/rma_request_status_update_email_identity',
+                            [
+                                'orderId' => $order->getRealOrderId(),
+                                'frontId' => $rma->getFrontId(),
+                                'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
+                                'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
+                                'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
+                            ],
+                            $email,
+                            $name,
+                            (int) $order->getStoreId()
+                        );
+
+                        /** @var string $viewUrl */
+                        $viewUrl = $this->urlBuilder->getUrl(
+                            'simplereturns/rma/view',
+                            [
+                                'rma_id' => $rmaId,
+                                'token' => $token,
+                                '_secure' => true,
+                            ]
+                        );
+
+                        $resultJson->setData([
+                            'success' => true,
+                            'isSimpleReturnsAjax' => true,
+                            'message' => __('Successfully updated RMA.'),
+                            'viewUrl' => $viewUrl,
+                        ]);
+                        return $resultJson;
                     }
+                } catch (NoSuchEntityException $e) {
+                    $response = [
+                        'error' => true,
+                        'message' => $e->getMessage(),
+                    ];
+                } catch (LocalizedException $e) {
+                    $response = [
+                        'error' => true,
+                        'message' => $e->getMessage(),
+                    ];
                 }
             }
         }
 
-        $response['error'] = $error;
-        $response['message'] = $message;
         $resultJson->setData($response);
-
         return $resultJson;
     }
 }
