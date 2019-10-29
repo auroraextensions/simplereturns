@@ -103,6 +103,10 @@ class DataProvider extends AbstractDataProvider implements
      */
     protected function prepareSubmitUrl(): void
     {
+        if (isset($this->data['config']['submit_url'])) {
+            $this->parseSubmitUrl();
+        }
+
         if (isset($this->data['config']['filter_url_params'])) {
             /** @var string $paramName */
             /** @var mixed $paramValue */
@@ -119,12 +123,35 @@ class DataProvider extends AbstractDataProvider implements
                         $paramValue
                     );
 
-                    $this->searchCriteriaBuilder->addFilter(
-                        $this->filterBuilder->setField($paramName)->setValue($paramValue)->setConditionType('eq')->create()
-                    );
+                    /** @var Filter $filter */
+                    $filter = $this->filterBuilder
+                        ->setField($paramName)
+                        ->setValue($paramValue)
+                        ->setConditionType('eq')
+                        ->create();
+
+                    $this->searchCriteriaBuilder->addFilter($filter);
                 }
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    protected function parseSubmitUrl(): void
+    {
+        /** @var string $actionName */
+        $actionName = strtolower($this->request->getActionName()) . 'Post';
+
+        /** @var string $submitUrl */
+        $submitUrl = $this->data['config']['submit_url'];
+
+        $this->data['config']['submit_url'] = str_replace(
+            ':action',
+            $actionName,
+            $submitUrl
+        );
     }
 
     /**
@@ -155,8 +182,6 @@ class DataProvider extends AbstractDataProvider implements
      */
     public function getData(): array
     {
-        return [];
-
         if (!empty($this->loadedData)) {
             return $this->loadedData;
         }
@@ -166,7 +191,7 @@ class DataProvider extends AbstractDataProvider implements
 
         /** @var SimpleReturnInterface $rma */
         foreach ($items as $rma) {
-            $this->loadedData[$rma->getId()]['rma'] = $rma->getData();
+            $this->loadedData[$rma->getId()] = $rma->getData();
         }
 
         return $this->loadedData;
