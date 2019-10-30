@@ -41,7 +41,7 @@
             <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>AuroraExtensions_SimpleReturns::rma_request</aclResource>
-        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\PackageDataProvider" name="simplereturns_pkg_grid_data_source">
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Package\DataProvider" name="simplereturns_pkg_grid_data_source">
             <settings>
                 <primaryFieldName>pkg_id</primaryFieldName>
                 <requestFieldName>pkg_id</requestFieldName>
