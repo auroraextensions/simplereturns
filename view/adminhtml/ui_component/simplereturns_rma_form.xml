@@ -27,8 +27,8 @@
     </argument>
     <settings>
         <buttons>
-            <button name="save" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\SaveButton"/>
-            <button name="cancel" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\CancelButton"/>
+            <button name="save" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\Rma\SaveButton"/>
+            <button name="cancel" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\Rma\CancelButton"/>
         </buttons>
         <ajaxSave>true</ajaxSave>
         <ajaxSaveType>simple</ajaxSaveType>
