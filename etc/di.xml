@@ -169,7 +169,7 @@
                  type="AuroraExtensions\SimpleReturns\Ui\Component\Control\CancelButton">
         <arguments>
             <argument name="paramKey" xsi:type="string">pkg_id</argument>
-            <argument name="entityType" xsi:type="string">pkg</argument>
+            <argument name="entityType" xsi:type="string">package</argument>
         </arguments>
     </virtualType>
     <type name="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma\DataProvider">
