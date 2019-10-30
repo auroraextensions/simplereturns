@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * simplereturns_package_view.xml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License, which
+ * is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       MIT License
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="AuroraExtensions_SimpleReturns::css/simplereturns.css"/>
+    </head>
+    <body>
+        <referenceBlock name="page.actions.toolbar">
+            <block class="AuroraExtensions\SimpleReturns\Block\Adminhtml\Package\Edit" name="simplereturns_package_edit_button"/>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="simplereturns_package_view"
+                   template="AuroraExtensions_SimpleReturns::package/view.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Package\ViewView</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
