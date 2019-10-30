@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * simplereturns_pkg_form.xml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License, which
+ * is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       MIT License
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">simplereturns_pkg_form.simplereturns_pkg_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string">Package Details</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="save" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\Package\SaveButton"/>
+            <button name="cancel" class="AuroraExtensions\SimpleReturns\Ui\Component\Control\Package\CancelButton"/>
+        </buttons>
+        <ajaxSave>true</ajaxSave>
+        <ajaxSaveType>simple</ajaxSaveType>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>simplereturns_pkg_form.simplereturns_pkg_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="simplereturns_pkg_form_data_source" component="Magento_Ui/js/form/provider">
+        <settings>
+            <filterUrlParams>
+                <param name="rma_id">*</param>
+                <param name="token">*</param>
+            </filterUrlParams>
+            <submitUrl path="simplereturns/package/:action"/>
+        </settings>
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Package\DataProvider" name="simplereturns_pkg_form_data_source">
+            <settings>
+                <primaryFieldName>pkg_id</primaryFieldName>
+                <requestFieldName>pkg_id</requestFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <htmlContent name="simplereturns_pkg_form_before_html_content">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="additionalClasses" xsi:type="string">simplereturns-pkg-form-before-html-content</item>
+            </item>
+        </argument>
+        <block class="Magento\Framework\View\Element\Template"
+               name="simplereturns_pkg_form_before"
+               template="AuroraExtensions_SimpleReturns::container/empty.phtml"/>
+    </htmlContent>
+    <fieldset name="simplereturns">
+        <settings>
+            <collapsible>false</collapsible>
+            <label/>
+        </settings>
+        <field name="pkg_id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+            </settings>
+        </field>
+        <field name="rma_id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+            </settings>
+        </field>
+        <field name="label_id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+            </settings>
+        </field>
+    </fieldset>
+    <htmlContent name="simplereturns_pkg_form_after_html_content">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="additionalClasses" xsi:type="string">simplereturns-pkg-form-after-html-content</item>
+            </item>
+        </argument>
+        <block class="Magento\Framework\View\Element\Template"
+               name="simplereturns_pkg_form_after"
+               template="AuroraExtensions_SimpleReturns::container/empty.phtml"/>
+    </htmlContent>
+</form>
