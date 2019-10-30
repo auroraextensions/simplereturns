@@ -109,12 +109,6 @@ class EditPost extends Action implements
      */
     public function execute()
     {
-        /** @var bool $error */
-        $error = false;
-
-        /** @var string $message */
-        $message = '';
-
         /** @var array $response */
         $response = [];
 
@@ -124,10 +118,20 @@ class EditPost extends Action implements
         /** @var Json $resultJson */
         $resultJson = $this->resultJsonFactory->create();
 
-        if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            $response['error'] = true;
-            $response['message'] = __('Invalid method: Must be POST request.')->__toString();
-            $resultJson->setData($response);
+        if (!$request->isPost()) {
+            $resultJson->setData([
+                'error' => true,
+                'message' => __('Invalid method: Must be POST request.'),
+            ]);
+
+            return $resultJson;
+        }
+
+        if (!$this->formKeyValidator->validate($request)) {
+            $resultJson->setData([
+                'error' => true,
+                'message' => __('Invalid form key.'),
+            ]);
 
             return $resultJson;
         }
@@ -191,27 +195,29 @@ class EditPost extends Action implements
                                 (int) $order->getStoreId()
                             );
 
-                            $response['error'] = $error;
-                            $response['message'] = $message;
-                            $resultJson->setData($response);
+                            $resultJson->setData([
+                                'success' => true,
+                                'message' => __('Successfully updated RMA status.'),
+                            ]);
 
                             return $resultJson;
                         }
                     } catch (NoSuchEntityException $e) {
-                        $error = true;
-                        $message = __($e->getMessage())->__toString();
+                        $response = [
+                            'error' => true,
+                            'message' => $e->getMessage(),
+                        ];
                     } catch (LocalizedException $e) {
-                        $error = true;
-                        $message = __($e->getMessage())->__toString();
+                        $response = [
+                            'error' => true,
+                            'message' => $e->getMessage(),
+                        ];
                     }
                 }
             }
         }
 
-        $response['error'] = $error;
-        $response['message'] = $message;
         $resultJson->setData($response);
-
         return $resultJson;
     }
 }
