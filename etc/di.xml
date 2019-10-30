@@ -181,6 +181,18 @@
             </argument>
         </arguments>
     </type>
+    <type name="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Package\DataProvider">
+        <arguments>
+            <argument name="labels" xsi:type="array">
+                <item name="carriers" xsi:type="array">
+                    <item name="dhl" xsi:type="string">DHL</item>
+                    <item name="fedex" xsi:type="string">Fedex</item>
+                    <item name="ups" xsi:type="string">UPS</item>
+                    <item name="usps" xsi:type="string">USPS</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
     <type name="AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma\DataProvider">
         <arguments>
             <argument name="labels" xsi:type="array">

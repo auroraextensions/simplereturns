@@ -37,6 +37,11 @@ class DataProvider extends AbstractDataProvider implements
     /** @property ViewModel $viewModel */
     protected $viewModel;
 
+    /** @property array $mapKeys */
+    protected $mapKeys = [
+        'carriers' => 'carrier_code',
+    ];
+
     /**
      * @param string $name
      * @param string $primaryFieldName
@@ -82,15 +87,24 @@ class DataProvider extends AbstractDataProvider implements
     }
 
     /**
-     * @param bool $includeKeys
+     * @param bool $preserveKeys
      * @return array
      */
-    public function getLabels(bool $includeKeys = true): array
+    public function getLabels(bool $preserveKeys = true): array
     {
         /** @var array $labels */
         $labels = $this->labels ?? [];
 
-        return $includeKeys ? $labels : array_values($labels);
+        return $preserveKeys ? $labels : array_values($labels);
+    }
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    protected function getMapKey(string $key): string
+    {
+        return $this->mapKeys[$key] ?? $key;
     }
 
     /**
@@ -104,9 +118,6 @@ class DataProvider extends AbstractDataProvider implements
         /** @var array $items */
         $items = $entries['items'] ?? [];
 
-        /** @var array $keys */
-        $keys = $this->getLabelKeys();
-
         /** @var array $labels */
         $labels = $this->getLabels();
 
@@ -119,20 +130,16 @@ class DataProvider extends AbstractDataProvider implements
         /** @var array $item */
         foreach ($items as $item) {
             /** @var string $key */
-            foreach ($keys as $key) {
-                /** @var string|null $labelValue */
-                $labelValue = $item[$key] ?? null;
+            /** @var mixed $label */
+            foreach ($labels as $key => $label) {
+                /** @var string $mapKey */
+                $mapKey = $this->getMapKey($key);
 
-                if ($labelValue !== null) {
-                    /** @var string|null $labelKey */
-                    $labelKey = $labels[$key] ?? null;
+                /** @var string|null $value */
+                $value = $item[$mapKey] ?? null;
 
-                    if ($labelKey !== null) {
-                        $item[$key] = $this->viewModel->getFrontLabel(
-                            $labelKey,
-                            $labelValue
-                        );
-                    }
+                if ($value !== null && $label !== null) {
+                    $item[$mapKey] = $label[$value] ?? $value;
                 }
             }
 
