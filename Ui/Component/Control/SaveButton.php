@@ -22,6 +22,24 @@ use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
 class SaveButton implements ButtonProviderInterface
 {
+    /** @property array $components */
+    protected $components = [
+        'button' => ['event' => 'save'],
+    ];
+
+    /**
+     * @param array $components
+     * @return void
+     */
+    public function __construct(
+        array $components = []
+    ) {
+        $this->components = array_merge(
+            $this->components,
+            $components
+        );
+    }
+
     /**
      * @return array
      */
@@ -31,10 +49,7 @@ class SaveButton implements ButtonProviderInterface
             'class' => 'save primary',
             'data_attribute' => [
                 'form-role' => 'save',
-                'mage-init' => [
-                    'button' => ['event' => 'save'],
-                    'simpleReturnsRmaFormRedirect' => [],
-                ],
+                'mage-init' => $this->components,
             ],
             'label' => __('Save'),
             'on_click' => '',
