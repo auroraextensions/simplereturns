@@ -1,6 +1,6 @@
 <?php
 /**
- * PackageDataProvider.php
+ * DataProvider.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,8 +16,9 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Ui\DataProvider;
+namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Package;
 
+use Countable;
 use AuroraExtensions\SimpleReturns\{
     Model\ResourceModel\Package as PackageResource,
     Model\ResourceModel\Package\Collection,
@@ -28,8 +29,8 @@ use AuroraExtensions\SimpleReturns\{
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
-class PackageDataProvider extends AbstractDataProvider implements
-    \Countable,
+class DataProvider extends AbstractDataProvider implements
+    Countable,
     DataProviderInterface,
     ModuleComponentInterface
 {
@@ -97,8 +98,6 @@ class PackageDataProvider extends AbstractDataProvider implements
      */
     public function getData()
     {
-        return $this->getCollection()->toArray();
-
         /** @var array $entries */
         $entries = $this->getCollection()->toArray();
 
