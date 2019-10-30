@@ -147,6 +147,31 @@
             <argument name="key" xsi:type="string">methods</argument>
         </arguments>
     </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Control\Rma\SaveButton"
+                 type="AuroraExtensions\SimpleReturns\Ui\Component\Control\SaveButton">
+        <arguments>
+            <argument name="components" xsi:type="array">
+                <item name="simpleReturnsAjaxSaveRedirect" xsi:type="array"></item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Control\Rma\CancelButton"
+                 type="AuroraExtensions\SimpleReturns\Ui\Component\Control\CancelButton"></virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Control\Package\SaveButton"
+                 type="AuroraExtensions\SimpleReturns\Ui\Component\Control\SaveButton">
+        <arguments>
+            <argument name="components" xsi:type="array">
+                <item name="simpleReturnsAjaxSaveRedirect" xsi:type="array"></item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="AuroraExtensions\SimpleReturns\Ui\Component\Control\Package\CancelButton"
+                 type="AuroraExtensions\SimpleReturns\Ui\Component\Control\CancelButton">
+        <arguments>
+            <argument name="paramKey" xsi:type="string">pkg_id</argument>
+            <argument name="entityType" xsi:type="string">package</argument>
+        </arguments>
+    </virtualType>
     <type name="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma\DataProvider">
         <arguments>
             <argument name="labels" xsi:type="array">
