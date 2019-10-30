@@ -1,0 +1,93 @@
+<?php
+/**
+ * view.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License, which
+ * is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       MIT License
+ */
+
+/** @var Template $block */
+/** @var ViewView $viewModel */
+$viewModel = $block->getViewModel();
+
+/** @var PackageInterface $package */
+$package = $viewModel->getPackage();
+
+/** @var SimpleReturnInterface $rma */
+$rma = $viewModel->getSimpleReturn();
+
+/** @var OrderInterface $order */
+$order = $viewModel->getOrder();
+
+/** @var bool $hasPackage */
+$hasPackage = $viewModel->hasPackage();
+?>
+<section class="admin__page-section simplereturns-pkg-info">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('View Package Details for Order #%1', $order->getRealOrderId())) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item package-information">
+            <div class="admin__page-section-item-content">
+                <table class="admin__table-secondary package-information-table">
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Created')) ?></th>
+                        <td><?= $block->escapeHtml($package->getCreatedAt()) ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Updated')) ?></th>
+                        <td><?= $block->escapeHtml($package->getUpdatedAt()) ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Package')) ?></th>
+                        <td>
+                            <span id="pkg_front_id">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '%1',
+                                        $package->getFrontId()
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('RMA')) ?></th>
+                        <td>
+                            <span id="rma_front_id">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '%1',
+                                        $rma->getFrontId()
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Order')) ?></th>
+                        <td>
+                            <span id="increment_id">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '%1',
+                                        $order->getRealOrderId()
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
