@@ -31,6 +31,12 @@ use Magento\Framework\{
 
 class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
 {
+    /** @constant string ENTITY_TYPE */
+    public const ENTITY_TYPE = 'rma';
+
+    /** @property string $paramKey */
+    protected $paramKey;
+
     /** @property RequestInterface $request */
     protected $request;
 
@@ -40,14 +46,20 @@ class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
     /**
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
+     * @param string|null $paramKey
+     * @param string|null $entityType
      * @return void
      */
     public function __construct(
         RequestInterface $request,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        string $paramKey = null,
+        string $entityType = null
     ) {
         $this->request = $request;
         $this->urlBuilder = $urlBuilder;
+        $this->paramKey = $paramKey ?? static::PARAM_RMA_ID;
+        $this->entityType = $entityType ?? static::ENTITY_TYPE;
     }
 
     /**
@@ -68,13 +80,13 @@ class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
      */
     protected function getOnClickJs(): ?string
     {
-        /** @var int|string|null $rmaId */
-        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
+        /** @var int|string|null $paramValue */
+        $paramValue = $this->request->getParam($this->paramKey);
+        $paramValue = $paramValue !== null && is_numeric($paramValue)
+            ? (int) $paramValue
             : null;
 
-        if ($rmaId !== null) {
+        if ($paramValue !== null) {
             /** @var string|null $token */
             $token = $this->request->getParam(self::PARAM_TOKEN);
             $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
@@ -82,9 +94,9 @@ class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
             if ($token !== null) {
                 /** @var string $targetUrl */
                 $targetUrl = $this->urlBuilder->getUrl(
-                    'simplereturns/rma/view',
+                    $this->getViewRoute(),
                     [
-                        'rma_id' => $rmaId,
+                        $this->paramKey => $paramValue,
                         'token' => $token,
                     ]
                 );
@@ -94,5 +106,13 @@ class CancelButton implements ButtonProviderInterface, ModuleComponentInterface
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getViewRoute(): string
+    {
+        return 'simplereturns/' . $this->entityType . '/view';
     }
 }
