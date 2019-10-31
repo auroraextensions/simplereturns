@@ -55,7 +55,7 @@ class Create extends Action implements
     {
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->getConfig()->getTitle()->prepend(__('Create New RMA'));
+        $resultPage->getConfig()->getTitle()->prepend(__('Create RMA'));
 
         return $resultPage;
     }
