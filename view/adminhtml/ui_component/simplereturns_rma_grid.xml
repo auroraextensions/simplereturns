@@ -20,7 +20,7 @@
          xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">simplereturns_rma_grid.simplereturns_rma_grid_datasource</item>
+            <item name="provider" xsi:type="string">simplereturns_rma_grid.simplereturns_rma_grid_data_source</item>
         </item>
     </argument>
     <settings>
@@ -34,15 +34,15 @@
         </buttons>
         <spinner>simplereturns_rma_grid_columns</spinner>
         <deps>
-            <dep>simplereturns_rma_grid.simplereturns_rma_grid_datasource</dep>
+            <dep>simplereturns_rma_grid.simplereturns_rma_grid_data_source</dep>
         </deps>
     </settings>
-    <dataSource name="simplereturns_rma_grid_datasource" component="Magento_Ui/js/grid/provider">
+    <dataSource name="simplereturns_rma_grid_data_source" component="Magento_Ui/js/grid/provider">
         <settings>
             <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>AuroraExtensions_SimpleReturns::rma_request</aclResource>
-        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma\DataProvider" name="simplereturns_rma_grid_datasource">
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma\DataProvider" name="simplereturns_rma_grid_data_source">
             <settings>
                 <primaryFieldName>rma_id</primaryFieldName>
                 <requestFieldName>rma_id</requestFieldName>
