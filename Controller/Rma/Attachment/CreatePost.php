@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
+use Exception;
 use AuroraExtensions\ImageProcessor\Api\ImageManagementInterface;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\AttachmentInterface,
@@ -171,11 +172,15 @@ class CreatePost extends Action implements
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
+            $resultJson->setData([
+                'error' => true,
+                'message' => __('Invalid method: Must be POST request.'),
+            ]);
             return $resultJson;
         }
 
-        /** @var bool $error */
-        $error = false;
+        /** @var array $response */
+        $response = [];
 
         /** @var array $attachment */
         $attachments = $request->getFiles('attachments') ?? [];
@@ -238,7 +243,7 @@ class CreatePost extends Action implements
                 $imageFile = rtrim(self::SAVE_PATH, '/') . $result['file'];
 
                 /** @var string $thumbnail */
-                $thumbnail = $imageManagement->resize($imageFile);
+                $thumbnail = $this->imageManagement->resize($imageFile);
 
                 /** @var array $entityData */
                 $entityData = [
@@ -258,10 +263,21 @@ class CreatePost extends Action implements
                 $metadata[] = [
                     'attachment_id' => $attachmentId,
                 ];
+
+                $response[] = [
+                    'success' => true,
+                    'message' => __('Successfully uploaded RMA attachment: %1', $result['name']),
+                ];
             } catch (LocalizedException $e) {
-                $error = true;
-            } catch (\Exception $e) {
-                $error = true;
+                $response[] = [
+                    'error' => true,
+                    'message' => $e->getMessage(),
+                ];
+            } catch (Exception $e) {
+                $response[] = [
+                    'error' => true,
+                    'message' => $e->getMessage(),
+                ];
             }
         }
 
@@ -270,7 +286,7 @@ class CreatePost extends Action implements
             $this->serializer->serialize($metadata)
         );
 
-        $resultJson->setData(['error' => $error]);
+        $resultJson->setData($response);
         return $resultJson;
     }
 }
