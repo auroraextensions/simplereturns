@@ -21,7 +21,7 @@ namespace AuroraExtensions\SimpleReturns\Helper;
 use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
 
 /**
- * @deprecated
+ * @deprecated Avoid use. Will be removed in future release.
  * @see AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config
  */
 class Config extends ModuleConfig

@@ -22,6 +22,9 @@ namespace AuroraExtensions\SimpleReturns\Helper;
 
 use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 
+/**
+ * @deprecated Avoid use. Will be removed in future release.
+ */
 class Action implements ModuleComponentInterface
 {
     /** @constant int DEFAULT_LENGTH */
