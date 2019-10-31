@@ -28,7 +28,7 @@
             <button name="add">
                 <url path="simplereturns/package/rma_index"/>
                 <class>primary</class>
-                <label translate="true">Create New Package</label>
+                <label translate="true">Create Package</label>
                 <aclResource>AuroraExtensions_SimpleReturns::rma_package</aclResource>
             </button>
         </buttons>

@@ -28,7 +28,7 @@
             <button name="add">
                 <url path="simplereturns/rma/order_index"/>
                 <class>primary</class>
-                <label translate="true">Create New RMA</label>
+                <label translate="true">Create RMA</label>
                 <aclResource>AuroraExtensions_SimpleReturns::create</aclResource>
             </button>
         </buttons>
