@@ -73,17 +73,44 @@
                 <visible>false</visible>
             </settings>
         </field>
-        <field name="rma_id" formElement="input">
-            <settings>
-                <dataType>text</dataType>
-            </settings>
-        </field>
-        <field name="label_id" formElement="input">
-            <settings>
-                <dataType>text</dataType>
-            </settings>
-        </field>
+        <container name="actions" component="Magento_Ui/js/form/components/group" sortOrder="10">
+            <argument name="data" xsi:type="array">
+                <item name="type" xsi:type="string">group</item>
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Actions</item>
+                </item>
+            </argument>
+            <field name="request_label" formElement="checkbox">
+                <settings>
+                    <dataType>boolean</dataType>
+                    <label translate="true">Generate Shipping Label</label>
+                    <tooltip>
+                        <description>You can defer this step until later, if desired.</description>
+                    </tooltip>
+                </settings>
+                <formElements>
+                    <checkbox>
+                        <settings>
+                            <valueMap>
+                                <map name="false" xsi:type="number">0</map>
+                                <map name="true" xsi:type="number">1</map>
+                            </valueMap>
+                        </settings>
+                    </checkbox>
+                </formElements>
+            </field>
+        </container>
     </fieldset>
+    <htmlContent name="simplereturns_pkg_form_info">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="additionalClasses" xsi:type="string">simplereturns-pkg-form-info</item>
+            </item>
+        </argument>
+        <block class="Magento\Framework\View\Element\Template"
+               name="simplereturns_pkg_form_info"
+               template="AuroraExtensions_SimpleReturns::package/form/info.phtml"/>
+    </htmlContent>
     <htmlContent name="simplereturns_pkg_form_after_html_content">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
