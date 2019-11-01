@@ -26,7 +26,6 @@ use Magento\Framework\{
     View\Element\UiComponent\ContextInterface,
     View\Element\UiComponentFactory
 };
-use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 
 class Rma extends Column
@@ -49,9 +48,6 @@ class Rma extends Column
     /** @property string $entityKey */
     protected $entityKey;
 
-    /** @property OrderRepositoryInterface $orderRepository */
-    protected $orderRepository;
-
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
@@ -69,7 +65,6 @@ class Rma extends Column
      * @param UiComponentFactory $uiComponentFactory,
      * @param array $components
      * @param array $data
-     * @param OrderRepositoryInterface $orderRepository
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @param string|null $entityKey
@@ -82,7 +77,6 @@ class Rma extends Column
         UiComponentFactory $uiComponentFactory,
         array $components = [],
         array $data = [],
-        OrderRepositoryInterface $orderRepository,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         UrlInterface $urlBuilder,
         string $entityKey = null,
@@ -95,7 +89,6 @@ class Rma extends Column
             $components,
             $data
         );
-        $this->orderRepository = $orderRepository;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->urlBuilder = $urlBuilder;
         $this->entityKey = $entityKey ?? static::ENTITY_KEY;
@@ -148,17 +141,14 @@ class Rma extends Column
     }
 
     /**
-     * @param int $orderId
+     * @param int $rmaId
      * @return string|null
      */
-    protected function getSecret(int $orderId): ?string
+    protected function getSecret(int $rmaId): ?string
     {
         try {
-            /** @var OrderInterface $order */
-            $order = $this->orderRepository->get($orderId);
-
             /** @var SimpleReturnInterface $rma */
-            $rma = $this->simpleReturnRepository->get($order);
+            $rma = $this->simpleReturnRepository->getById($rmaId);
 
             return $rma->getToken();
         } catch (NoSuchEntityException $e) {
