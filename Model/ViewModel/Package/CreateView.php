@@ -60,9 +60,6 @@ class CreateView extends AbstractView implements
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property Tokenizer $tokenizer */
-    protected $tokenizer;
-
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
@@ -74,7 +71,6 @@ class CreateView extends AbstractView implements
      * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
-     * @param Tokenizer $tokenizer
      * @return void
      */
     public function __construct(
@@ -87,8 +83,7 @@ class CreateView extends AbstractView implements
         MessageManagerInterface $messageManager,
         ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
-        SimpleReturnRepositoryInterface $simpleReturnRepository,
-        Tokenizer $tokenizer
+        SimpleReturnRepositoryInterface $simpleReturnRepository
     ) {
         parent::__construct(
             $configHelper,
@@ -103,7 +98,6 @@ class CreateView extends AbstractView implements
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->simpleReturnRepository = $simpleReturnRepository;
-        $this->tokenizer = $tokenizer;
     }
 
     /**
