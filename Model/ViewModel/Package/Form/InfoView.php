@@ -1,6 +1,6 @@
 <?php
 /**
- * CreateView.php
+ * InfoView.php
  *
  * NOTICE OF LICENSE
  *
@@ -16,14 +16,13 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
+namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package\Form;
 
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
     Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
-    Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
@@ -42,7 +41,7 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
-class CreateView extends AbstractView implements
+class InfoView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
@@ -54,8 +53,14 @@ class CreateView extends AbstractView implements
     /** @property MessageManagerInterface $messageManager */
     protected $messageManager;
 
+    /** @property OrderInterface $order */
+    protected $order;
+
     /** @property OrderAdapter $orderAdapter */
     protected $orderAdapter;
+
+    /** @property SimpleReturnInterface $rma */
+    protected $rma;
 
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
@@ -92,7 +97,6 @@ class CreateView extends AbstractView implements
             $urlBuilder,
             $data
         );
-
         $this->directoryHelper = $directoryHelper;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
@@ -163,16 +167,16 @@ class CreateView extends AbstractView implements
             : null;
 
         if ($rmaId !== null) {
-            /** @var string|null $rmaToken */
-            $rmaToken = $this->request->getParam(self::PARAM_TOKEN);
-            $rmaToken = $rmaToken !== null && Tokenizer::isHex($rmaToken) ? $rmaToken : null;
+            /** @var string|null $token */
+            $token = $this->request->getParam(self::PARAM_TOKEN);
+            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
-            if ($rmaToken !== null) {
+            if ($token !== null) {
                 try {
                     /** @var SimpleReturnInterface $rma */
                     $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                    if (Tokenizer::isEqual($rmaToken, $rma->getToken())) {
+                    if (Tokenizer::isEqual($token, $rma->getToken())) {
                         return $rma;
                     }
 
@@ -200,6 +204,10 @@ class CreateView extends AbstractView implements
      */
     public function getOrder(): ?OrderInterface
     {
+        if ($this->order !== null) {
+            return $this->order;
+        }
+
         /** @var SimpleReturnInterface|null $rma */
         $rma = $this->getSimpleReturn();
 
@@ -214,7 +222,9 @@ class CreateView extends AbstractView implements
                 $orders = $this->orderAdapter->getOrdersByFields($fields);
 
                 if (!empty($orders)) {
-                    return $orders[0];
+                    $this->order = $orders[0];
+
+                    return $this->order;
                 }
 
                 /** @var NoSuchEntityException $exception */
@@ -225,9 +235,9 @@ class CreateView extends AbstractView implements
 
                 throw $exception;
             } catch (NoSuchEntityException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             } catch (LocalizedException $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             }
         }
 
@@ -257,32 +267,26 @@ class CreateView extends AbstractView implements
     }
 
     /**
-     * @param string $route
      * @return string
      */
-    public function getPostActionUrl(
-        string $route = self::ROUTE_SIMPLERETURNS_PKG_CREATEPOST
-    ): string
+    public function getViewRmaUrl(): string
     {
         /** @var array $params */
         $params = [
             '_secure' => true,
         ];
 
-        /** @var int|string|null $rmaId */
-        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
+        /** @var SimpleReturnInterface $rma */
+        $rma = $this->getSimpleReturn();
 
-        if ($rmaId !== null) {
-            $params['rma_id'] = $rmaId;
+        if ($rma !== null) {
+            $params['rma_id'] = $rma->getId();
+            $params['token'] = $rma->getToken();
         }
 
-        /** @var string|null $token */
-        $token = $this->request->getParam(self::PARAM_TOKEN);
-
-        if ($token !== null) {
-            $params['token'] = $token;
-        }
-
-        return $this->urlBuilder->getUrl($route, $params);
+        return $this->urlBuilder->getUrl(
+            'simplereturns/rma/view',
+            $params
+        );
     }
 }

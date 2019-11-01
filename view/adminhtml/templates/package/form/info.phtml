@@ -1,0 +1,90 @@
+<?php
+/**
+ * info.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License, which
+ * is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       MIT License
+ */
+
+/** @var Template $block */
+/** @var InfoView $viewModel */
+$viewModel = $block->getViewModel();
+
+/** @var OrderInterface $order */
+$order = $viewModel->getOrder();
+?>
+<section class="admin__page-section simplereturns-pkg-info">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Details')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item package-information">
+            <div class="admin__page-section-item-content">
+                <table class="admin__table-secondary package-information-table">
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Order')) ?></th>
+                        <td>
+                            <span id="pkg_order">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '#%1',
+                                        $order->getRealOrderId()
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Shipping Carrier')) ?></th>
+                        <td>
+                            <span id="pkg_carrier">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '%1',
+                                        $viewModel->getFrontLabel('carriers', $viewModel->getShippingCarrier())
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Shipping Method')) ?></th>
+                        <td>
+                            <span id="pkg_method">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '%1',
+                                        $viewModel->getFrontLabel('methods', $viewModel->getShippingMethod())
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Package Weight')) ?></th>
+                        <td>
+                            <span id="pkg_weight">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '%1 %2',
+                                        $viewModel->getPackageWeight(),
+                                        $viewModel->getWeightUnits()
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
