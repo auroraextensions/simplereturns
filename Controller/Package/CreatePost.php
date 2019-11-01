@@ -152,9 +152,7 @@ class CreatePost extends Action implements
 
             /** @var int|string|null $requestLabel */
             $requestLabel = $params['request_label'] ?? null;
-            $requestLabel = $requestLabel !== null && strtolower($requestLabel) === 'on'
-                ? true
-                : false;
+            $requestLabel = ($requestLabel !== null && strtolower($requestLabel) === 'on');
 
             try {
                 /** @var SimpleReturnInterface $rma */
