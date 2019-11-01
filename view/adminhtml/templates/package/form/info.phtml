@@ -63,7 +63,11 @@ $order = $viewModel->getOrder();
                                 <?= $block->escapeHtml(
                                     __(
                                         '%1',
-                                        $viewModel->getFrontLabel('methods', $viewModel->getShippingMethod())
+                                        $viewModel->getFrontLabel(
+                                            'methods',
+                                            $viewModel->getShippingCarrier(),
+                                            $viewModel->getShippingMethod()
+                                        )
                                     )
                                 ) ?>
                             </span>
