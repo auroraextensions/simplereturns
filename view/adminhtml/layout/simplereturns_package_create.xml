@@ -24,5 +24,10 @@
         <referenceContainer name="content">
             <uiComponent name="simplereturns_pkg_form"/>
         </referenceContainer>
+        <referenceBlock name="simplereturns_pkg_form_info">
+            <arguments>
+                <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Package\Form\InfoView</argument>
+            </arguments>
+        </referenceBlock>
     </body>
 </page>
