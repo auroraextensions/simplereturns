@@ -27,9 +27,6 @@ $rma = $viewModel->getSimpleReturn();
 
 /** @var OrderInterface $order */
 $order = $viewModel->getOrder();
-
-/** @var bool $hasPackage */
-$hasPackage = $viewModel->hasPackage();
 ?>
 <section class="admin__page-section simplereturns-pkg-info">
     <div class="admin__page-section-title">
@@ -53,7 +50,7 @@ $hasPackage = $viewModel->hasPackage();
                             <span id="pkg_front_id">
                                 <?= $block->escapeHtml(
                                     __(
-                                        '%1',
+                                        '#%1',
                                         $package->getFrontId()
                                     )
                                 ) ?>
@@ -66,7 +63,7 @@ $hasPackage = $viewModel->hasPackage();
                             <span id="rma_front_id">
                                 <?= $block->escapeHtml(
                                     __(
-                                        '%1',
+                                        '#%1',
                                         $rma->getFrontId()
                                     )
                                 ) ?>
@@ -79,7 +76,7 @@ $hasPackage = $viewModel->hasPackage();
                             <span id="increment_id">
                                 <?= $block->escapeHtml(
                                     __(
-                                        '%1',
+                                        '#%1',
                                         $order->getRealOrderId()
                                     )
                                 ) ?>
