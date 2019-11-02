@@ -19,11 +19,11 @@
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
     <table name="simplereturns_rma" resource="default" engine="innodb" comment="Simple Returns RMAs">
-        <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="false" identity="true"
+        <column xsi:type="int" name="rma_id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="RMA ID"/>
-        <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" comment="Store ID"/>
-        <column xsi:type="smallint" name="order_id" padding="5" unsigned="true" nullable="false" comment="Order ID"/>
-        <column xsi:type="smallint" name="pkg_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
+        <column xsi:type="int" name="store_id" padding="10" unsigned="true" nullable="false" comment="Store ID"/>
+        <column xsi:type="int" name="order_id" padding="10" unsigned="true" nullable="false" comment="Order ID"/>
+        <column xsi:type="int" name="pkg_id" padding="10" unsigned="true" nullable="true" comment="Package ID"/>
         <column xsi:type="varchar" name="status" nullable="true" length="32" comment="Status"/>
         <column xsi:type="varchar" name="reason" nullable="true" length="64" comment="Reason"/>
         <column xsi:type="varchar" name="resolution" nullable="true" length="32" comment="Resolution"/>
@@ -48,9 +48,9 @@
         </index>
     </table>
     <table name="simplereturns_rma_attachment" resource="default" engine="innodb" comment="Simple Returns RMA Attachments">
-        <column xsi:type="smallint" name="attachment_id" padding="5" unsigned="true" nullable="false" identity="true"
+        <column xsi:type="int" name="attachment_id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="Attachment ID"/>
-        <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="true" comment="RMA ID"/>
+        <column xsi:type="int" name="rma_id" padding="10" unsigned="true" nullable="true" comment="RMA ID"/>
         <column xsi:type="varchar" name="filename" nullable="true" length="512" comment="Filename"/>
         <column xsi:type="varchar" name="filepath" nullable="true" length="1024" comment="File Path"/>
         <column xsi:type="int" name="filesize" padding="10" unsigned="true" nullable="true" comment="Filesize"/>
@@ -69,11 +69,12 @@
         </index>
     </table>
     <table name="simplereturns_package" resource="default" engine="innodb" comment="Simple Returns Packages">
-        <column xsi:type="smallint" name="pkg_id" padding="5" unsigned="true" nullable="false" identity="true"
+        <column xsi:type="int" name="pkg_id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="Package ID"/>
-        <column xsi:type="smallint" name="rma_id" padding="5" unsigned="true" nullable="false" comment="RMA ID"/>
-        <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="true" comment="Label ID"/>
+        <column xsi:type="int" name="rma_id" padding="10" unsigned="true" nullable="false" comment="RMA ID"/>
+        <column xsi:type="int" name="label_id" padding="10" unsigned="true" nullable="true" comment="Label ID"/>
         <column xsi:type="varchar" name="carrier_code" nullable="true" length="32" comment="Carrier Code"/>
+        <column xsi:type="varchar" name="method_code" nullable="true" length="32" comment="Method Code"/>
         <column xsi:type="varchar" name="container_type" nullable="true" length="32" comment="Container Type"/>
         <column xsi:type="varchar" name="description" nullable="true" length="128" comment="Description"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
@@ -96,9 +97,9 @@
         </index>
     </table>
     <table name="simplereturns_label" resource="default" engine="innodb" comment="Simple Returns Labels">
-        <column xsi:type="smallint" name="label_id" padding="5" unsigned="true" nullable="false" identity="true"
+        <column xsi:type="int" name="label_id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="Label ID"/>
-        <column xsi:type="smallint" name="pkg_id" padding="5" unsigned="true" nullable="true" comment="Package ID"/>
+        <column xsi:type="int" name="pkg_id" padding="10" unsigned="true" nullable="true" comment="Package ID"/>
         <column xsi:type="blob" name="image" nullable="true" comment="Label Image"/>
         <column xsi:type="varchar" name="tracking_number" nullable="true" length="128" comment="Tracking Number"/>
         <column xsi:type="varchar" name="remote_ip" nullable="true" length="128" comment="Remote IP Address"/>
