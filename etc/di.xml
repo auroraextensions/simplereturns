@@ -190,6 +190,10 @@
                     <item name="ups" xsi:type="string">UPS</item>
                     <item name="usps" xsi:type="string">USPS</item>
                 </item>
+                <item name="methods" xsi:type="array">
+                    <item name="03" xsi:type="string">UPS Ground</item>
+                    <item name="FEDEX_GROUND" xsi:type="string">Fedex Ground</item>
+                </item>
             </argument>
         </arguments>
     </type>
