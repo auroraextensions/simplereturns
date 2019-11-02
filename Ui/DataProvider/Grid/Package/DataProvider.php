@@ -40,6 +40,7 @@ class DataProvider extends AbstractDataProvider implements
     /** @property array $mapKeys */
     protected $mapKeys = [
         'carriers' => 'carrier_code',
+        'methods' => 'method_code',
     ];
 
     /**
