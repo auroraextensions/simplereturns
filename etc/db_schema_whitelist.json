@@ -49,6 +49,7 @@
             "rma_id": true,
             "label_id": true,
             "carrier_code": true,
+            "method_code": true,
             "container_type": true,
             "description": true,
             "remote_ip": true,
