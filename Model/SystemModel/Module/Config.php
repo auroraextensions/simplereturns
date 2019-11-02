@@ -322,7 +322,7 @@ class Config implements ConfigInterface
             'carriers/fedex/container',
             $scope,
             $store
-        ) ?? self::DEFAULT_FEDEX_CONTAINER_CODE;
+        ) ?? static::DEFAULT_FEDEX_CONTAINER_CODE;
     }
 
     /**
@@ -354,7 +354,7 @@ class Config implements ConfigInterface
             'carriers/ups/container',
             $scope,
             $store
-        ) ?? self::DEFAULT_UPS_CONTAINER_CODE;
+        ) ?? static::DEFAULT_UPS_CONTAINER_CODE;
     }
 
     /**
@@ -388,7 +388,7 @@ class Config implements ConfigInterface
             'simplereturns/returns/order_age_maximum',
             $scope,
             $store
-        ) ?? self::DEFAULT_RETURNS_ORDER_AGE_MAXIMUM;
+        ) ?? static::DEFAULT_RETURNS_ORDER_AGE_MAXIMUM;
     }
 
     /**
@@ -407,7 +407,7 @@ class Config implements ConfigInterface
             'simplereturns/returns/order_amount_minimum',
             $scope,
             $store
-        ) ?? self::DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM;
+        ) ?? static::DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM;
     }
 
     /**
@@ -426,7 +426,7 @@ class Config implements ConfigInterface
             'simplereturns/returns/order_amount_maximum',
             $scope,
             $store
-        ) ?? self::DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM;
+        ) ?? static::DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM;
     }
 
     /**
@@ -445,7 +445,7 @@ class Config implements ConfigInterface
             'simplereturns/returns/package_weight',
             $scope,
             $store
-        ) ?? self::DEFAULT_PACKAGE_WEIGHT;
+        ) ?? static::DEFAULT_PACKAGE_WEIGHT;
     }
 
     /**
@@ -464,7 +464,7 @@ class Config implements ConfigInterface
             'simplereturns/returns/recipient_first_name',
             $scope,
             $store
-        ) ?? self::DEFAULT_RETURNS_RECIPIENT_FIRST_NAME;
+        ) ?? static::DEFAULT_RETURNS_RECIPIENT_FIRST_NAME;
     }
 
     /**
@@ -483,7 +483,7 @@ class Config implements ConfigInterface
             'simplereturns/returns/recipient_last_name',
             $scope,
             $store
-        ) ?? self::DEFAULT_RETURNS_RECIPIENT_LAST_NAME;
+        ) ?? static::DEFAULT_RETURNS_RECIPIENT_LAST_NAME;
     }
 
     /**
