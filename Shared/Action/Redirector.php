@@ -25,6 +25,10 @@ use Magento\Framework\{
     Controller\Result\Redirect
 };
 
+/**
+ * @deprecated
+ * @see RedirectTrait
+ */
 trait Redirector
 {
     /**
