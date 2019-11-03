@@ -10,11 +10,11 @@ Simplified RMA for Magento Open Source.
 
 ## Description
 
-Simple Returns provides robust RMA functionality for Magento Open Source. It extends the basic
-RMA capabilities built into Magento Open Source (not to be confused with `Magento_Rma`, which
-is available with Magento Commerce), and offers several additional features, such as:
+Simple Returns provides robust RMA functionality for Magento Open Source. It extends the
+default RMA capabilities built into Magento Open Source<sup>1</sup> and offers several
+additional features, such as:
 
-+ Customer shipping label generation
++ Shipping label generation
 + Status updates via email
 + File attachments
 + Order search
@@ -24,3 +24,7 @@ is available with Magento Commerce), and offers several additional features, suc
 ```
 composer require auroraextensions/simplereturns
 ```
+
+## Notes
+
+1. Not to be confused with `Magento_Rma`, which is packaged with Magento Commerce.
