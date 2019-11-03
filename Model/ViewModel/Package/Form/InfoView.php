@@ -109,7 +109,8 @@ class InfoView extends AbstractView implements
      */
     public function getShippingCarrier(): string
     {
-        return $this->getConfig()->getShippingCarrier();
+        return $this->getConfig()
+            ->getShippingCarrier();
     }
 
     /**
@@ -117,7 +118,8 @@ class InfoView extends AbstractView implements
      */
     public function getShippingMethod(): string
     {
-        return $this->getConfig()->getShippingMethod();
+        return $this->getConfig()
+            ->getShippingMethod();
     }
 
     /**
@@ -152,8 +154,6 @@ class InfoView extends AbstractView implements
     }
 
     /**
-     * Get associated SimpleReturn data object.
-     *
      * @return SimpleReturnInterface|null
      * @throws LocalizedException
      * @throws NoSuchEntityException
@@ -161,14 +161,14 @@ class InfoView extends AbstractView implements
     public function getSimpleReturn(): ?SimpleReturnInterface
     {
         /** @var int|string|null $rmaId */
-        $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
+        $rmaId = $this->request->getParam(static::PARAM_RMA_ID);
         $rmaId = $rmaId !== null && is_numeric($rmaId)
             ? (int) $rmaId
             : null;
 
         if ($rmaId !== null) {
             /** @var string|null $token */
-            $token = $this->request->getParam(self::PARAM_TOKEN);
+            $token = $this->request->getParam(static::PARAM_TOKEN);
             $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
             if ($token !== null) {
