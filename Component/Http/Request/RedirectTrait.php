@@ -1,6 +1,6 @@
 <?php
 /**
- * Redirector.php
+ * RedirectTrait.php
  *
  * NOTICE OF LICENSE
  *
@@ -14,46 +14,21 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       MIT License
  */
-namespace AuroraExtensions\SimpleReturns\Shared\Action;
+declare(strict_types=1);
 
-use AuroraExtensions\SimpleReturns\{
-    Exception\TraitContextException,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Action\AbstractAction,
-    Controller\Result\Redirect
-};
+namespace AuroraExtensions\SimpleReturns\Component\Http\Request;
+
+use Magento\Framework\Controller\Result\Redirect;
 
 /**
- * @deprecated
- * @see RedirectTrait
+ * Reusable HTTP redirect methods.
+ *
+ * @api
+ * @since 1.0.0
  */
-trait Redirector
+trait RedirectTrait
 {
     /**
-     * Trait initializer. Permit usage only
-     * by classes extending AbstractAction.
-     *
-     * @return void
-     * @throws TraitContextException
-     */
-    public function __initialize()
-    {
-        if (!is_subclass_of(static::class, AbstractAction::class)) {
-            throw new TraitContextException(
-                __(
-                    ModuleComponentInterface::ERROR_INVALID_TRAIT_CONTEXT,
-                    __TRAIT__,
-                    AbstractAction::class
-                )
-            );
-        }
-    }
-
-    /**
-     * Get result redirect instance.
-     *
      * @return Redirect
      */
     public function getRedirect(): Redirect
@@ -62,8 +37,6 @@ trait Redirector
     }
 
     /**
-     * Get result redirect instance, with redirect path set.
-     *
      * @param string $path
      * @return Redirect
      */
@@ -77,8 +50,6 @@ trait Redirector
     }
 
     /**
-     * Get result redirect instance, with redirect URL set.
-     *
      * @param string $url
      * @return Redirect
      */
