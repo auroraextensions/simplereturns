@@ -22,6 +22,7 @@ $viewModel = $block->getViewModel();
 /** @var OrderInterface $order */
 $order = $viewModel->getOrder();
 ?>
+<?php if ($order): ?>
 <section class="admin__page-section simplereturns-pkg-info">
     <div class="admin__page-section-title">
         <span class="title"><?= $block->escapeHtml(__('Details')) ?></span>
@@ -92,3 +93,4 @@ $order = $viewModel->getOrder();
         </div>
     </div>
 </section>
+<?php endif ?>
