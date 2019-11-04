@@ -73,12 +73,9 @@ class Attachment extends AbstractModel implements
     public function getRmaId(): ?int
     {
         /** @var int|string|null $rmaId */
-        $rmaId = $this->getData('rma_id') ?? null;
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = $this->getData('rma_id');
 
-        return $rmaId;
+        return $rmaId !== null ? (int) $rmaId : null;
     }
 
     /**
@@ -117,12 +114,9 @@ class Attachment extends AbstractModel implements
     public function getFilesize(): ?int
     {
         /** @var int|string|null $filesize */
-        $filesize = $this->getData('filesize') ?? null;
-        $filesize = $filesize !== null && is_numeric($filesize)
-            ? (int) $filesize
-            : null;
+        $filesize = $this->getData('filesize');
 
-        return $filesize;
+        return $filesize !== null ? (int) $filesize : null;
     }
 
     /**
