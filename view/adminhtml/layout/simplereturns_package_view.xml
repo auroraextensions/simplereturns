@@ -23,6 +23,7 @@
     <body>
         <referenceBlock name="page.actions.toolbar">
             <block class="AuroraExtensions\SimpleReturns\Block\Adminhtml\Package\Edit" name="simplereturns_package_edit_button"/>
+            <block class="AuroraExtensions\SimpleReturns\Block\Adminhtml\Label\Generate" name="simplereturns_label_generate"/>
         </referenceBlock>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"

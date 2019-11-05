@@ -188,12 +188,17 @@ class CreatePost extends Action implements
                         $carrierCode = $this->getConfig()
                             ->getShippingCarrier();
 
+                        /** @var string $methodCode */
+                        $methodCode = $this->getConfig()
+                            ->getShippingMethod();
+
                         /** @var array $pkgData */
                         $pkgData = [
-                            'rma_id'       => $rmaId,
+                            'rma_id' => $rmaId,
                             'carrier_code' => $carrierCode,
-                            'remote_ip'    => $remoteIp,
-                            'token'        => $token,
+                            'method_code' => $methodCode,
+                            'remote_ip' => $remoteIp,
+                            'token' => $token,
                         ];
 
                         /** @var int $pkgId */

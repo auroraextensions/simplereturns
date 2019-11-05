@@ -90,3 +90,7 @@
   padding: 0;
   white-space: nowrap;
 }
+
+.simplereturns-shipping-label .thumbnail {
+  width: 20%;
+}

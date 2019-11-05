@@ -88,3 +88,19 @@ $order = $viewModel->getOrder();
         </div>
     </div>
 </section>
+<?php if ($viewModel->hasLabel()): ?>
+<section class="admin__page-section simplereturns-shipping-label">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Shipping Label')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item shipping-label">
+            <div class="admin__page-section-item-content">
+                <div class="thumbnail">
+                    <img alt="Shipping Label" src="<?= $viewModel->getLabelDataUri() ?>"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<?php endif ?>
