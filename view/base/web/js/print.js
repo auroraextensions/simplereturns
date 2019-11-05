@@ -20,9 +20,9 @@ define([
 ], function ($) {
     'use strict';
 
-    $.widget('mage.labelPrint', {
+    $.widget('mage.simpleReturnsLabelPrint', {
         options: {
-            container: ".thumbnail"
+            container: '.thumbnail'
         },
         _create: function () {
             this.element.on('click', $.proxy(this._print, this));
@@ -32,5 +32,5 @@ define([
         }
     });
 
-    return $.mage.labelPrint;
+    return $.mage.simpleReturnsLabelPrint;
 });
