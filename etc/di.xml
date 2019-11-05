@@ -105,7 +105,6 @@
                     <item name="replacement" xsi:type="string">Replacement</item>
                     <item name="repair" xsi:type="string">Repair</item>
                     <item name="refund" xsi:type="string">Refund</item>
-                    <item name="exchange" xsi:type="string">Exchange</item>
                 </item>
                 <item name="statuses" xsi:type="array">
                     <item name="approved" xsi:type="string">Approved</item>
