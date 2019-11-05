@@ -27,6 +27,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Exception\ExceptionFactory,
+    Exception\Http\Request\InvalidTokenException,
     Model\Security\Token as Tokenizer,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface
@@ -73,9 +74,6 @@ class Generate extends Action implements
     /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property Tokenizer $tokenizer */
-    protected $tokenizer;
-
     /** @property UrlInterface $urlBuilder */
     protected $urlBuilder;
 
@@ -88,7 +86,6 @@ class Generate extends Action implements
      * @param RemoteAddress $remoteAddress
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
-     * @param Tokenizer $tokenizer
      * @param UrlInterface $urlBuilder
      * @return void
      */
@@ -101,7 +98,6 @@ class Generate extends Action implements
         RemoteAddress $remoteAddress,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
-        Tokenizer $tokenizer,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
@@ -113,7 +109,6 @@ class Generate extends Action implements
         $this->remoteAddress = $remoteAddress;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
-        $this->tokenizer = $tokenizer;
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -143,15 +138,24 @@ class Generate extends Action implements
                 '_secure' => true,
             ];
 
-            /** @var string|null $pkgToken */
-            $pkgToken = $request->getParam(self::PARAM_TOKEN);
-            $pkgToken = $pkgToken !== null && !empty($pkgToken)
-                ? $pkgToken
+            /** @var string|null $token */
+            $token = $request->getParam(self::PARAM_TOKEN);
+            $token = $token !== null && !empty($token)
+                ? $token
                 : null;
 
             try {
                 /** @var PackageInterface $package */
                 $package = $this->packageRepository->getById($pkgId);
+
+                if (!Tokenizer::isEqual($token, $package->getToken())) {
+                    /** @var InvalidTokenException $exception */
+                    $exception = $this->exceptionFactory->create(
+                        InvalidTokenException::class
+                    );
+
+                    throw $exception;
+                }
 
                 /* Create RMA request and generate shipping label. */
                 if ($this->packageManagement->requestToReturnShipment($package)) {
@@ -166,6 +170,8 @@ class Generate extends Action implements
                 );
 
                 return $this->getRedirectToUrl($viewUrl);
+            } catch (InvalidTokenException $e) {
+                $this->messageManager->addErrorMessage($e->getMessage());
             } catch (NoSuchEntityException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             } catch (LocalizedException $e) {

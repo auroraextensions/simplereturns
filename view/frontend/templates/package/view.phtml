@@ -46,7 +46,7 @@ $hasLabel = $viewModel->hasLabel();
     <div class="actions">
         <a class="action" href="<?= $viewModel->getViewRmaUrl() ?>"><?= $block->escapeHtml(__('View RMA Details')) ?></a>
         <?php if ($hasLabel): ?>
-        <a class="action" href="#" title="Print" data-mage-init='{"labelPrint":{}}'><?= $block->escapeHtml(__('Print Label')) ?></a>
+        <a class="action" href="#" title="Print" data-mage-init='{"simpleReturnsLabelPrint":{}}'><?= $block->escapeHtml(__('Print Label')) ?></a>
         <?php else: ?>
         <a class="action" href="<?= $viewModel->getGenerateLabelUrl() ?>"><?= $block->escapeHtml(__('Generate Label')) ?></a>
         <?php endif ?>
