@@ -19,6 +19,9 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Block\Adminhtml\Label;
 
 use AuroraExtensions\SimpleReturns\{
+    Api\Data\PackageInterface,
+    Api\PackageRepositoryInterface,
+    Exception\ExceptionFactory,
     Model\Security\Token as Tokenizer,
     Shared\ModuleComponentInterface
 };
@@ -26,25 +29,38 @@ use Magento\Backend\{
     Block\Widget\Context,
     Block\Widget\Container
 };
+use Magento\Framework\{
+    Exception\LocalizedException,
+    Exception\NoSuchEntityException
+};
 
 class Generate extends Container implements ModuleComponentInterface
 {
     /** @property string $_blockGroup */
     protected $_blockGroup = 'AuroraExtensions_SimpleReturns';
 
+    /** @property ExceptionFactory $exceptionFactory */
+    protected $exceptionFactory;
+
+    /** @property PackageRepositoryInterface $packageRepository */
+    protected $packageRepository;
+
     /**
      * @param Context $context
      * @param array $data
+     * @param ExceptionFactory $exceptionFactory
+     * @param PackageRepositoryInterface $packageRepository
      * @return void
      */
     public function __construct(
         Context $context,
-        array $data = []
+        array $data = [],
+        ExceptionFactory $exceptionFactory,
+        PackageRepositoryInterface $packageRepository
     ) {
-        parent::__construct(
-            $context,
-            $data
-        );
+        $this->exceptionFactory = $exceptionFactory;
+        $this->packageRepository = $packageRepository;
+        parent::__construct($context, $data);
     }
 
     /**
@@ -74,12 +90,58 @@ class Generate extends Container implements ModuleComponentInterface
                     'class' => 'print primary',
                     'id' => 'simplereturns-label-print',
                     'data_attribute' => [
-                        'simpleReturnsLabelPrint' => [],
+                        'mage-init' => [
+                            'simpleReturnsLabelPrint' => [],
+                        ],
                     ],
                     'label' => __('Print Shipping Label'),
                 ]
             );
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function hasLabel(): bool
+    {
+        /** @var int|string|null $pkgId */
+        $pkgId = $this->getRequest()->getParam(self::PARAM_PKG_ID);
+        $pkgId = $pkgId !== null && is_numeric($pkgId)
+            ? (int) $pkgId
+            : null;
+
+        if ($pkgId !== null) {
+            /** @var string|null $token */
+            $token = $this->getRequest()->getParam(self::PARAM_TOKEN);
+            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
+
+            if ($token !== null) {
+                try {
+                    /** @var PackageInterface $package */
+                    $package = $this->packageRepository->getById($pkgId);
+
+                    if (!Tokenizer::isEqual($token, $package->getToken())) {
+                        /** @var LocalizedException $exception */
+                        $exception = $this->exceptionFactory->create(
+                            LocalizedException::class
+                        );
+
+                        throw $exception;
+                    }
+
+                    if ($package->getLabelId() !== null) {
+                        return true;
+                    }
+                } catch (NoSuchEntityException $e) {
+                    /* No action required. */
+                } catch (LocalizedException $e) {
+                    /* No action required. */
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
