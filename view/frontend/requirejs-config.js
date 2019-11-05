@@ -14,17 +14,8 @@
  * @license       MIT License
  */
 var config = {
-    paths: {
-        'jquery.print': 'AuroraExtensions_SimpleReturns/js/plugins/jquery.print'
-    },
-    shim: {
-        'jquery.print': {
-            'deps': ['jquery']
-        }
-    },
     map: {
         '*': {
-            labelPrint: 'AuroraExtensions_SimpleReturns/js/print',
             simpleReturnsDeleteAttachment: 'AuroraExtensions_SimpleReturns/js/action/rma/delete-attachment'
         }
     }

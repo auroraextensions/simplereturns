@@ -15,10 +15,17 @@
  */
 var config = {
     paths: {
-        'dropzone': 'AuroraExtensions_SimpleReturns/js/plugins/dropzone'
+        'dropzone': 'AuroraExtensions_SimpleReturns/js/plugins/dropzone',
+        'jquery.print': 'AuroraExtensions_SimpleReturns/js/plugins/jquery.print'
+    },
+    shim: {
+        'jquery.print': {
+            'deps': ['jquery']
+        }
     },
     map: {
         '*': {
+            simpleReturnsLabelPrint: 'AuroraExtensions_SimpleReturns/js/print',
             simpleReturnsDragAndDrop: 'AuroraExtensions_SimpleReturns/js/dnd'
         }
     }
