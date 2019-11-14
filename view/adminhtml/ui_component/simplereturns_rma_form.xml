@@ -23,6 +23,7 @@
             <item name="provider" xsi:type="string">simplereturns_rma_form.simplereturns_rma_form_data_source</item>
         </item>
         <item name="label" xsi:type="string">RMA Details</item>
+        <item name="reverseMetadataMerge" xsi:type="boolean">true</item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
     </argument>
     <settings>
