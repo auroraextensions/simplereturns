@@ -20,6 +20,7 @@ namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma;
 
 use Countable;
 use AuroraExtensions\SimpleReturns\{
+    Component\Ui\DataProvider\Modifier\ModifierPoolTrait,
     Model\ResourceModel\SimpleReturn as SimpleReturnResource,
     Model\ResourceModel\SimpleReturn\Collection,
     Model\ResourceModel\SimpleReturn\CollectionFactory,
@@ -33,13 +34,23 @@ use Magento\Framework\{
     App\RequestInterface,
     View\Element\UiComponent\DataProvider\DataProviderInterface
 };
-use Magento\Ui\DataProvider\AbstractDataProvider;
+use Magento\Ui\{
+    DataProvider\AbstractDataProvider,
+    DataProvider\Modifier\ModifierInterface,
+    DataProvider\Modifier\PoolInterface
+};
 
 class DataProvider extends AbstractDataProvider implements
     Countable,
     DataProviderInterface,
     ModuleComponentInterface
 {
+    /**
+     * @property PoolInterface $modifierPool
+     * @method getModifierPool()
+     */
+    use ModifierPoolTrait;
+
     /** @constant string WILDCARD */
     public const WILDCARD = '*';
 
@@ -66,7 +77,7 @@ class DataProvider extends AbstractDataProvider implements
      * @param array $data
      * @param CollectionFactory $collectionFactory
      * @param FilterBuilder $filterBuilder
-     * @param array $labels
+     * @param PoolInterface $modifierPool
      * @param RequestInterface $request
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @return void
@@ -79,7 +90,7 @@ class DataProvider extends AbstractDataProvider implements
         array $data = [],
         CollectionFactory $collectionFactory,
         FilterBuilder $filterBuilder,
-        array $labels = [],
+        PoolInterface $modifierPool,
         RequestInterface $request,
         SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
@@ -92,7 +103,7 @@ class DataProvider extends AbstractDataProvider implements
         );
         $this->collection = $collectionFactory->create();
         $this->filterBuilder = $filterBuilder;
-        $this->labels = $labels;
+        $this->modifierPool = $modifierPool;
         $this->request = $request;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->prepareSubmitUrl();
@@ -157,24 +168,23 @@ class DataProvider extends AbstractDataProvider implements
     /**
      * @return array
      */
-    public function getLabelKeys(): array
+    public function getMeta(): array
     {
-        /** @var array $labels */
-        $labels = $this->labels ?? [];
+        /** @var array $meta */
+        $meta = parent::getMeta();
 
-        return array_keys($labels);
-    }
+        /** @var PoolInterface $pool */
+        $pool = $this->getModifierPool();
 
-    /**
-     * @param bool $preserveKeys
-     * @return array
-     */
-    public function getLabels(bool $preserveKeys = true): array
-    {
-        /** @var array $labels */
-        $labels = $this->labels ?? [];
+        /** @var ModifierInterface[] $modifiers */
+        $modifiers = $pool->getModifiersInstances();
 
-        return $preserveKeys ? $labels : array_values($labels);
+        /** @var ModifierInterface $modifier */
+        foreach ($modifiers as $modifier) {
+            $meta = $modifier->modifyMeta($meta);
+        }
+
+        return $meta;
     }
 
     /**
@@ -192,6 +202,17 @@ class DataProvider extends AbstractDataProvider implements
         /** @var SimpleReturnInterface $rma */
         foreach ($items as $rma) {
             $this->loadedData[$rma->getId()] = $rma->getData();
+        }
+
+        /** @var PoolInterface $pool */
+        $pool = $this->getModifierPool();
+
+        /** @var ModifierInterface[] $modifiers */
+        $modifiers = $pool->getModifiersInstances();
+
+        /** @var ModifierInterface $modifier */
+        foreach ($modifiers as $modifier) {
+            $this->loadedData = $modifier->modifyData($this->loadedData);
         }
 
         return $this->loadedData;
