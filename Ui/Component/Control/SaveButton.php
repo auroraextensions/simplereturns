@@ -34,7 +34,7 @@ class SaveButton implements ButtonProviderInterface
     public function __construct(
         array $components = []
     ) {
-        $this->components = array_merge(
+        $this->components = array_replace_recursive(
             $this->components,
             $components
         );

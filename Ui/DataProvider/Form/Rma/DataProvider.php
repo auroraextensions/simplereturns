@@ -57,9 +57,6 @@ class DataProvider extends AbstractDataProvider implements
     /** @property FilterBuilder $filterBuilder */
     protected $filterBuilder;
 
-    /** @property array $labels */
-    protected $labels;
-
     /** @property array $loadedData */
     protected $loadedData = [];
 
@@ -112,7 +109,7 @@ class DataProvider extends AbstractDataProvider implements
     /**
      * @return void
      */
-    protected function prepareSubmitUrl(): void
+    public function prepareSubmitUrl(): void
     {
         if (isset($this->data['config']['submit_url'])) {
             $this->parseSubmitUrl();
