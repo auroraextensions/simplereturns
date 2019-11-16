@@ -34,6 +34,7 @@
         <ajaxSave>true</ajaxSave>
         <ajaxSaveType>simple</ajaxSaveType>
         <dataScope>data</dataScope>
+        <namespace>simplereturns_rma_form</namespace>
         <deps>
             <dep>simplereturns_rma_form.simplereturns_rma_form_data_source</dep>
         </deps>
