@@ -1,0 +1,100 @@
+<?php
+/**
+ * details.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License, which
+ * is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       MIT License
+ */
+
+/**
+ * @see AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
+ * @see AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView
+ * @see Magento\Framework\View\Element\Template
+ * @see Magento\Sales\Api\Data\OrderInterface
+ */
+
+/** @var Template $block */
+/** @var ViewView $viewModel */
+$viewModel = $block->getViewModel();
+
+/** @var SimpleReturnInterface $rma */
+$rma = $viewModel->getSimpleReturn();
+
+/** @var OrderInterface $order */
+$order = $viewModel->getOrder();
+?>
+<section class="admin__page-section simplereturns-rma-info">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('View RMA Details for Order #%1', $order->getRealOrderId())) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item rma-information">
+            <div class="admin__page-section-item-content">
+                <table class="admin__table-secondary rma-information-table">
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Created')) ?></th>
+                        <td><?= $block->escapeHtml($rma->getCreatedAt()) ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Updated')) ?></th>
+                        <td><?= $block->escapeHtml($rma->getUpdatedAt()) ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Status')) ?></th>
+                        <td>
+                            <span id="rma_status">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '%1',
+                                        $viewModel->getFrontLabel('statuses', $rma->getStatus())
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Reason')) ?></th>
+                        <td>
+                            <span id="rma_reason">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '%1',
+                                        $viewModel->getFrontLabel('reasons', $rma->getReason())
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Resolution')) ?></th>
+                        <td>
+                            <span id="rma_resolution">
+                                <?= $block->escapeHtml(
+                                    __(
+                                        '%1',
+                                        $viewModel->getFrontLabel('resolutions', $rma->getResolution())
+                                    )
+                                ) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Comments')) ?></th>
+                        <td>
+                            <span id="rma_comments"><?= $block->escapeHtml(__('%1', $rma->getComments())) ?></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

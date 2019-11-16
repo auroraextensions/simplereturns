@@ -1,0 +1,48 @@
+<?php
+/**
+ * media.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License, which
+ * is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       MIT License
+ */
+
+/**
+ * @see AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface
+ * @see AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView
+ * @see Magento\Framework\View\Element\Template
+ * @see Magento\Sales\Api\Data\OrderInterface
+ */
+
+/** @var Template $block */
+/** @var ViewView $viewModel */
+$viewModel = $block->getViewModel();
+?>
+<?php if ($viewModel->hasAttachments()): ?>
+<?php /** @var array $attachments */ ?>
+<?php $attachments = $viewModel->getAttachments() ?>
+<section class="admin__page-section simplereturns-rma-attachments">
+    <div class="admin__page-section-item">
+        <div class="admin__page-section-item-title">
+            <span class="title"><?= $block->escapeHtml(__('Attachments')) ?></span>
+        </div>
+        <div class="admin__page-section-item-content">
+            <?php foreach ($attachments as $attachment): ?>
+                <div class="attachment framed">
+                    <a href="<?= $block->escapeUrl($attachment) ?>" target="_blank">
+                        <img src="<?= $block->escapeUrl($attachment) ?>"/>
+                    </a>
+                </div>
+            <?php endforeach ?>
+        </div>
+    </div>
+</section>
+<?php endif ?>
