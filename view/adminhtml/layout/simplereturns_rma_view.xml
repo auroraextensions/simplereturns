@@ -28,10 +28,28 @@
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
                    name="simplereturns_rma_view"
-                   template="AuroraExtensions_SimpleReturns::rma/view.phtml">
-                <arguments>
-                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView</argument>
-                </arguments>
+                   template="AuroraExtensions_SimpleReturns::container/empty.phtml">
+                <block class="Magento\Framework\View\Element\Template"
+                       name="simplereturns_rma_view_details"
+                       template="AuroraExtensions_SimpleReturns::rma/view/details.phtml">
+                    <arguments>
+                        <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView</argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Framework\View\Element\Template"
+                       name="simplereturns_rma_view_media"
+                       template="AuroraExtensions_SimpleReturns::rma/view/media.phtml">
+                    <arguments>
+                        <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView</argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Framework\View\Element\Template"
+                       name="simplereturns_rma_view_customer_info"
+                       template="AuroraExtensions_SimpleReturns::rma/view/customer.phtml">
+                    <arguments>
+                        <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView</argument>
+                    </arguments>
+                </block>
             </block>
         </referenceContainer>
     </body>
