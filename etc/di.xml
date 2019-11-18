@@ -102,16 +102,16 @@
                     <item name="unapproved_purchase" xsi:type="string">Didn't approve purchase</item>
                 </item>
                 <item name="resolutions" xsi:type="array">
-                    <item name="replacement" xsi:type="string">Replacement</item>
-                    <item name="repair" xsi:type="string">Repair</item>
                     <item name="refund" xsi:type="string">Refund</item>
+                    <item name="repair" xsi:type="string">Repair</item>
+                    <item name="replacement" xsi:type="string">Replacement</item>
                 </item>
                 <item name="statuses" xsi:type="array">
+                    <item name="pending" xsi:type="string">Pending</item>
                     <item name="approved" xsi:type="string">Approved</item>
                     <item name="canceled" xsi:type="string">Canceled</item>
                     <item name="declined" xsi:type="string">Declined</item>
                     <item name="on_hold" xsi:type="string">On Hold</item>
-                    <item name="pending" xsi:type="string">Pending</item>
                 </item>
             </argument>
         </arguments>
