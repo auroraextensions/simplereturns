@@ -51,7 +51,7 @@
                 type="AuroraExtensions\SimpleReturns\Model\DataModel\Attachment"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentSearchResultsInterface"
                 type="Magento\Framework\Api\SearchResults"/>
-    <preference for="AuroraExtensions\SimpleReturns\Spec\System\Module\ConfigInterface"
+    <preference for="AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface"
                 type="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config"/>
 
     <type name="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository">

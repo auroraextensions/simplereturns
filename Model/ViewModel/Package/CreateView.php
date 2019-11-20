@@ -29,7 +29,7 @@ use AuroraExtensions\SimpleReturns\{
     Model\Security\Token as Tokenizer,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface,
-    Spec\System\Module\ConfigInterface
+    Csi\System\Module\ConfigInterface
 };
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\{

@@ -31,7 +31,7 @@ use AuroraExtensions\SimpleReturns\{
     Model\Security\Token as Tokenizer,
     Shared\Action\Redirector,
     Shared\ModuleComponentInterface,
-    Spec\System\Module\ConfigInterface
+    Csi\System\Module\ConfigInterface
 };
 use Magento\Framework\{
     App\Action\Action,

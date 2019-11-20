@@ -28,7 +28,7 @@ use AuroraExtensions\SimpleReturns\{
     Exception\ExceptionFactory,
     Exception\InvalidCarrierException,
     Shared\ModuleComponentInterface,
-    Spec\System\Module\ConfigInterface
+    Csi\System\Module\ConfigInterface
 };
 use Magento\Dhl\Model\Carrier as DHL;
 use Magento\Fedex\Model\Carrier as Fedex;
