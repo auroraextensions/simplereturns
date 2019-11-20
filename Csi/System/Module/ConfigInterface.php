@@ -16,7 +16,7 @@
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Spec\System\Module;
+namespace AuroraExtensions\SimpleReturns\Csi\System\Module;
 
 interface ConfigInterface
 {
