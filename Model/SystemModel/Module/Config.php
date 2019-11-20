@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\SystemModel\Module;
 
-use AuroraExtensions\SimpleReturns\Spec\System\Module\ConfigInterface;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use Magento\Dhl\Model\Carrier as DHL;
 use Magento\Fedex\Model\Carrier as Fedex;
 use Magento\Framework\{

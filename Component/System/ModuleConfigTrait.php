@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Component\System;
 
-use AuroraExtensions\SimpleReturns\Spec\System\Module\ConfigInterface;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 
 trait ModuleConfigTrait
 {

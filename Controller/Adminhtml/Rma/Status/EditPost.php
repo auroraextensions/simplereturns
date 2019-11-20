@@ -27,7 +27,7 @@ use AuroraExtensions\SimpleReturns\{
     Model\Email\Transport\Customer as EmailTransport,
     Shared\Component\LabelFormatterTrait,
     Shared\ModuleComponentInterface,
-    Spec\System\Module\ConfigInterface
+    Csi\System\Module\ConfigInterface
 };
 use Magento\Backend\{
     App\Action,
