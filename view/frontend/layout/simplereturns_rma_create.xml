@@ -33,9 +33,9 @@
                 <arguments>
                     <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\CreateView</argument>
                 </arguments>
-                <container name="simplereturns_rma_create_before_fields" htmlTag="div" htmlClass="block"/>
-                <container name="simplereturns_rma_create_after_fields" htmlTag="div" htmlClass="block"/>
-                <container name="simplereturns_rma_create_after_media" htmlTag="div" htmlClass="block"/>
+                <container name="simplereturns_rma_create_before_fields" htmlTag="div" htmlClass="container"/>
+                <container name="simplereturns_rma_create_after_fields" htmlTag="div" htmlClass="container"/>
+                <container name="simplereturns_rma_create_after_media" htmlTag="div" htmlClass="container"/>
             </block>
         </referenceContainer>
     </body>
