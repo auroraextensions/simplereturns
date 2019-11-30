@@ -37,6 +37,7 @@ $resolutions = $viewModel->getResolutions();
                     <legend class="legend">
                         <span><?= $block->escapeHtml(__('Create Return for Order #%1', $order->getRealOrderId())) ?></span>
                     </legend>
+                    <?= $block->getChildHtml('simplereturns_rma_create_before_fields') ?>
                     <div class="field reason required">
                         <label class="label reason" for="reason">
                             <span><?= $block->escapeHtml(__('Reason')) ?></span>
@@ -69,6 +70,7 @@ $resolutions = $viewModel->getResolutions();
                             <textarea id="comments" name="simplereturns[comments]"></textarea>
                         </div>
                     </div>
+                    <?= $block->getChildHtml('simplereturns_rma_create_after_fields') ?>
                     <div id="attachment-dropzone" class="field attachments optional" data-mage-init='{"simpleReturnsDragAndDrop":{}}'>
                         <label class="label attachments" for="attachments">
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
@@ -77,6 +79,7 @@ $resolutions = $viewModel->getResolutions();
                             <div class="dz-message"><?= $block->escapeHtml(__('Drag and drop files or click to upload.')) ?></div>
                         </div>
                     </div>
+                    <?= $block->getChildHtml('simplereturns_rma_create_after_media') ?>
                 </fieldset>
                 <div class="actions-toolbar">
                     <div class="primary">
