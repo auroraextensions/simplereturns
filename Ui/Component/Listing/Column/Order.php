@@ -1,6 +1,6 @@
 <?php
 /**
- * Action.php
+ * Order.php
  *
  * NOTICE OF LICENSE
  *
@@ -62,9 +62,10 @@ class Order extends Column
 
     /**
      * @param ContextInterface $context
-     * @param UiComponentFactory $uiComponentFactory,
+     * @param UiComponentFactory $uiComponentFactory
      * @param array $components
      * @param array $data
+     * @param OrderRepositoryInterface $orderRepository
      * @param UrlInterface $urlBuilder
      * @param string|null $entityKey
      * @param string|null $paramKey
