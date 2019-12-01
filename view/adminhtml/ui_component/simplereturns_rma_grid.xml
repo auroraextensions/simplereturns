@@ -73,6 +73,13 @@
                 <label translate="true">ID</label>
             </settings>
         </column>
+        <column name="increment_id" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Order\IncrementId">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Order</label>
+                <sortable>false</sortable>
+            </settings>
+        </column>
         <column name="status">
             <settings>
                 <filter>text</filter>
