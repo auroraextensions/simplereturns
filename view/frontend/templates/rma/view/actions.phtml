@@ -1,0 +1,42 @@
+<?php
+/**
+ * actions.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License, which
+ * is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       MIT License
+ */
+
+/**
+ * @see AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView
+ * @see Magento\Framework\View\Element\Template
+ */
+
+/** @var Template $block */
+/** @var ViewView $viewModel */
+$viewModel = $block->getViewModel();
+?>
+<h3 class="subtitle"><?= $block->escapeHtml(__('Actions')) ?></h3>
+<div class="actions">
+    <a class="action" href="<?= $viewModel->getEditRmaUrl() ?>"><?= $block->escapeHtml(__('Edit RMA Details')) ?></a>
+    <?php if ($viewModel->hasPackage()): ?>
+    <a class="action" href="<?= $viewModel->getViewPackageUrl() ?>"><?= $block->escapeHtml(__('View Package Details')) ?></a>
+    <?php else: ?>
+        <?php if ($viewModel->isRequestApproved()): ?>
+        <a class="action" href="<?= $viewModel->getCreatePackageUrl() ?>"><?= $block->escapeHtml(__('Create Package')) ?></a>
+        <?php else: ?>
+        <a class="action disabled" href="#"><?= $block->escapeHtml(__('Create Package')) ?></a>
+        <span class="tooltip">
+            <button type="button" data-tooltip="<?= $block->escapeHtmlAttr(__('Once approved, you can create the return package and generate the shipping label.')) ?>">&#9432;</button>
+        </span>
+        <?php endif ?>
+    <?php endif ?>
+</div>
