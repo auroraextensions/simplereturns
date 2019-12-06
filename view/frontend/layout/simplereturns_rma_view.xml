@@ -28,11 +28,38 @@
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
                    name="simplereturns_rma_view"
-                   template="AuroraExtensions_SimpleReturns::rma/view.phtml"
+                   template="AuroraExtensions_SimpleReturns::container/empty.phtml"
                    cacheable="false">
-                <arguments>
-                    <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView</argument>
-                </arguments>
+                <container name="simplereturns_rma_view_container" htmlTag="div" htmlClass="block simplereturns">
+                    <block class="Magento\Framework\View\Element\Template"
+                           name="simplereturns_rma_view_title"
+                           template="AuroraExtensions_SimpleReturns::rma/view/title.phtml">
+                        <arguments>
+                            <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Framework\View\Element\Template"
+                           name="simplereturns_rma_view_actions"
+                           template="AuroraExtensions_SimpleReturns::rma/view/actions.phtml">
+                        <arguments>
+                            <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Framework\View\Element\Template"
+                           name="simplereturns_rma_view_details"
+                           template="AuroraExtensions_SimpleReturns::rma/view/details.phtml">
+                        <arguments>
+                            <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Framework\View\Element\Template"
+                           name="simplereturns_rma_view_media"
+                           template="AuroraExtensions_SimpleReturns::rma/view/media.phtml">
+                        <arguments>
+                            <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView</argument>
+                        </arguments>
+                    </block>
+                </container>
             </block>
         </referenceContainer>
     </body>

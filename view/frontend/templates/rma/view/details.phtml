@@ -1,0 +1,112 @@
+<?php
+/**
+ * details.phtml
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License, which
+ * is bundled with this package in the file LICENSE.txt.
+ *
+ * It is also available on the Internet at the following URL:
+ * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
+ *
+ * @package       AuroraExtensions_SimpleReturns
+ * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
+ * @license       MIT License
+ */
+
+/**
+ * @see AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
+ * @see AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
+ * @see AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView
+ * @see Magento\Framework\View\Element\Template
+ * @see Magento\Sales\Api\Data\OrderInterface
+ */
+
+/** @var Template $block */
+/** @var ViewView $viewModel */
+$viewModel = $block->getViewModel();
+
+/** @var SimpleReturnInterface $rma */
+$rma = $viewModel->getSimpleReturn();
+
+/** @var OrderInterface $order */
+$order = $viewModel->getOrder();
+?>
+<h3 class="subtitle"><?= $block->escapeHtml(__('Details')) ?></h3>
+<div class="details">
+    <div class="row">
+        <span class="title"><?= $block->escapeHtml(__('Return')) ?></span>
+        <span class="value">
+            <?= $block->escapeHtml(
+                __(
+                    '#%1',
+                    $rma->getFrontId()
+                )
+            ) ?>
+        </span>
+    </div>
+    <?php if ($viewModel->hasPackage()): ?>
+    <?php /** @var PackageInterface $package */ ?>
+    <?php $package = $viewModel->getPackage() ?>
+    <div class="row">
+        <span class="title"><?= $block->escapeHtml(__('Package')) ?></span>
+        <span class="value">
+            <?= $block->escapeHtml(
+                __(
+                    '#%1',
+                    $package->getFrontId()
+                )
+            ) ?>
+        </span>
+    </div>
+    <?php endif ?>
+    <div class="row">
+        <span class="title"><?= $block->escapeHtml(__('Order')) ?></span>
+        <span class="value">
+            <?= $block->escapeHtml(
+                __(
+                    '#%1',
+                    $order->getRealOrderId()
+                )
+            ) ?>
+        </span>
+    </div>
+    <div class="row">
+        <span class="title"><?= $block->escapeHtml(__('Status')) ?></span>
+        <span class="value">
+            <?= $block->escapeHtml(
+                __(
+                    '%1',
+                    $viewModel->getFrontLabel('statuses', $rma->getStatus())
+                )
+            ) ?>
+        </span>
+    </div>
+    <div class="row">
+        <span class="title"><?= $block->escapeHtml(__('Reason')) ?></span>
+        <span class="value">
+            <?= $block->escapeHtml(
+                __(
+                    '%1',
+                    $viewModel->getFrontLabel('reasons', $rma->getReason())
+                )
+            ) ?>
+        </span>
+    </div>
+    <div class="row">
+        <span class="title"><?= $block->escapeHtml(__('Resolution')) ?></span>
+        <span class="value">
+            <?= $block->escapeHtml(
+                __(
+                    '%1',
+                    $viewModel->getFrontLabel('resolutions', $rma->getResolution())
+                )
+            ) ?>
+        </span>
+    </div>
+    <div class="row">
+        <span class="title"><?= $block->escapeHtml(__('Comments')) ?></span>
+        <span class="value"><?= $block->escapeHtml($rma->getComments()) ?></span>
+    </div>
+</div>
