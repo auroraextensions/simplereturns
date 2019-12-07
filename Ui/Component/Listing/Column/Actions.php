@@ -98,6 +98,7 @@ class Actions extends Column
                                     $urlSecretParamName => $item[$urlSecretParamName],
                                 ]
                             ),
+                            'hidden' => true,
                             'label' => __('View'),
                         ],
                         'edit' => [
