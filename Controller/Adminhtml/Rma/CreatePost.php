@@ -24,13 +24,13 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterfaceFactory,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\Http\Request\RedirectTrait,
     Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
     Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\Action\Redirector,
     Shared\Component\LabelFormatterTrait,
     Shared\ModuleComponentInterface
 };
@@ -44,6 +44,7 @@ use Magento\Framework\{
     Controller\Result\JsonFactory as ResultJsonFactory,
     Data\Form\FormKey\Validator as FormKeyValidator,
     Escaper,
+    Event\ManagerInterface as EventManagerInterface,
     Exception\AlreadyExistsException,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
@@ -59,9 +60,7 @@ class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use LabelFormatterTrait, ModuleConfigTrait, Redirector {
-        Redirector::__initialize as protected;
-    }
+    use LabelFormatterTrait, ModuleConfigTrait, RedirectTrait;
 
     /** @property AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
@@ -74,6 +73,9 @@ class CreatePost extends Action implements
 
     /** @property Escaper $escaper */
     protected $escaper;
+
+    /** @property EventManagerInterface $eventManager */
+    protected $eventManager;
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
@@ -114,6 +116,7 @@ class CreatePost extends Action implements
      * @param DateTimeFactory $dateTimeFactory
      * @param EmailTransport $emailTransport
      * @param Escaper $escaper
+     * @param EventManagerInterface $eventManager
      * @param ExceptionFactory $exceptionFactory
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
@@ -134,6 +137,7 @@ class CreatePost extends Action implements
         DateTimeFactory $dateTimeFactory,
         EmailTransport $emailTransport,
         Escaper $escaper,
+        EventManagerInterface $eventManager,
         ExceptionFactory $exceptionFactory,
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
@@ -148,11 +152,11 @@ class CreatePost extends Action implements
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
-        $this->__initialize();
         $this->attachmentRepository = $attachmentRepository;
         $this->dateTimeFactory = $dateTimeFactory;
         $this->emailTransport = $emailTransport;
         $this->escaper = $escaper;
+        $this->eventManager = $eventManager;
         $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
@@ -286,6 +290,17 @@ class CreatePost extends Action implements
                     /** @var int $rmaId */
                     $rmaId = $this->simpleReturnRepository->save(
                         $rma->addData($data)
+                    );
+
+                    $this->eventManager->dispatch(
+                        'simplereturns_adminhtml_rma_create_after',
+                        [
+                            'rma_id' => $rmaId,
+                            'order_id' => $orderId,
+                            'status' => $status,
+                            'reason' => $reason,
+                            'resolution' => $resolution,
+                        ]
                     );
 
                     /* Send New RMA Request email */
