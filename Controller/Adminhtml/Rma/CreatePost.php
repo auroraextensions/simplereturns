@@ -184,14 +184,14 @@ class CreatePost extends Action implements
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
-            return $this->resultJsonFactory->create()->setData([
+            return $resultJson->setData([
                 'errors' => true,
                 'message' => __('Invalid request type. Must be POST request.'),
             ]);
         }
 
         if (!$this->formKeyValidator->validate($request)) {
-            return $this->resultJsonFactory->create()->setData([
+            return $resultJson->setData([
                 'errors' => true,
                 'message' => __('Invalid form key.'),
             ]);
