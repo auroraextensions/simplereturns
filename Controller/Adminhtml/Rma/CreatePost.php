@@ -295,11 +295,7 @@ class CreatePost extends Action implements
                     $this->eventManager->dispatch(
                         'simplereturns_adminhtml_rma_create_after',
                         [
-                            'rma_id' => $rmaId,
-                            'order_id' => $orderId,
-                            'status' => $status,
-                            'reason' => $reason,
-                            'resolution' => $resolution,
+                            'rma' => $rma,
                         ]
                     );
 
