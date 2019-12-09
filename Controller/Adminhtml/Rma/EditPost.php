@@ -38,6 +38,7 @@ use Magento\Framework\{
     Controller\Result\JsonFactory as ResultJsonFactory,
     Data\Form\FormKey\Validator as FormKeyValidator,
     Escaper,
+    Event\ManagerInterface as EventManagerInterface,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
     Serialize\Serializer\Json as JsonSerializer,
@@ -56,6 +57,9 @@ class EditPost extends Action implements
 
     /** @property Escaper $escaper */
     protected $escaper;
+
+    /** @property EventManagerInterface $eventManager */
+    protected $eventManager;
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
@@ -82,6 +86,7 @@ class EditPost extends Action implements
      * @param Context $context
      * @param EmailTransport $emailTransport
      * @param Escaper $escaper
+     * @param EventManagerInterface $eventManager
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
      * @param ConfigInterface $moduleConfig
@@ -96,6 +101,7 @@ class EditPost extends Action implements
         Context $context,
         EmailTransport $emailTransport,
         Escaper $escaper,
+        EventManagerInterface $eventManager,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
         ConfigInterface $moduleConfig,
@@ -108,6 +114,7 @@ class EditPost extends Action implements
         parent::__construct($context);
         $this->emailTransport = $emailTransport;
         $this->escaper = $escaper;
+        $this->eventManager = $eventManager;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->moduleConfig = $moduleConfig;
@@ -192,6 +199,13 @@ class EditPost extends Action implements
                             'comments' => $comments,
                         ]);
                         $this->simpleReturnRepository->save($rma);
+
+                        $this->eventManager->dispatch(
+                            'simplereturns_adminhtml_rma_edit_after',
+                            [
+                                'rma' => $rma,
+                            ]
+                        );
 
                         /** @var OrderInterface $order */
                         $order = $this->orderRepository->get($rma->getOrderId());
