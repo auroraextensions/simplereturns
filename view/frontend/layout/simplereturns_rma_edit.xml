@@ -34,6 +34,9 @@
                 <arguments>
                     <argument name="view_model" xsi:type="object">AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\EditView</argument>
                 </arguments>
+                <container name="simplereturns_rma_edit_before_fields" htmlTag="div" htmlClass="container"/>
+                <container name="simplereturns_rma_edit_after_fields" htmlTag="div" htmlClass="container"/>
+                <container name="simplereturns_rma_edit_after_media" htmlTag="div" htmlClass="container"/>
             </block>
         </referenceContainer>
     </body>

@@ -53,6 +53,7 @@ $files = $viewModel->getSerializedFiles();
                     <legend class="legend">
                         <span><?= $block->escapeHtml(__('Edit RMA Request for Order #%1', $order->getRealOrderId())) ?></span>
                     </legend>
+                    <?= $block->getChildHtml('simplereturns_rma_edit_before_fields') ?>
                     <div class="field reason required">
                         <label class="label reason" for="reason">
                             <span><?= $block->escapeHtml(__('Reason')) ?></span>
@@ -89,6 +90,7 @@ $files = $viewModel->getSerializedFiles();
                             <textarea id="comments" name="simplereturns[comments]"><?= $block->escapeHtml($rma->getComments()) ?></textarea>
                         </div>
                     </div>
+                    <?= $block->getChildHtml('simplereturns_rma_edit_after_fields') ?>
                     <div id="attachment-dropzone" class="field attachments optional">
                         <label class="label attachments" for="attachments">
                             <span><?= $block->escapeHtml(__('Attachments')) ?></span>
@@ -105,6 +107,7 @@ $files = $viewModel->getSerializedFiles();
                             <div class="dz-message dz-hide-message"><?= $block->escapeHtml(__('Drag and drop files or click to upload.')) ?></div>
                         </div>
                     </div>
+                    <?= $block->getChildHtml('simplereturns_rma_edit_after_media') ?>
                 </fieldset>
                 <script type="text/x-magento-init">
                     {
