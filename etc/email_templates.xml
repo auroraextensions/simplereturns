@@ -17,7 +17,7 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
-    <!-- adminhtml -->
+    <!-- Adminhtml -->
     <template id="simplereturns_admin_rma_request_new_email_template"
               label="New RMA Request"
               file="rma_request_new.html"
@@ -25,16 +25,22 @@
               module="AuroraExtensions_SimpleReturns"
               area="adminhtml"/>
 
-    <!-- frontend -->
+    <!-- Frontend -->
     <template id="simplereturns_customer_rma_request_new_email_template"
               label="New RMA Request"
               file="rma_request_new.html"
               type="html"
               module="AuroraExtensions_SimpleReturns"
               area="frontend"/>
-    <template id="simplereturns_customer_rma_request_status_update_email_template"
-              label="RMA Request Status Update"
-              file="rma_request_status_update.html"
+    <template id="simplereturns_customer_rma_request_status_change_email_template"
+              label="RMA Request Status Change"
+              file="rma_request_status_change.html"
+              type="html"
+              module="AuroraExtensions_SimpleReturns"
+              area="frontend"/>
+    <template id="simplereturns_customer_rma_request_update_email_template"
+              label="RMA Request Update"
+              file="rma_request_update.html"
               type="html"
               module="AuroraExtensions_SimpleReturns"
               area="frontend"/>
