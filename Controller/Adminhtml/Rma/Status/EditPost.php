@@ -21,10 +21,11 @@ namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma\Status;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\Event\EventManagerTrait,
     Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
-    Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
+    Model\Security\Token as Tokenizer,
     Shared\Component\LabelFormatterTrait,
     Shared\ModuleComponentInterface,
     Csi\System\Module\ConfigInterface
@@ -37,6 +38,7 @@ use Magento\Framework\{
     App\Action\HttpPostActionInterface,
     Controller\Result\JsonFactory as ResultJsonFactory,
     Data\Form\FormKey\Validator as FormKeyValidator,
+    Event\ManagerInterface as EventManagerInterface,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
     Serialize\Serializer\Json as JsonSerializer
@@ -47,7 +49,7 @@ class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use ModuleConfigTrait, LabelFormatterTrait;
+    use EventManagerTrait, ModuleConfigTrait, LabelFormatterTrait;
 
     /** @property EmailTransport $emailTransport */
     protected $emailTransport;
@@ -73,6 +75,7 @@ class EditPost extends Action implements
     /**
      * @param Context $context
      * @param EmailTransport $emailTransport
+     * @param EventManagerInterface $eventManager
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
      * @param ConfigInterface $moduleConfig
@@ -85,6 +88,7 @@ class EditPost extends Action implements
     public function __construct(
         Context $context,
         EmailTransport $emailTransport,
+        EventManagerInterface $eventManager,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
         ConfigInterface $moduleConfig,
@@ -95,6 +99,7 @@ class EditPost extends Action implements
     ) {
         parent::__construct($context);
         $this->emailTransport = $emailTransport;
+        $this->eventManager = $eventManager;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->moduleConfig = $moduleConfig;
@@ -144,14 +149,12 @@ class EditPost extends Action implements
         $data = $this->serializer->unserialize($content);
 
         /** @var int|string|null $rmaId */
-        $rmaId = $request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = $request->getParam(static::PARAM_RMA_ID);
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
         if ($rmaId !== null) {
             /** @var string|null $token */
-            $token = $request->getParam(self::PARAM_TOKEN);
+            $token = $request->getParam(static::PARAM_TOKEN);
             $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
             if ($token !== null) {
@@ -159,49 +162,79 @@ class EditPost extends Action implements
                 $status = $data['status'] ?? null;
                 $status = $status !== null ? trim($status) : null;
 
-                /** @todo: Ensure given status value is permissible. */
-
                 if ($status !== null) {
                     try {
                         /** @var SimpleReturnInterface $rma */
                         $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                        if ($rma->getId()) {
-                            $this->simpleReturnRepository->save(
-                                $rma->setStatus($status)
+                        if (!Tokenizer::isEqual($token, $rma->getToken())) {
+                            /** @var LocalizedException $exception */
+                            $exception = $this->exceptionFactory->create(
+                                LocalizedException::class
                             );
 
-                            /** @var OrderInterface $order */
-                            $order = $this->orderRepository->get($rma->getOrderId());
-
-                            /** @var string $email */
-                            $email = $order->getCustomerEmail();
-
-                            /** @var string $name */
-                            $name = $order->getCustomerName();
-
-                            $this->emailTransport->send(
-                                'simplereturns/customer/rma_request_status_update_email_template',
-                                'simplereturns/customer/rma_request_status_update_email_identity',
-                                [
-                                    'orderId' => $order->getRealOrderId(),
-                                    'frontId' => $rma->getFrontId(),
-                                    'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
-                                    'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
-                                    'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
-                                ],
-                                $email,
-                                $name,
-                                (int) $order->getStoreId()
-                            );
-
-                            $resultJson->setData([
-                                'success' => true,
-                                'message' => __('Successfully updated RMA status.'),
-                            ]);
-
-                            return $resultJson;
+                            throw $exception;
                         }
+
+                        /** @var int|string $orderId */
+                        $orderId = $rma->getOrderId();
+
+                        /** @var string $reason */
+                        $reason = $rma->getReason();
+
+                        /** @var string $resolution */
+                        $resolution = $rma->getResolution();
+
+                        $this->dispatchEvent(
+                            'simplereturns_adminhtml_rma_status_edit_save_before',
+                            [
+                                'rma' => $rma,
+                                'status' => $status,
+                            ]
+                        );
+
+                        $this->simpleReturnRepository->save(
+                            $rma->setStatus($status)
+                        );
+
+                        $this->dispatchEvent(
+                            'simplereturns_adminhtml_rma_status_edit_save_after',
+                            [
+                                'rma' => $rma,
+                            ]
+                        );
+
+                        /** @var OrderInterface $order */
+                        $order = $this->orderRepository->get($orderId);
+
+                        /** @var string $email */
+                        $email = $order->getCustomerEmail();
+
+                        /** @var string $name */
+                        $name = $order->getCustomerName();
+
+                        /* Send RMA request status change email. */
+                        $this->emailTransport->send(
+                            'simplereturns/customer/rma_request_status_change_email_template',
+                            'simplereturns/customer/rma_request_status_change_email_identity',
+                            [
+                                'orderId' => $order->getRealOrderId(),
+                                'frontId' => $rma->getFrontId(),
+                                'reason' => $this->getFrontLabel('reasons', $reason),
+                                'resolution' => $this->getFrontLabel('resolutions', $resolution),
+                                'status' => $this->getFrontLabel('statuses', $status),
+                            ],
+                            $email,
+                            $name,
+                            (int) $order->getStoreId()
+                        );
+
+                        $resultJson->setData([
+                            'success' => true,
+                            'message' => __('Successfully updated RMA status.'),
+                        ]);
+
+                        return $resultJson;
                     } catch (NoSuchEntityException $e) {
                         $response = [
                             'error' => true,
