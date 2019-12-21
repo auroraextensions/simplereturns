@@ -31,6 +31,7 @@ use AuroraExtensions\SimpleReturns\{
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Email\Transport\Customer as EmailTransport,
     Model\Security\Token as Tokenizer,
+    Shared\Component\LabelFormatterTrait,
     Shared\ModuleComponentInterface,
     Csi\System\Module\ConfigInterface
 };
@@ -55,7 +56,8 @@ class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use EventManagerTrait, ModuleConfigTrait, RedirectTrait;
+    use EventManagerTrait, ModuleConfigTrait,
+        LabelFormatterTrait, RedirectTrait;
 
     /** @property AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
