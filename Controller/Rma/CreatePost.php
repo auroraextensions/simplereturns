@@ -24,13 +24,14 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterfaceFactory,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\Event\EventManagerTrait,
+    Component\Http\Request\RedirectTrait,
     Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
     Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\Action\Redirector,
     Shared\Component\LabelFormatterTrait,
     Shared\ModuleComponentInterface
 };
@@ -45,6 +46,7 @@ use Magento\Framework\{
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
     Escaper,
+    Event\ManagerInterface as EventManagerInterface,
     Exception\AlreadyExistsException,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
@@ -60,9 +62,8 @@ class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use ModuleConfigTrait, LabelFormatterTrait, Redirector {
-        Redirector::__initialize as protected;
-    }
+    use EventManagerTrait, ModuleConfigTrait,
+        LabelFormatterTrait, RedirectTrait;
 
     /** @property AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
@@ -116,6 +117,7 @@ class CreatePost extends Action implements
      * @param DateTimeFactory $dateTimeFactory
      * @param EmailTransport $emailTransport
      * @param Escaper $escaper
+     * @param EventManagerInterface $eventManager
      * @param ExceptionFactory $exceptionFactory
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
@@ -136,6 +138,7 @@ class CreatePost extends Action implements
         DateTimeFactory $dateTimeFactory,
         EmailTransport $emailTransport,
         Escaper $escaper,
+        EventManagerInterface $eventManager,
         ExceptionFactory $exceptionFactory,
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
@@ -149,12 +152,12 @@ class CreatePost extends Action implements
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
-        $this->__initialize();
         $this->attachmentRepository = $attachmentRepository;
         $this->dataPersistor = $dataPersistor;
         $this->dateTimeFactory = $dateTimeFactory;
         $this->emailTransport = $emailTransport;
         $this->escaper = $escaper;
+        $this->eventManager = $eventManager;
         $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
@@ -169,17 +172,15 @@ class CreatePost extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_createPost action.
-     *
      * @return Redirect
      */
     public function execute()
     {
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
         if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+            return $this->getRedirectToPath(static::ROUTE_SALES_GUEST_VIEW);
         }
 
         /** @var array|null $params */
@@ -187,11 +188,11 @@ class CreatePost extends Action implements
 
         if ($params !== null) {
             /** @var int|string|null $orderId */
-            $orderId = $request->getParam(self::PARAM_ORDER_ID);
+            $orderId = $request->getParam(static::PARAM_ORDER_ID);
             $orderId = !empty($orderId) ? $orderId : null;
 
             /** @var string|null $protectCode */
-            $protectCode = $request->getParam(self::PARAM_PROTECT_CODE);
+            $protectCode = $request->getParam(static::PARAM_PROTECT_CODE);
             $protectCode = !empty($protectCode) ? $protectCode : null;
 
             /** @var string|null $reason */
@@ -214,13 +215,14 @@ class CreatePost extends Action implements
 
             /** @var array $fields */
             $fields = [
-                self::FIELD_INCREMENT_ID => $orderId,
-                self::FIELD_PROTECT_CODE => $protectCode,
+                static::FIELD_INCREMENT_ID => $orderId,
+                static::FIELD_PROTECT_CODE => $protectCode,
             ];
 
             try {
                 /** @var OrderInterface[] $orders */
-                $orders = $this->orderAdapter->getOrdersByFields($fields);
+                $orders = $this->orderAdapter
+                    ->getOrdersByFields($fields);
 
                 if (!empty($orders)) {
                     /** @var OrderInterface $order */
@@ -266,13 +268,19 @@ class CreatePost extends Action implements
                             'created_at' => $createdTime,
                         ];
 
+                        $this->dispatchEvent('simplereturns_rma_create_save_before', $data);
+
                         /** @var int $rmaId */
                         $rmaId = $this->simpleReturnRepository->save(
                             $rma->addData($data)
                         );
 
+                        $this->dispatchEvent('simplereturns_rma_create_save_after', [
+                            'rma' => $rma,
+                        ]);
+
                         /** @var string|null $groupKey */
-                        $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
+                        $groupKey = $this->dataPersistor->get(static::DATA_GROUP_KEY);
 
                         /* Update attachments with new RMA ID. */
                         if ($groupKey !== null) {
@@ -302,7 +310,7 @@ class CreatePost extends Action implements
 
                             /* Clear attachment metadata, group key from session. */
                             $this->dataPersistor->clear($groupKey);
-                            $this->dataPersistor->clear(self::DATA_GROUP_KEY);
+                            $this->dataPersistor->clear(static::DATA_GROUP_KEY);
                         }
 
                         /* Send New RMA Request email */
@@ -322,8 +330,8 @@ class CreatePost extends Action implements
                             (int) $order->getStoreId()
                         );
 
-                        /** @var string $viewUrl */
-                        $viewUrl = $this->urlBuilder->getUrl(
+                        /** @var string $redirectUrl */
+                        $redirectUrl = $this->urlBuilder->getUrl(
                             'simplereturns/rma/view',
                             [
                                 'rma_id'  => $rmaId,
@@ -332,7 +340,7 @@ class CreatePost extends Action implements
                             ]
                         );
 
-                        return $this->getRedirectToUrl($viewUrl);
+                        return $this->getRedirectToUrl($redirectUrl);
                     } catch (AlreadyExistsException $e) {
                         throw $e;
                     } catch (LocalizedException $e) {
@@ -354,6 +362,6 @@ class CreatePost extends Action implements
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+        return $this->getRedirectToPath(static::ROUTE_SALES_GUEST_VIEW);
     }
 }
