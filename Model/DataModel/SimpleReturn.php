@@ -67,11 +67,8 @@ class SimpleReturn extends AbstractModel implements
     {
         /** @var int|string|null $pkgId */
         $pkgId = $this->getData('pkg_id') ?? null;
-        $pkgId = $pkgId !== null && is_numeric($pkgId)
-            ? (int) $pkgId
-            : null;
 
-        return $pkgId;
+        return is_numeric($pkgId) ? (int) $pkgId : null;
     }
 
     /**

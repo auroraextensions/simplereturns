@@ -205,6 +205,12 @@ class EditPost extends Action implements
                     throw $exception;
                 }
 
+                /** @var int|string $orderId */
+                $orderId = $rma->getOrderId();
+
+                /** @var string $orderId */
+                $status = $rma->getStatus();
+
                 /** @var array $data */
                 $data = [
                     'rma_id'     => $rmaId,
@@ -260,7 +266,7 @@ class EditPost extends Action implements
 
                 /** @var OrderInterface[] $orders */
                 $orders = $this->orderAdapter
-                    ->getOrdersByFields(['entity_id' => $rma->getOrderId()]);
+                    ->getOrdersByFields(['entity_id' => $orderId]);
 
                 /** @var OrderInterface $order */
                 $order = $orders[0];
@@ -272,10 +278,10 @@ class EditPost extends Action implements
                     [
                         'orderId' => $order->getRealOrderId(),
                         'frontId' => $rma->getFrontId(),
-                        'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
-                        'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
-                        'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
-                        'comments' => $this->escaper->escapeHtml($rma->getComments()),
+                        'reason' => $this->getFrontLabel('reasons', $reason),
+                        'resolution' => $this->getFrontLabel('resolutions', $resolution),
+                        'status' => $this->getFrontLabel('statuses', $status),
+                        'comments' => $this->escaper->escapeHtml($comments),
                     ],
                     $order->getCustomerEmail(),
                     $order->getCustomerName(),
