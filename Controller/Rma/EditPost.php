@@ -205,6 +205,12 @@ class EditPost extends Action implements
                     throw $exception;
                 }
 
+                /** @var int|string $orderId */
+                $orderId = $rma->getOrderId();
+
+                /** @var string $orderId */
+                $status = $rma->getStatus();
+
                 /** @var array $data */
                 $data = [
                     'rma_id'     => $rmaId,
@@ -260,7 +266,7 @@ class EditPost extends Action implements
 
                 /** @var OrderInterface[] $orders */
                 $orders = $this->orderAdapter
-                    ->getOrdersByFields(['entity_id' => $rma->getOrderId()]);
+                    ->getOrdersByFields(['entity_id' => $orderId]);
 
                 /** @var OrderInterface $order */
                 $order = $orders[0];
