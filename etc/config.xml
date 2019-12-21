@@ -43,8 +43,8 @@
             <customer>
                 <rma_request_new_email_identity>general</rma_request_new_email_identity>
                 <rma_request_new_email_template>simplereturns_customer_rma_request_new_email_template</rma_request_new_email_template>
-                <rma_request_status_update_email_identity>general</rma_request_status_update_email_identity>
-                <rma_request_status_update_email_template>simplereturns_customer_rma_request_status_update_email_template</rma_request_status_update_email_template>
+                <rma_request_status_change_email_identity>general</rma_request_status_change_email_identity>
+                <rma_request_status_change_email_template>simplereturns_customer_rma_request_status_change_email_template</rma_request_status_change_email_template>
             </customer>
         </simplereturns>
     </default>
