@@ -31,7 +31,7 @@ use Magento\Framework\{
 };
 use Throwable;
 
-final class ExceptionFactory implements ModuleComponentInterface
+class ExceptionFactory implements ModuleComponentInterface
 {
     /** @constant string BASE_TYPE */
     const BASE_TYPE = Exception::class;
