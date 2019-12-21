@@ -24,11 +24,13 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterfaceFactory,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
+    Component\Event\EventManagerTrait,
+    Component\Http\Request\RedirectTrait,
     Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
+    Model\Email\Transport\Customer as EmailTransport,
     Model\Security\Token as Tokenizer,
-    Shared\Action\Redirector,
     Shared\ModuleComponentInterface,
     Csi\System\Module\ConfigInterface
 };
@@ -39,6 +41,8 @@ use Magento\Framework\{
     App\Request\DataPersistorInterface,
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
+    Escaper,
+    Event\ManagerInterface as EventManagerInterface,
     Exception\AlreadyExistsException,
     Exception\LocalizedException,
     Exception\NoSuchEntityException,
@@ -51,15 +55,19 @@ class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use ModuleConfigTrait, Redirector {
-        Redirector::__initialize as protected;
-    }
+    use EventManagerTrait, ModuleConfigTrait, RedirectTrait;
 
     /** @property AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
 
     /** @property DataPersistorInterface $dataPersistor */
     protected $dataPersistor;
+
+    /** @property EmailTransport $emailTransport */
+    protected $emailTransport;
+
+    /** @property Escaper $escaper */
+    protected $escaper;
 
     /** @property ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
@@ -92,6 +100,9 @@ class EditPost extends Action implements
      * @param Context $context
      * @param AttachmentRepositoryInterface $attachmentRepository
      * @param DataPersistorInterface $dataPersistor
+     * @param EmailTransport $emailTransport
+     * @param Escaper $escaper
+     * @param EventManagerInterface $eventManager
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
      * @param ConfigInterface $moduleConfig
@@ -108,6 +119,9 @@ class EditPost extends Action implements
         Context $context,
         AttachmentRepositoryInterface $attachmentRepository,
         DataPersistorInterface $dataPersistor,
+        EmailTransport $emailTransport,
+        Escaper $escaper,
+        EventManagerInterface $eventManager,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
         ConfigInterface $moduleConfig,
@@ -120,9 +134,11 @@ class EditPost extends Action implements
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
-        $this->__initialize();
         $this->attachmentRepository = $attachmentRepository;
         $this->dataPersistor = $dataPersistor;
+        $this->emailTransport = $emailTransport;
+        $this->escaper = $escaper;
+        $this->eventManager = $eventManager;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->moduleConfig = $moduleConfig;
@@ -136,8 +152,6 @@ class EditPost extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_editPost action.
-     *
      * @return Redirect
      */
     public function execute()
@@ -146,14 +160,12 @@ class EditPost extends Action implements
         $request = $this->getRequest();
 
         if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+            return $this->getRedirectToPath(static::ROUTE_SALES_GUEST_VIEW);
         }
 
         /** @var int|string|null $rmaId */
-        $rmaId = $request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = $request->getParam(static::PARAM_RMA_ID);
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
         if ($rmaId !== null) {
             /** @var array|null $params */
@@ -172,7 +184,7 @@ class EditPost extends Action implements
             $comments = !empty($comments) ? $comments : null;
 
             /** @var string|null $token */
-            $token = $request->getParam(self::PARAM_TOKEN);
+            $token = $request->getParam(static::PARAM_TOKEN);
             $token = !empty($token) ? $token : null;
 
             /** @var string $remoteIp */
@@ -182,69 +194,103 @@ class EditPost extends Action implements
                 /** @var SimpleReturnInterface $rma */
                 $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                if ($rma->getId()) {
-                    /** @var array $data */
-                    $data = [
-                        'rma_id'     => $rmaId,
-                        'reason'     => $reason,
-                        'resolution' => $resolution,
-                        'comments'   => $comments,
-                        'remote_ip'  => $remoteIp,
-                        'token'      => $token,
-                    ];
-
-                    $this->simpleReturnRepository->save(
-                        $rma->setData($data)
+                if (!Tokenizer::isEqual($token, $rma->getToken())) {
+                    /** @var LocalizedException $exception */
+                    $exception = $this->exceptionFactory->create(
+                        LocalizedException::class
                     );
 
-                    /** @var string|null $groupKey */
-                    $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
+                    throw $exception;
+                }
 
-                    /* Update attachments with new RMA ID. */
-                    if ($groupKey !== null) {
-                        /** @var array $metadata */
-                        $metadata = $this->serializer->unserialize(
-                            $this->dataPersistor->get($groupKey)
-                                ?? $this->serializer->serialize([])
-                        );
+                /** @var array $data */
+                $data = [
+                    'rma_id'     => $rmaId,
+                    'reason'     => $reason,
+                    'resolution' => $resolution,
+                    'comments'   => $comments,
+                    'remote_ip'  => $remoteIp,
+                    'token'      => $token,
+                ];
 
-                        /** @var array $metadatum */
-                        foreach ($metadata as $metadatum) {
-                            /** @var int|string|null $attachmentId */
-                            $attachmentId = $metadatum['attachment_id'] ?? null;
-                            $attachmentId = $attachmentId !== null && is_numeric($attachmentId)
-                                ? (int) $attachmentId
-                                : null;
+                $this->dispatchEvent('simplereturns_rma_edit_save_before', $data);
 
-                            if ($attachmentId !== null) {
-                                /** @var AttachmentInterface $attachment */
-                                $attachment = $this->attachmentRepository->getById($attachmentId);
+                $this->simpleReturnRepository->save(
+                    $rma->setData($data)
+                );
 
-                                $this->attachmentRepository->save(
-                                    $attachment->setRmaId($rmaId)
-                                );
-                            }
+                $this->dispatchEvent('simplereturns_rma_edit_save_after', [
+                    'rma' => $rma,
+                ]);
+
+                /** @var string|null $groupKey */
+                $groupKey = $this->dataPersistor->get(static::DATA_GROUP_KEY);
+
+                /* Update attachments with new RMA ID. */
+                if ($groupKey !== null) {
+                    /** @var array $metadata */
+                    $metadata = $this->serializer->unserialize(
+                        $this->dataPersistor->get($groupKey)
+                            ?? $this->serializer->serialize([])
+                    );
+
+                    /** @var array $metadatum */
+                    foreach ($metadata as $metadatum) {
+                        /** @var int|string|null $attachmentId */
+                        $attachmentId = $metadatum['attachment_id'] ?? null;
+                        $attachmentId = is_numeric($attachmentId) ? (int) $attachmentId : null;
+
+                        if ($attachmentId !== null) {
+                            /** @var AttachmentInterface $attachment */
+                            $attachment = $this->attachmentRepository
+                                ->getById($attachmentId);
+
+                            $this->attachmentRepository->save(
+                                $attachment->setRmaId($rmaId)
+                            );
                         }
-
-                        /* Clear attachment metadata from session. */
-                        $this->dataPersistor->clear($groupKey);
-
-                        /* Clear group key from session. */
-                        $this->dataPersistor->clear(self::DATA_GROUP_KEY);
                     }
 
-                    /** @var string $viewUrl */
-                    $viewUrl = $this->urlBuilder->getUrl(
-                        'simplereturns/rma/view',
-                        [
-                            'rma_id'  => $rmaId,
-                            'token'   => $token,
-                            '_secure' => true,
-                        ]
-                    );
-
-                    return $this->getRedirectToUrl($viewUrl);
+                    /* Clear attachment metadata, group key from session. */
+                    $this->dataPersistor->clear($groupKey);
+                    $this->dataPersistor->clear(static::DATA_GROUP_KEY);
                 }
+
+                /** @var OrderInterface[] $orders */
+                $orders = $this->orderAdapter
+                    ->getOrdersByFields(['entity_id' => $rma->getOrderId()]);
+
+                /** @var OrderInterface $order */
+                $order = $orders[0];
+
+                /* Send Updated RMA Request email */
+                $this->emailTransport->send(
+                    'simplereturns/customer/rma_request_update_email_template',
+                    'simplereturns/customer/rma_request_update_email_identity',
+                    [
+                        'orderId' => $order->getRealOrderId(),
+                        'frontId' => $rma->getFrontId(),
+                        'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
+                        'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
+                        'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
+                        'comments' => $this->escaper->escapeHtml($rma->getComments()),
+                    ],
+                    $order->getCustomerEmail(),
+                    $order->getCustomerName(),
+                    (int) $order->getStoreId()
+                );
+
+                /** @var string $redirectUrl */
+                $redirectUrl = $this->urlBuilder->getUrl(
+                    'simplereturns/rma/view',
+                    [
+                        'rma_id'  => $rmaId,
+                        'token'   => $token,
+                        '_secure' => true,
+                    ]
+                );
+
+                return $this->getRedirectToUrl($redirectUrl);
             } catch (NoSuchEntityException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             } catch (LocalizedException $e) {
@@ -252,6 +298,6 @@ class EditPost extends Action implements
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+        return $this->getRedirectToPath(static::ROUTE_SALES_GUEST_VIEW);
     }
 }
