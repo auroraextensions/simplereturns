@@ -36,4 +36,13 @@ trait ModifierPoolTrait
     {
         return $this->modifierPool;
     }
+
+    /**
+     * @return ModifierInterface[]
+     */
+    public function getModifiers(): array
+    {
+        return $this->getModifierPool()
+            ->getModifiersInstances();
+    }
 }
