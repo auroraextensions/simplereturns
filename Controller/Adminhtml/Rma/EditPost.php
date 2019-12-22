@@ -192,16 +192,28 @@ class EditPost extends Action implements
                     $rma = $this->simpleReturnRepository->getById($rmaId);
 
                     if ($rma->getId()) {
-                        $rma->addData([
-                            'status' => $status,
-                            'reason' => $reason,
-                            'resolution' => $resolution,
-                            'comments' => $comments,
-                        ]);
-                        $this->simpleReturnRepository->save($rma);
+                        $this->eventManager->dispatch(
+                            'simplereturns_adminhtml_rma_edit_save_before',
+                            [
+                                'rma' => $rma,
+                                'status' => $status,
+                                'reason' => $reason,
+                                'resolution' => $resolution,
+                                'comments' => $comments,
+                            ]
+                        );
+
+                        $this->simpleReturnRepository->save(
+                            $rma->addData([
+                                'status' => $status,
+                                'reason' => $reason,
+                                'resolution' => $resolution,
+                                'comments' => $comments,
+                            ])
+                        );
 
                         $this->eventManager->dispatch(
-                            'simplereturns_adminhtml_rma_edit_after',
+                            'simplereturns_adminhtml_rma_edit_save_after',
                             [
                                 'rma' => $rma,
                             ]
