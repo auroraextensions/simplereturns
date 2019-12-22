@@ -287,13 +287,18 @@ class CreatePost extends Action implements
                         'created_at' => $createdTime,
                     ];
 
+                    $this->eventManager->dispatch(
+                        'simplereturns_adminhtml_rma_create_save_before',
+                        $data
+                    );
+
                     /** @var int $rmaId */
                     $rmaId = $this->simpleReturnRepository->save(
                         $rma->addData($data)
                     );
 
                     $this->eventManager->dispatch(
-                        'simplereturns_adminhtml_rma_create_after',
+                        'simplereturns_adminhtml_rma_create_save_after',
                         [
                             'rma' => $rma,
                         ]
