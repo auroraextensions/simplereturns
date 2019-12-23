@@ -10,6 +10,7 @@ Simplified RMA for Magento Open Source.
 + [Documentation](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/)
 + [Roadmap](https://github.com/auroraextensions/simplereturns/wiki/Roadmap)
 + [Sample Data](https://github.com/auroraextensions/simplereturns-sampledata)
++ [Simple Returns Pro](https://auroraextensions.com/products/simple-returns-pro)
 
 ## Description
 
