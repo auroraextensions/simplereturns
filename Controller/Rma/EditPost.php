@@ -213,12 +213,13 @@ class EditPost extends Action implements
 
                 /** @var array $data */
                 $data = [
-                    'rma_id'     => $rmaId,
-                    'reason'     => $reason,
+                    'rma_id' => $rmaId,
+                    'status' => $status,
+                    'reason' => $reason,
                     'resolution' => $resolution,
-                    'comments'   => $comments,
-                    'remote_ip'  => $remoteIp,
-                    'token'      => $token,
+                    'comments' => $comments,
+                    'remote_ip' => $remoteIp,
+                    'token' => $token,
                 ];
 
                 $this->dispatchEvent('simplereturns_rma_edit_save_before', $data);
