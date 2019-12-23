@@ -14,8 +14,6 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       MIT License
  */
-use Countable;
-
 if (!function_exists('array_key_first')) {
     /** @link https://www.php.net/manual/en/function.array-key-first.php */
     function array_key_first(array $source) {
@@ -41,6 +39,6 @@ if (!function_exists('array_key_last')) {
 if (!function_exists('is_countable')) {
     /** @link https://www.php.net/manual/en/function.is-countable.php */
     function is_countable($var) {
-        return (is_array($var) || $var instanceof Countable);
+        return (is_array($var) || $var instanceof \Countable);
     }
 }
