@@ -21,3 +21,5 @@ ComponentRegistrar::register(
     'AuroraExtensions_SimpleReturns',
     __DIR__
 );
+
+require_once __DIR__ . '/include/exports.php';
