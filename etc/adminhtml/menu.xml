@@ -34,7 +34,7 @@
              resource="AuroraExtensions_SimpleReturns::rma_operation"
              sortOrder="10"/>
         <add id="AuroraExtensions_SimpleReturns::rma_request"
-             title="Returns"
+             title="RMAs"
              translate="title"
              module="AuroraExtensions_SimpleReturns"
              dependsOnModule="AuroraExtensions_SimpleReturns"
