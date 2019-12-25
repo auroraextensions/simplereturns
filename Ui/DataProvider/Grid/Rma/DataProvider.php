@@ -25,14 +25,27 @@ use AuroraExtensions\SimpleReturns\{
     Model\ViewModel\Rma\ListView as ViewModel,
     Shared\ModuleComponentInterface
 };
-use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
-use Magento\Ui\DataProvider\AbstractDataProvider;
+use Magento\Framework\{
+    Api\Filter,
+    View\Element\UiComponent\DataProvider\DataProviderInterface
+};
+use Magento\Ui\{
+    DataProvider\AbstractDataProvider,
+    DataProvider\AddFieldToCollectionInterface,
+    DataProvider\AddFilterToCollectionInterface
+};
 
 class DataProvider extends AbstractDataProvider implements
     Countable,
     DataProviderInterface,
     ModuleComponentInterface
 {
+    /** @property AddFieldToCollectionInterface[] $addFieldStrategies */
+    protected $addFieldStrategies;
+
+    /** @property AddFilterToCollectionInterface[] $addFilterStrategies */
+    protected $addFilterStrategies;
+
     /** @property ViewModel $viewModel */
     protected $viewModel;
 
@@ -42,6 +55,8 @@ class DataProvider extends AbstractDataProvider implements
      * @param string $requestFieldName
      * @param array $meta
      * @param array $data
+     * @param AddFieldToCollectionInterface[] $addFieldStrategies
+     * @param AddFilterToCollectionInterface[] $addFilterStrategies
      * @param CollectionFactory $collectionFactory
      * @param ViewModel $viewModel
      * @param array $labels
@@ -53,6 +68,8 @@ class DataProvider extends AbstractDataProvider implements
         $requestFieldName,
         array $meta = [],
         array $data = [],
+        array $addFieldStrategies = [],
+        array $addFilterStrategies = [],
         CollectionFactory $collectionFactory,
         ViewModel $viewModel,
         array $labels = []
@@ -64,6 +81,8 @@ class DataProvider extends AbstractDataProvider implements
             $meta,
             $data
         );
+        $this->addFieldStrategies = $addFieldStrategies;
+        $this->addFilterStrategies = $addFilterStrategies;
         $this->collection = $collectionFactory->create();
         $this->viewModel = $viewModel;
         $this->labels = $labels;
@@ -139,5 +158,38 @@ class DataProvider extends AbstractDataProvider implements
         }
 
         return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addField($field, $alias = null)
+    {
+        if (isset($this->addFieldStrategies[$field])) {
+            $this->addFieldStrategies[$field]
+                ->addField($this->getCollection(), $field, $alias);
+        } else {
+            parent::addField($field, $alias);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFilter(Filter $filter)
+    {
+        /** @var string $field */
+        $field = $filter->getField();
+
+        if (isset($this->addFilterStrategies[$field])) {
+            $this->addFilterStrategies[$field]
+                ->addFilter(
+                    $this->getCollection(),
+                    $field,
+                    [$filter->getConditionType() => $filter->getValue()]
+                );
+        } else {
+            parent::addFilter($filter);
+        }
     }
 }
