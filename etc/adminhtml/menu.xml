@@ -25,7 +25,7 @@
              resource="AuroraExtensions_SimpleReturns::rma"
              sortOrder="18"/>
         <add id="AuroraExtensions_SimpleReturns::rma_operation"
-             title="Returns Management"
+             title="Management"
              translate="title"
              module="AuroraExtensions_SimpleReturns"
              parent="AuroraExtensions_SimpleReturns::rma"
