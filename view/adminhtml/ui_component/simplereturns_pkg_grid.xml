@@ -79,6 +79,7 @@
             <settings>
                 <filter>text</filter>
                 <label translate="true">RMA</label>
+                <sortable>false</sortable>
             </settings>
         </column>
         <column name="carrier_code" sortOrder="40">
