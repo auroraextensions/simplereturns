@@ -63,12 +63,12 @@
                 </param>
             </childDefaults>
         </settings>
-        <selectionsColumn name="ids" sortOrder="10">
+        <selectionsColumn name="ids" sortOrder="100">
             <settings>
                 <indexField>rma_id</indexField>
             </settings>
         </selectionsColumn>
-        <column name="rma_id" sortOrder="20">
+        <column name="rma_id" sortOrder="200">
             <settings>
                 <filter>text</filter>
                 <label translate="true">ID</label>
@@ -76,27 +76,27 @@
         </column>
         <column name="increment_id"
                 class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Order\IncrementId"
-                sortOrder="30">
+                sortOrder="300">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Order</label>
                 <sortable>false</sortable>
             </settings>
         </column>
-        <column name="status" sortOrder="40">
+        <column name="status" sortOrder="400">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Status</label>
                 <sorting>desc</sorting>
             </settings>
         </column>
-        <column name="reason" sortOrder="50">
+        <column name="reason" sortOrder="500">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Reason</label>
             </settings>
         </column>
-        <column name="resolution" sortOrder="60">
+        <column name="resolution" sortOrder="600">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Resolution</label>
@@ -105,7 +105,7 @@
         <column name="created_at"
                 class="Magento\Ui\Component\Listing\Columns\Date"
                 component="Magento_Ui/js/grid/columns/date"
-                sortOrder="70">
+                sortOrder="700">
             <settings>
                 <dataType>date</dataType>
                 <filter>dateRange</filter>
@@ -115,7 +115,7 @@
         <column name="updated_at"
                 class="Magento\Ui\Component\Listing\Columns\Date"
                 component="Magento_Ui/js/grid/columns/date"
-                sortOrder="80">
+                sortOrder="800">
             <settings>
                 <dataType>date</dataType>
                 <filter>dateRange</filter>
@@ -124,7 +124,7 @@
         </column>
         <actionsColumn name="actions"
                        class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma\Actions"
-                       sortOrder="90">
+                       sortOrder="900">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="viewUrlPath" xsi:type="string">simplereturns/rma/view</item>
