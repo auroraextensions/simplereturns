@@ -2,8 +2,6 @@
 /**
  * CreateSimpleReturnProductAttribute.php
  *
- * Add simple_return product attribute.
- *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the MIT License, which
@@ -16,6 +14,8 @@
  * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
  * @license       MIT License
  */
+declare(strict_types=1);
+
 namespace AuroraExtensions\SimpleReturns\Setup\Patch\Data;
 
 use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
@@ -74,15 +74,16 @@ class CreateSimpleReturnProductAttribute implements
      */
     public function apply()
     {
+        /** @var EavSetup $eavSetup */
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
 
         $eavSetup->addAttribute(
             Product::ENTITY,
-            self::ATTRIBUTE_CODE_SIMPLE_RETURN,
+            static::ATTRIBUTE_CODE_SIMPLE_RETURN,
             [
                 'type'             => 'int',
                 'input'            => 'boolean',
-                'label'            => self::ATTRIBUTE_LABEL_SIMPLE_RETURN,
+                'label'            => static::ATTRIBUTE_LABEL_SIMPLE_RETURN,
                 'global'           => ScopedAttributeInterface::SCOPE_GLOBAL,
                 'frontend'         => '',
                 'source'           => SourceBoolean::class,
@@ -105,11 +106,12 @@ class CreateSimpleReturnProductAttribute implements
      */
     public function revert()
     {
+        /** @var EavSetup $eavSetup */
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
 
         $eavSetup->removeAttribute(
             Product::ENTITY,
-            self::ATTRIBUTE_CODE_SIMPLE_RETURN
+            static::ATTRIBUTE_CODE_SIMPLE_RETURN
         );
     }
 }
