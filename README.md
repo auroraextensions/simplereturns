@@ -9,6 +9,7 @@ Self-service RMA for Magento Open Source.
   - [Customer](#customer)
   - [Administrator](#administrator)
   - [Developer](#developer)
+  - [Other](#other)
 + [Installation](#installation)
 + [Notes](#notes)
 + [Documentation](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/)
@@ -70,5 +71,6 @@ composer require auroraextensions/simplereturns
 
 1. Not to be confused with `Magento_Rma`, which is a premium module available with Magento Commerce.
 2. Simple Returns is free to everyone, but comes at a cost to us. To help us continue our efforts,
-   please consider purchasing Simple Returns Pro, our premium RMA extension that builds on top of
-   Simple Returns to provide more advanced features to further optimize your RMA pipeline.
+   please consider purchasing [Simple Returns Pro](https://auroraextensions.com/products/simple-returns-pro),
+   our premium RMA extension that builds on top of Simple Returns to provide more advanced features
+   that can further optimize your RMA pipeline and improve customer experience.
