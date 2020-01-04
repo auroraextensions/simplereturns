@@ -54,9 +54,9 @@ symptoms like decreased % of repeat customers and increased negative reviews.
 + Dependable and extensible (Simple Returns Pro is living proof!)
 + Plugin-friendly classes and methods
 + Events dispatched for most major actions
-+ Actively developed and maintained by [Aurora Extensions](https://partners.magento.com/portal/details/partner/id/2163/), a Magento partner
++ Actively developed and maintained by Aurora Extensions, an [ExtDN member](https://extdn.org) and [Magento partner](https://partners.magento.com/portal/details/partner/id/2163/)
 
-#### Other features
+### Other
 
 + Free<sup>2</sup>, forever and always!
 
