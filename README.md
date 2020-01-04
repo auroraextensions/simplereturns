@@ -1,6 +1,6 @@
-# AuroraExtensions\_SimpleReturns
+# Simple Returns
 
-Self-service RMA functionality for Magento Open Source.
+Self-service RMA for Magento Open Source.
 
 ## Table of Contents
 
@@ -33,7 +33,7 @@ lacking critical self-service RMA features, such as those provided by Simple Ret
 make the RMA process more difficult and cumbersome for customers, which can lead to
 symptoms like decreased % of repeat customers and increased negative reviews.
 
-#### Customer
+### Customer
 
 + Create, edit RMA requests from frontend
 + Create, edit, delete RMA file attachments
@@ -41,7 +41,7 @@ symptoms like decreased % of repeat customers and increased negative reviews.
 + Generate shipping label upon RMA approval
 + Available to registered customers and guests
 
-#### Administrator
+### Administrator
 
 + Create, edit RMA requests
 + Create RMA packages (return shipments)
@@ -49,7 +49,7 @@ symptoms like decreased % of repeat customers and increased negative reviews.
 + Supports several carriers, like Fedex and UPS
 + Customizable RMA fields (e.g. reasons, resolutions, statuses)
 
-#### Developer
+### Developer
 
 + Dependable and extensible (Simple Returns Pro is living proof!)
 + Plugin-friendly classes and methods
