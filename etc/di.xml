@@ -217,6 +217,17 @@
             <argument name="paramKey" xsi:type="string">pkg_id</argument>
         </arguments>
     </virtualType>
+
+    <type name="Magento\Catalog\Ui\DataProvider\Product\ProductDataProvider">
+        <arguments>
+            <argument name="addFieldStrategies" xsi:type="array">
+                <item name="simple_return" xsi:type="object">AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Product\AddSimpleReturnFieldToCollection</item>
+            </argument>
+            <argument name="addFilterStrategies" xsi:type="array">
+                <item name="simple_return" xsi:type="object">AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Product\AddSimpleReturnFilterToCollection</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
