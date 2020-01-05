@@ -10,10 +10,13 @@ Self-service RMA for Magento Open Source.
   - [Administrator](#administrator)
   - [Developer](#developer)
   - [Other](#other)
-+ [Installation](#installation)
 + [Notes](#notes)
 + [Documentation](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/)
-+ [Roadmap](https://github.com/auroraextensions/simplereturns/wiki/Roadmap)
+  - [Installation Guide](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/installation.html)
+  - [Configuration Guide](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/configuration.html)
+  - [Product Attribute Guide](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/attribute.html)
+  - [Events](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/events.html)
++ [Project Roadmap](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/roadmap.html)
 + [Sample Data](https://github.com/auroraextensions/simplereturns-sampledata)
 + [Simple Returns Pro](https://auroraextensions.com/products/simple-returns-pro)
 
@@ -60,12 +63,6 @@ symptoms like decreased % of repeat customers and increased negative reviews.
 ### Other
 
 + Free<sup>2</sup>, forever and always!
-
-## Installation
-
-```
-composer require auroraextensions/simplereturns
-```
 
 ## Notes
 
