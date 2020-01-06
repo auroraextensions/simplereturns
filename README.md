@@ -1,6 +1,6 @@
 # Simple Returns
 
-Self-service RMA for Magento Open Source.
+Self-service RMA for Magento.
 
 ## Table of Contents
 
@@ -22,10 +22,10 @@ Self-service RMA for Magento Open Source.
 
 ## Description
 
-Simple Returns provides enhanced RMA functionality intended for Magento Open Source.
-It extends the default RMA capabilities built into Magento Open Source<sup>1</sup>,
-and offers a range of additional features to improve the RMA experience for both
-customers and administrators alike.
+Simple Returns provides enhanced RMA functionality primarily intended for Magento Open Source,
+but can also be used with Magento Commerce, if desired. It extends the default RMA capabilities
+built into Magento Open Source<sup>1</sup>, and offers a range of additional features to improve
+the RMA experience for both customers and administrators alike.
 
 ## Features
 
@@ -35,7 +35,7 @@ does not allow customers to initiate the RMA process via web UI, nor does it pro
 customers the capability to generate and print shipping labels via web UI. Merchants
 lacking critical self-service RMA features, such as those provided by Simple Returns,
 make the RMA process more difficult and cumbersome for customers, which can lead to
-symptoms like decreased % of repeat customers and increased negative reviews.
+symptoms like fewer repeat customers and increased negative reviews.
 
 ### Customer
 
