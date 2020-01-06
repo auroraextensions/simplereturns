@@ -37,4 +37,17 @@ trait EventManagerTrait
         $this->eventManager
             ->dispatch($event, $data);
     }
+
+    /**
+     * @param array $events
+     * @return void
+     */
+    private function dispatchEvents(array $events = []): void
+    {
+        /** @var string $event */
+        /** @var array $data */
+        foreach ($events as $event => $data) {
+            $this->dispatchEvent($event, $data);
+        }
+    }
 }
