@@ -42,7 +42,8 @@
             <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>AuroraExtensions_SimpleReturns::rma_request</aclResource>
-        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Package\DataProvider" name="simplereturns_pkg_grid_data_source">
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Package\DataProvider"
+                      name="simplereturns_pkg_grid_data_source">
             <settings>
                 <primaryFieldName>pkg_id</primaryFieldName>
                 <requestFieldName>pkg_id</requestFieldName>
@@ -62,12 +63,12 @@
                 </param>
             </childDefaults>
         </settings>
-        <selectionsColumn name="ids" sortOrder="10">
+        <selectionsColumn name="ids" sortOrder="100">
             <settings>
                 <indexField>pkg_id</indexField>
             </settings>
         </selectionsColumn>
-        <column name="pkg_id" sortOrder="20">
+        <column name="pkg_id" sortOrder="200">
             <settings>
                 <filter>text</filter>
                 <label translate="true">ID</label>
@@ -75,20 +76,20 @@
         </column>
         <column name="rma_id"
                 class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma\IncrementId"
-                sortOrder="30">
+                sortOrder="300">
             <settings>
                 <filter>text</filter>
                 <label translate="true">RMA</label>
                 <sortable>false</sortable>
             </settings>
         </column>
-        <column name="carrier_code" sortOrder="40">
+        <column name="carrier_code" sortOrder="400">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Carrier</label>
             </settings>
         </column>
-        <column name="method_code" sortOrder="50">
+        <column name="method_code" sortOrder="500">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Method</label>
@@ -97,7 +98,7 @@
         <column name="created_at"
                 class="Magento\Ui\Component\Listing\Columns\Date"
                 component="Magento_Ui/js/grid/columns/date"
-                sortOrder="60">
+                sortOrder="600">
             <settings>
                 <dataType>date</dataType>
                 <filter>dateRange</filter>
@@ -107,7 +108,7 @@
         <column name="updated_at"
                 class="Magento\Ui\Component\Listing\Columns\Date"
                 component="Magento_Ui/js/grid/columns/date"
-                sortOrder="70">
+                sortOrder="700">
             <settings>
                 <dataType>date</dataType>
                 <filter>dateRange</filter>
@@ -116,7 +117,7 @@
         </column>
         <actionsColumn name="actions"
                        class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Package\Actions"
-                       sortOrder="80">
+                       sortOrder="800">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="viewUrlPath" xsi:type="string">simplereturns/package/view</item>

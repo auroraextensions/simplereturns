@@ -47,7 +47,8 @@
             <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>AuroraExtensions_SimpleReturns::rma_request</aclResource>
-        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma\DataProvider" name="simplereturns_pkg_rma_grid_data_source">
+        <dataProvider class="AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma\DataProvider"
+                      name="simplereturns_pkg_rma_grid_data_source">
             <settings>
                 <primaryFieldName>rma_id</primaryFieldName>
                 <requestFieldName>rma_id</requestFieldName>
@@ -67,51 +68,61 @@
                 </param>
             </childDefaults>
         </settings>
-        <selectionsColumn name="ids">
+        <selectionsColumn name="ids" sortOrder="100">
             <settings>
                 <indexField>rma_id</indexField>
             </settings>
         </selectionsColumn>
-        <column name="rma_id">
+        <column name="rma_id"
+                class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma\IncrementId"
+                sortOrder="200">
             <settings>
                 <filter>text</filter>
-                <label translate="true">ID</label>
+                <label translate="true">RMA</label>
             </settings>
         </column>
-        <column name="status">
+        <column name="status" sortOrder="300">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Status</label>
                 <sorting>desc</sorting>
             </settings>
         </column>
-        <column name="reason">
+        <column name="reason" sortOrder="400">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Reason</label>
             </settings>
         </column>
-        <column name="resolution">
+        <column name="resolution" sortOrder="500">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Resolution</label>
             </settings>
         </column>
-        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+        <column name="created_at"
+                class="Magento\Ui\Component\Listing\Columns\Date"
+                component="Magento_Ui/js/grid/columns/date"
+                sortOrder="600">
             <settings>
                 <dataType>date</dataType>
                 <filter>dateRange</filter>
                 <label translate="true">Created</label>
             </settings>
         </column>
-        <column name="updated_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+        <column name="updated_at"
+                class="Magento\Ui\Component\Listing\Columns\Date"
+                component="Magento_Ui/js/grid/columns/date"
+                sortOrder="700">
             <settings>
                 <dataType>date</dataType>
                 <filter>dateRange</filter>
                 <label translate="true">Updated</label>
             </settings>
         </column>
-        <actionsColumn name="actions" class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma">
+        <actionsColumn name="actions"
+                       class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma"
+                       sortOrder="800">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="actionPath" xsi:type="string">simplereturns/package/create</item>
