@@ -16,10 +16,9 @@
         },
         "index": {
             "SIMPLERETURNS_RMA_ORDER_ID": true,
-            "SIMPLERETURNS_RMA_PACKAGE_ID": true
+            "SIMPLERETURNS_RMA_PKG_ID": true
         },
         "constraint": {
-            "SIMPLERETURNS_RMA_PKG_ID_SIMPLERETURNS_PACKAGE_PKG_ID": true,
             "PRIMARY": true
         }
     },
@@ -40,6 +39,7 @@
             "SIMPLERETURNS_RMA_ATTACHMENT_RMA_ID": true
         },
         "constraint": {
+            "SIMPLERETURNS_RMA_ATTACHMENT_RMA_ID_SIMPLERETURNS_RMA_RMA_ID": true,
             "PRIMARY": true
         }
     },
@@ -62,7 +62,7 @@
             "SIMPLERETURNS_PACKAGE_LABEL_ID": true
         },
         "constraint": {
-            "SIMPLERETURNS_PACKAGE_LABEL_ID_SIMPLERETURNS_LABEL_LABEL_ID": true,
+            "SIMPLERETURNS_PACKAGE_RMA_ID_SIMPLERETURNS_RMA_RMA_ID": true,
             "PRIMARY": true
         }
     },
@@ -78,9 +78,10 @@
             "updated_at": true
         },
         "index": {
-            "SIMPLERETURNS_LABEL_PACKAGE_ID": true
+            "SIMPLERETURNS_LABEL_PKG_ID": true
         },
         "constraint": {
+            "SIMPLERETURNS_LABEL_PKG_ID_SIMPLERETURNS_PACKAGE_PKG_ID": true,
             "PRIMARY": true
         }
     }
