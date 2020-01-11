@@ -14,7 +14,7 @@ Self-service RMA for Magento.
 + [Documentation](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/)
   - [Installation Guide](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/installation.html)
   - [Configuration Guide](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/configuration.html)
-  - [Product Attribute Guide](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/attribute.html)
+  - [Attribute Guide](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/attribute.html)
   - [Events](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/events.html)
 + [Project Roadmap](https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/roadmap.html)
 + [Sample Data](https://github.com/auroraextensions/simplereturns-sampledata)
