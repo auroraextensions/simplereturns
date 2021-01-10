@@ -25,10 +25,11 @@ use Magento\Framework\{
     Exception\NoSuchEntityException
 };
 use Magento\Ui\DataProvider\AddFieldToCollectionInterface;
+use function sprintf;
 
 class AddSimpleReturnFieldToCollection implements AddFieldToCollectionInterface
 {
-    /** @property ProductAttributeRepositoryInterface $attributeRepository */
+    /** @var ProductAttributeRepositoryInterface $attributeRepository */
     private $attributeRepository;
 
     /**
@@ -64,9 +65,7 @@ class AddSimpleReturnFieldToCollection implements AddFieldToCollectionInterface
                 $condition,
                 'left'
             );
-        } catch (NoSuchEntityException $e) {
-            /* No action required. */
-        } catch (Exception $e) {
+        } catch (NoSuchEntityException | Exception $e) {
             /* No action required. */
         }
     }
