@@ -30,6 +30,7 @@ use Magento\Framework\{
     View\Element\UiComponentFactory
 };
 use Magento\Ui\Component\Listing\Columns\Column;
+use function sprintf;
 
 class IncrementId extends Column
 {
@@ -96,14 +97,9 @@ class IncrementId extends Column
         try {
             /** @var SimpleReturnInterface $rma */
             $rma = $this->rmaRepository->getById($rmaId);
-
             return sprintf('%09d', $rma->getId());
-        } catch (NoSuchEntityException $e) {
-            /* No action required. */
-        } catch (Exception $e) {
-            /* No action required. */
+        } catch (NoSuchEntityException | Exception $e) {
+            return null;
         }
-
-        return null;
     }
 }
