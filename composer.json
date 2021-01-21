@@ -13,18 +13,19 @@
     "email": "support@auroraextensions.com"
   },
   "require": {
-    "php": ">=7.1",
+    "php": "~7.2.0||~7.3.0||~7.4.0",
     "ext-gd": "*",
-    "magento/framework": "102.*.*",
-    "magento/module-catalog": "103.*.*",
-    "magento/module-customer": "102.*.*",
+    "magento/framework": "^100||^101||^102||^103",
+    "magento/module-catalog": "^103||^104||^105",
+    "magento/module-customer": "^102||^103||^104",
     "magento/module-directory": "100.*.*",
-    "magento/module-eav": "102.*.*",
-    "magento/module-sales": "102.*.*",
+    "magento/module-eav": "^101||^102||^103",
+    "magento/module-sales": "^102||^103||^104",
     "magento/module-shipping": "100.*.*",
-    "magento/module-store": "101.*.*",
+    "magento/module-store": "^100||^101||^102",
     "magento/module-ups": "100.*.*",
-    "auroraextensions/imageprocessor": "~1.0.0"
+    "auroraextensions/modulecomponents": "~100.0.0||~100.1.0",
+    "auroraextensions/imageprocessor": "~1.0"
   },
   "autoload": {
     "files": [
