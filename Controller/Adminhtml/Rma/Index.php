@@ -29,9 +29,9 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class Index extends Action implements
-    HttpGetActionInterface,
-    ModuleComponentInterface
+use function __;
+
+class Index extends Action implements HttpGetActionInterface, ModuleComponentInterface
 {
     /** @constant string ADMIN_RESOURCE */
     public const ADMIN_RESOURCE = 'AuroraExtensions_SimpleReturns::rma';
@@ -53,8 +53,6 @@ class Index extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_view action.
-     *
      * @return Page
      */
     public function execute()

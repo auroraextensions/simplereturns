@@ -28,9 +28,9 @@ use Magento\Framework\{
     View\Result\PageFactory
 };
 
-class View extends Action implements
-    HttpGetActionInterface,
-    ModuleComponentInterface
+use function __;
+
+class View extends Action implements HttpGetActionInterface, ModuleComponentInterface
 {
     /** @property PageFactory $resultPageFactory */
     protected $resultPageFactory;
@@ -49,8 +49,6 @@ class View extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_view action.
-     *
      * @return Page
      */
     public function execute()
