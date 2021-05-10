@@ -40,6 +40,10 @@ use Magento\Ui\{
     DataProvider\Modifier\PoolInterface
 };
 
+use function sprintf;
+use function strtolower;
+use function str_replace;
+
 class DataProvider extends AbstractDataProvider implements
     Countable,
     DataProviderInterface,
@@ -47,7 +51,7 @@ class DataProvider extends AbstractDataProvider implements
 {
     /**
      * @property PoolInterface $modifierPool
-     * @method getModifierPool()
+     * @method PoolInterface getModifierPool()
      */
     use ModifierPoolTrait;
 

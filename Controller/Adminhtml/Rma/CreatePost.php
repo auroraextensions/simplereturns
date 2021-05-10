@@ -56,6 +56,8 @@ use Magento\Framework\{
 };
 use Magento\MediaStorage\Model\File\UploaderFactory;
 
+use function __;
+
 class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
@@ -211,27 +213,19 @@ class CreatePost extends Action implements
 
         /** @var string|null $status */
         $status = $request->getPostValue('status');
-        $status = $status !== null && !empty($status)
-            ? $this->escaper->escapeHtml($status)
-            : null;
+        $status = !empty($status) ? $this->escaper->escapeHtml($status) : null;
 
         /** @var string|null $reason */
         $reason = $request->getPostValue('reason');
-        $reason = $reason !== null && !empty($reason)
-            ? $this->escaper->escapeHtml($reason)
-            : null;
+        $reason = !empty($reason) ? $this->escaper->escapeHtml($reason) : null;
 
         /** @var string|null $resolution */
         $resolution = $request->getPostValue('resolution');
-        $resolution = $resolution !== null && !empty($resolution)
-            ? $this->escaper->escapeHtml($resolution)
-            : null;
+        $resolution = !empty($resolution) ? $this->escaper->escapeHtml($resolution) : null;
 
         /** @var string|null $comments */
         $comments = $request->getPostValue('comments');
-        $comments = $comments !== null && !empty($comments)
-            ? $this->escaper->escapeHtml($comments)
-            : null;
+        $comments = !empty($comments) ? $this->escaper->escapeHtml($comments) : null;
 
         /** @var array $fields */
         $fields = [
@@ -248,7 +242,7 @@ class CreatePost extends Action implements
                 $order = $orders[0];
 
                 try {
-                    /** @var SimpleReturn $rma */
+                    /** @var SimpleReturnInterface $rma */
                     $rma = $this->simpleReturnRepository->get($order);
 
                     /** @note Consider possible redirect to RMA view page. */
@@ -263,7 +257,7 @@ class CreatePost extends Action implements
                     }
                 /* RMA doesn't exist, continue processing. */
                 } catch (NoSuchEntityException $e) {
-                    /** @var SimpleReturn $rma */
+                    /** @var SimpleReturnInterface $rma */
                     $rma = $this->simpleReturnFactory->create();
 
                     /** @var string $remoteIp */
@@ -293,9 +287,7 @@ class CreatePost extends Action implements
                     );
 
                     /** @var int $rmaId */
-                    $rmaId = $this->simpleReturnRepository->save(
-                        $rma->addData($data)
-                    );
+                    $rmaId = $this->simpleReturnRepository->save($rma->addData($data));
 
                     $this->eventManager->dispatch(
                         'simplereturns_adminhtml_rma_create_save_after',
@@ -322,14 +314,11 @@ class CreatePost extends Action implements
                     );
 
                     /** @var string $viewUrl */
-                    $viewUrl = $this->urlBuilder->getUrl(
-                        'simplereturns/rma/view',
-                        [
-                            'rma_id'  => $rmaId,
-                            'token'   => $token,
-                            '_secure' => true,
-                        ]
-                    );
+                    $viewUrl = $this->urlBuilder->getUrl('simplereturns/rma/view', [
+                        'rma_id'  => $rmaId,
+                        'token'   => $token,
+                        '_secure' => true,
+                    ]);
 
                     return $resultJson->setData([
                         'success' => true,
@@ -337,9 +326,7 @@ class CreatePost extends Action implements
                         'message' => __('Successfully created RMA.'),
                         'viewUrl' => $viewUrl,
                     ]);
-                } catch (AlreadyExistsException $e) {
-                    throw $e;
-                } catch (LocalizedException $e) {
+                } catch (AlreadyExistsException | LocalizedException $e) {
                     throw $e;
                 }
             }
@@ -349,14 +336,8 @@ class CreatePost extends Action implements
                 LocalizedException::class,
                 __('Unable to create RMA request.')
             );
-
             throw $exception;
-        } catch (NoSuchEntityException $e) {
-            $response = [
-                'error' => true,
-                'messages' => [$e->getMessage()],
-            ];
-        } catch (LocalizedException $e) {
+        } catch (NoSuchEntityException | LocalizedException $e) {
             $response = [
                 'error' => true,
                 'messages' => [$e->getMessage()],
