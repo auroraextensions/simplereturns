@@ -15,7 +15,7 @@
   "require": {
     "php": "~7.2.0||~7.3.0||~7.4.0",
     "ext-gd": "*",
-    "magento/framework": "^100||^101||^102||^103",
+    "magento/framework": "*",
     "magento/module-catalog": "^103||^104||^105",
     "magento/module-customer": "^102||^103||^104",
     "magento/module-directory": "100.*.*",
