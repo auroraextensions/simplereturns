@@ -18,10 +18,10 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma\Status;
 
+use AuroraExtensions\ModuleComponents\Component\Event\EventManagerTrait;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
-    Component\Event\EventManagerTrait,
     Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Model\Email\Transport\Customer as EmailTransport,
@@ -45,31 +45,40 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\OrderRepositoryInterface;
 
+use function __;
+use function is_numeric;
+use function trim;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use EventManagerTrait, ModuleConfigTrait, LabelFormatterTrait;
+    use EventManagerTrait,
+        ModuleConfigTrait,
+        LabelFormatterTrait;
 
-    /** @property EmailTransport $emailTransport */
+    /** @var EmailTransport $emailTransport */
     protected $emailTransport;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
-    /** @property ResultJsonFactory $resultJsonFactory */
+    /** @var ResultJsonFactory $resultJsonFactory */
     protected $resultJsonFactory;
 
-    /** @property JsonSerializer $serializer */
+    /** @var JsonSerializer $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
     /**
@@ -84,6 +93,8 @@ class EditPost extends Action implements
      * @param JsonSerializer $serializer
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
@@ -111,6 +122,10 @@ class EditPost extends Action implements
 
     /**
      * @return Json
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function execute()
     {
@@ -172,7 +187,6 @@ class EditPost extends Action implements
                             $exception = $this->exceptionFactory->create(
                                 LocalizedException::class
                             );
-
                             throw $exception;
                         }
 
@@ -235,12 +249,7 @@ class EditPost extends Action implements
                         ]);
 
                         return $resultJson;
-                    } catch (NoSuchEntityException $e) {
-                        $response = [
-                            'error' => true,
-                            'message' => $e->getMessage(),
-                        ];
-                    } catch (LocalizedException $e) {
+                    } catch (NoSuchEntityException | LocalizedException $e) {
                         $response = [
                             'error' => true,
                             'message' => $e->getMessage(),
