@@ -4,20 +4,21 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\RepositoryModel
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\AbstractCollectionInterfaceFactory,
     Api\PackageRepositoryInterface,
@@ -25,29 +26,29 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\PackageInterfaceFactory,
     Api\Data\PackageSearchResultsInterfaceFactory,
     Api\Data\SimpleReturnInterface,
-    Exception\ExceptionFactory,
     Model\Package as PackageDataModel,
     Model\ResourceModel\Package as PackageResourceModel,
     Shared\ModuleComponentInterface
 };
-
 use Magento\Framework\{
     Api\SearchResultsInterface,
     Api\SearchResultsInterfaceFactory,
     Exception\NoSuchEntityException
 };
 
+use function __;
+
 class PackageRepository extends AbstractRepository implements
     PackageRepositoryInterface,
     ModuleComponentInterface
 {
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property PackageInterfaceFactory $packageFactory */
+    /** @var PackageInterfaceFactory $packageFactory */
     protected $packageFactory;
 
-    /** @property PackageResourceModel $packageResource */
+    /** @var PackageResourceModel $packageResource */
     protected $packageResource;
 
     /**
@@ -69,7 +70,6 @@ class PackageRepository extends AbstractRepository implements
             $collectionFactory,
             $searchResultsFactory
         );
-
         $this->packageFactory = $packageFactory;
         $this->packageResource = $packageResource;
         $this->exceptionFactory = $exceptionFactory;
@@ -96,7 +96,6 @@ class PackageRepository extends AbstractRepository implements
                 NoSuchEntityException::class,
                 __('Unable to locate package(s) for the requested RMA.')
             );
-
             throw $exception;
         }
 
@@ -120,7 +119,6 @@ class PackageRepository extends AbstractRepository implements
                 NoSuchEntityException::class,
                 __('Unable to locate package(s) for the requested RMA.')
             );
-
             throw $exception;
         }
 
@@ -155,7 +153,6 @@ class PackageRepository extends AbstractRepository implements
         /** @var PackageDataModel $package */
         $package = $this->packageFactory->create();
         $package->setId($id);
-
         return (bool) $this->packageResource->delete($package);
     }
 }

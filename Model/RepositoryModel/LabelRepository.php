@@ -4,20 +4,21 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\RepositoryModel
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\AbstractCollectionInterfaceFactory,
     Api\LabelRepositoryInterface,
@@ -25,7 +26,6 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterfaceFactory,
     Api\Data\LabelSearchResultsInterfaceFactory,
     Api\Data\PackageInterface,
-    Exception\ExceptionFactory,
     Model\Label as LabelDataModel,
     Model\ResourceModel\Label as LabelResourceModel,
     Shared\ModuleComponentInterface
@@ -36,17 +36,19 @@ use Magento\Framework\{
     Exception\NoSuchEntityException
 };
 
+use function __;
+
 class LabelRepository extends AbstractRepository implements
     LabelRepositoryInterface,
     ModuleComponentInterface
 {
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property LabelInterfaceFactory $labelFactory */
+    /** @var LabelInterfaceFactory $labelFactory */
     protected $labelFactory;
 
-    /** @property LabelResourceModel $labelResource */
+    /** @var LabelResourceModel $labelResource */
     protected $labelResource;
 
     /**
@@ -68,7 +70,6 @@ class LabelRepository extends AbstractRepository implements
             $collectionFactory,
             $searchResultsFactory
         );
-
         $this->labelFactory = $labelFactory;
         $this->labelResource = $labelResource;
         $this->exceptionFactory = $exceptionFactory;
@@ -90,10 +91,12 @@ class LabelRepository extends AbstractRepository implements
         );
 
         if (!$label->getId()) {
-            throw $this->exceptionFactory->create(
+            /** @var NoSuchEntityException $exception */
+            $exception = $this->exceptionFactory->create(
                 NoSuchEntityException::class,
                 __('Unable to locate label(s) for the requested package.')
             );
+            throw $exception;
         }
 
         return $label;
@@ -111,10 +114,12 @@ class LabelRepository extends AbstractRepository implements
         $this->labelResource->load($label, $id);
 
         if (!$label->getId()) {
-            throw $this->exceptionFactory->create(
+            /** @var NoSuchEntityException $exception */
+            $exception = $this->exceptionFactory->create(
                 NoSuchEntityException::class,
                 __('Unable to locate label(s) for the requested package.')
             );
+            throw $exception;
         }
 
         return $label;
@@ -148,7 +153,6 @@ class LabelRepository extends AbstractRepository implements
         /** @var LabelDataModel $label */
         $label = $this->labelFactory->create();
         $label->setId($id);
-
         return (bool) $this->labelResource->delete($label);
     }
 }

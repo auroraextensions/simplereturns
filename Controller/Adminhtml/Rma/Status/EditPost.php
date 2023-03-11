@@ -4,26 +4,26 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma\Status
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma\Status;
 
+use AuroraExtensions\ModuleComponents\Component\Event\EventManagerTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
-    Component\Event\EventManagerTrait,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Model\Email\Transport\Customer as EmailTransport,
     Model\Security\Token as Tokenizer,
     Shared\Component\LabelFormatterTrait,
@@ -45,31 +45,40 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\OrderRepositoryInterface;
 
+use function __;
+use function is_numeric;
+use function trim;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use EventManagerTrait, ModuleConfigTrait, LabelFormatterTrait;
+    use EventManagerTrait,
+        ModuleConfigTrait,
+        LabelFormatterTrait;
 
-    /** @property EmailTransport $emailTransport */
+    /** @var EmailTransport $emailTransport */
     protected $emailTransport;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
-    /** @property ResultJsonFactory $resultJsonFactory */
+    /** @var ResultJsonFactory $resultJsonFactory */
     protected $resultJsonFactory;
 
-    /** @property JsonSerializer $serializer */
+    /** @var JsonSerializer $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
     /**
@@ -84,6 +93,8 @@ class EditPost extends Action implements
      * @param JsonSerializer $serializer
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
@@ -111,6 +122,10 @@ class EditPost extends Action implements
 
     /**
      * @return Json
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function execute()
     {
@@ -128,7 +143,6 @@ class EditPost extends Action implements
                 'error' => true,
                 'message' => __('Invalid method: Must be POST request.'),
             ]);
-
             return $resultJson;
         }
 
@@ -137,7 +151,6 @@ class EditPost extends Action implements
                 'error' => true,
                 'message' => __('Invalid form key.'),
             ]);
-
             return $resultJson;
         }
 
@@ -172,7 +185,6 @@ class EditPost extends Action implements
                             $exception = $this->exceptionFactory->create(
                                 LocalizedException::class
                             );
-
                             throw $exception;
                         }
 
@@ -233,14 +245,8 @@ class EditPost extends Action implements
                             'success' => true,
                             'message' => __('Successfully updated RMA status.'),
                         ]);
-
                         return $resultJson;
-                    } catch (NoSuchEntityException $e) {
-                        $response = [
-                            'error' => true,
-                            'message' => $e->getMessage(),
-                        ];
-                    } catch (LocalizedException $e) {
+                    } catch (NoSuchEntityException | LocalizedException $e) {
                         $response = [
                             'error' => true,
                             'message' => $e->getMessage(),

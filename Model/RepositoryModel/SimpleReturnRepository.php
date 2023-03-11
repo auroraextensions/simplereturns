@@ -4,26 +4,26 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\RepositoryModel
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
-    Api\AbstractCollectionInterface,
+    Api\AbstractCollectionInterfaceFactory,
     Api\SimpleReturnRepositoryInterface,
     Api\Data\SimpleReturnInterface,
     Api\Data\SimpleReturnInterfaceFactory,
-    Exception\ExceptionFactory,
     Model\DataModel\SimpleReturn,
     Model\ResourceModel\SimpleReturn as SimpleReturnResource,
     Shared\ModuleComponentInterface
@@ -34,17 +34,19 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
+use function __;
+
 class SimpleReturnRepository extends AbstractRepository implements
     SimpleReturnRepositoryInterface,
     ModuleComponentInterface
 {
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
+    /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
     protected $simpleReturnFactory;
 
-    /** @property SimpleReturnResource $simpleReturnResource */
+    /** @var SimpleReturnResource $simpleReturnResource */
     protected $simpleReturnResource;
 
     /**
@@ -66,7 +68,6 @@ class SimpleReturnRepository extends AbstractRepository implements
             $collectionFactory,
             $searchResultsFactory
         );
-
         $this->exceptionFactory = $exceptionFactory;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnResource = $simpleReturnResource;
@@ -93,7 +94,6 @@ class SimpleReturnRepository extends AbstractRepository implements
                 NoSuchEntityException::class,
                 __('Unable to locate SimpleReturn RMA information.')
             );
-
             throw $exception;
         }
 
@@ -117,7 +117,6 @@ class SimpleReturnRepository extends AbstractRepository implements
                 NoSuchEntityException::class,
                 __('Unable to locate SimpleReturn RMA information.')
             );
-
             throw $exception;
         }
 
@@ -152,7 +151,6 @@ class SimpleReturnRepository extends AbstractRepository implements
         /** @var SimpleReturn $rma */
         $rma = $this->simpleReturnFactory->create();
         $rma->setId($id);
-
         return (bool) $this->simpleReturnResource->delete($rma);
     }
 }

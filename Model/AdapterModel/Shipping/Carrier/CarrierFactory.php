@@ -9,23 +9,23 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\AdapterModel\Shipping\Carrier
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Shipping\Carrier;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Exception\InvalidCarrierException,
     Shared\ModuleComponentInterface,
     Csi\System\Module\ConfigInterface
@@ -41,11 +41,15 @@ use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Ups\Model\Carrier as UPS;
 use Magento\Usps\Model\Carrier as USPS;
 
+use function __;
+use function array_keys;
+use function in_array;
+
 class CarrierFactory implements ModuleComponentInterface
 {
     use ModuleConfigTrait;
 
-    /** @property array $carriers */
+    /** @var array $carriers */
     protected $carriers = [
         DHL::CODE   => DHL::class,
         Fedex::CODE => Fedex::class,
@@ -53,13 +57,13 @@ class CarrierFactory implements ModuleComponentInterface
         USPS::CODE  => USPS::class,
     ];
 
-    /** @property DataObjectFactory $dataObjectFactory */
+    /** @var DataObjectFactory $dataObjectFactory */
     protected $dataObjectFactory;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property ObjectManagerInterface $objectManager */
+    /** @var ObjectManagerInterface $objectManager */
     protected $objectManager;
 
     /**
@@ -86,7 +90,7 @@ class CarrierFactory implements ModuleComponentInterface
      *
      * @param string $code The carrier code.
      * @return CarrierInterface
-     * @throws Exception
+     * @throws InvalidCarrierException
      */
     public function create(string $code): CarrierInterface
     {
@@ -102,7 +106,6 @@ class CarrierFactory implements ModuleComponentInterface
                     $code
                 )
             );
-
             throw $exception;
         }
 

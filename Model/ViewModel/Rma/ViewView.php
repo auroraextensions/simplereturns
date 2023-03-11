@@ -4,20 +4,21 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ViewModel\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterface,
     Api\Data\PackageInterface,
@@ -25,7 +26,6 @@ use AuroraExtensions\SimpleReturns\{
     Api\LabelRepositoryInterface,
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
-    Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Model\Security\Token as Tokenizer,
     Model\SearchModel\Attachment as AttachmentAdapter,
@@ -48,50 +48,54 @@ use Magento\Sales\{
 };
 use Magento\Store\Model\StoreManagerInterface;
 
+use function count;
+use function is_numeric;
+use function rtrim;
+
 class ViewView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property AttachmentAdapter $attachmentAdapter */
+    /** @var AttachmentAdapter $attachmentAdapter */
     protected $attachmentAdapter;
 
-    /** @property LabelInterface $label */
+    /** @var LabelInterface $label */
     protected $label;
 
-    /** @property LabelRepositoryInterface $labelRepository */
+    /** @var LabelRepositoryInterface $labelRepository */
     protected $labelRepository;
 
-    /** @property MessageManagerInterface $messageManager */
+    /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property OrderInterface $order */
+    /** @var OrderInterface $order */
     protected $order;
 
-    /** @property OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
-    /** @property PackageInterface $package */
+    /** @var PackageInterface $package */
     protected $package;
 
-    /** @property PackageRepositoryInterface $packageRepository */
+    /** @var PackageRepositoryInterface $packageRepository */
     protected $packageRepository;
 
-    /** @property SimpleReturnInterface $rma */
+    /** @var SimpleReturnInterface $rma */
     protected $rma;
 
-    /** @property Json $serializer */
+    /** @var Json $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property StoreManagerInterface $storeManager */
+    /** @var StoreManagerInterface $storeManager */
     protected $storeManager;
 
-    /** @property Tokenizer $tokenizer */
+    /** @var Tokenizer $tokenizer */
     protected $tokenizer;
 
     /**
@@ -99,7 +103,6 @@ class ViewView extends AbstractView implements
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
-     * @param array $data
      * @param AttachmentAdapter $attachmentAdapter
      * @param LabelRepositoryInterface $labelRepository
      * @param MessageManagerInterface $messageManager
@@ -110,6 +113,7 @@ class ViewView extends AbstractView implements
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param StoreManagerInterface $storeManager
      * @param Tokenizer $tokenizer
+     * @param array $data
      * @return void
      */
     public function __construct(
@@ -117,7 +121,6 @@ class ViewView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = [],
         AttachmentAdapter $attachmentAdapter,
         LabelRepositoryInterface $labelRepository,
         MessageManagerInterface $messageManager,
@@ -127,7 +130,8 @@ class ViewView extends AbstractView implements
         Json $serializer,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         StoreManagerInterface $storeManager,
-        Tokenizer $tokenizer
+        Tokenizer $tokenizer,
+        array $data = []
     ) {
         parent::__construct(
             $configHelper,
@@ -136,7 +140,6 @@ class ViewView extends AbstractView implements
             $urlBuilder,
             $data
         );
-
         $this->attachmentAdapter = $attachmentAdapter;
         $this->labelRepository = $labelRepository;
         $this->messageManager = $messageManager;
@@ -155,9 +158,7 @@ class ViewView extends AbstractView implements
     public function getCreatePackageUrl(): string
     {
         /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
+        $params = ['_secure' => true];
 
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
@@ -185,9 +186,7 @@ class ViewView extends AbstractView implements
     public function getViewCustomerUrl(): string
     {
         /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
+        $params = ['_secure' => true];
 
         /** @var OrderInterface|null $order */
         $order = $this->getOrder();
@@ -218,9 +217,7 @@ class ViewView extends AbstractView implements
     public function getViewPackageUrl(): string
     {
         /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
+        $params = ['_secure' => true];
 
         /** @var PackageInterface|null $package */
         $package = $this->getPackage();
@@ -242,9 +239,7 @@ class ViewView extends AbstractView implements
     public function getEditRmaUrl(): string
     {
         /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
+        $params = ['_secure' => true];
 
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
@@ -273,11 +268,12 @@ class ViewView extends AbstractView implements
      * @param string $key
      * @param string
      */
-    public function getFrontLabel(string $type, string $key): string
-    {
+    public function getFrontLabel(
+        string $type,
+        string $key
+    ): string {
         /** @var array $labels */
         $labels = $this->moduleConfig->getSettings()->getData($type);
-
         return $labels[$key] ?? $key;
     }
 
@@ -295,37 +291,29 @@ class ViewView extends AbstractView implements
 
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
-        if (is_int($rmaId)) {
-            /** @var string|null $token */
-            $token = $this->request->getParam(self::PARAM_TOKEN);
-            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
+        /** @var string|null $token */
+        $token = $this->request->getParam(self::PARAM_TOKEN);
+        $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
-            if ($token !== null) {
-                try {
-                    /** @var SimpleReturnInterface $rma */
-                    $rma = $this->simpleReturnRepository->getById($rmaId);
+        if ($rmaId !== null && $token !== null) {
+            try {
+                /** @var SimpleReturnInterface $rma */
+                $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                    if (Tokenizer::isEqual($token, $rma->getToken())) {
-                        $this->rma = $rma;
-
-                        return $rma;
-                    }
-
+                if (!Tokenizer::isEqual($token, $rma->getToken())) {
                     /** @var LocalizedException $exception */
                     $exception = $this->exceptionFactory->create(
                         LocalizedException::class
                     );
-
                     throw $exception;
-                } catch (NoSuchEntityException $e) {
-                    /* No action required. */
-                } catch (LocalizedException $e) {
-                    /* No action required. */
                 }
+
+                $this->rma = $rma;
+                return $rma;
+            } catch (NoSuchEntityException | LocalizedException $e) {
+                /* No action required. */
             }
         }
 
@@ -355,12 +343,9 @@ class ViewView extends AbstractView implements
 
                 if ($order->getId()) {
                     $this->order = $order;
-
                     return $order;
                 }
-            } catch (NoSuchEntityException $e) {
-                /* No action required. */
-            } catch (LocalizedException $e) {
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 /* No action required. */
             }
         }
@@ -383,9 +368,7 @@ class ViewView extends AbstractView implements
         if ($rma !== null) {
             /** @var int|string|null $pkgId */
             $pkgId = $rma->getPackageId();
-            $pkgId = $pkgId !== null && is_numeric($pkgId)
-                ? (int) $pkgId
-                : null;
+            $pkgId = is_numeric($pkgId) ? (int) $pkgId : null;
 
             if ($pkgId !== null) {
                 try {
@@ -394,12 +377,9 @@ class ViewView extends AbstractView implements
 
                     if ($package->getId()) {
                         $this->package = $package;
-
                         return $package;
                     }
-                } catch (NoSuchEntityException $e) {
-                    /* No action required. */
-                } catch (LocalizedException $e) {
+                } catch (NoSuchEntityException | LocalizedException $e) {
                     /* No action required. */
                 }
             }
@@ -427,12 +407,9 @@ class ViewView extends AbstractView implements
 
                 if ($label->getId()) {
                     $this->label = $label;
-
                     return $label;
                 }
-            } catch (NoSuchEntityException $e) {
-                /* No action required. */
-            } catch (LocalizedException $e) {
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 /* No action required. */
             }
         }
@@ -476,7 +453,7 @@ class ViewView extends AbstractView implements
      */
     public function hasAttachments(): bool
     {
-        return (bool)(count($this->getAttachments()));
+        return count($this->getAttachments()) > 0;
     }
 
     /**
@@ -486,12 +463,7 @@ class ViewView extends AbstractView implements
     {
         /** @var LabelInterface|null $label */
         $label = $this->getLabel();
-
-        if ($label !== null) {
-            return true;
-        }
-
-        return false;
+        return $label !== null ? (bool) $label->getId() : false;
     }
 
     /**
@@ -501,12 +473,7 @@ class ViewView extends AbstractView implements
     {
         /** @var PackageInterface|null $package */
         $package = $this->getPackage();
-
-        if ($package !== null) {
-            return true;
-        }
-
-        return false;
+        return $package !== null ? (bool) $package->getId() : false;
     }
 
     /**
@@ -516,12 +483,7 @@ class ViewView extends AbstractView implements
     {
         /** @var SimpleReturnInterface|null $rma */
         $rma = $this->getSimpleReturn();
-
-        if ($rma !== null) {
-            return true;
-        }
-
-        return false;
+        return $rma !== null ? (bool) $rma->getId() : false;
     }
 
     /**
@@ -536,7 +498,6 @@ class ViewView extends AbstractView implements
             /** @var string $status */
             $status = $rma->getStatus()
                 ?? ModuleConfig::DEFAULT_RMA_STATUS_CODE;
-
             return ($status === 'approved');
         }
 

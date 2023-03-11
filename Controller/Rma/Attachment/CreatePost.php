@@ -4,21 +4,20 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Rma\Attachment
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
-use Exception;
 use AuroraExtensions\ImageProcessor\Api\ImageManagementInterface;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\AttachmentInterface,
@@ -26,11 +25,9 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
-    Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
     Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
@@ -42,64 +39,62 @@ use Magento\Framework\{
     Controller\Result\JsonFactory as ResultJsonFactory,
     Controller\Result\Redirect as ResultRedirect,
     Data\Form\FormKey\Validator as FormKeyValidator,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
     Filesystem,
     HTTP\PhpEnvironment\RemoteAddress,
     Serialize\Serializer\Json,
     UrlInterface
 };
 use Magento\MediaStorage\Model\File\UploaderFactory;
+use Throwable;
 
+use function __;
+use function rtrim;
+use function str_replace;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
-    use Redirector {
-        Redirector::__initialize as protected;
-    }
-
-    /** @property AttachmentInterfaceFactory $attachmentFactory */
+    /** @var AttachmentInterfaceFactory $attachmentFactory */
     protected $attachmentFactory;
 
-    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    /** @var AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
 
-    /** @property DataPersistorInterface $dataPersistor */
+    /** @var DataPersistorInterface $dataPersistor */
     protected $dataPersistor;
 
-    /** @property ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
-
-    /** @property Filesystem $filesystem */
+    /** @var Filesystem $filesystem */
     protected $filesystem;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property ImageManagementInterface $imageManagement */
+    /** @var ImageManagementInterface $imageManagement */
     protected $imageManagement;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property RemoteAddress $remoteAddress */
+    /** @var RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
-    /** @property ResultJsonFactory $resultJsonFactory */
+    /** @var ResultJsonFactory $resultJsonFactory */
     protected $resultJsonFactory;
 
-    /** @property Json $serializer */
+    /** @var Json $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
@@ -107,7 +102,6 @@ class CreatePost extends Action implements
      * @param AttachmentInterfaceFactory $attachmentFactory
      * @param AttachmentRepositoryInterface $attachmentRepository
      * @param DataPersistorInterface $dataPersistor
-     * @param ExceptionFactory $exceptionFactory
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
      * @param FormKeyValidator $formKeyValidator
@@ -120,13 +114,14 @@ class CreatePost extends Action implements
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
         AttachmentInterfaceFactory $attachmentFactory,
         AttachmentRepositoryInterface $attachmentRepository,
         DataPersistorInterface $dataPersistor,
-        ExceptionFactory $exceptionFactory,
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
         FormKeyValidator $formKeyValidator,
@@ -140,11 +135,9 @@ class CreatePost extends Action implements
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
-        $this->__initialize();
         $this->attachmentFactory = $attachmentFactory;
         $this->attachmentRepository = $attachmentRepository;
         $this->dataPersistor = $dataPersistor;
-        $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
         $this->formKeyValidator = $formKeyValidator;
@@ -209,11 +202,10 @@ class CreatePost extends Action implements
             $this->dataPersistor->set(self::DATA_GROUP_KEY, $groupKey);
         }
 
-        /** @var string|array $metadata */
+        /** @var string|array|null $metadata */
         $metadata = $this->dataPersistor->get($groupKey);
         $metadata = $metadata !== null
-            ? $this->serializer->unserialize($metadata)
-            : [];
+            ? $this->serializer->unserialize($metadata) : [];
 
         /** @var array $attachment */
         foreach ($attachments as $attachment) {
@@ -268,12 +260,7 @@ class CreatePost extends Action implements
                     'success' => true,
                     'message' => __('Successfully uploaded RMA attachment: %1', $result['name']),
                 ];
-            } catch (LocalizedException $e) {
-                $response[] = [
-                    'error' => true,
-                    'message' => $e->getMessage(),
-                ];
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $response[] = [
                     'error' => true,
                     'message' => $e->getMessage(),

@@ -4,22 +4,22 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ViewModel\Orders
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Orders;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
-    Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Model\ViewModel\AbstractView,
     Shared\ModuleComponentInterface
@@ -34,8 +34,8 @@ class SearchView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property array $errors */
-    protected $errors = [];
+    /** @var string $route */
+    private $route;
 
     /**
      * @param ConfigHelper $configHelper
@@ -43,6 +43,7 @@ class SearchView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param array $data
+     * @param string $route
      * @return void
      */
     public function __construct(
@@ -50,7 +51,8 @@ class SearchView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = []
+        array $data = [],
+        string $route = self::ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST
     ) {
         parent::__construct(
             $configHelper,
@@ -58,21 +60,17 @@ class SearchView extends AbstractView implements
             $request,
             $urlBuilder
         );
+        $this->route = $route;
     }
 
     /**
-     * @param string $route
-     * @return string
+     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getPostActionUrl(
-        string $route = self::ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST
-    ): string
-    {
-        return $this->urlBuilder->getUrl(
-            $route,
-            [
-                '_secure' => true,
-            ]
-        );
+        string $route = '',
+        array $params = []
+    ): string {
+        return parent::getPostActionUrl($this->route, $params);
     }
 }

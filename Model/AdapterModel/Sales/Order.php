@@ -2,28 +2,24 @@
 /**
  * Order.php
  *
- * Customer orders adapter model.
- *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales;
 
-use AuroraExtensions\SimpleReturns\{
-    Exception\ExceptionFactory,
-    Shared\ModuleComponentInterface
-};
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\{
     Api\FilterBuilder,
@@ -33,24 +29,28 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\OrderRepositoryInterface;
 
+use function __;
+use function array_values;
+use function substr;
+
 class Order implements ModuleComponentInterface
 {
-    /** @property CustomerRepositoryInterface $customerRepository */
+    /** @var CustomerRepositoryInterface $customerRepository */
     protected $customerRepository;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property FilterBuilder $filterBuilder */
+    /** @var FilterBuilder $filterBuilder */
     protected $filterBuilder;
 
-    /** @property MessageManagerInterface $messageManager */
+    /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
 
-    /** @property OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
-    /** @property SearchCriteriaBuilder $searchCriteriaBuilder */
+    /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
     protected $searchCriteriaBuilder;
 
     /**
@@ -89,8 +89,7 @@ class Order implements ModuleComponentInterface
     public function getOrdersByCustomerEmailAndZipCode(
         string $email,
         string $zipCode
-    ): array
-    {
+    ): array {
         try {
             /** @var CustomerInterface $customer */
             $customer = $this->customerRepository->get($email);
@@ -103,7 +102,6 @@ class Order implements ModuleComponentInterface
                         ->setValue($customer->getId())
                         ->create()
                 ];
-
                 return $this->getOrdersByFilters($filters);
             }
         } catch (NoSuchEntityException $e) {
@@ -128,8 +126,7 @@ class Order implements ModuleComponentInterface
     public function getOrdersByIncrementIdAndZipCode(
         string $incrementId,
         string $zipCode
-    ): array
-    {
+    ): array {
         /** @var array $orders */
         $orders = [];
 
@@ -137,9 +134,9 @@ class Order implements ModuleComponentInterface
             /** @var array $filters */
             $filters = [
                 $this->filterBuilder
-                ->setField(self::FIELD_INCREMENT_ID)
-                ->setValue($incrementId)
-                ->create()
+                     ->setField(self::FIELD_INCREMENT_ID)
+                     ->setValue($incrementId)
+                     ->create(),
             ];
 
             /** @var OrderInterface[] $orders */
@@ -155,7 +152,6 @@ class Order implements ModuleComponentInterface
                         $zipCode
                     )
                 );
-
                 throw $exception;
             }
         } catch (NoSuchEntityException $e) {
@@ -175,8 +171,7 @@ class Order implements ModuleComponentInterface
     public function getOrdersByIncrementIdAndProtectCode(
         string $incrementId,
         string $protectCode
-    ): array
-    {
+    ): array {
         /** @var array $data */
         $data = [];
 
@@ -184,11 +179,11 @@ class Order implements ModuleComponentInterface
             /** @var array $filters */
             $filters = [
                 $this->filterBuilder->setField(self::FIELD_INCREMENT_ID)
-                ->setValue($incrementId)
-                ->create(),
+                     ->setValue($incrementId)
+                     ->create(),
                 $this->filterBuilder->setField(self::FIELD_PROTECT_CODE)
-                ->setValue($protectCode)
-                ->create()
+                     ->setValue($protectCode)
+                     ->create(),
             ];
 
             /** @var OrderInterface[] $orders */
@@ -206,7 +201,6 @@ class Order implements ModuleComponentInterface
                     NoSuchEntityException::class,
                     __(self::ERROR_INVALID_RETURN_LABEL_URL)
                 );
-
                 throw $exception;
             }
         } catch (NoSuchEntityException $e) {
@@ -227,10 +221,8 @@ class Order implements ModuleComponentInterface
         /** @var array $filters */
         $filters = [];
 
-        /**
-         * @var string $field
-         * @var mixed $value
-         */
+        /** @var string $field */
+        /** @var mixed $value */
         foreach ($fields as $field => $value) {
             $filters[] = $this->filterBuilder
                 ->setField($field)
@@ -272,7 +264,6 @@ class Order implements ModuleComponentInterface
     {
         /** @var SearchCriteria $criteria */
         $criteria = $this->searchCriteriaBuilder->addFilters($filters)->create();
-
         return $this->orderRepository->getList($criteria)->getItems();
     }
 
@@ -281,9 +272,14 @@ class Order implements ModuleComponentInterface
      *
      * @param string $zipCode
      * @return string
+     * @static
      */
     public static function truncateZipCode(string $zipCode): string
     {
-        return substr($zipCode, self::ZIP_CODE_INDEX, self::ZIP_CODE_LENGTH);
+        return substr(
+            $zipCode,
+            self::ZIP_CODE_INDEX,
+            self::ZIP_CODE_LENGTH
+        );
     }
 }

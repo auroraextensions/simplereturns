@@ -24,7 +24,7 @@
     "magento/module-shipping": "100.*.*",
     "magento/module-store": "^100||^101||^102",
     "magento/module-ups": "100.*.*",
-    "auroraextensions/modulecomponents": "~100.0.0||~100.1.0",
+    "auroraextensions/modulecomponents": "^100||^101",
     "auroraextensions/imageprocessor": "~1.0"
   },
   "autoload": {

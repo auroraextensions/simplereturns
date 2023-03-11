@@ -4,30 +4,30 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 
+use AuroraExtensions\ModuleComponents\Component\Event\EventManagerTrait;
+use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\AttachmentInterface,
     Api\Data\SimpleReturnInterface,
     Api\Data\SimpleReturnInterfaceFactory,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
-    Component\Event\EventManagerTrait,
-    Component\Http\Request\RedirectTrait,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
@@ -58,56 +58,64 @@ use Magento\Framework\{
 };
 use Magento\MediaStorage\Model\File\UploaderFactory;
 
+use function __;
+use function is_numeric;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use EventManagerTrait, ModuleConfigTrait,
-        LabelFormatterTrait, RedirectTrait;
+    use EventManagerTrait,
+        ModuleConfigTrait,
+        LabelFormatterTrait,
+        RedirectTrait;
 
-    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    /** @var AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
 
-    /** @property DataPersistorInterface $dataPersistor */
+    /** @var DataPersistorInterface $dataPersistor */
     protected $dataPersistor;
 
-    /** @property DateTimeFactory $dateTimeFactory */
+    /** @var DateTimeFactory $dateTimeFactory */
     protected $dateTimeFactory;
 
-    /** @property EmailTransport $emailTransport */
+    /** @var EmailTransport $emailTransport */
     protected $emailTransport;
 
-    /** @property Escaper $escaper */
+    /** @var Escaper $escaper */
     protected $escaper;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property Filesystem $filesystem */
+    /** @var Filesystem $filesystem */
     protected $filesystem;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property RemoteAddress $remoteAddress */
+    /** @var RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
-    /** @property Json $serializer */
+    /** @var Json $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
+    /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
     protected $simpleReturnFactory;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
@@ -130,6 +138,8 @@ class CreatePost extends Action implements
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
@@ -173,6 +183,10 @@ class CreatePost extends Action implements
 
     /**
      * @return Redirect
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function execute()
     {
