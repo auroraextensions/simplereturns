@@ -18,13 +18,13 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma;
 
+use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\AttachmentInterface,
     Api\Data\SimpleReturnInterface,
     Api\Data\SimpleReturnInterfaceFactory,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
-    Component\Http\Request\RedirectTrait,
     Component\System\ModuleConfigTrait,
     Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
@@ -57,59 +57,65 @@ use Magento\Framework\{
 use Magento\MediaStorage\Model\File\UploaderFactory;
 
 use function __;
+use function array_shift;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use LabelFormatterTrait, ModuleConfigTrait, RedirectTrait;
+    use LabelFormatterTrait,
+        ModuleConfigTrait,
+        RedirectTrait;
 
-    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    /** @var AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
 
-    /** @property DateTimeFactory $dateTimeFactory */
+    /** @var DateTimeFactory $dateTimeFactory */
     protected $dateTimeFactory;
 
-    /** @property EmailTransport $emailTransport */
+    /** @var EmailTransport $emailTransport */
     protected $emailTransport;
 
-    /** @property Escaper $escaper */
+    /** @var Escaper $escaper */
     protected $escaper;
 
-    /** @property EventManagerInterface $eventManager */
+    /** @var EventManagerInterface $eventManager */
     protected $eventManager;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property Filesystem $filesystem */
+    /** @var Filesystem $filesystem */
     protected $filesystem;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property RemoteAddress $remoteAddress */
+    /** @var RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
-    /** @property ResultJsonFactory $resultJsonFactory */
+    /** @var ResultJsonFactory $resultJsonFactory */
     protected $resultJsonFactory;
 
-    /** @property Json $serializer */
+    /** @var Json $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
+    /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
     protected $simpleReturnFactory;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
@@ -132,6 +138,8 @@ class CreatePost extends Action implements
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
@@ -174,9 +182,11 @@ class CreatePost extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_createPost action.
-     *
      * @return Redirect
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function execute()
     {
@@ -239,7 +249,7 @@ class CreatePost extends Action implements
 
             if (!empty($orders)) {
                 /** @var OrderInterface $order */
-                $order = $orders[0];
+                $order = array_shift($orders);
 
                 try {
                     /** @var SimpleReturnInterface $rma */
@@ -252,7 +262,6 @@ class CreatePost extends Action implements
                             AlreadyExistsException::class,
                             __('An RMA request already exists for this order.')
                         );
-
                         throw $exception;
                     }
                 /* RMA doesn't exist, continue processing. */
@@ -319,7 +328,6 @@ class CreatePost extends Action implements
                         'token'   => $token,
                         '_secure' => true,
                     ]);
-
                     return $resultJson->setData([
                         'success' => true,
                         'isSimpleReturnsAjax' => true,
