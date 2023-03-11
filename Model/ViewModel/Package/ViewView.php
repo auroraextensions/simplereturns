@@ -4,20 +4,21 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ViewModel\Package
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\LabelInterface,
     Api\Data\PackageInterface,
@@ -27,7 +28,6 @@ use AuroraExtensions\SimpleReturns\{
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
@@ -46,43 +46,49 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
+use function __;
+use function array_shift;
+use function is_array;
+use function is_numeric;
+use function number_format;
+
 class ViewView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
     use ModuleConfigTrait;
 
-    /** @property DirectoryHelper $directoryHelper */
+    /** @var DirectoryHelper $directoryHelper */
     protected $directoryHelper;
 
-    /** @property LabelInterface $label */
+    /** @var LabelInterface $label */
     protected $label;
 
-    /** @property LabelManagementInterface $labelManagement */
+    /** @var LabelManagementInterface $labelManagement */
     protected $labelManagement;
 
-    /** @property LabelRepositoryInterface $labelRepository */
+    /** @var LabelRepositoryInterface $labelRepository */
     protected $labelRepository;
 
-    /** @property MessageManagerInterface $messageManager */
+    /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
 
-    /** @property OrderInterface $order */
+    /** @var OrderInterface $order */
     protected $order;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property PackageInterface $package */
+    /** @var PackageInterface $package */
     protected $package;
 
-    /** @property PackageRepositoryInterface $packageRepository */
+    /** @var PackageRepositoryInterface $packageRepository */
     protected $packageRepository;
 
-    /** @property SimpleReturnInterface $rma */
+    /** @var SimpleReturnInterface $rma */
     protected $rma;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
     /**
@@ -90,7 +96,6 @@ class ViewView extends AbstractView implements
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
-     * @param array $data
      * @param DirectoryHelper $directoryHelper
      * @param LabelManagementInterface $labelManagement
      * @param LabelRepositoryInterface $labelRepository
@@ -98,6 +103,7 @@ class ViewView extends AbstractView implements
      * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param array $data
      * @return void
      */
     public function __construct(
@@ -105,7 +111,6 @@ class ViewView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = [],
         DirectoryHelper $directoryHelper,
         LabelManagementInterface $labelManagement,
         LabelRepositoryInterface $labelRepository,
@@ -113,7 +118,8 @@ class ViewView extends AbstractView implements
         ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
         PackageRepositoryInterface $packageRepository,
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        array $data = []
     ) {
         parent::__construct(
             $configHelper,
@@ -122,7 +128,6 @@ class ViewView extends AbstractView implements
             $urlBuilder,
             $data
         );
-
         $this->directoryHelper = $directoryHelper;
         $this->labelManagement = $labelManagement;
         $this->labelRepository = $labelRepository;
@@ -140,12 +145,8 @@ class ViewView extends AbstractView implements
     {
         /** @var LabelInterface|null $label */
         $label = $this->getLabel();
-
-        if ($label !== null) {
-            return $this->labelManagement->getImageDataUri($label);
-        }
-
-        return null;
+        return $label !== null
+            ? $this->labelManagement->getImageDataUri($label) : null;
     }
 
     /**
@@ -176,8 +177,7 @@ class ViewView extends AbstractView implements
         string $type,
         string $key,
         string $subkey = null
-    ): string
-    {
+    ): string {
         /** @var array $labels */
         $labels = $this->getConfig()
             ->getSettings()
@@ -188,8 +188,7 @@ class ViewView extends AbstractView implements
 
         if ($subkey !== null) {
             $label = is_array($label) && isset($label[$subkey])
-                ? $label[$subkey]
-                : $label;
+                ? $label[$subkey] : $label;
         }
 
         return $label;
@@ -208,39 +207,29 @@ class ViewView extends AbstractView implements
 
         /** @var int|string|null $pkgId */
         $pkgId = $this->request->getParam(self::PARAM_PKG_ID);
-        $pkgId = $pkgId !== null && is_numeric($pkgId)
-            ? (int) $pkgId
-            : null;
+        $pkgId = is_numeric($pkgId) ? (int) $pkgId : null;
 
-        if ($pkgId !== null) {
-            /** @var string|null $pkgToken */
-            $pkgToken = $this->request->getParam(self::PARAM_TOKEN);
-            $pkgToken = $pkgToken !== null && Tokenizer::isHex($pkgToken)
-                ? $pkgToken
-                : null;
+        /** @var string|null $token */
+        $token = $this->request->getParam(self::PARAM_TOKEN);
+        $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
-            if ($pkgToken !== null) {
-                try {
-                    /** @var PackageInterface $package */
-                    $package = $this->packageRepository->getById($pkgId);
+        if ($pkgId !== null && $token !== null) {
+            try {
+                /** @var PackageInterface $package */
+                $package = $this->packageRepository->getById($pkgId);
 
-                    if (Tokenizer::isEqual($pkgToken, $package->getToken())) {
-                        $this->package = $package;
-
-                        return $package;
-                    }
-
+                if (!Tokenizer::isEqual($token, $package->getToken())) {
                     /** @var LocalizedException $exception */
                     $exception = $this->exceptionFactory->create(
                         LocalizedException::class
                     );
-
                     throw $exception;
-                } catch (NoSuchEntityException $e) {
-                    /* No action required. */
-                } catch (LocalizedException $e) {
-                    /* No action required. */
                 }
+
+                $this->package = $package;
+                return $package;
+            } catch (NoSuchEntityException | LocalizedException $e) {
+                /* No action required. */
             }
         }
 
@@ -269,21 +258,17 @@ class ViewView extends AbstractView implements
                 /** @var LabelInterface $label */
                 $label = $this->labelRepository->getById($labelId);
 
-                if ($label->getId()) {
-                    $this->label = $label;
-
-                    return $label;
+                if (!$label->getId()) {
+                    /** @var LocalizedException $exception */
+                    $exception = $this->exceptionFactory->create(
+                        LocalizedException::class
+                    );
+                    throw $exception;
                 }
 
-                /** @var LocalizedException $exception */
-                $exception = $this->exceptionFactory->create(
-                    LocalizedException::class
-                );
-
-                throw $exception;
-            } catch (NoSuchEntityException $e) {
-                /* No action required. */
-            } catch (LocalizedException $e) {
+                $this->label = $label;
+                return $label;
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 /* No action required. */
             }
         }
@@ -308,28 +293,24 @@ class ViewView extends AbstractView implements
         $package = $this->getPackage();
 
         if ($package !== null) {
-            /** @var int $pkgId */
-            $pkgId = (int) $package->getRmaId();
+            /** @var int $rmaId */
+            $rmaId = (int) $package->getRmaId();
 
             try {
                 /** @var SimpleReturnInterface $rma */
-                $rma = $this->simpleReturnRepository->getById($pkgId);
+                $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                if ($rma->getId()) {
-                    $this->rma = $rma;
-
-                    return $rma;
+                if (!$rma->getId()) {
+                    /** @var LocalizedException $exception */
+                    $exception = $this->exceptionFactory->create(
+                        LocalizedException::class
+                    );
+                    throw $exception;
                 }
 
-                /** @var LocalizedException $exception */
-                $exception = $this->exceptionFactory->create(
-                    LocalizedException::class
-                );
-
-                throw $exception;
-            } catch (NoSuchEntityException $e) {
-                /* No action required. */
-            } catch (LocalizedException $e) {
+                $this->rma = $rma;
+                return $rma;
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 /* No action required. */
             }
         }
@@ -362,8 +343,7 @@ class ViewView extends AbstractView implements
                 $orders = $this->orderAdapter->getOrdersByFields($fields);
 
                 if (!empty($orders)) {
-                    $this->order = $orders[0];
-
+                    $this->order = array_shift($orders);
                     return $this->order;
                 }
 
@@ -372,11 +352,8 @@ class ViewView extends AbstractView implements
                     NoSuchEntityException::class,
                     __('Unable to locate any matching orders.')
                 );
-
                 throw $exception;
-            } catch (NoSuchEntityException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
-            } catch (LocalizedException $e) {
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             }
         }
@@ -393,8 +370,10 @@ class ViewView extends AbstractView implements
         $order = $this->getOrder();
 
         /** @var float $weight */
-        $weight = (float)($order->getWeight() ?? $this->getConfig()->getPackageWeight());
-
+        $weight = (float)(
+            $order->getWeight()
+                ?? $this->getConfig()->getPackageWeight()
+        );
         return number_format($weight, 2);
     }
 
@@ -412,16 +391,16 @@ class ViewView extends AbstractView implements
     public function getGenerateLabelUrl(): string
     {
         /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
+        $params = ['_secure' => true];
 
         /** @var PackageInterface|null $package */
         $package = $this->getPackage();
 
         if ($package !== null) {
-            $params['pkg_id'] = $package->getId();
-            $params['token'] = $package->getToken();
+            $params += [
+                'pkg_id' => $package->getId(),
+                'token' => $package->getToken(),
+            ];
         }
 
         return $this->urlBuilder->getUrl(
@@ -436,16 +415,16 @@ class ViewView extends AbstractView implements
     public function getViewRmaUrl(): string
     {
         /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
+        $params = ['_secure' => true];
 
         /** @var SimpleReturnInterface $rma */
         $rma = $this->getSimpleReturn();
 
         if ($rma !== null) {
-            $params['rma_id'] = $rma->getId();
-            $params['token'] = $rma->getToken();
+            $params += [
+                'rma_id' => $rma->getId(),
+                'token' => $rma->getToken(),
+            ];
         }
 
         return $this->urlBuilder->getUrl(
@@ -461,12 +440,7 @@ class ViewView extends AbstractView implements
     {
         /** @var LabelInterface|null $label */
         $label = $this->getLabel();
-
-        if ($label !== null) {
-            return true;
-        }
-
-        return false;
+        return $label !== null ? (bool) $label->getId() : false;
     }
 
     /**
@@ -476,11 +450,6 @@ class ViewView extends AbstractView implements
     {
         /** @var PackageInterface|null $package */
         $package = $this->getPackage();
-
-        if ($package !== null) {
-            return true;
-        }
-
-        return false;
+        return $package !== null ? (bool) $package->getId() : false;
     }
 }

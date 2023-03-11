@@ -4,25 +4,25 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
     Shared\Component\LabelFormatterTrait,
@@ -46,40 +46,47 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\OrderRepositoryInterface;
 
+use function __;
+use function is_numeric;
+use function trim;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
     use ModuleConfigTrait, LabelFormatterTrait;
 
-    /** @property EmailTransport $emailTransport */
+    /** @var EmailTransport $emailTransport */
     protected $emailTransport;
 
-    /** @property Escaper $escaper */
+    /** @var Escaper $escaper */
     protected $escaper;
 
-    /** @property EventManagerInterface $eventManager */
+    /** @var EventManagerInterface $eventManager */
     protected $eventManager;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
-    /** @property ResultJsonFactory $resultJsonFactory */
+    /** @var ResultJsonFactory $resultJsonFactory */
     protected $resultJsonFactory;
 
-    /** @property JsonSerializer $serializer */
+    /** @var JsonSerializer $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
@@ -144,7 +151,6 @@ class EditPost extends Action implements
                 'error' => true,
                 'message' => __('Invalid method: Must be POST request.'),
             ]);
-
             return $resultJson;
         }
 
@@ -153,15 +159,12 @@ class EditPost extends Action implements
                 'error' => true,
                 'message' => __('Invalid form key.'),
             ]);
-
             return $resultJson;
         }
 
         /** @var int|string|null $rmaId */
         $rmaId = $request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
         if ($rmaId !== null) {
             /** @var string|null $token */
@@ -184,8 +187,7 @@ class EditPost extends Action implements
                 /** @var string|null $comments */
                 $comments = $request->getPostValue('comments');
                 $comments = $resolution !== null && !empty($comments)
-                    ? $this->escaper->escapeHtml($comments)
-                    : null;
+                    ? $this->escaper->escapeHtml($comments) : null;
 
                 try {
                     /** @var SimpleReturnInterface $rma */
@@ -261,12 +263,7 @@ class EditPost extends Action implements
                         ]);
                         return $resultJson;
                     }
-                } catch (NoSuchEntityException $e) {
-                    $response = [
-                        'error' => true,
-                        'message' => $e->getMessage(),
-                    ];
-                } catch (LocalizedException $e) {
+                } catch (NoSuchEntityException | LocalizedException $e) {
                     $response = [
                         'error' => true,
                         'message' => $e->getMessage(),

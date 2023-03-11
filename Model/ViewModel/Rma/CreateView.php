@@ -4,22 +4,22 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ViewModel\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
-    Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
@@ -36,31 +36,38 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
+use function __;
+use function array_shift;
+
 class CreateView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property MessageManagerInterface $messageManager */
+    /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property OrderInterface $order */
+    /** @var OrderInterface $order */
     protected $order;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
+
+    /** @var string $route */
+    private $route;
 
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
-     * @param array $data
      * @param MessageManagerInterface $messageManager
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
+     * @param array $data
+     * @param string $route
      * @return void
      */
     public function __construct(
@@ -68,10 +75,11 @@ class CreateView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = [],
         MessageManagerInterface $messageManager,
         ModuleConfig $moduleConfig,
-        OrderAdapter $orderAdapter
+        OrderAdapter $orderAdapter,
+        array $data = [],
+        string $route = self::ROUTE_SIMPLERETURNS_RMA_CREATEPOST
     ) {
         parent::__construct(
             $configHelper,
@@ -83,6 +91,7 @@ class CreateView extends AbstractView implements
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
+        $this->route = $route;
     }
 
     /**
@@ -113,8 +122,7 @@ class CreateView extends AbstractView implements
                 $orders = $this->orderAdapter->getOrdersByFields($fields);
 
                 if (!empty($orders)) {
-                    $this->order = $orders[0];
-
+                    $this->order = array_shift($orders);
                     return $this->order;
                 }
 
@@ -123,7 +131,6 @@ class CreateView extends AbstractView implements
                     NoSuchEntityException::class,
                     __('Unable to locate any matching orders.')
                 );
-
                 throw $exception;
             } catch (NoSuchEntityException $e) {
                 $this->messageManager->addError($e->getMessage());
@@ -171,18 +178,13 @@ class CreateView extends AbstractView implements
     }
 
     /**
-     * @param string $route
-     * @return string
+     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getPostActionUrl(
-        string $route = self::ROUTE_SIMPLERETURNS_RMA_CREATEPOST
-    ): string
-    {
-        /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
-
+        string $route = '',
+        array $params = []
+    ): string {
         /** @var int|string|null $orderId */
         $orderId = $this->request->getParam(self::PARAM_ORDER_ID);
 
@@ -197,6 +199,6 @@ class CreateView extends AbstractView implements
             $params['code'] = $protectCode;
         }
 
-        return $this->urlBuilder->getUrl($route, $params);
+        return parent::getPostActionUrl($this->route, $params);
     }
 }

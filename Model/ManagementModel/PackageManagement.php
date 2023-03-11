@@ -4,21 +4,22 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ManagementModel
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ManagementModel;
 
-use Exception;
+use AuroraExtensions\ModuleComponents\Component\Log\LoggerTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\PackageManagementInterface,
     Api\PackageRepositoryInterface,
@@ -28,8 +29,6 @@ use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\LabelRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
-    Component\Psr\Log\LoggerTrait,
-    Exception\ExceptionFactory,
     Model\Security\Token as Tokenizer,
     Model\AdapterModel\Shipping\Carrier\CarrierFactory,
     Model\SystemModel\Module\Config as ModuleConfig,
@@ -57,54 +56,63 @@ use Magento\Shipping\{
 };
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
+use function __;
+use function implode;
+use function in_array;
+use function is_array;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class PackageManagement implements PackageManagementInterface, ModuleComponentInterface
 {
     use LoggerTrait;
 
-    /** @property CarrierFactory $carrierFactory */
+    /** @var CarrierFactory $carrierFactory */
     protected $carrierFactory;
 
-    /** @property DataObjectFactory $dataObjectFactory */
+    /** @var DataObjectFactory $dataObjectFactory */
     protected $dataObjectFactory;
 
-    /** @property DirectoryHelper $directoryHelper */
+    /** @var DirectoryHelper $directoryHelper */
     protected $directoryHelper;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property LabelInterfaceFactory $labelFactory */
+    /** @var LabelInterfaceFactory $labelFactory */
     protected $labelFactory;
 
-    /** @property LabelRepositoryInterface $labelRepository */
+    /** @var LabelRepositoryInterface $labelRepository */
     protected $labelRepository;
 
-    /** @property MessageManagerInterface $messageManager */
+    /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
-    /** @property PackageRepositoryInterface $packageRepository */
+    /** @var PackageRepositoryInterface $packageRepository */
     protected $packageRepository;
 
-    /** @property RegionCollectionFactory $regionCollectionFactory */
+    /** @var RegionCollectionFactory $regionCollectionFactory */
     protected $regionCollectionFactory;
 
-    /** @property RemoteAddress $remoteAddress */
+    /** @var RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
-    /** @property ShipmentRequestFactory $shipmentRequestFactory */
+    /** @var ShipmentRequestFactory $shipmentRequestFactory */
     protected $shipmentRequestFactory;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property StoreManagerInterface $storeManager */
+    /** @var StoreManagerInterface $storeManager */
     protected $storeManager;
 
     /**
@@ -125,6 +133,8 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param StoreManagerInterface $storeManager
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         CarrierFactory $carrierFactory,
@@ -234,11 +244,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                 'params' => $params,
                 'items' => $items,
             ];
-        } catch (NoSuchEntityException $e) {
-            $this->getLogger()->error($e->getMessage());
-        } catch (LocalizedException $e) {
-            $this->getLogger()->error($e->getMessage());
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->getLogger()->error($e->getMessage());
         }
 
@@ -248,6 +254,10 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
     /**
      * @param PackageInterface $package
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function requestToReturnShipment(PackageInterface $package): bool
     {
@@ -324,8 +334,8 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
             ];
 
             if (in_array(true, $conditions)) {
-                $this->messageManager->addErrorMessage('Unable to generate shipping label(s).');
-
+                $this->messageManager
+                     ->addErrorMessage('Unable to generate shipping label(s).');
                 return false;
             }
 
@@ -404,7 +414,6 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                         LocalizedException::class,
                         __($carrierResponse->getErrors())
                     );
-
                     throw $exception;
                 }
 
@@ -450,18 +459,10 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                 }
 
                 return true;
-            } catch (NoSuchEntityException $e) {
-                throw $e;
-            } catch (LocalizedException $e) {
-                throw $e;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 throw $e;
             }
-        } catch (NoSuchEntityException $e) {
-            /* No action required. */
-        } catch (LocalizedException $e) {
-            /* No action required. */
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             /* No action required. */
         }
 
@@ -476,8 +477,10 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
     public function getPackageWeight(OrderInterface $order, int $store): float
     {
         /** @var float $weight */
-        $weight = (float)($order->getWeight() ?? $this->moduleConfig->getPackageWeight($store));
-
+        $weight = (float)(
+            $order->getWeight()
+                ?? $this->moduleConfig->getPackageWeight($store)
+        );
         return $weight;
     }
 
@@ -487,10 +490,10 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      */
     public function getOrderComment(OrderInterface $order): string
     {
-        return __(
+        return (string) __(
             self::FORMAT_RMA_ORDER_COMMENT,
             $order->getRealOrderId()
-        )->__toString();
+        );
     }
 
     /**
@@ -499,11 +502,11 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      */
     public function getRmaComment(string $trackingNumber): string
     {
-        return __(
+        return (string) __(
             self::FORMAT_RMA_REQUEST_COMMENT,
             $this->remoteAddress->getRemoteAddress(),
             $trackingNumber
-        )->__toString();
+        );
     }
 
     /**

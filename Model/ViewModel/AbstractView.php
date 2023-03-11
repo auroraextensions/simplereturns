@@ -4,22 +4,22 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ViewModel
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
-    Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Shared\ModuleComponentInterface
 };
@@ -30,20 +30,22 @@ use Magento\Framework\{
     View\Element\Block\ArgumentInterface
 };
 
+use function array_replace;
+
 abstract class AbstractView extends DataObject implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property ConfigHelper $configHelper */
+    /** @var ConfigHelper $configHelper */
     protected $configHelper;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property RequestInterface $request */
+    /** @var RequestInterface $request */
     protected $request;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
@@ -74,13 +76,16 @@ abstract class AbstractView extends DataObject implements
      * @param string $route
      * @return string
      */
-    public function getPostActionUrl(string $route): string
-    {
+    public function getPostActionUrl(
+        string $route,
+        array $params = []
+    ): string {
         return $this->urlBuilder->getUrl(
             $route,
-            [
-                '_secure' => true,
-            ]
+            array_replace(
+                $params,
+                ['_secure' => true]
+            )
         );
     }
 }

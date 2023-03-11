@@ -4,25 +4,25 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ViewModel\Package
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
@@ -42,35 +42,45 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
+use function __;
+use function array_shift;
+use function is_array;
+use function is_numeric;
+use function number_format;
+
 class CreateView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
     use ModuleConfigTrait;
 
-    /** @property DirectoryHelper $directoryHelper */
+    /** @var DirectoryHelper $directoryHelper */
     protected $directoryHelper;
 
-    /** @property MessageManagerInterface $messageManager */
+    /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
+
+    /** @var string $route */
+    private $route;
 
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
-     * @param array $data
      * @param DirectoryHelper $directoryHelper
      * @param MessageManagerInterface $messageManager
      * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param array $data
+     * @param string $route
      * @return void
      */
     public function __construct(
@@ -78,12 +88,13 @@ class CreateView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = [],
         DirectoryHelper $directoryHelper,
         MessageManagerInterface $messageManager,
         ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        array $data = [],
+        string $route = self::ROUTE_SIMPLERETURNS_PKG_CREATEPOST
     ) {
         parent::__construct(
             $configHelper,
@@ -92,7 +103,6 @@ class CreateView extends AbstractView implements
             $urlBuilder,
             $data
         );
-
         $this->directoryHelper = $directoryHelper;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
@@ -128,8 +138,7 @@ class CreateView extends AbstractView implements
         string $type,
         string $key,
         string $subkey = null
-    ): string
-    {
+    ): string {
         /** @var array $labels */
         $labels = $this->getConfig()
             ->getSettings()
@@ -140,8 +149,7 @@ class CreateView extends AbstractView implements
 
         if ($subkey !== null) {
             $label = is_array($label) && isset($label[$subkey])
-                ? $label[$subkey]
-                : $label;
+                ? $label[$subkey] : $label;
         }
 
         return $label;
@@ -158,35 +166,28 @@ class CreateView extends AbstractView implements
     {
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
-        if ($rmaId !== null) {
-            /** @var string|null $rmaToken */
-            $rmaToken = $this->request->getParam(self::PARAM_TOKEN);
-            $rmaToken = $rmaToken !== null && Tokenizer::isHex($rmaToken) ? $rmaToken : null;
+        /** @var string|null $token */
+        $token = $this->request->getParam(self::PARAM_TOKEN);
+        $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
-            if ($rmaToken !== null) {
-                try {
-                    /** @var SimpleReturnInterface $rma */
-                    $rma = $this->simpleReturnRepository->getById($rmaId);
+        if ($rmaId !== null && $token !== null) {
+            try {
+                /** @var SimpleReturnInterface $rma */
+                $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                    if (Tokenizer::isEqual($rmaToken, $rma->getToken())) {
-                        return $rma;
-                    }
-
+                if (!Tokenizer::isEqual($token, $rma->getToken())) {
                     /** @var LocalizedException $exception */
                     $exception = $this->exceptionFactory->create(
                         LocalizedException::class
                     );
-
                     throw $exception;
-                } catch (NoSuchEntityException $e) {
-                    /* No action required. */
-                } catch (LocalizedException $e) {
-                    /* No action required. */
                 }
+
+                return $rma;
+            } catch (NoSuchEntityException | LocalizedException $e) {
+                /* No action required. */
             }
         }
 
@@ -214,7 +215,7 @@ class CreateView extends AbstractView implements
                 $orders = $this->orderAdapter->getOrdersByFields($fields);
 
                 if (!empty($orders)) {
-                    return $orders[0];
+                    return array_shift($orders);
                 }
 
                 /** @var NoSuchEntityException $exception */
@@ -222,11 +223,8 @@ class CreateView extends AbstractView implements
                     NoSuchEntityException::class,
                     __('Unable to locate any matching orders.')
                 );
-
                 throw $exception;
-            } catch (NoSuchEntityException $e) {
-                $this->messageManager->addError($e->getMessage());
-            } catch (LocalizedException $e) {
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
             }
         }
@@ -243,8 +241,10 @@ class CreateView extends AbstractView implements
         $order = $this->getOrder();
 
         /** @var float $weight */
-        $weight = (float)($order->getWeight() ?? $this->getConfig()->getPackageWeight());
-
+        $weight = (float)(
+            $order->getWeight()
+                ?? $this->getConfig()->getPackageWeight()
+        );
         return number_format($weight, 2);
     }
 
@@ -257,18 +257,13 @@ class CreateView extends AbstractView implements
     }
 
     /**
-     * @param string $route
-     * @return string
+     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getPostActionUrl(
-        string $route = self::ROUTE_SIMPLERETURNS_PKG_CREATEPOST
-    ): string
-    {
-        /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
-
+        string $route = '',
+        array $params = []
+    ): string {
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
 
@@ -283,6 +278,6 @@ class CreateView extends AbstractView implements
             $params['token'] = $token;
         }
 
-        return $this->urlBuilder->getUrl($route, $params);
+        return parent::getPostActionUrl($this->route, $params);
     }
 }

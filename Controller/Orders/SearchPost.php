@@ -4,25 +4,25 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Orders
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Orders;
 
+use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
-    Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\ViewModel\Rma\ListView as ViewModel,
-    Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
 use Magento\Customer\Api\CustomerRepositoryInterface;
@@ -36,31 +36,33 @@ use Magento\Framework\{
     Exception\LocalizedException
 };
 
+use function __;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class SearchPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
-    use Redirector {
-        Redirector::__initialize as protected;
-    }
+    use RedirectTrait;
 
-    /** @property CustomerRepositoryInterface $customerRepository */
+    /** @var CustomerRepositoryInterface $customerRepository */
     protected $customerRepository;
 
-    /** @property DataPersistorInterface $dataPersistor */
+    /** @var DataPersistorInterface $dataPersistor */
     protected $dataPersistor;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property ViewModel $viewModel */
+    /** @var ViewModel $viewModel */
     protected $viewModel;
 
     /**
@@ -83,7 +85,6 @@ class SearchPost extends Action implements
         ViewModel $viewModel
     ) {
         parent::__construct($context);
-        $this->__initialize();
         $this->customerRepository = $customerRepository;
         $this->dataPersistor = $dataPersistor;
         $this->exceptionFactory = $exceptionFactory;
@@ -93,8 +94,6 @@ class SearchPost extends Action implements
     }
 
     /**
-     * Execute returns_label_ordersPost POST action.
-     *
      * @return Redirect
      */
     public function execute()
@@ -110,10 +109,10 @@ class SearchPost extends Action implements
                 /** @var string|null $email */
                 $email = !empty($params['email']) ? $params['email'] : null;
 
-                /** @var string|int|null $orderId */
+                /** @var int|string|null $orderId */
                 $orderId = !empty($params['order_id']) ? $params['order_id'] : null;
 
-                /** @var string|int|null $zipCode */
+                /** @var int|string|null $zipCode */
                 $zipCode = !empty($params['zip_code']) ? $params['zip_code'] : null;
 
                 try {
@@ -123,28 +122,25 @@ class SearchPost extends Action implements
                         __(self::ERROR_MISSING_URL_PARAMS)
                     );
 
-                    if ($zipCode !== null) {
-                        /* Trim delivery route suffix from zip code. */
-                        $zipCode = OrderAdapter::truncateZipCode($zipCode);
+                    if ($zipCode === null) {
+                        throw $exception;
+                    }
 
-                        /** @var array $data */
-                        $data = [
-                            'zip_code'   => $zipCode,
-                            'is_checked' => true,
-                        ];
+                    /** @var array $data */
+                    $data = [
+                        'zip_code' => OrderAdapter::truncateZipCode($zipCode),
+                        'is_checked' => true,
+                    ];
 
-                        if ($email !== null) {
-                            $data['email'] = $email;
-                        } elseif ($orderId !== null) {
-                            $data['order_id'] = $orderId;
-                        } else {
-                            throw $exception;
-                        }
-
-                        $this->dataPersistor->set(self::DATA_PERSISTOR_KEY, $data);
+                    if ($email !== null) {
+                        $data['email'] = $email;
+                    } elseif ($orderId !== null) {
+                        $data['order_id'] = $orderId;
                     } else {
                         throw $exception;
                     }
+
+                    $this->dataPersistor->set(self::DATA_PERSISTOR_KEY, $data);
                 } catch (LocalizedException $e) {
                     $this->messageManager->addError($e->getMessage());
                 }

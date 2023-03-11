@@ -4,20 +4,22 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Adminhtml\Package
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Package;
 
+use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\PackageInterface,
     Api\Data\PackageInterfaceFactory,
@@ -27,10 +29,8 @@ use AuroraExtensions\SimpleReturns\{
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
-    Shared\Action\Redirector,
     Shared\Component\LabelFormatterTrait,
     Shared\ModuleComponentInterface,
     Csi\System\Module\ConfigInterface
@@ -56,57 +56,62 @@ use Magento\Framework\{
 };
 use Magento\MediaStorage\Model\File\UploaderFactory;
 
+use function __;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use LabelFormatterTrait, ModuleConfigTrait, Redirector {
-        Redirector::__initialize as protected;
-    }
+    use LabelFormatterTrait,
+        ModuleConfigTrait,
+        RedirectTrait;
 
-    /** @property DateTimeFactory $dateTimeFactory */
+    /** @var DateTimeFactory $dateTimeFactory */
     protected $dateTimeFactory;
 
-    /** @property EmailTransport $emailTransport */
+    /** @var EmailTransport $emailTransport */
     protected $emailTransport;
 
-    /** @property Escaper $escaper */
+    /** @var Escaper $escaper */
     protected $escaper;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property ConfigInterface $moduleConfig */
+    /** @var ConfigInterface $moduleConfig */
     protected $moduleConfig;
 
-    /** @property PackageInterfaceFactory $packageFactory */
+    /** @var PackageInterfaceFactory $packageFactory */
     protected $packageFactory;
 
-    /** @property PackageManagementInterface $packageManagement */
+    /** @var PackageManagementInterface $packageManagement */
     protected $packageManagement;
 
-    /** @property PackageRepositoryInterface $packageRepository */
+    /** @var PackageRepositoryInterface $packageRepository */
     protected $packageRepository;
 
-    /** @property RemoteAddress $remoteAddress */
+    /** @var RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
-    /** @property ResultJsonFactory $resultJsonFactory */
+    /** @var ResultJsonFactory $resultJsonFactory */
     protected $resultJsonFactory;
 
-    /** @property Json $serializer */
+    /** @var Json $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
+    /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
     protected $simpleReturnFactory;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
@@ -127,6 +132,8 @@ class CreatePost extends Action implements
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
@@ -147,7 +154,6 @@ class CreatePost extends Action implements
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
-        $this->__initialize();
         $this->dateTimeFactory = $dateTimeFactory;
         $this->emailTransport = $emailTransport;
         $this->escaper = $escaper;
@@ -184,7 +190,6 @@ class CreatePost extends Action implements
                 'error' => true,
                 'message' => __('Invalid request type. Must be POST request.'),
             ]);
-
             return $resultJson;
         }
 
@@ -193,7 +198,6 @@ class CreatePost extends Action implements
                 'error' => true,
                 'message' => __('Invalid form key.'),
             ]);
-
             return $resultJson;
         }
 
@@ -210,14 +214,12 @@ class CreatePost extends Action implements
 
         try {
             /** @var SimpleReturnInterface $rma */
-            $rma = $this->simpleReturnRepository
-                ->getById($rmaId);
+            $rma = $this->simpleReturnRepository->getById($rmaId);
         } catch (NoSuchEntityException $e) {
             $resultJson->setData([
                 'error' => true,
                 'message' => $e->getMessage(),
             ]);
-
             return $resultJson;
         }
 
@@ -231,7 +233,6 @@ class CreatePost extends Action implements
                     AlreadyExistsException::class,
                     __('There is already a package for this return.')
                 );
-
                 throw $exception;
             }
         /* RMA doesn't exist, continue processing. */
@@ -265,7 +266,7 @@ class CreatePost extends Action implements
 
             if ($requestLabel) {
                 $this->packageManagement
-                    ->requestToReturnShipment($package);
+                     ->requestToReturnShipment($package);
             }
 
             /** @var SimpleReturnInterface $rma */
@@ -291,19 +292,13 @@ class CreatePost extends Action implements
                     '_secure' => true,
                 ]
             );
-
             return $resultJson->setData([
                 'success' => true,
                 'isSimpleReturnsAjax' => true,
                 'message' => __('Successfully created package for return shipment.'),
                 'viewUrl' => $viewUrl,
             ]);
-        } catch (AlreadyExistsException $e) {
-            $response = [
-                'error' => true,
-                'message' => $e->getMessage(),
-            ];
-        } catch (LocalizedException $e) {
+        } catch (AlreadyExistsException | LocalizedException $e) {
             $response = [
                 'error' => true,
                 'message' => $e->getMessage(),

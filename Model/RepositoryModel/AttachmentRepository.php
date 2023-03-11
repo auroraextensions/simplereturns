@@ -4,25 +4,26 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\RepositoryModel
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
+use AuroraExtensions\ModuleComponents\Component\Repository\AbstractRepositoryTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\AttachmentRepositoryInterface,
     Api\Data\AttachmentInterface,
     Api\Data\AttachmentInterfaceFactory,
-    Exception\ExceptionFactory,
     Model\DataModel\Attachment,
     Model\ResourceModel\Attachment as AttachmentResource,
     Model\ResourceModel\Attachment\CollectionFactory,
@@ -34,23 +35,19 @@ use Magento\Framework\{
     Exception\NoSuchEntityException
 };
 
+use function __;
+
 class AttachmentRepository implements AttachmentRepositoryInterface, ModuleComponentInterface
 {
     use AbstractRepositoryTrait;
 
-    /** @property CollectionFactory $collectionFactory */
-    protected $collectionFactory;
-
-    /** @property SearchResultsInterfaceFactory $searchResultsFactory */
-    protected $searchResultsFactory;
-
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property AttachmentInterfaceFactory $attachmentFactory */
+    /** @var AttachmentInterfaceFactory $attachmentFactory */
     protected $attachmentFactory;
 
-    /** @property AttachmentResource $attachmentResource */
+    /** @var AttachmentResource $attachmentResource */
     protected $attachmentResource;
 
     /**
@@ -96,7 +93,6 @@ class AttachmentRepository implements AttachmentRepositoryInterface, ModuleCompo
                 NoSuchEntityException::class,
                 __('Unable to locate RMA attachment information.')
             );
-
             throw $exception;
         }
 
@@ -120,7 +116,6 @@ class AttachmentRepository implements AttachmentRepositoryInterface, ModuleCompo
                 NoSuchEntityException::class,
                 __('Unable to locate RMA attachment information.')
             );
-
             throw $exception;
         }
 
@@ -155,7 +150,6 @@ class AttachmentRepository implements AttachmentRepositoryInterface, ModuleCompo
         /** @var AttachmentInterface $attachment */
         $attachment = $this->attachmentFactory->create();
         $attachment->setId($id);
-
         return (bool) $this->attachmentResource->delete($attachment);
     }
 }

@@ -4,27 +4,27 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ViewModel\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\AttachmentInterface,
     Api\Data\SimpleReturnInterface,
     Api\AttachmentManagementInterface,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
-    Exception\ExceptionFactory,
     Helper\Action as ActionHelper,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
@@ -50,55 +50,59 @@ use Magento\Sales\{
 };
 use Magento\Store\Model\StoreManagerInterface;
 
+use function is_numeric;
+
 class EditView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property AttachmentAdapter $attachmentAdapter */
+    /** @var AttachmentAdapter $attachmentAdapter */
     protected $attachmentAdapter;
 
-    /** @property AttachmentManagementInterface $attachmentManagement */
+    /** @var AttachmentManagementInterface $attachmentManagement */
     protected $attachmentManagement;
 
-    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    /** @var AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
 
-    /** @property FormKey $formKey */
+    /** @var FormKey $formKey */
     protected $formKey;
 
-    /** @property MessageManagerInterface $messageManager */
+    /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property OrderInterface $order */
+    /** @var OrderInterface $order */
     protected $order;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
-    /** @property SimpleReturnInterface $rma */
+    /** @var SimpleReturnInterface $rma */
     protected $rma;
 
-    /** @property Json $serializer */
+    /** @var Json $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property StoreManagerInterface $storeManager */
+    /** @var StoreManagerInterface $storeManager */
     protected $storeManager;
+
+    /** @var string $route */
+    private $route;
 
     /**
      * @param ConfigHelper $configHelper
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
-     * @param array $data
      * @param AttachmentAdapter $attachmentAdapter
      * @param AttachmentManagementInterface $attachmentManagement
      * @param AttachmentRepositoryInterface $attachmentRepository
@@ -110,6 +114,8 @@ class EditView extends AbstractView implements
      * @param Json $serializer
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param StoreManagerInterface $storeManager
+     * @param array $data
+     * @param string $route
      * @return void
      */
     public function __construct(
@@ -117,7 +123,6 @@ class EditView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = [],
         AttachmentAdapter $attachmentAdapter,
         AttachmentManagementInterface $attachmentManagement,
         AttachmentRepositoryInterface $attachmentRepository,
@@ -128,7 +133,9 @@ class EditView extends AbstractView implements
         OrderRepositoryInterface $orderRepository,
         Json $serializer,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        array $data = [],
+        string $route = self::ROUTE_SIMPLERETURNS_RMA_EDITPOST
     ) {
         parent::__construct(
             $configHelper,
@@ -137,7 +144,6 @@ class EditView extends AbstractView implements
             $urlBuilder,
             $data
         );
-
         $this->attachmentAdapter = $attachmentAdapter;
         $this->attachmentManagement = $attachmentManagement;
         $this->attachmentRepository = $attachmentRepository;
@@ -152,18 +158,13 @@ class EditView extends AbstractView implements
     }
 
     /**
-     * @param string $route
-     * @return string
+     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getPostActionUrl(
-        string $route = self::ROUTE_SIMPLERETURNS_RMA_EDITPOST
-    ): string
-    {
-        /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
-
+        string $route = '',
+        array $params = []
+    ): string {
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
 
@@ -178,7 +179,7 @@ class EditView extends AbstractView implements
             $params['token'] = $token;
         }
 
-        return $this->urlBuilder->getUrl($route, $params);
+        return parent::getPostActionUrl($this->route, $params);
     }
 
     /**
@@ -187,9 +188,7 @@ class EditView extends AbstractView implements
     public function getViewRmaUrl(): string
     {
         /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
+        $params = ['_secure' => true];
 
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
@@ -223,37 +222,29 @@ class EditView extends AbstractView implements
 
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
-        if ($rmaId !== null) {
-            /** @var string|null $token */
-            $token = $this->request->getParam(self::PARAM_TOKEN);
-            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
+        /** @var string|null $token */
+        $token = $this->request->getParam(self::PARAM_TOKEN);
+        $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
-            if ($token !== null) {
-                try {
-                    /** @var SimpleReturnInterface $rma */
-                    $rma = $this->simpleReturnRepository->getById($rmaId);
+        if ($rmaId !== null && $token !== null) {
+            try {
+                /** @var SimpleReturnInterface $rma */
+                $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                    if (Tokenizer::isEqual($token, $rma->getToken())) {
-                        $this->rma = $rma;
-
-                        return $rma;
-                    }
-
+                if (!Tokenizer::isEqual($token, $rma->getToken())) {
                     /** @var LocalizedException $exception */
                     $exception = $this->exceptionFactory->create(
                         LocalizedException::class
                     );
-
                     throw $exception;
-                } catch (NoSuchEntityException $e) {
-                    /* No action required. */
-                } catch (LocalizedException $e) {
-                    /* No action required. */
                 }
+
+                $this->rma = $rma;
+                return $rma;
+            } catch (NoSuchEntityException | LocalizedException $e) {
+                /* No action required. */
             }
         }
 
@@ -280,12 +271,9 @@ class EditView extends AbstractView implements
 
                 if ($order->getId()) {
                     $this->order = $order;
-
                     return $order;
                 }
-            } catch (NoSuchEntityException $e) {
-                /* No action required. */
-            } catch (LocalizedException $e) {
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 /* No action required. */
             }
         }
@@ -329,9 +317,7 @@ class EditView extends AbstractView implements
                         'url'   => $fileUrl,
                     ];
                 }
-            } catch (NoSuchEntityException $e) {
-                /* No action required. */
-            } catch (LocalizedException $e) {
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 /* No action required. */
             }
         }
@@ -378,11 +364,6 @@ class EditView extends AbstractView implements
     {
         /** @var SimpleReturnInterface|null $rma */
         $rma = $this->getSimpleReturn();
-
-        if ($rma !== null) {
-            return true;
-        }
-
-        return false;
+        return $rma !== null ? (bool) $rma->getId() : false;
     }
 }

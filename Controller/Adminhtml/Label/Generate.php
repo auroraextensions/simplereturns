@@ -4,21 +4,22 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Adminhtml\Label
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Label;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\PackageInterface,
     Api\Data\PackageInterfaceFactory,
@@ -27,7 +28,6 @@ use AuroraExtensions\SimpleReturns\{
     Api\PackageManagementInterface,
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
-    Exception\ExceptionFactory,
     Exception\Http\Request\InvalidTokenException,
     Model\Security\Token as Tokenizer,
     Shared\ModuleComponentInterface
@@ -138,9 +138,7 @@ class Generate extends Action implements
 
         if ($pkgId !== null) {
             /** @var array $params */
-            $params = [
-                '_secure' => true,
-            ];
+            $params = ['_secure' => true];
 
             /** @var string|null $token */
             $token = $request->getParam(static::PARAM_TOKEN);
@@ -153,8 +151,10 @@ class Generate extends Action implements
                 if (Tokenizer::isEqual($token, $package->getToken())) {
                     /* Create RMA request and generate shipping label. */
                     if ($this->packageManagement->requestToReturnShipment($package)) {
-                        $params['pkg_id'] = $package->getId();
-                        $params['token'] = $token;
+                        $params += [
+                            'pkg_id' => $package->getId(),
+                            'token' => $token,
+                        ];
                     }
 
                     /** @var string $viewUrl */

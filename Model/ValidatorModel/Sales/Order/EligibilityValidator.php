@@ -4,52 +4,48 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ValidatorModel\Sales\Order
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ValidatorModel\Sales\Order;
 
-use AuroraExtensions\SimpleReturns\{
-    Exception\ExceptionFactory,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\ModuleComponentInterface
-};
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use DateTime;
 use DateTimeFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Framework\{
-    Message\ManagerInterface as MessageManagerInterface,
-    Pricing\PriceCurrencyInterface
-};
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
 class EligibilityValidator implements ModuleComponentInterface
 {
-    /** @property PriceCurrencyInterface $currency */
+    /** @var PriceCurrencyInterface $currency */
     protected $currency;
 
-    /** @property DateTimeFactory $dateTimeFactory */
+    /** @var DateTimeFactory $dateTimeFactory */
     protected $dateTimeFactory;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property MessageManagerInterface $messageManager */
+    /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property ProductRepositoryInterface $productRepository */
+    /** @var ProductRepositoryInterface $productRepository */
     protected $productRepository;
 
     /**
@@ -91,7 +87,6 @@ class EligibilityValidator implements ModuleComponentInterface
 
         /** @var bool $isAmountAbove */
         $isAmountAbove = $this->isOrderSubtotalAboveMinimum($order);
-
         return ($isEnabled && $isAgeBelow && $isAmountAbove);
     }
 
@@ -111,7 +106,6 @@ class EligibilityValidator implements ModuleComponentInterface
 
         /** @var DateTime $currentDateTime */
         $currentDateTime = $this->dateTimeFactory->create();
-
         return ($ageLimit > 0 && $createdDateTime->diff($currentDateTime)->days <= $ageLimit);
     }
 
@@ -122,11 +116,11 @@ class EligibilityValidator implements ModuleComponentInterface
     public function isOrderSubtotalAboveMinimum(OrderInterface $order): bool
     {
         /** @var float $minimumAmount */
-        $minimumAmount = $this->moduleConfig->getOrderAmountMinimum($order->getStoreId());
+        $minimumAmount = $this->moduleConfig
+            ->getOrderAmountMinimum($order->getStoreId());
 
         /** @var float $orderSubtotal */
         $orderSubtotal = (float) $order->getSubtotal();
-
         return ($minimumAmount > 0 && $minimumAmount <= $orderSubtotal);
     }
 

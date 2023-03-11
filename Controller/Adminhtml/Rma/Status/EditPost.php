@@ -4,26 +4,26 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma\Status
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma\Status;
 
 use AuroraExtensions\ModuleComponents\Component\Event\EventManagerTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Model\Email\Transport\Customer as EmailTransport,
     Model\Security\Token as Tokenizer,
     Shared\Component\LabelFormatterTrait,
@@ -143,7 +143,6 @@ class EditPost extends Action implements
                 'error' => true,
                 'message' => __('Invalid method: Must be POST request.'),
             ]);
-
             return $resultJson;
         }
 
@@ -152,7 +151,6 @@ class EditPost extends Action implements
                 'error' => true,
                 'message' => __('Invalid form key.'),
             ]);
-
             return $resultJson;
         }
 
@@ -247,7 +245,6 @@ class EditPost extends Action implements
                             'success' => true,
                             'message' => __('Successfully updated RMA status.'),
                         ]);
-
                         return $resultJson;
                     } catch (NoSuchEntityException | LocalizedException $e) {
                         $response = [

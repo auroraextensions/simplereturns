@@ -4,25 +4,25 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ViewModel\Package\Form
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package\Form;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
@@ -41,28 +41,34 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
+use function __;
+use function array_shift;
+use function is_array;
+use function is_numeric;
+use function number_format;
+
 class InfoView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
     use ModuleConfigTrait;
 
-    /** @property DirectoryHelper $directoryHelper */
+    /** @var DirectoryHelper $directoryHelper */
     protected $directoryHelper;
 
-    /** @property MessageManagerInterface $messageManager */
+    /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
 
-    /** @property OrderInterface $order */
+    /** @var OrderInterface $order */
     protected $order;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property SimpleReturnInterface $rma */
+    /** @var SimpleReturnInterface $rma */
     protected $rma;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
     /**
@@ -70,12 +76,12 @@ class InfoView extends AbstractView implements
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
-     * @param array $data
      * @param DirectoryHelper $directoryHelper
      * @param MessageManagerInterface $messageManager
      * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param array $data
      * @return void
      */
     public function __construct(
@@ -83,12 +89,12 @@ class InfoView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = [],
         DirectoryHelper $directoryHelper,
         MessageManagerInterface $messageManager,
         ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        array $data = []
     ) {
         parent::__construct(
             $configHelper,
@@ -134,8 +140,7 @@ class InfoView extends AbstractView implements
         string $type,
         string $key,
         string $subkey = null
-    ): string
-    {
+    ): string {
         /** @var array $labels */
         $labels = $this->getConfig()
             ->getSettings()
@@ -146,8 +151,7 @@ class InfoView extends AbstractView implements
 
         if ($subkey !== null) {
             $label = is_array($label) && isset($label[$subkey])
-                ? $label[$subkey]
-                : $label;
+                ? $label[$subkey] : $label;
         }
 
         return $label;
@@ -162,9 +166,7 @@ class InfoView extends AbstractView implements
     {
         /** @var int|string|null $rmaId */
         $rmaId = $this->request->getParam(static::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
         if ($rmaId !== null) {
             /** @var string|null $token */
@@ -176,19 +178,16 @@ class InfoView extends AbstractView implements
                     /** @var SimpleReturnInterface $rma */
                     $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                    if (Tokenizer::isEqual($token, $rma->getToken())) {
-                        return $rma;
+                    if (!Tokenizer::isEqual($token, $rma->getToken())) {
+                        /** @var LocalizedException $exception */
+                        $exception = $this->exceptionFactory->create(
+                            LocalizedException::class
+                        );
+                        throw $exception;
                     }
 
-                    /** @var LocalizedException $exception */
-                    $exception = $this->exceptionFactory->create(
-                        LocalizedException::class
-                    );
-
-                    throw $exception;
-                } catch (NoSuchEntityException $e) {
-                    /* No action required. */
-                } catch (LocalizedException $e) {
+                    return $rma;
+                } catch (NoSuchEntityException | LocalizedException $e) {
                     /* No action required. */
                 }
             }
@@ -222,8 +221,7 @@ class InfoView extends AbstractView implements
                 $orders = $this->orderAdapter->getOrdersByFields($fields);
 
                 if (!empty($orders)) {
-                    $this->order = $orders[0];
-
+                    $this->order = array_shift($orders);
                     return $this->order;
                 }
 
@@ -232,11 +230,8 @@ class InfoView extends AbstractView implements
                     NoSuchEntityException::class,
                     __('Unable to locate any matching orders.')
                 );
-
                 throw $exception;
-            } catch (NoSuchEntityException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
-            } catch (LocalizedException $e) {
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             }
         }
@@ -253,8 +248,10 @@ class InfoView extends AbstractView implements
         $order = $this->getOrder();
 
         /** @var float $weight */
-        $weight = (float)($order->getWeight() ?? $this->getConfig()->getPackageWeight());
-
+        $weight = (float)(
+            $order->getWeight() 
+                ?? $this->getConfig()->getPackageWeight()
+        );
         return number_format($weight, 2);
     }
 
@@ -272,16 +269,16 @@ class InfoView extends AbstractView implements
     public function getViewRmaUrl(): string
     {
         /** @var array $params */
-        $params = [
-            '_secure' => true,
-        ];
+        $params = ['_secure' => true];
 
         /** @var SimpleReturnInterface $rma */
         $rma = $this->getSimpleReturn();
 
         if ($rma !== null) {
-            $params['rma_id'] = $rma->getId();
-            $params['token'] = $rma->getToken();
+            $params += [
+                'rma_id' => $rma->getId(),
+                'token' => $rma->getToken(),
+            ];
         }
 
         return $this->urlBuilder->getUrl(

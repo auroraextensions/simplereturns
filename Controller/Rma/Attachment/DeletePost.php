@@ -4,30 +4,30 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Rma\Attachment
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
+use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\AttachmentInterface,
     Api\Data\SimpleReturnInterface,
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
-    Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
     Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\Action\Redirector,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
@@ -48,46 +48,50 @@ use Magento\Framework\{
 };
 use Magento\MediaStorage\Model\File\UploaderFactory;
 
+use function __;
+use function is_numeric;
+use function trim;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class DeletePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    /** @see AuroraExtensions\SimpleReturns\Shared\Action\Redirector */
-    use Redirector {
-        Redirector::__initialize as protected;
-    }
+    use RedirectTrait;
 
-    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    /** @var AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property Filesystem $filesystem */
+    /** @var Filesystem $filesystem */
     protected $filesystem;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property OrderAdapter $orderAdapter */
+    /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
 
-    /** @property RemoteAddress $remoteAddress */
+    /** @var RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
-    /** @property ResultJsonFactory $resultJsonFactory */
+    /** @var ResultJsonFactory $resultJsonFactory */
     protected $resultJsonFactory;
 
-    /** @property Json $serializer */
+    /** @var Json $serializer */
     protected $serializer;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
@@ -105,6 +109,8 @@ class DeletePost extends Action implements
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
@@ -122,7 +128,6 @@ class DeletePost extends Action implements
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
-        $this->__initialize();
         $this->attachmentRepository = $attachmentRepository;
         $this->exceptionFactory = $exceptionFactory;
         $this->filesystem = $filesystem;
@@ -160,10 +165,11 @@ class DeletePost extends Action implements
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
-            $response['error'] = true;
-            $response['message'] = __('Invalid method: Must be POST request.')->__toString();
+            $response += [
+                'error' => true,
+                'message' => (string) __('Invalid method: Must be POST request.'),
+            ];
             $resultJson->setData($response);
-
             return $resultJson;
         }
 
@@ -176,42 +182,35 @@ class DeletePost extends Action implements
 
         /** @var int|string|null $rmaId */
         $rmaId = $data['rma_id'] ?? null;
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
-        if ($rmaId !== null) {
-            /** @var string|null $token */
-            $token = $data['token'] ?? null;
-            $token = !empty($token) ? $token : null;
+        /** @var string|null $token */
+        $token = $data['token'] ?? null;
+        $token = !empty($token) ? $token : null;
 
-            if ($token !== null) {
-                /** @var string|null $fileKey */
-                $fileKey = $data['file_key'] ?? null;
-                $fileKey = $fileKey !== null && Tokenizer::isHex($fileKey)
-                    ? trim($fileKey)
-                    : null;
+        if ($rmaId !== null && $token !== null) {
+            /** @var string|null $fileKey */
+            $fileKey = $data['file_key'] ?? null;
+            $fileKey = $fileKey !== null && Tokenizer::isHex($fileKey)
+                ? trim($fileKey) : null;
 
-                if ($fileKey !== null) {
-                    try {
-                        /** @var AttachmentInterface $attachment */
-                        $attachment = $this->attachmentRepository->get($fileKey);
-                        $this->attachmentRepository->delete($attachment);
-                    } catch (NoSuchEntityException $e) {
-                        $error = true;
-                        $message = __($e->getMessage())->__toString();
-                    } catch (LocalizedException $e) {
-                        $error = true;
-                        $message = __($e->getMessage())->__toString();
-                    }
+            if ($fileKey !== null) {
+                try {
+                    /** @var AttachmentInterface $attachment */
+                    $attachment = $this->attachmentRepository->get($fileKey);
+                    $this->attachmentRepository->delete($attachment);
+                } catch (NoSuchEntityException | LocalizedException $e) {
+                    $error = true;
+                    $message = (string) __($e->getMessage());
                 }
             }
         }
 
-        $response['error'] = $error;
-        $response['message'] = $message;
+        $response += [
+            'error' => $error,
+            'message' => $message,
+        ];
         $resultJson->setData($response);
-
         return $resultJson;
     }
 }

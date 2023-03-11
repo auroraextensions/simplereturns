@@ -4,21 +4,22 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\AttachmentInterface,
     Api\Data\SimpleReturnInterface,
@@ -26,7 +27,6 @@ use AuroraExtensions\SimpleReturns\{
     Api\AttachmentRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Model\AdapterModel\Sales\Order as OrderAdapter,
     Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
@@ -297,12 +297,9 @@ class CreatePost extends Action implements
 
                     /** @var int $rmaId */
                     $rmaId = $this->simpleReturnRepository->save($rma->addData($data));
-
                     $this->eventManager->dispatch(
                         'simplereturns_adminhtml_rma_create_save_after',
-                        [
-                            'rma' => $rma,
-                        ]
+                        ['rma' => $rma]
                     );
 
                     /* Send New RMA Request email */
@@ -323,11 +320,14 @@ class CreatePost extends Action implements
                     );
 
                     /** @var string $viewUrl */
-                    $viewUrl = $this->urlBuilder->getUrl('simplereturns/rma/view', [
-                        'rma_id'  => $rmaId,
-                        'token'   => $token,
-                        '_secure' => true,
-                    ]);
+                    $viewUrl = $this->urlBuilder->getUrl(
+                        'simplereturns/rma/view',
+                        [
+                            'rma_id'  => $rmaId,
+                            'token'   => $token,
+                            '_secure' => true,
+                        ]
+                    );
                     return $resultJson->setData([
                         'success' => true,
                         'isSimpleReturnsAjax' => true,

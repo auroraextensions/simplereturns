@@ -4,20 +4,22 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Package
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Package;
 
+use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\PackageInterface,
     Api\Data\PackageInterfaceFactory,
@@ -27,9 +29,7 @@ use AuroraExtensions\SimpleReturns\{
     Api\PackageRepositoryInterface,
     Api\SimpleReturnRepositoryInterface,
     Component\System\ModuleConfigTrait,
-    Exception\ExceptionFactory,
     Model\Security\Token as Tokenizer,
-    Shared\Action\Redirector,
     Shared\ModuleComponentInterface,
     Csi\System\Module\ConfigInterface
 };
@@ -46,39 +46,44 @@ use Magento\Framework\{
     UrlInterface
 };
 
+use function __;
+use function is_numeric;
+use function strtolower;
+
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use ModuleConfigTrait, Redirector {
-        Redirector::__initialize as protected;
-    }
+    use ModuleConfigTrait, RedirectTrait;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property FormKeyValidator $formKeyValidator */
+    /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
 
-    /** @property PackageInterfaceFactory $packageFactory */
+    /** @var PackageInterfaceFactory $packageFactory */
     protected $packageFactory;
 
-    /** @property PackageManagementInterface $packageManagement */
+    /** @var PackageManagementInterface $packageManagement */
     protected $packageManagement;
 
-    /** @property PackageRepositoryInterface $packageRepository */
+    /** @var PackageRepositoryInterface $packageRepository */
     protected $packageRepository;
 
-    /** @property RemoteAddress $remoteAddress */
+    /** @var RemoteAddress $remoteAddress */
     protected $remoteAddress;
 
-    /** @property SimpleReturnInterfaceFactory $simpleReturnFactory */
+    /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
     protected $simpleReturnFactory;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
@@ -94,6 +99,8 @@ class CreatePost extends Action implements
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
@@ -109,7 +116,6 @@ class CreatePost extends Action implements
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
-        $this->__initialize();
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
         $this->moduleConfig = $moduleConfig;
@@ -123,9 +129,11 @@ class CreatePost extends Action implements
     }
 
     /**
-     * Execute simplereturns_package_createPost action.
-     *
      * @return Redirect
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function execute()
     {
@@ -138,9 +146,7 @@ class CreatePost extends Action implements
 
         /** @var int|string|null $rmaId */
         $rmaId = $request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
         if ($rmaId !== null) {
             /** @var array|null $params */
@@ -170,7 +176,6 @@ class CreatePost extends Action implements
                                 AlreadyExistsException::class,
                                 __('There is already a package for this return.')
                             );
-
                             throw $exception;
                         }
                     /* Package doesn't exist, continue processing. */
@@ -207,7 +212,8 @@ class CreatePost extends Action implements
                         );
 
                         if ($requestLabel) {
-                            $this->packageManagement->requestToReturnShipment($package);
+                            $this->packageManagement
+                                 ->requestToReturnShipment($package);
                         }
 
                         /** @var SimpleReturnInterface $rma */
@@ -235,9 +241,7 @@ class CreatePost extends Action implements
                         );
 
                         return $this->getRedirectToUrl($viewUrl);
-                    } catch (AlreadyExistsException $e) {
-                        throw $e;
-                    } catch (LocalizedException $e) {
+                    } catch (AlreadyExistsException | LocalizedException $e) {
                         throw $e;
                     }
                 }
@@ -249,9 +253,7 @@ class CreatePost extends Action implements
                 );
 
                 throw $exception;
-            } catch (NoSuchEntityException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
-            } catch (LocalizedException $e) {
+            } catch (NoSuchEntityException | LocalizedException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             }
         }

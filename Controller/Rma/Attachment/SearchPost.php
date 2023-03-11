@@ -4,22 +4,22 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Rma\Attachment
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
-    Exception\ExceptionFactory,
     Model\SearchModel\Attachment as AttachmentAdapter,
     Shared\ModuleComponentInterface
 };
@@ -36,23 +36,26 @@ use Magento\Framework\{
 };
 use Magento\Store\Model\StoreManagerInterface;
 
+use function is_numeric;
+use function rtrim;
+
 class SearchPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    /** @property AttachmentAdapter $attachmentAdapter */
+    /** @var AttachmentAdapter $attachmentAdapter */
     protected $attachmentAdapter;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property ResultJsonFactory $resultJsonFactory */
+    /** @var ResultJsonFactory $resultJsonFactory */
     protected $resultJsonFactory;
 
-    /** @property Json $serializer */
+    /** @var Json $serializer */
     protected $serializer;
 
-    /** @property StoreManagerInterface $storeManager */
+    /** @var StoreManagerInterface $storeManager */
     protected $storeManager;
 
     /**
@@ -109,58 +112,51 @@ class SearchPost extends Action implements
 
         /** @var int|string|null $rmaId */
         $rmaId = $data['rma_id'] ?? null;
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
-        if ($rmaId !== null) {
-            /** @var string|null $token */
-            $token = $data['token'] ?? null;
-            $token = !empty($token) ? $token : null;
+        /** @var string|null $token */
+        $token = $data['token'] ?? null;
+        $token = !empty($token) ? $token : null;
 
-            if ($token !== null) {
-                /** @var string $baseUrl */
-                $baseUrl = $this->storeManager
-                    ->getStore()
-                    ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
-                $baseUrl = rtrim($baseUrl, '/');
+        if ($rmaId !== null && $token !== null) {
+            /** @var string $baseUrl */
+            $baseUrl = $this->storeManager
+                ->getStore()
+                ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+            $baseUrl = rtrim($baseUrl, '/');
 
-                /** @var string $mediaUrl */
-                $mediaUrl = $baseUrl . self::SAVE_PATH;
-                $mediaUrl = rtrim($mediaUrl, '/');
+            /** @var string $mediaUrl */
+            $mediaUrl = $baseUrl . self::SAVE_PATH;
+            $mediaUrl = rtrim($mediaUrl, '/');
 
-                try {
-                    /** @var array $attachments */
-                    $attachments = $this->attachmentAdapter
-                        ->getRecordsByFields(['rma_id' => $rmaId]);
+            try {
+                /** @var array $attachments */
+                $attachments = $this->attachmentAdapter
+                    ->getRecordsByFields(['rma_id' => $rmaId]);
 
-                    foreach ($attachments as $attachment) {
-                        /** @var string $filename */
-                        $filename = $attachment->getFilename();
+                foreach ($attachments as $attachment) {
+                    /** @var string $filename */
+                    $filename = $attachment->getFilename();
 
-                        /** @var int $filesize */
-                        $filesize = $attachment->getFilesize();
+                    /** @var int $filesize */
+                    $filesize = $attachment->getFilesize();
 
-                        /** @var string $imagePath */
-                        $imagePath = $attachment->getFilePath()
-                            ?? ('/' . $filename);
+                    /** @var string $imagePath */
+                    $imagePath = $attachment->getFilePath()
+                        ?? ('/' . $filename);
 
-                        /** @var string $imageUrl */
-                        $imageUrl = $mediaUrl . $imagePath;
-
-                        $results[] = [
-                            'name' => $filename,
-                            'path' => $imageUrl,
-                            'size' => $filesize,
-                        ];
-                    }
-
-                    $resultJson->setData($results);
-                } catch (NoSuchEntityException $e) {
-                    /* No action required. */
-                } catch (LocalizedException $e) {
-                    /* No action required. */
+                    /** @var string $imageUrl */
+                    $imageUrl = $mediaUrl . $imagePath;
+                    $results[] = [
+                        'name' => $filename,
+                        'path' => $imageUrl,
+                        'size' => $filesize,
+                    ];
                 }
+
+                $resultJson->setData($results);
+            } catch (NoSuchEntityException | LocalizedException $e) {
+                /* No action required. */
             }
         }
 

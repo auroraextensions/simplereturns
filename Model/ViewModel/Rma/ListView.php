@@ -4,24 +4,24 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\ViewModel\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */ 
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\Data\SimpleReturnInterface,
     Api\SimpleReturnRepositoryInterface,
-    Exception\ExceptionFactory,
     Helper\Config as ConfigHelper,
     Model\SystemModel\Module\Config as ModuleConfig,
     Model\ValidatorModel\Sales\Order\EligibilityValidator,
@@ -37,17 +37,19 @@ use Magento\Framework\{
 };
 use Magento\Sales\Api\Data\OrderInterface;
 
+use function count;
+
 class ListView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
 
-    /** @property EligibilityValidator $validator */
+    /** @var EligibilityValidator $validator */
     protected $validator;
 
     /**
@@ -55,10 +57,10 @@ class ListView extends AbstractView implements
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
-     * @param array $data
      * @param ModuleConfig $moduleConfig
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param EligibilityValidator $validator
+     * @param array $data
      * @return void
      */
     public function __construct(
@@ -66,10 +68,10 @@ class ListView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        array $data = [],
         ModuleConfig $moduleConfig,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
-        EligibilityValidator $validator
+        EligibilityValidator $validator,
+        array $data = []
     ) {
         parent::__construct(
             $configHelper,
@@ -78,7 +80,6 @@ class ListView extends AbstractView implements
             $urlBuilder,
             $data
         );
-
         $this->moduleConfig = $moduleConfig;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->validator = $validator;
@@ -91,11 +92,12 @@ class ListView extends AbstractView implements
      * @param string $key
      * @param string
      */
-    public function getFrontLabel(string $type, string $key): string
-    {
+    public function getFrontLabel(
+        string $type,
+        string $key
+    ): string {
         /** @var array $labels */
         $labels = $this->moduleConfig->getSettings()->getData($type);
-
         return $labels[$key] ?? $key;
     }
 
@@ -112,9 +114,7 @@ class ListView extends AbstractView implements
             if ($rma->getId()) {
                 return $rma;
             }
-        } catch (NoSuchEntityException $e) {
-            /* No action required. */
-        } catch (LocalizedException $e) {
+        } catch (NoSuchEntityException | LocalizedException $e) {
             /* No action required. */
         }
 
@@ -129,12 +129,7 @@ class ListView extends AbstractView implements
     {
         /** @var SimpleReturnInterface|null $rma */
         $rma = $this->getSimpleReturn($order);
-
-        if ($rma !== null) {
-            return true;
-        }
-
-        return false;
+        return $rma !== null ? (bool) $rma->getId() : false;
     }
 
     /**
@@ -179,8 +174,7 @@ class ListView extends AbstractView implements
     {
         /** @var array $orders */
         $orders = $this->getData('orders') ?? [];
-
-        return (bool)(count($orders) > 0);
+        return count($orders) > 0;
     }
 
     /**

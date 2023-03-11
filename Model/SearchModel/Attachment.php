@@ -4,24 +4,24 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\SearchModel
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\SearchModel;
 
+use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\{
     Api\AttachmentRepositoryInterface,
     Api\Data\AttachmentInterface,
-    Exception\ExceptionFactory,
     Shared\ModuleComponentInterface
 };
 use Magento\Framework\{
@@ -31,18 +31,21 @@ use Magento\Framework\{
     Exception\NoSuchEntityException
 };
 
+use function __;
+use function array_values;
+
 class Attachment implements ModuleComponentInterface
 {
-    /** @property AttachmentRepositoryInterface $attachmentRepository */
+    /** @var AttachmentRepositoryInterface $attachmentRepository */
     protected $attachmentRepository;
 
-    /** @property ExceptionFactory $exceptionFactory */
+    /** @var ExceptionFactory $exceptionFactory */
     protected $exceptionFactory;
 
-    /** @property FilterBuilder $filterBuilder */
+    /** @var FilterBuilder $filterBuilder */
     protected $filterBuilder;
 
-    /** @property SearchCriteriaBuilder $searchCriteriaBuilder */
+    /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
     protected $searchCriteriaBuilder;
 
     /**
@@ -95,11 +98,8 @@ class Attachment implements ModuleComponentInterface
                 LocalizedException::class,
                 __('Unable to locate any matching attachments.')
             );
-
             throw $exception;
-        } catch (NoSuchEntityException $e) {
-            /* No action required. */
-        } catch (LocalizedException $e) {
+        } catch (NoSuchEntityException | LocalizedException $e) {
             /* No action required. */
         }
 
