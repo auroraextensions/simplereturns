@@ -40,10 +40,10 @@ Documentation
 -------------
 
 1. `link1`_
-   a. `link2`_
-   b. `link3`_
-   c. `link4`_
-   d. `link5`_
+    a. `link2`_
+    b. `link3`_
+    c. `link4`_
+    d. `link5`_
 
 Features
 --------
