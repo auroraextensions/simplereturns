@@ -6,10 +6,7 @@ Self-service RMA for Magento.
 .. contents::
     :local:
 
-Description
------------
-
-.. |link1| replace:: Documentation
+.. |link1| replace:: Overview
 .. |link2| replace:: Installation Guide
 .. |link3| replace:: Configuration Guide
 .. |link4| replace:: Attribute Guide
@@ -21,6 +18,9 @@ Description
 .. _link4: https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/attribute.html
 .. _link5: https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/latest/events.html
 .. _link6: https://auroraextensions.com/products/simple-returns-pro
+
+Description
+-----------
 
 Simple Returns provides enhanced RMA functionality primarily intended for Magento Open Source,
 but can also be used with Magento Commerce, if desired. It extends the default RMA capabilities
@@ -40,10 +40,10 @@ Documentation
 -------------
 
 1. |link1|_
-    a. |link2|_
-    b. |link3|_
-    c. |link4|_
-    d. |link5|_
+2. |link2|_
+3. |link3|_
+4. |link4|_
+5. |link5|_
 
 Features
 --------
