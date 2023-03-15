@@ -68,13 +68,11 @@ $count = count($orders);
                                         <span><?= __('View Order') ?></span>
                                     </a>
                                     <?php if ($this->helper(ReorderHelper::class)->canReorder($order->getEntityId())): ?>
-                                        <a class="action order" href="#" data-post="<?= $this->helper(PostHelper::class)->getPostData($block->getReorderUrl($order)) ?>">
+                                        <a class="action order" href="#" data-post='<?= $this->helper(PostHelper::class)->getPostData($block->getReorderUrl($order)) ?>'>
                                             <span><?= __('Reorder') ?></span>
                                         </a>
                                     <?php endif ?>
-                                    <?php /** @var bool $hasSimpleReturn */ ?>
-                                    <?php $hasSimpleReturn = $viewModel->hasSimpleReturn($order) ?>
-                                    <?php if ($hasSimpleReturn): ?>
+                                    <?php if ($viewModel->hasSimpleReturn($order)): ?>
                                         <a class="action simplereturns-rma-view" href="<?= $block->escapeUrl($viewModel->getRmaViewUrl($order)) ?>">
                                             <span><?= __('View Return') ?></span>
                                         </a>
