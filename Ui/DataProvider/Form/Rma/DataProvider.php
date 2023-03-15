@@ -4,45 +4,39 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma;
 
+use AuroraExtensions\ModuleComponents\Component\Ui\DataProvider\Modifier\ModifierPoolTrait;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn as SimpleReturnResource;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\Collection;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\CollectionFactory;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Countable;
-use AuroraExtensions\SimpleReturns\{
-    Component\Ui\DataProvider\Modifier\ModifierPoolTrait,
-    Model\ResourceModel\SimpleReturn as SimpleReturnResource,
-    Model\ResourceModel\SimpleReturn\Collection,
-    Model\ResourceModel\SimpleReturn\CollectionFactory,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\FilterBuilder,
-    Api\Search\SearchCriteria,
-    Api\Search\SearchCriteriaBuilder,
-    Api\Search\SearchResultInterface,
-    App\RequestInterface,
-    View\Element\UiComponent\DataProvider\DataProviderInterface
-};
-use Magento\Ui\{
-    DataProvider\AbstractDataProvider,
-    DataProvider\Modifier\ModifierInterface,
-    DataProvider\Modifier\PoolInterface
-};
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\Search\SearchCriteria;
+use Magento\Framework\Api\Search\SearchCriteriaBuilder;
+use Magento\Framework\Api\Search\SearchResultInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
+use Magento\Ui\DataProvider\AbstractDataProvider;
+use Magento\Ui\DataProvider\Modifier\ModifierInterface;
+use Magento\Ui\DataProvider\Modifier\PoolInterface;
 
 use function sprintf;
-use function strtolower;
 use function str_replace;
+use function strtolower;
 
 class DataProvider extends AbstractDataProvider implements
     Countable,
@@ -50,24 +44,25 @@ class DataProvider extends AbstractDataProvider implements
     ModuleComponentInterface
 {
     /**
-     * @property PoolInterface $modifierPool
+     * @var PoolInterface $modifierPool
      * @method PoolInterface getModifierPool()
+     * @method ModifierInterface[] getModifiers()
      */
     use ModifierPoolTrait;
 
     /** @constant string WILDCARD */
     public const WILDCARD = '*';
 
-    /** @property FilterBuilder $filterBuilder */
+    /** @var array $cache */
+    protected $cache = [];
+
+    /** @var FilterBuilder $filterBuilder */
     protected $filterBuilder;
 
-    /** @property array $loadedData */
-    protected $loadedData = [];
-
-    /** @property RequestInterface $request */
+    /** @var RequestInterface $request */
     protected $request;
 
-    /** @property SearchCriteriaBuilder $searchCriteriaBuilder */
+    /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
     protected $searchCriteriaBuilder;
 
     /**
@@ -174,11 +169,8 @@ class DataProvider extends AbstractDataProvider implements
         /** @var array $meta */
         $meta = parent::getMeta();
 
-        /** @var PoolInterface $pool */
-        $pool = $this->getModifierPool();
-
         /** @var ModifierInterface[] $modifiers */
-        $modifiers = $pool->getModifiersInstances();
+        $modifiers = $this->getModifiers();
 
         /** @var ModifierInterface $modifier */
         foreach ($modifiers as $modifier) {
@@ -193,8 +185,8 @@ class DataProvider extends AbstractDataProvider implements
      */
     public function getData(): array
     {
-        if (!empty($this->loadedData)) {
-            return $this->loadedData;
+        if (!empty($this->cache)) {
+            return $this->cache;
         }
 
         /** @var SimpleReturnInterface[] $items */
@@ -202,20 +194,17 @@ class DataProvider extends AbstractDataProvider implements
 
         /** @var SimpleReturnInterface $rma */
         foreach ($items as $rma) {
-            $this->loadedData[$rma->getId()] = $rma->getData();
+            $this->cache[$rma->getId()] = $rma->getData();
         }
 
-        /** @var PoolInterface $pool */
-        $pool = $this->getModifierPool();
-
         /** @var ModifierInterface[] $modifiers */
-        $modifiers = $pool->getModifiersInstances();
+        $modifiers = $this->getModifiers();
 
         /** @var ModifierInterface $modifier */
         foreach ($modifiers as $modifier) {
-            $this->loadedData = $modifier->modifyData($this->loadedData);
+            $this->cache = $modifier->modifyData($this->cache);
         }
 
-        return $this->loadedData;
+        return $this->cache;
     }
 }
