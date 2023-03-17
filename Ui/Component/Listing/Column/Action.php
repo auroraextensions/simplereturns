@@ -4,78 +4,71 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column;
 
-use Magento\Framework\{
-    UrlInterface,
-    View\Element\UiComponent\ContextInterface,
-    View\Element\UiComponentFactory
-};
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
+
+use function __;
 
 class Action extends Column
 {
-    /** @constant string ACTION_KEY */
     public const ACTION_KEY = 'select';
-
-    /** @constant string ACTION_LABEL */
     public const ACTION_LABEL = 'Select';
-
-    /** @constant string PARAM_KEY */
     public const PARAM_KEY = 'entity_id';
-
-    /** @constant string TOKEN_KEY */
     public const TOKEN_KEY = 'token';
 
-    /** @property string $actionKey */
+    /** @var string $actionKey */
     protected $actionKey;
 
-    /** @property string $actionLabel */
+    /** @var string $actionLabel */
     protected $actionLabel;
 
-    /** @property string $paramKey */
+    /** @var string $paramKey */
     protected $paramKey;
 
-    /** @property string $tokenKey */
+    /** @var string $tokenKey */
     protected $tokenKey;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory,
-     * @param array $components
-     * @param array $data
      * @param UrlInterface $urlBuilder
      * @param string $actionKey
      * @param string $actionLabel
      * @param string|null $paramKey
      * @param string|null $tokenKey
+     * @param array $components
+     * @param array $data
      * @return void
      */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
-        array $components = [],
-        array $data = [],
         UrlInterface $urlBuilder,
         string $actionKey = null,
         string $actionLabel = null,
         string $paramKey = null,
-        string $tokenKey = null
+        string $tokenKey = null,
+        array $components = [],
+        array $data = []
     ) {
         parent::__construct(
             $context,

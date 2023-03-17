@@ -4,84 +4,75 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column;
 
-use Exception;
-use Magento\Framework\{
-    Exception\NoSuchEntityException,
-    UrlInterface,
-    View\Element\UiComponent\ContextInterface,
-    View\Element\UiComponentFactory
-};
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
+use Throwable;
+
+use function __;
 
 class Order extends Column
 {
-    /** @constant string ACTION_KEY */
     public const ACTION_KEY = 'select';
-
-    /** @constant string ACTION_LABEL */
     public const ACTION_LABEL = 'Select';
-
-    /** @constant string ENTITY_KEY */
     public const ENTITY_KEY = 'entity_id';
-
-    /** @constant string PARAM_KEY */
     public const PARAM_KEY = 'order_id';
-
-    /** @constant string TOKEN_KEY */
     public const TOKEN_KEY = 'code';
 
-    /** @property string $entityKey */
+    /** @var string $entityKey */
     protected $entityKey;
 
-    /** @property OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
-    /** @property string $paramKey */
+    /** @var string $paramKey */
     protected $paramKey;
 
-    /** @property string $tokenKey */
+    /** @var string $tokenKey */
     protected $tokenKey;
 
-    /** @property UrlInterface $urlBuilder */
+    /** @var UrlInterface $urlBuilder */
     protected $urlBuilder;
 
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
-     * @param array $components
-     * @param array $data
      * @param OrderRepositoryInterface $orderRepository
      * @param UrlInterface $urlBuilder
      * @param string|null $entityKey
      * @param string|null $paramKey
      * @param string|null $tokenKey
+     * @param array $components
+     * @param array $data
      * @return void
      */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
-        array $components = [],
-        array $data = [],
         OrderRepositoryInterface $orderRepository,
         UrlInterface $urlBuilder,
         string $entityKey = null,
         string $paramKey = null,
-        string $tokenKey = null
+        string $tokenKey = null,
+        array $components = [],
+        array $data = []
     ) {
         parent::__construct(
             $context,
@@ -150,12 +141,8 @@ class Order extends Column
             /** @var OrderInterface $order */
             $order = $this->orderRepository->get($orderId);
             return $order->getProtectCode();
-        } catch (NoSuchEntityException $e) {
-            /* No action required. */
-        } catch (Exception $e) {
-            /* No action required. */
+        } catch (Throwable $e) {
+            return null;
         }
-
-        return null;
     }
 }

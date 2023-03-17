@@ -5,15 +5,15 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
@@ -21,7 +21,6 @@
         <tab id="auroraextensions" translate="label" sortOrder="1000">
             <label>Aurora Extensions</label>
         </tab>
-
         <section id="simplereturns" translate="label" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
             <label>Simple Returns</label>
@@ -40,11 +39,11 @@
                 <label>RMA Settings</label>
                 <field id="shipping_carrier" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Shipping Carrier</label>
-                    <source_model>AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Shipping\Carriers</source_model>
+                    <source_model>AuroraExtensions\SimpleReturns\Model\Config\Source\Select\Shipping\ShippingCarrierList</source_model>
                 </field>
                 <field id="shipping_method" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Shipping Method</label>
-                    <source_model>AuroraExtensions\SimpleReturns\Model\BackendModel\Source\Select\Shipping\Methods</source_model>
+                    <source_model>AuroraExtensions\SimpleReturns\Model\Config\Source\Select\Shipping\ShippingMethodList</source_model>
                 </field>
                 <field id="order_amount_minimum" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Minimum Order Amount</label>

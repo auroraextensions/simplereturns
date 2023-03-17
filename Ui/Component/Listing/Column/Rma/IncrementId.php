@@ -4,59 +4,52 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma;
 
-use Exception;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\SimpleReturnInterface,
-    Api\SimpleReturnRepositoryInterface
-};
-use Magento\Framework\{
-    Exception\NoSuchEntityException,
-    UrlInterface,
-    View\Element\UiComponent\ContextInterface,
-    View\Element\UiComponentFactory
-};
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
+use Throwable;
+
 use function sprintf;
 
 class IncrementId extends Column
 {
-    /** @constant string COLUMN_KEY */
     public const COLUMN_KEY = 'increment_id';
-
-    /** @constant string ENTITY_KEY */
     public const ENTITY_KEY = 'rma_id';
 
-    /** @property SimpleReturnRepositoryInterface $rmaRepository */
+    /** @var SimpleReturnRepositoryInterface $rmaRepository */
     protected $rmaRepository;
 
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
+     * @param SimpleReturnRepositoryInterface $rmaRepository
      * @param array $components
      * @param array $data
-     * @param SimpleReturnRepositoryInterface $rmaRepository
      * @return void
      */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
+        SimpleReturnRepositoryInterface $rmaRepository,
         array $components = [],
-        array $data = [],
-        SimpleReturnRepositoryInterface $rmaRepository
+        array $data = []
     ) {
         parent::__construct(
             $context,
@@ -98,7 +91,7 @@ class IncrementId extends Column
             /** @var SimpleReturnInterface $rma */
             $rma = $this->rmaRepository->getById($rmaId);
             return sprintf('%09d', $rma->getId());
-        } catch (NoSuchEntityException | Exception $e) {
+        } catch (Throwable $e) {
             return null;
         }
     }
