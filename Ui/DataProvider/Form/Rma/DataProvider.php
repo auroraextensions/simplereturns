@@ -19,10 +19,10 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Rma;
 
 use AuroraExtensions\ModuleComponents\Component\Ui\DataProvider\Modifier\ModifierPoolTrait;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn as SimpleReturnResource;
 use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\Collection;
 use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\CollectionFactory;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Countable;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Search\SearchCriteria;
@@ -40,8 +40,7 @@ use function strtolower;
 
 class DataProvider extends AbstractDataProvider implements
     Countable,
-    DataProviderInterface,
-    ModuleComponentInterface
+    DataProviderInterface
 {
     /**
      * @var PoolInterface $modifierPool
@@ -50,20 +49,19 @@ class DataProvider extends AbstractDataProvider implements
      */
     use ModifierPoolTrait;
 
-    /** @constant string WILDCARD */
     public const WILDCARD = '*';
 
     /** @var array $cache */
-    protected $cache = [];
+    private $cache = [];
 
     /** @var FilterBuilder $filterBuilder */
-    protected $filterBuilder;
+    private $filterBuilder;
 
     /** @var RequestInterface $request */
-    protected $request;
+    private $request;
 
     /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
-    protected $searchCriteriaBuilder;
+    private $searchCriteriaBuilder;
 
     /**
      * @param string $name
@@ -108,7 +106,7 @@ class DataProvider extends AbstractDataProvider implements
     /**
      * @return void
      */
-    public function prepareSubmitUrl(): void
+    private function prepareSubmitUrl(): void
     {
         if (isset($this->data['config']['submit_url'])) {
             $this->parseSubmitUrl();
@@ -146,7 +144,7 @@ class DataProvider extends AbstractDataProvider implements
     /**
      * @return void
      */
-    protected function parseSubmitUrl(): void
+    private function parseSubmitUrl(): void
     {
         /** @var string $actionName */
         $actionName = strtolower($this->request->getActionName()) . 'Post';
@@ -169,11 +167,8 @@ class DataProvider extends AbstractDataProvider implements
         /** @var array $meta */
         $meta = parent::getMeta();
 
-        /** @var ModifierInterface[] $modifiers */
-        $modifiers = $this->getModifiers();
-
         /** @var ModifierInterface $modifier */
-        foreach ($modifiers as $modifier) {
+        foreach ($this->getModifiers() as $modifier) {
             $meta = $modifier->modifyMeta($meta);
         }
 
@@ -197,11 +192,8 @@ class DataProvider extends AbstractDataProvider implements
             $this->cache[$rma->getId()] = $rma->getData();
         }
 
-        /** @var ModifierInterface[] $modifiers */
-        $modifiers = $this->getModifiers();
-
         /** @var ModifierInterface $modifier */
-        foreach ($modifiers as $modifier) {
+        foreach ($this->getModifiers() as $modifier) {
             $this->cache = $modifier->modifyData($this->cache);
         }
 

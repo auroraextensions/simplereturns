@@ -4,59 +4,54 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Package
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Form\Package;
 
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Package as PackageResource;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Package\Collection;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Package\CollectionFactory;
 use Countable;
-use AuroraExtensions\SimpleReturns\{
-    Model\ResourceModel\Package as PackageResource,
-    Model\ResourceModel\Package\Collection,
-    Model\ResourceModel\Package\CollectionFactory,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\FilterBuilder,
-    Api\Search\SearchCriteria,
-    Api\Search\SearchCriteriaBuilder,
-    Api\Search\SearchResultInterface,
-    App\RequestInterface,
-    View\Element\UiComponent\DataProvider\DataProviderInterface
-};
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\Search\SearchCriteria;
+use Magento\Framework\Api\Search\SearchCriteriaBuilder;
+use Magento\Framework\Api\Search\SearchResultInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
+
+use function sprintf;
+use function str_replace;
+use function strtolower;
 
 class DataProvider extends AbstractDataProvider implements
     Countable,
-    DataProviderInterface,
-    ModuleComponentInterface
+    DataProviderInterface
 {
-    /** @constant string WILDCARD */
     public const WILDCARD = '*';
 
-    /** @property FilterBuilder $filterBuilder */
-    protected $filterBuilder;
+    /** @var array $cache */
+    private $cache = [];
 
-    /** @property array $labels */
-    protected $labels;
+    /** @var FilterBuilder $filterBuilder */
+    private $filterBuilder;
 
-    /** @property array $loadedData */
-    protected $loadedData = [];
+    /** @var RequestInterface $request */
+    private $request;
 
-    /** @property RequestInterface $request */
-    protected $request;
-
-    /** @property SearchCriteriaBuilder $searchCriteriaBuilder */
-    protected $searchCriteriaBuilder;
+    /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
+    private $searchCriteriaBuilder;
 
     /**
      * @param string $name
@@ -66,7 +61,6 @@ class DataProvider extends AbstractDataProvider implements
      * @param array $data
      * @param CollectionFactory $collectionFactory
      * @param FilterBuilder $filterBuilder
-     * @param array $labels
      * @param RequestInterface $request
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @return void
@@ -79,7 +73,6 @@ class DataProvider extends AbstractDataProvider implements
         array $data = [],
         CollectionFactory $collectionFactory,
         FilterBuilder $filterBuilder,
-        array $labels = [],
         RequestInterface $request,
         SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
@@ -92,7 +85,6 @@ class DataProvider extends AbstractDataProvider implements
         );
         $this->collection = $collectionFactory->create();
         $this->filterBuilder = $filterBuilder;
-        $this->labels = $labels;
         $this->request = $request;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->prepareSubmitUrl();
@@ -101,7 +93,7 @@ class DataProvider extends AbstractDataProvider implements
     /**
      * @return void
      */
-    protected function prepareSubmitUrl(): void
+    private function prepareSubmitUrl(): void
     {
         if (isset($this->data['config']['submit_url'])) {
             $this->parseSubmitUrl();
@@ -112,8 +104,7 @@ class DataProvider extends AbstractDataProvider implements
             /** @var mixed $paramValue */
             foreach ($this->data['config']['filter_url_params'] as $paramName => $paramValue) {
                 $paramValue = $paramValue !== static::WILDCARD
-                    ? $paramValue
-                    : $this->request->getParam($paramName);
+                    ? $paramValue : $this->request->getParam($paramName);
 
                 if ($paramValue) {
                     $this->data['config']['submit_url'] = sprintf(
@@ -139,7 +130,7 @@ class DataProvider extends AbstractDataProvider implements
     /**
      * @return void
      */
-    protected function parseSubmitUrl(): void
+    private function parseSubmitUrl(): void
     {
         /** @var string $actionName */
         $actionName = strtolower($this->request->getActionName()) . 'Post';
@@ -157,43 +148,20 @@ class DataProvider extends AbstractDataProvider implements
     /**
      * @return array
      */
-    public function getLabelKeys(): array
-    {
-        /** @var array $labels */
-        $labels = $this->labels ?? [];
-
-        return array_keys($labels);
-    }
-
-    /**
-     * @param bool $preserveKeys
-     * @return array
-     */
-    public function getLabels(bool $preserveKeys = true): array
-    {
-        /** @var array $labels */
-        $labels = $this->labels ?? [];
-
-        return $preserveKeys ? $labels : array_values($labels);
-    }
-
-    /**
-     * @return array
-     */
     public function getData(): array
     {
-        if (!empty($this->loadedData)) {
-            return $this->loadedData;
+        if (!empty($this->cache)) {
+            return $this->cache;
         }
 
-        /** @var SimpleReturnInterface[] $items */
+        /** @var PackageInterface[] $items */
         $items = $this->getCollection()->getItems();
 
-        /** @var PackageInterface $rma */
+        /** @var PackageInterface $pkg */
         foreach ($items as $pkg) {
-            $this->loadedData[$pkg->getId()] = $pkg->getData();
+            $this->cache[$pkg->getId()] = $pkg->getData();
         }
 
-        return $this->loadedData;
+        return $this->cache;
     }
 }

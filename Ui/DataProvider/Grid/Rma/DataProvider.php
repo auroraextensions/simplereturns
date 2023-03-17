@@ -4,50 +4,42 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\DataProvider\Grid\Rma;
 
+use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\Collection;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\CollectionFactory;
 use Countable;
-use AuroraExtensions\SimpleReturns\{
-    Model\ResourceModel\SimpleReturn\Collection,
-    Model\ResourceModel\SimpleReturn\CollectionFactory,
-    Model\ViewModel\Rma\ListView as ViewModel,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\Filter,
-    View\Element\UiComponent\DataProvider\DataProviderInterface
-};
-use Magento\Ui\{
-    DataProvider\AbstractDataProvider,
-    DataProvider\AddFieldToCollectionInterface,
-    DataProvider\AddFilterToCollectionInterface
-};
+use Magento\Framework\Api\Filter;
+use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
+use Magento\Ui\DataProvider\AbstractDataProvider;
+use Magento\Ui\DataProvider\AddFieldToCollectionInterface;
+use Magento\Ui\DataProvider\AddFilterToCollectionInterface;
 
 class DataProvider extends AbstractDataProvider implements
     Countable,
-    DataProviderInterface,
-    ModuleComponentInterface
+    DataProviderInterface
 {
-    /** @property AddFieldToCollectionInterface[] $addFieldStrategies */
-    protected $addFieldStrategies;
+    /** @var AddFieldToCollectionInterface[] $addFieldStrategies */
+    private $addFieldStrategies;
 
-    /** @property AddFilterToCollectionInterface[] $addFilterStrategies */
-    protected $addFilterStrategies;
+    /** @var AddFilterToCollectionInterface[] $addFilterStrategies */
+    private $addFilterStrategies;
 
-    /** @property ViewModel $viewModel */
-    protected $viewModel;
+    /** @var LabelManager $labelManager */
+    private $labelManager;
 
     /**
      * @param string $name
@@ -58,8 +50,7 @@ class DataProvider extends AbstractDataProvider implements
      * @param AddFieldToCollectionInterface[] $addFieldStrategies
      * @param AddFilterToCollectionInterface[] $addFilterStrategies
      * @param CollectionFactory $collectionFactory
-     * @param ViewModel $viewModel
-     * @param array $labels
+     * @param LabelManager $labelManager
      * @return void
      */
     public function __construct(
@@ -71,8 +62,7 @@ class DataProvider extends AbstractDataProvider implements
         array $addFieldStrategies = [],
         array $addFilterStrategies = [],
         CollectionFactory $collectionFactory,
-        ViewModel $viewModel,
-        array $labels = []
+        LabelManager $labelManager
     ) {
         parent::__construct(
             $name,
@@ -85,30 +75,7 @@ class DataProvider extends AbstractDataProvider implements
         $this->addFilterStrategies = $addFilterStrategies;
         $this->collection = $collectionFactory->create();
         $this->viewModel = $viewModel;
-        $this->labels = $labels;
-    }
-
-    /**
-     * @return array
-     */
-    public function getLabelKeys(): array
-    {
-        /** @var array $labels */
-        $labels = $this->labels ?? [];
-
-        return array_keys($labels);
-    }
-
-    /**
-     * @param bool $preserveKeys
-     * @return array
-     */
-    public function getLabels(bool $preserveKeys = true): array
-    {
-        /** @var array $labels */
-        $labels = $this->labels ?? [];
-
-        return $preserveKeys ? $labels : array_values($labels);
+        $this->labelManager = $labelManager;
     }
 
     /**
@@ -122,12 +89,6 @@ class DataProvider extends AbstractDataProvider implements
         /** @var array $items */
         $items = $entries['items'] ?? [];
 
-        /** @var array $keys */
-        $keys = $this->getLabelKeys();
-
-        /** @var array $labels */
-        $labels = $this->getLabels();
-
         /** @var array $data */
         $data = [
             'totalRecords' => $this->count(),
@@ -136,25 +97,7 @@ class DataProvider extends AbstractDataProvider implements
 
         /** @var array $item */
         foreach ($items as $item) {
-            /** @var string $key */
-            foreach ($keys as $key) {
-                /** @var string|null $labelValue */
-                $labelValue = $item[$key] ?? null;
-
-                if ($labelValue !== null) {
-                    /** @var string|null $labelKey */
-                    $labelKey = $labels[$key] ?? null;
-
-                    if ($labelKey !== null) {
-                        $item[$key] = $this->viewModel->getFrontLabel(
-                            $labelKey,
-                            $labelValue
-                        );
-                    }
-                }
-            }
-
-            $data['items'][] = $item;
+            $data['items'][] = $this->labelManager->replace($item);
         }
 
         return $data;
@@ -167,7 +110,7 @@ class DataProvider extends AbstractDataProvider implements
     {
         if (isset($this->addFieldStrategies[$field])) {
             $this->addFieldStrategies[$field]
-                ->addField($this->getCollection(), $field, $alias);
+                 ->addField($this->getCollection(), $field, $alias);
         } else {
             parent::addField($field, $alias);
         }
@@ -183,11 +126,11 @@ class DataProvider extends AbstractDataProvider implements
 
         if (isset($this->addFilterStrategies[$field])) {
             $this->addFilterStrategies[$field]
-                ->addFilter(
-                    $this->getCollection(),
-                    $field,
-                    [$filter->getConditionType() => $filter->getValue()]
-                );
+                 ->addFilter(
+                     $this->getCollection(),
+                     $field,
+                     [$filter->getConditionType() => $filter->getValue()]
+                 );
         } else {
             parent::addFilter($filter);
         }
