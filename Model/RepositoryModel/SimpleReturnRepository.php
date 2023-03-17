@@ -18,56 +18,60 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
+use AuroraExtensions\ModuleComponents\Api\AbstractCollectionInterfaceFactory;
+use AuroraExtensions\ModuleComponents\Component\Repository\AbstractRepositoryTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\AbstractCollectionInterfaceFactory,
-    Api\SimpleReturnRepositoryInterface,
-    Api\Data\SimpleReturnInterface,
-    Api\Data\SimpleReturnInterfaceFactory,
-    Model\DataModel\SimpleReturn,
-    Model\ResourceModel\SimpleReturn as SimpleReturnResource,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\SearchResultsInterface,
-    Exception\NoSuchEntityException
-};
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn as SimpleReturnResource;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn\CollectionFactory;
+use Magento\Framework\Api\SearchResultsInterface;
+use Magento\Framework\Api\SearchResultsInterfaceFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\Data\OrderItemInterface;
 
 use function __;
 
-class SimpleReturnRepository extends AbstractRepository implements
-    SimpleReturnRepositoryInterface,
-    ModuleComponentInterface
+class SimpleReturnRepository implements SimpleReturnRepositoryInterface
 {
+    /**
+     * @var AbstractCollectionInterfaceFactory $collectionFactory
+     * @var SearchResultsInterfaceFactory $searchResultsFactory
+     * @method void addFilterGroupToCollection()
+     * @method string getDirection()
+     * @method SearchResultsInterface getList()
+     */
+    use AbstractRepositoryTrait;
+
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
-    protected $simpleReturnFactory;
+    private $simpleReturnFactory;
 
     /** @var SimpleReturnResource $simpleReturnResource */
-    protected $simpleReturnResource;
+    private $simpleReturnResource;
 
     /**
-     * @param AbstractCollectionInterfaceFactory $collectionFactory
-     * @param SearchResultsInterfaceFactory $searchResultsFactory
+     * @param CollectionFactory $collectionFactory
+     * @param SimpleReturnSearchResultsInterfaceFactory $searchResultsFactory
      * @param ExceptionFactory $exceptionFactory
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnResource $simpleReturnResource
      * @return void
      */
     public function __construct(
-        $collectionFactory,
-        $searchResultsFactory,
+        CollectionFactory $collectionFactory,
+        SimpleReturnSearchResultsInterfaceFactory $searchResultsFactory,
         ExceptionFactory $exceptionFactory,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnResource $simpleReturnResource
     ) {
-        parent::__construct(
-            $collectionFactory,
-            $searchResultsFactory
-        );
+        $this->collectionFactory = $collectionFactory;
+        $this->searchResultsFactory = $searchResultsFactory;
         $this->exceptionFactory = $exceptionFactory;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnResource = $simpleReturnResource;
@@ -80,19 +84,19 @@ class SimpleReturnRepository extends AbstractRepository implements
      */
     public function get(OrderInterface $order): SimpleReturnInterface
     {
-        /** @var SimpleReturn $rma */
+        /** @var SimpleReturnInterface $rma */
         $rma = $this->simpleReturnFactory->create();
         $this->simpleReturnResource->load(
             $rma,
             $order->getId(),
-            self::SQL_COLUMN_RMA_ORDER_ID_FIELD
+            OrderItemInterface::ORDER_ID
         );
 
         if (!$rma->getId()) {
             /** @var NoSuchEntityException $exception */
             $exception = $this->exceptionFactory->create(
                 NoSuchEntityException::class,
-                __('Unable to locate SimpleReturn RMA information.')
+                __('Unable to locate RMA information.')
             );
             throw $exception;
         }
@@ -107,7 +111,7 @@ class SimpleReturnRepository extends AbstractRepository implements
      */
     public function getById(int $id): SimpleReturnInterface
     {
-        /** @var SimpleReturn $rma */
+        /** @var SimpleReturnInterface $rma */
         $rma = $this->simpleReturnFactory->create();
         $this->simpleReturnResource->load($rma, $id);
 
@@ -115,7 +119,7 @@ class SimpleReturnRepository extends AbstractRepository implements
             /** @var NoSuchEntityException $exception */
             $exception = $this->exceptionFactory->create(
                 NoSuchEntityException::class,
-                __('Unable to locate SimpleReturn RMA information.')
+                __('Unable to locate RMA information.')
             );
             throw $exception;
         }
@@ -148,7 +152,7 @@ class SimpleReturnRepository extends AbstractRepository implements
      */
     public function deleteById(int $id): bool
     {
-        /** @var SimpleReturn $rma */
+        /** @var SimpleReturnInterface $rma */
         $rma = $this->simpleReturnFactory->create();
         $rma->setId($id);
         return (bool) $this->simpleReturnResource->delete($rma);

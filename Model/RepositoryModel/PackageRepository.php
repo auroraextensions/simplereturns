@@ -18,61 +18,62 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
+use AuroraExtensions\ModuleComponents\Api\AbstractCollectionInterfaceFactory;
+use AuroraExtensions\ModuleComponents\Component\Repository\AbstractRepositoryTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\AbstractCollectionInterfaceFactory,
-    Api\PackageRepositoryInterface,
-    Api\Data\PackageInterface,
-    Api\Data\PackageInterfaceFactory,
-    Api\Data\PackageSearchResultsInterfaceFactory,
-    Api\Data\SimpleReturnInterface,
-    Model\Package as PackageDataModel,
-    Model\ResourceModel\Package as PackageResourceModel,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\SearchResultsInterface,
-    Api\SearchResultsInterfaceFactory,
-    Exception\NoSuchEntityException
-};
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Package as PackageResource;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Package\CollectionFactory;
+use Magento\Framework\Api\SearchResultsInterface;
+use Magento\Framework\Api\SearchResultsInterfaceFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 use function __;
 
-class PackageRepository extends AbstractRepository implements
-    PackageRepositoryInterface,
-    ModuleComponentInterface
+class PackageRepository implements PackageRepositoryInterface
 {
+    /**
+     * @var AbstractCollectionInterfaceFactory $collectionFactory
+     * @var SearchResultsInterfaceFactory $searchResultsFactory
+     * @method void addFilterGroupToCollection()
+     * @method string getDirection()
+     * @method SearchResultsInterface getList()
+     */
+    use AbstractRepositoryTrait;
+
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var PackageInterfaceFactory $packageFactory */
-    protected $packageFactory;
+    private $packageFactory;
 
-    /** @var PackageResourceModel $packageResource */
-    protected $packageResource;
+    /** @var PackageResource $packageResource */
+    private $packageResource;
 
     /**
-     * @param AbstractCollectionInterfaceFactory $collectionFactory
-     * @param SearchResultsInterfaceFactory $searchResultsFactory
-     * @param PackageInterfaceFactory $packageFactory
-     * @param PackageResourceModel $packageResource
+     * @param CollectionFactory $collectionFactory
+     * @param PackageSearchResultsInterfaceFactory $searchResultsFactory
      * @param ExceptionFactory $exceptionFactory
+     * @param PackageInterfaceFactory $packageFactory
+     * @param PackageResource $packageResource
      * @return void
      */
     public function __construct(
-        $collectionFactory,
-        $searchResultsFactory,
+        CollectionFactory $collectionFactory,
+        PackageSearchResultsInterfaceFactory $searchResultsFactory,
+        ExceptionFactory $exceptionFactory,
         PackageInterfaceFactory $packageFactory,
-        PackageResourceModel $packageResource,
-        ExceptionFactory $exceptionFactory
+        PackageResource $packageResource
     ) {
-        parent::__construct(
-            $collectionFactory,
-            $searchResultsFactory
-        );
+        $this->collectionFactory = $collectionFactory;
+        $this->searchResultsFactory = $searchResultsFactory;
+        $this->exceptionFactory = $exceptionFactory;
         $this->packageFactory = $packageFactory;
         $this->packageResource = $packageResource;
-        $this->exceptionFactory = $exceptionFactory;
     }
 
     /**
@@ -82,12 +83,12 @@ class PackageRepository extends AbstractRepository implements
      */
     public function get(SimpleReturnInterface $rma): PackageInterface
     {
-        /** @var PackageDataModel $package */
+        /** @var PackageInterface $package */
         $package = $this->packageFactory->create();
         $this->packageResource->load(
             $package,
             $rma->getId(),
-            self::SQL_COLUMN_RMA_PRIMARY_FIELD
+            'rma_id'
         );
 
         if (!$package->getId()) {
@@ -109,7 +110,7 @@ class PackageRepository extends AbstractRepository implements
      */
     public function getById(int $id): PackageInterface
     {
-        /** @var PackageDataModel $package */
+        /** @var PackageInterface $package */
         $package = $this->packageFactory->create();
         $this->packageResource->load($package, $id);
 
@@ -150,7 +151,7 @@ class PackageRepository extends AbstractRepository implements
      */
     public function deleteById(int $id): bool
     {
-        /** @var PackageDataModel $package */
+        /** @var PackageInterface $package */
         $package = $this->packageFactory->create();
         $package->setId($id);
         return (bool) $this->packageResource->delete($package);

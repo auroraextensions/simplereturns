@@ -18,37 +18,39 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
+use AuroraExtensions\ModuleComponents\Api\AbstractCollectionInterfaceFactory;
 use AuroraExtensions\ModuleComponents\Component\Repository\AbstractRepositoryTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\AttachmentRepositoryInterface,
-    Api\Data\AttachmentInterface,
-    Api\Data\AttachmentInterfaceFactory,
-    Model\DataModel\Attachment,
-    Model\ResourceModel\Attachment as AttachmentResource,
-    Model\ResourceModel\Attachment\CollectionFactory,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\SearchResultsInterface,
-    Api\SearchResultsInterfaceFactory,
-    Exception\NoSuchEntityException
-};
+use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Attachment as AttachmentResource;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Attachment\CollectionFactory;
+use Magento\Framework\Api\SearchResultsInterface;
+use Magento\Framework\Api\SearchResultsInterfaceFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 use function __;
 
-class AttachmentRepository implements AttachmentRepositoryInterface, ModuleComponentInterface
+class AttachmentRepository implements AttachmentRepositoryInterface
 {
+    /**
+     * @var AbstractCollectionInterfaceFactory $collectionFactory
+     * @var SearchResultsInterfaceFactory $searchResultsFactory
+     * @method void addFilterGroupToCollection()
+     * @method string getDirection()
+     * @method SearchResultsInterface getList()
+     */
     use AbstractRepositoryTrait;
 
-    /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
-
     /** @var AttachmentInterfaceFactory $attachmentFactory */
-    protected $attachmentFactory;
+    private $attachmentFactory;
 
     /** @var AttachmentResource $attachmentResource */
-    protected $attachmentResource;
+    private $attachmentResource;
+
+    /** @var ExceptionFactory $exceptionFactory */
+    private $exceptionFactory;
 
     /**
      * @param CollectionFactory $collectionFactory
@@ -84,7 +86,7 @@ class AttachmentRepository implements AttachmentRepositoryInterface, ModuleCompo
         $this->attachmentResource->load(
             $attachment,
             $token,
-            self::SQL_COLUMN_ATTACHMENT_TOKEN_FIELD
+            'token'
         );
 
         if (!$attachment->getId()) {

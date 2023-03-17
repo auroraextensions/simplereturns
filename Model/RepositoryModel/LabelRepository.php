@@ -18,61 +18,62 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\RepositoryModel;
 
+use AuroraExtensions\ModuleComponents\Api\AbstractCollectionInterfaceFactory;
+use AuroraExtensions\ModuleComponents\Component\Repository\AbstractRepositoryTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\AbstractCollectionInterfaceFactory,
-    Api\LabelRepositoryInterface,
-    Api\Data\LabelInterface,
-    Api\Data\LabelInterfaceFactory,
-    Api\Data\LabelSearchResultsInterfaceFactory,
-    Api\Data\PackageInterface,
-    Model\Label as LabelDataModel,
-    Model\ResourceModel\Label as LabelResourceModel,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\SearchResultsInterface,
-    Api\SearchResultsInterfaceFactory,
-    Exception\NoSuchEntityException
-};
+use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\LabelInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Label as LabelResource;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Label\CollectionFactory;
+use Magento\Framework\Api\SearchResultsInterface;
+use Magento\Framework\Api\SearchResultsInterfaceFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 use function __;
 
-class LabelRepository extends AbstractRepository implements
-    LabelRepositoryInterface,
-    ModuleComponentInterface
+class LabelRepository implements LabelRepositoryInterface
 {
+    /**
+     * @var AbstractCollectionInterfaceFactory $collectionFactory
+     * @var SearchResultsInterfaceFactory $searchResultsFactory
+     * @method void addFilterGroupToCollection()
+     * @method string getDirection()
+     * @method SearchResultsInterface getList()
+     */
+    use AbstractRepositoryTrait;
+
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var LabelInterfaceFactory $labelFactory */
-    protected $labelFactory;
+    private $labelFactory;
 
-    /** @var LabelResourceModel $labelResource */
-    protected $labelResource;
+    /** @var LabelResource $labelResource */
+    private $labelResource;
 
     /**
-     * @param AbstractCollectionInterfaceFactory $collectionFactory
-     * @param SearchResultsInterfaceFactory $searchResultsFactory
-     * @param LabelInterfaceFactory $labelFactory
-     * @param LabelResourceModel $labelResource
+     * @param CollectionFactory $collectionFactory
+     * @param LabelSearchResultsInterfaceFactory $searchResultsFactory
      * @param ExceptionFactory $exceptionFactory
+     * @param LabelInterfaceFactory $labelFactory
+     * @param LabelResource $labelResource
      * @return void
      */
     public function __construct(
-        $collectionFactory,
-        $searchResultsFactory,
+        CollectionFactory $collectionFactory,
+        LabelSearchResultsInterfaceFactory $searchResultsFactory,
+        ExceptionFactory $exceptionFactory,
         LabelInterfaceFactory $labelFactory,
-        LabelResourceModel $labelResource,
-        ExceptionFactory $exceptionFactory
+        LabelResource $labelResource
     ) {
-        parent::__construct(
-            $collectionFactory,
-            $searchResultsFactory
-        );
+        $this->collectionFactory = $collectionFactory;
+        $this->searchResultsFactory = $searchResultsFactory;
+        $this->exceptionFactory = $exceptionFactory;
         $this->labelFactory = $labelFactory;
         $this->labelResource = $labelResource;
-        $this->exceptionFactory = $exceptionFactory;
     }
 
     /**
@@ -82,12 +83,12 @@ class LabelRepository extends AbstractRepository implements
      */
     public function get(PackageInterface $package): LabelInterface
     {
-        /** @var LabelDataModel $label */
+        /** @var LabelInterface $label */
         $label = $this->labelFactory->create();
         $this->labelResource->load(
             $label,
             $package->getId(),
-            self::SQL_COLUMN_PKG_PRIMARY_FIELD
+            'pkg_id'
         );
 
         if (!$label->getId()) {
@@ -109,7 +110,7 @@ class LabelRepository extends AbstractRepository implements
      */
     public function getById(int $id): LabelInterface
     {
-        /** @var LabelDataModel $label */
+        /** @var LabelInterface $label */
         $label = $this->labelFactory->create();
         $this->labelResource->load($label, $id);
 
@@ -150,7 +151,7 @@ class LabelRepository extends AbstractRepository implements
      */
     public function deleteById(int $id): bool
     {
-        /** @var LabelDataModel $label */
+        /** @var LabelInterface $label */
         $label = $this->labelFactory->create();
         $label->setId($id);
         return (bool) $this->labelResource->delete($label);
