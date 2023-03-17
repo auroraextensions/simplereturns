@@ -4,55 +4,50 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Order
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Order;
 
-use Exception;
-use Magento\Framework\{
-    Exception\NoSuchEntityException,
-    UrlInterface,
-    View\Element\UiComponent\ContextInterface,
-    View\Element\UiComponentFactory
-};
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
+use Throwable;
 
 class IncrementId extends Column
 {
-    /** @constant string COLUMN_KEY */
     public const COLUMN_KEY = 'increment_id';
-
-    /** @constant string ENTITY_KEY */
     public const ENTITY_KEY = 'order_id';
 
-    /** @property OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
 
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
+     * @param OrderRepositoryInterface $orderRepository
      * @param array $components
      * @param array $data
-     * @param OrderRepositoryInterface $orderRepository
      * @return void
      */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
+        OrderRepositoryInterface $orderRepository,
         array $components = [],
-        array $data = [],
-        OrderRepositoryInterface $orderRepository
+        array $data = []
     ) {
         parent::__construct(
             $context,
@@ -93,14 +88,9 @@ class IncrementId extends Column
         try {
             /** @var OrderInterface $order */
             $order = $this->orderRepository->get($orderId);
-
             return (string) $order->getRealOrderId();
-        } catch (NoSuchEntityException $e) {
-            /* No action required. */
-        } catch (Exception $e) {
-            /* No action required. */
+        } catch (Throwable $e) {
+            return null;
         }
-
-        return null;
     }
 }
