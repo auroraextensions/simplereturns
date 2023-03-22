@@ -20,29 +20,23 @@ namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma\Status;
 
 use AuroraExtensions\ModuleComponents\Component\Event\EventManagerTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\SimpleReturnInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Component\System\ModuleConfigTrait,
-    Model\Email\Transport\Customer as EmailTransport,
-    Model\Security\Token as Tokenizer,
-    Shared\Component\LabelFormatterTrait,
-    Shared\ModuleComponentInterface,
-    Csi\System\Module\ConfigInterface
-};
-use Magento\Backend\{
-    App\Action,
-    App\Action\Context
-};
-use Magento\Framework\{
-    App\Action\HttpPostActionInterface,
-    Controller\Result\JsonFactory as ResultJsonFactory,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Event\ManagerInterface as EventManagerInterface,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Serialize\Serializer\Json as JsonSerializer
-};
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
+use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
+use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Sales\Api\OrderRepositoryInterface;
 
 use function __;
@@ -56,9 +50,7 @@ class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use EventManagerTrait,
-        ModuleConfigTrait,
-        LabelFormatterTrait;
+    use EventManagerTrait, ModuleConfigTrait;
 
     /** @var EmailTransport $emailTransport */
     protected $emailTransport;
@@ -68,6 +60,9 @@ class EditPost extends Action implements
 
     /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
+
+    /** @var LabelManager $labelManager */
+    protected $labelManager;
 
     /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
@@ -87,6 +82,7 @@ class EditPost extends Action implements
      * @param EventManagerInterface $eventManager
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param LabelManager $labelManager
      * @param ConfigInterface $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
      * @param ResultJsonFactory $resultJsonFactory
@@ -102,6 +98,7 @@ class EditPost extends Action implements
         EventManagerInterface $eventManager,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
+        LabelManager $labelManager,
         ConfigInterface $moduleConfig,
         OrderRepositoryInterface $orderRepository,
         ResultJsonFactory $resultJsonFactory,
@@ -113,6 +110,7 @@ class EditPost extends Action implements
         $this->eventManager = $eventManager;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->labelManager = $labelManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
         $this->resultJsonFactory = $resultJsonFactory;
@@ -219,12 +217,6 @@ class EditPost extends Action implements
                         /** @var OrderInterface $order */
                         $order = $this->orderRepository->get($orderId);
 
-                        /** @var string $email */
-                        $email = $order->getCustomerEmail();
-
-                        /** @var string $name */
-                        $name = $order->getCustomerName();
-
                         /* Send RMA request status change email. */
                         $this->emailTransport->send(
                             'simplereturns/customer/rma_request_status_change_email_template',
@@ -232,12 +224,12 @@ class EditPost extends Action implements
                             [
                                 'orderId' => $order->getRealOrderId(),
                                 'frontId' => $rma->getFrontId(),
-                                'reason' => $this->getFrontLabel('reasons', $reason),
-                                'resolution' => $this->getFrontLabel('resolutions', $resolution),
-                                'status' => $this->getFrontLabel('statuses', $status),
+                                'reason' => $this->labelManager->getLabel('reason', $reason),
+                                'resolution' => $this->labelManager->getLabel('resolution', $resolution),
+                                'status' => $this->labelManager->getLabel('status', $status),
                             ],
-                            $email,
-                            $name,
+                            $order->getCustomerEmail(),
+                            $order->getCustomerName(),
                             (int) $order->getStoreId()
                         );
 

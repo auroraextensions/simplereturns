@@ -19,27 +19,24 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\SimpleReturnInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Component\System\ModuleConfigTrait,
-    Helper\Action as ActionHelper,
-    Helper\Config as ConfigHelper,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\Security\Token as Tokenizer,
-    Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface,
-    Csi\System\Module\ConfigInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
+use AuroraExtensions\SimpleReturns\Helper\Action as ActionHelper;
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Directory\Helper\Data as DirectoryHelper;
-use Magento\Framework\{
-    App\RequestInterface,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Message\ManagerInterface as MessageManagerInterface,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
 use function __;
@@ -56,6 +53,9 @@ class CreateView extends AbstractView implements
 
     /** @var DirectoryHelper $directoryHelper */
     protected $directoryHelper;
+
+    /** @var LabelManager $labelManager */
+    protected $labelManager;
 
     /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
@@ -75,6 +75,7 @@ class CreateView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param DirectoryHelper $directoryHelper
+     * @param LabelManager $labelManager
      * @param MessageManagerInterface $messageManager
      * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
@@ -89,6 +90,7 @@ class CreateView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         DirectoryHelper $directoryHelper,
+        LabelManager $labelManager,
         MessageManagerInterface $messageManager,
         ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
@@ -104,6 +106,7 @@ class CreateView extends AbstractView implements
             $data
         );
         $this->directoryHelper = $directoryHelper;
+        $this->labelManager = $labelManager;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
@@ -131,28 +134,14 @@ class CreateView extends AbstractView implements
      *
      * @param string $type
      * @param string $key
-     * @param string|null $subkey
      * @param string
      */
     public function getFrontLabel(
         string $type,
-        string $key,
-        string $subkey = null
+        string $key
     ): string {
-        /** @var array $labels */
-        $labels = $this->getConfig()
-            ->getSettings()
-            ->getData($type);
-
-        /** @var string|array $label */
-        $label = $labels[$key] ?? $key;
-
-        if ($subkey !== null) {
-            $label = is_array($label) && isset($label[$subkey])
-                ? $label[$subkey] : $label;
-        }
-
-        return $label;
+        return $this->labelManager
+            ->getLabel($type, $key) ?? $key;
     }
 
     /**

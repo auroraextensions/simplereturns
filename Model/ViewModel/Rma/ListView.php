@@ -19,22 +19,18 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\SimpleReturnInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Helper\Config as ConfigHelper,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Model\ValidatorModel\Sales\Order\EligibilityValidator,
-    Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\RequestInterface,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\ValidatorModel\Sales\Order\EligibilityValidator;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
 use function count;
@@ -43,8 +39,8 @@ class ListView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
 {
-    /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    /** @var LabelManager $labelManager */
+    protected $labelManager;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     protected $simpleReturnRepository;
@@ -57,7 +53,7 @@ class ListView extends AbstractView implements
      * @param ExceptionFactory $exceptionFactory
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
-     * @param ModuleConfig $moduleConfig
+     * @param LabelManager $labelManager
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param EligibilityValidator $validator
      * @param array $data
@@ -68,7 +64,7 @@ class ListView extends AbstractView implements
         ExceptionFactory $exceptionFactory,
         RequestInterface $request,
         UrlInterface $urlBuilder,
-        ModuleConfig $moduleConfig,
+        LabelManager $labelManager,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         EligibilityValidator $validator,
         array $data = []
@@ -80,7 +76,7 @@ class ListView extends AbstractView implements
             $urlBuilder,
             $data
         );
-        $this->moduleConfig = $moduleConfig;
+        $this->labelManager = $labelManager;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->validator = $validator;
     }
@@ -96,9 +92,8 @@ class ListView extends AbstractView implements
         string $type,
         string $key
     ): string {
-        /** @var array $labels */
-        $labels = $this->moduleConfig->getSettings()->getData($type);
-        return $labels[$key] ?? $key;
+        return $this->labelManager
+            ->getLabel($type, $key) ?? $key;
     }
 
     /**
@@ -110,15 +105,10 @@ class ListView extends AbstractView implements
         try {
             /** @var SimpleReturnInterface $rma */
             $rma = $this->simpleReturnRepository->get($order);
-
-            if ($rma->getId()) {
-                return $rma;
-            }
+            return $rma->getId() ? $rma : null;
         } catch (NoSuchEntityException | LocalizedException $e) {
-            /* No action required. */
+            return null;
         }
-
-        return null;
     }
 
     /**

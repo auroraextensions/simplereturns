@@ -19,31 +19,25 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\SimpleReturnInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Component\System\ModuleConfigTrait,
-    Model\Security\Token as Tokenizer,
-    Model\Email\Transport\Customer as EmailTransport,
-    Shared\Component\LabelFormatterTrait,
-    Shared\ModuleComponentInterface,
-    Csi\System\Module\ConfigInterface
-};
-use Magento\Backend\{
-    App\Action,
-    App\Action\Context
-};
-use Magento\Framework\{
-    App\Action\HttpPostActionInterface,
-    Controller\Result\JsonFactory as ResultJsonFactory,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Escaper,
-    Event\ManagerInterface as EventManagerInterface,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Serialize\Serializer\Json as JsonSerializer,
-    UrlInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
+use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
+use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
+use Magento\Framework\Escaper;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Framework\UrlInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 
 use function __;
@@ -57,7 +51,7 @@ class EditPost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use ModuleConfigTrait, LabelFormatterTrait;
+    use ModuleConfigTrait;
 
     /** @var EmailTransport $emailTransport */
     protected $emailTransport;
@@ -73,6 +67,9 @@ class EditPost extends Action implements
 
     /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
+
+    /** @var LabelManager $labelManager */
+    protected $labelManager;
 
     /** @var OrderRepositoryInterface $orderRepository */
     protected $orderRepository;
@@ -96,6 +93,7 @@ class EditPost extends Action implements
      * @param EventManagerInterface $eventManager
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param LabelManager $labelManager
      * @param ConfigInterface $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
      * @param ResultJsonFactory $resultJsonFactory
@@ -111,6 +109,7 @@ class EditPost extends Action implements
         EventManagerInterface $eventManager,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
+        LabelManager $labelManager,
         ConfigInterface $moduleConfig,
         OrderRepositoryInterface $orderRepository,
         ResultJsonFactory $resultJsonFactory,
@@ -124,6 +123,7 @@ class EditPost extends Action implements
         $this->eventManager = $eventManager;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->labelManager = $labelManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
         $this->resultJsonFactory = $resultJsonFactory;
@@ -166,109 +166,100 @@ class EditPost extends Action implements
         $rmaId = $request->getParam(self::PARAM_RMA_ID);
         $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
-        if ($rmaId !== null) {
-            /** @var string|null $token */
-            $token = $request->getParam(self::PARAM_TOKEN);
-            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
+        /** @var string|null $token */
+        $token = $request->getParam(self::PARAM_TOKEN);
+        $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
-            if ($token !== null) {
-                /** @var string|null $status */
-                $status = $request->getPostValue('status');
-                $status = $status !== null ? trim($status) : null;
+        if ($rmaId !== null && $token !== null) {
+            /** @var string|null $status */
+            $status = $request->getPostValue('status');
+            $status = $status !== null ? trim($status) : null;
 
-                /** @var string|null $reason */
-                $reason = $request->getPostValue('reason');
-                $reason = $reason !== null ? trim($reason) : null;
+            /** @var string|null $reason */
+            $reason = $request->getPostValue('reason');
+            $reason = $reason !== null ? trim($reason) : null;
 
-                /** @var string|null $resolution */
-                $resolution = $request->getPostValue('resolution');
-                $resolution = $resolution !== null ? trim($resolution) : null;
+            /** @var string|null $resolution */
+            $resolution = $request->getPostValue('resolution');
+            $resolution = $resolution !== null ? trim($resolution) : null;
 
-                /** @var string|null $comments */
-                $comments = $request->getPostValue('comments');
-                $comments = $resolution !== null && !empty($comments)
-                    ? $this->escaper->escapeHtml($comments) : null;
+            /** @var string|null $comments */
+            $comments = $request->getPostValue('comments');
+            $comments = $resolution !== null && !empty($comments)
+                ? $this->escaper->escapeHtml($comments) : null;
 
-                try {
-                    /** @var SimpleReturnInterface $rma */
-                    $rma = $this->simpleReturnRepository->getById($rmaId);
+            try {
+                /** @var SimpleReturnInterface $rma */
+                $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                    if ($rma->getId()) {
-                        $this->eventManager->dispatch(
-                            'simplereturns_adminhtml_rma_edit_save_before',
-                            [
-                                'rma' => $rma,
-                                'status' => $status,
-                                'reason' => $reason,
-                                'resolution' => $resolution,
-                                'comments' => $comments,
-                            ]
-                        );
+                if ($rma->getId()) {
+                    $this->eventManager->dispatch(
+                        'simplereturns_adminhtml_rma_edit_save_before',
+                        [
+                            'rma' => $rma,
+                            'status' => $status,
+                            'reason' => $reason,
+                            'resolution' => $resolution,
+                            'comments' => $comments,
+                        ]
+                    );
 
-                        $this->simpleReturnRepository->save(
-                            $rma->addData([
-                                'status' => $status,
-                                'reason' => $reason,
-                                'resolution' => $resolution,
-                                'comments' => $comments,
-                            ])
-                        );
+                    $this->simpleReturnRepository->save(
+                        $rma->addData([
+                            'status' => $status,
+                            'reason' => $reason,
+                            'resolution' => $resolution,
+                            'comments' => $comments,
+                        ])
+                    );
 
-                        $this->eventManager->dispatch(
-                            'simplereturns_adminhtml_rma_edit_save_after',
-                            [
-                                'rma' => $rma,
-                            ]
-                        );
+                    $this->eventManager->dispatch(
+                        'simplereturns_adminhtml_rma_edit_save_after',
+                        [
+                            'rma' => $rma,
+                        ]
+                    );
 
-                        /** @var OrderInterface $order */
-                        $order = $this->orderRepository->get($rma->getOrderId());
+                    /** @var OrderInterface $order */
+                    $order = $this->orderRepository->get($rma->getOrderId());
+                    $this->emailTransport->send(
+                        'simplereturns/customer/rma_request_status_update_email_template',
+                        'simplereturns/customer/rma_request_status_update_email_identity',
+                        [
+                            'orderId' => $order->getRealOrderId(),
+                            'frontId' => $rma->getFrontId(),
+                            'reason' => $this->labelManager->getLabel('reason', $rma->getReason()),
+                            'resolution' => $this->labelManager->getLabel('resolution', $rma->getResolution()),
+                            'status' => $this->labelManager->getLabel('status', $rma->getStatus()),
+                        ],
+                        $order->getCustomerEmail(),
+                        $order->getCustomerName(),
+                        (int) $order->getStoreId()
+                    );
 
-                        /** @var string $email */
-                        $email = $order->getCustomerEmail();
+                    /** @var string $viewUrl */
+                    $viewUrl = $this->urlBuilder->getUrl(
+                        'simplereturns/rma/view',
+                        [
+                            'rma_id' => $rmaId,
+                            'token' => $token,
+                            '_secure' => true,
+                        ]
+                    );
 
-                        /** @var string $name */
-                        $name = $order->getCustomerName();
-
-                        $this->emailTransport->send(
-                            'simplereturns/customer/rma_request_status_update_email_template',
-                            'simplereturns/customer/rma_request_status_update_email_identity',
-                            [
-                                'orderId' => $order->getRealOrderId(),
-                                'frontId' => $rma->getFrontId(),
-                                'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
-                                'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
-                                'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
-                            ],
-                            $email,
-                            $name,
-                            (int) $order->getStoreId()
-                        );
-
-                        /** @var string $viewUrl */
-                        $viewUrl = $this->urlBuilder->getUrl(
-                            'simplereturns/rma/view',
-                            [
-                                'rma_id' => $rmaId,
-                                'token' => $token,
-                                '_secure' => true,
-                            ]
-                        );
-
-                        $resultJson->setData([
-                            'success' => true,
-                            'isSimpleReturnsAjax' => true,
-                            'message' => __('Successfully updated RMA.'),
-                            'viewUrl' => $viewUrl,
-                        ]);
-                        return $resultJson;
-                    }
-                } catch (NoSuchEntityException | LocalizedException $e) {
-                    $response = [
-                        'error' => true,
-                        'message' => $e->getMessage(),
-                    ];
+                    $resultJson->setData([
+                        'success' => true,
+                        'isSimpleReturnsAjax' => true,
+                        'message' => __('Successfully updated RMA.'),
+                        'viewUrl' => $viewUrl,
+                    ]);
+                    return $resultJson;
                 }
+            } catch (NoSuchEntityException | LocalizedException $e) {
+                $response = [
+                    'error' => true,
+                    'message' => $e->getMessage(),
+                ];
             }
         }
 
