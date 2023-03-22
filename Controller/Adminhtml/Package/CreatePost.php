@@ -31,7 +31,6 @@ use AuroraExtensions\SimpleReturns\{
     Component\System\ModuleConfigTrait,
     Model\Security\Token as Tokenizer,
     Model\Email\Transport\Customer as EmailTransport,
-    Shared\Component\LabelFormatterTrait,
     Shared\ModuleComponentInterface,
     Csi\System\Module\ConfigInterface
 };
@@ -65,9 +64,7 @@ class CreatePost extends Action implements
     HttpPostActionInterface,
     ModuleComponentInterface
 {
-    use LabelFormatterTrait,
-        ModuleConfigTrait,
-        RedirectTrait;
+    use ModuleConfigTrait, RedirectTrait;
 
     /** @var DateTimeFactory $dateTimeFactory */
     protected $dateTimeFactory;

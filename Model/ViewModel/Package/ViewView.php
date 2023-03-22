@@ -19,31 +19,28 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Package;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\LabelInterface,
-    Api\Data\PackageInterface,
-    Api\Data\SimpleReturnInterface,
-    Api\LabelManagementInterface,
-    Api\LabelRepositoryInterface,
-    Api\PackageRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Component\System\ModuleConfigTrait,
-    Helper\Config as ConfigHelper,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\Security\Token as Tokenizer,
-    Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface,
-    Csi\System\Module\ConfigInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\LabelManagementInterface;
+use AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Directory\Helper\Data as DirectoryHelper;
-use Magento\Framework\{
-    App\RequestInterface,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Message\ManagerInterface as MessageManagerInterface,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
 use function __;
@@ -66,6 +63,9 @@ class ViewView extends AbstractView implements
 
     /** @var LabelManagementInterface $labelManagement */
     protected $labelManagement;
+
+    /** @var LabelManager $labelManager */
+    protected $labelManager;
 
     /** @var LabelRepositoryInterface $labelRepository */
     protected $labelRepository;
@@ -98,6 +98,7 @@ class ViewView extends AbstractView implements
      * @param UrlInterface $urlBuilder
      * @param DirectoryHelper $directoryHelper
      * @param LabelManagementInterface $labelManagement
+     * @param LabelManager $labelManager
      * @param LabelRepositoryInterface $labelRepository
      * @param MessageManagerInterface $messageManager
      * @param ConfigInterface $moduleConfig
@@ -113,6 +114,7 @@ class ViewView extends AbstractView implements
         UrlInterface $urlBuilder,
         DirectoryHelper $directoryHelper,
         LabelManagementInterface $labelManagement,
+        LabelManager $labelManager,
         LabelRepositoryInterface $labelRepository,
         MessageManagerInterface $messageManager,
         ConfigInterface $moduleConfig,
@@ -130,6 +132,7 @@ class ViewView extends AbstractView implements
         );
         $this->directoryHelper = $directoryHelper;
         $this->labelManagement = $labelManagement;
+        $this->labelManager = $labelManager;
         $this->labelRepository = $labelRepository;
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
@@ -170,28 +173,14 @@ class ViewView extends AbstractView implements
      *
      * @param string $type
      * @param string $key
-     * @param string|null $subkey
      * @param string
      */
     public function getFrontLabel(
         string $type,
-        string $key,
-        string $subkey = null
+        string $key
     ): string {
-        /** @var array $labels */
-        $labels = $this->getConfig()
-            ->getSettings()
-            ->getData($type);
-
-        /** @var string|array $label */
-        $label = $labels[$key] ?? $key;
-
-        if ($subkey !== null) {
-            $label = is_array($label) && isset($label[$subkey])
-                ? $label[$subkey] : $label;
-        }
-
-        return $label;
+        return $this->labelManager
+            ->getLabel($type, $key) ?? $key;
     }
 
     /**
@@ -440,7 +429,8 @@ class ViewView extends AbstractView implements
     {
         /** @var LabelInterface|null $label */
         $label = $this->getLabel();
-        return $label !== null ? (bool) $label->getId() : false;
+        return $label !== null
+            ? (bool) $label->getId() : false;
     }
 
     /**
@@ -450,6 +440,7 @@ class ViewView extends AbstractView implements
     {
         /** @var PackageInterface|null $package */
         $package = $this->getPackage();
-        return $package !== null ? (bool) $package->getId() : false;
+        return $package !== null
+            ? (bool) $package->getId() : false;
     }
 }

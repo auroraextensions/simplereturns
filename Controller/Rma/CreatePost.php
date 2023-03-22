@@ -21,41 +21,37 @@ namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 use AuroraExtensions\ModuleComponents\Component\Event\EventManagerTrait;
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\AttachmentInterface,
-    Api\Data\SimpleReturnInterface,
-    Api\Data\SimpleReturnInterfaceFactory,
-    Api\AttachmentRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Component\System\ModuleConfigTrait,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\Security\Token as Tokenizer,
-    Model\Email\Transport\Customer as EmailTransport,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\Component\LabelFormatterTrait,
-    Shared\ModuleComponentInterface
-};
+use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
 use DateTime;
 use DateTimeFactory;
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpPostActionInterface,
-    App\Filesystem\DirectoryList,
-    App\Request\DataPersistorInterface,
-    Controller\Result\Redirect as ResultRedirect,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Escaper,
-    Event\ManagerInterface as EventManagerInterface,
-    Exception\AlreadyExistsException,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Filesystem,
-    HTTP\PhpEnvironment\RemoteAddress,
-    Serialize\Serializer\Json,
-    Stdlib\DateTime as StdlibDateTime,
-    UrlInterface
-};
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\Controller\Result\Redirect as ResultRedirect;
+use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
+use Magento\Framework\Escaper;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Framework\Exception\AlreadyExistsException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Filesystem;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
+use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Model\File\UploaderFactory;
 
 use function __;
@@ -70,7 +66,6 @@ class CreatePost extends Action implements
 {
     use EventManagerTrait,
         ModuleConfigTrait,
-        LabelFormatterTrait,
         RedirectTrait;
 
     /** @var AttachmentRepositoryInterface $attachmentRepository */
@@ -96,6 +91,9 @@ class CreatePost extends Action implements
 
     /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
+
+    /** @var LabelManager $labelManager */
+    protected $labelManager;
 
     /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
@@ -130,6 +128,7 @@ class CreatePost extends Action implements
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param LabelManager $labelManager
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
@@ -153,6 +152,7 @@ class CreatePost extends Action implements
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
         FormKeyValidator $formKeyValidator,
+        LabelManager $labelManager,
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
@@ -172,6 +172,7 @@ class CreatePost extends Action implements
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->labelManager = $labelManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->remoteAddress = $remoteAddress;
@@ -334,9 +335,9 @@ class CreatePost extends Action implements
                             [
                                 'orderId' => $order->getRealOrderId(),
                                 'frontId' => $rma->getFrontId(),
-                                'reason' => $this->getFrontLabel('reasons', $rma->getReason()),
-                                'resolution' => $this->getFrontLabel('resolutions', $rma->getResolution()),
-                                'status' => $this->getFrontLabel('statuses', $rma->getStatus()),
+                                'reason' => $this->labelManager->getLabel('reason', $rma->getReason()),
+                                'resolution' => $this->labelManager->getLabel('resolution', $rma->getResolution()),
+                                'status' => $this->labelManager->getLabel('status', $rma->getStatus()),
                                 'comments' => $this->escaper->escapeHtml($rma->getComments()),
                             ],
                             $order->getCustomerEmail(),
@@ -353,7 +354,6 @@ class CreatePost extends Action implements
                                 '_secure' => true,
                             ]
                         );
-
                         return $this->getRedirectToUrl($redirectUrl);
                     } catch (AlreadyExistsException $e) {
                         throw $e;

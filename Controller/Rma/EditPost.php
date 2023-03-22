@@ -21,36 +21,32 @@ namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 use AuroraExtensions\ModuleComponents\Component\Event\EventManagerTrait;
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\AttachmentInterface,
-    Api\Data\SimpleReturnInterface,
-    Api\Data\SimpleReturnInterfaceFactory,
-    Api\AttachmentRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Component\System\ModuleConfigTrait,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\Email\Transport\Customer as EmailTransport,
-    Model\Security\Token as Tokenizer,
-    Shared\Component\LabelFormatterTrait,
-    Shared\ModuleComponentInterface,
-    Csi\System\Module\ConfigInterface
-};
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpPostActionInterface,
-    App\Request\DataPersistorInterface,
-    Controller\Result\Redirect as ResultRedirect,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Escaper,
-    Event\ManagerInterface as EventManagerInterface,
-    Exception\AlreadyExistsException,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    HTTP\PhpEnvironment\RemoteAddress,
-    Serialize\Serializer\Json,
-    UrlInterface
-};
+use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
+use AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\Controller\Result\Redirect as ResultRedirect;
+use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
+use Magento\Framework\Escaper;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Framework\Exception\AlreadyExistsException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\UrlInterface;
 
 use function array_shift;
 use function is_numeric;
@@ -64,7 +60,6 @@ class EditPost extends Action implements
 {
     use EventManagerTrait,
         ModuleConfigTrait,
-        LabelFormatterTrait,
         RedirectTrait;
 
     /** @var AttachmentRepositoryInterface $attachmentRepository */
@@ -84,6 +79,9 @@ class EditPost extends Action implements
 
     /** @var FormKeyValidator $formKeyValidator */
     protected $formKeyValidator;
+
+    /** @var LabelManager $labelManager */
+    protected $labelManager;
 
     /** @var OrderAdapter $orderAdapter */
     protected $orderAdapter;
@@ -115,6 +113,7 @@ class EditPost extends Action implements
      * @param EventManagerInterface $eventManager
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param LabelManager $labelManager
      * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
@@ -136,6 +135,7 @@ class EditPost extends Action implements
         EventManagerInterface $eventManager,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
+        LabelManager $labelManager,
         ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
@@ -153,6 +153,7 @@ class EditPost extends Action implements
         $this->eventManager = $eventManager;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->labelManager = $labelManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->remoteAddress = $remoteAddress;
@@ -293,9 +294,9 @@ class EditPost extends Action implements
                     [
                         'orderId' => $order->getRealOrderId(),
                         'frontId' => $rma->getFrontId(),
-                        'reason' => $this->getFrontLabel('reasons', $reason),
-                        'resolution' => $this->getFrontLabel('resolutions', $resolution),
-                        'status' => $this->getFrontLabel('statuses', $status),
+                        'reason' => $this->labelManager->getLabel('reason', $reason),
+                        'resolution' => $this->labelManager->getLabel('resolution', $resolution),
+                        'status' => $this->labelManager->getLabel('status', $status),
                         'comments' => $this->escaper->escapeHtml($comments),
                     ],
                     $order->getCustomerEmail(),

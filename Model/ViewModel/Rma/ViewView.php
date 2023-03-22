@@ -19,39 +19,37 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\LabelInterface,
-    Api\Data\PackageInterface,
-    Api\Data\SimpleReturnInterface,
-    Api\LabelRepositoryInterface,
-    Api\PackageRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Helper\Config as ConfigHelper,
-    Model\Security\Token as Tokenizer,
-    Model\SearchModel\Attachment as AttachmentAdapter,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\RequestInterface,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Message\ManagerInterface as MessageManagerInterface,
-    Serialize\Serializer\Json,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
-use Magento\Sales\{
-    Api\Data\OrderInterface,
-    Api\OrderRepositoryInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Model\SearchModel\Attachment as AttachmentAdapter;
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
+use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 use function count;
 use function is_numeric;
 use function rtrim;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ViewView extends AbstractView implements
     ArgumentInterface,
     ModuleComponentInterface
@@ -62,14 +60,14 @@ class ViewView extends AbstractView implements
     /** @var LabelInterface $label */
     protected $label;
 
+    /** @var LabelManager $labelManager */
+    protected $labelManager;
+
     /** @var LabelRepositoryInterface $labelRepository */
     protected $labelRepository;
 
     /** @var MessageManagerInterface $messageManager */
     protected $messageManager;
-
-    /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
 
     /** @var OrderInterface $order */
     protected $order;
@@ -104,9 +102,9 @@ class ViewView extends AbstractView implements
      * @param RequestInterface $request
      * @param UrlInterface $urlBuilder
      * @param AttachmentAdapter $attachmentAdapter
+     * @param LabelManager $labelManager
      * @param LabelRepositoryInterface $labelRepository
      * @param MessageManagerInterface $messageManager
-     * @param ModuleConfig $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
      * @param PackageRepositoryInterface $packageRepository
      * @param Json $serializer
@@ -122,9 +120,9 @@ class ViewView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         AttachmentAdapter $attachmentAdapter,
+        LabelManager $labelManager,
         LabelRepositoryInterface $labelRepository,
         MessageManagerInterface $messageManager,
-        ModuleConfig $moduleConfig,
         OrderRepositoryInterface $orderRepository,
         PackageRepositoryInterface $packageRepository,
         Json $serializer,
@@ -141,9 +139,9 @@ class ViewView extends AbstractView implements
             $data
         );
         $this->attachmentAdapter = $attachmentAdapter;
+        $this->labelManager = $labelManager;
         $this->labelRepository = $labelRepository;
         $this->messageManager = $messageManager;
-        $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
         $this->packageRepository = $packageRepository;
         $this->serializer = $serializer;
@@ -272,9 +270,8 @@ class ViewView extends AbstractView implements
         string $type,
         string $key
     ): string {
-        /** @var array $labels */
-        $labels = $this->moduleConfig->getSettings()->getData($type);
-        return $labels[$key] ?? $key;
+        return $this->labelManager
+            ->getLabel($type, $key) ?? $key;
     }
 
     /**
@@ -463,7 +460,8 @@ class ViewView extends AbstractView implements
     {
         /** @var LabelInterface|null $label */
         $label = $this->getLabel();
-        return $label !== null ? (bool) $label->getId() : false;
+        return $label !== null
+            ? (bool) $label->getId() : false;
     }
 
     /**

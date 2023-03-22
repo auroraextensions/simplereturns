@@ -23,6 +23,7 @@ use Iterator;
 use IteratorAggregate;
 use Traversable;
 
+use function __;
 use function array_filter;
 use function array_keys;
 use function array_map;
@@ -62,6 +63,7 @@ class LabelManager
 
     /**
      * @return void
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     private function initialize(): void
     {
@@ -129,7 +131,7 @@ class LabelManager
     /**
      * @return array
      */
-    private function getKeys(): array
+    private function getFields(): array
     {
         /** @var string[] $keys */
         $keys = array_keys($this->data);
@@ -144,6 +146,21 @@ class LabelManager
     }
 
     /**
+     * @param string $group
+     * @param string $value
+     * @return string|null
+     */
+    public function getLabel(
+        string $group,
+        string $value
+    ): ?string {
+        /** @var mixed $label */
+        $label = $this->data[$group][$value] ?? null;
+        return $label !== null
+            ? (string) __($label) : null;
+    }
+
+    /**
      * @param array $item
      * @return array
      */
@@ -155,7 +172,7 @@ class LabelManager
         /** @var array $values */
         $values = $this->arrayUtils->kslice(
             $item,
-            $this->getKeys()
+            $this->getFields()
         );
 
         /** @var string $field */
