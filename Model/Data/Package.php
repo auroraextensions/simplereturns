@@ -4,46 +4,38 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\Data
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\DataModel;
+namespace AuroraExtensions\SimpleReturns\Model\Data;
 
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\LabelInterface,
-    Api\Data\PackageInterface,
-    Model\ResourceModel\Package as PackageResourceModel,
-    Shared\Component\FormatterTrait,
-    Shared\ModuleComponentInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Package as PackageResource;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 
-class Package extends AbstractModel implements
-    PackageInterface,
-    ModuleComponentInterface
+class Package extends AbstractModel implements PackageInterface
 {
-    use FormatterTrait;
-
     /**
      * @return void
      */
     public function _construct()
     {
-        $this->_init(PackageResourceModel::class);
+        $this->_init(PackageResource::class);
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getCreatedAt(): string
     {
@@ -51,18 +43,33 @@ class Package extends AbstractModel implements
     }
 
     /**
-     * @param string $createdAt
-     * @return $this
+     * {@inheritdoc}
      */
     public function setCreatedAt($createdAt): PackageInterface
     {
         $this->setData('created_at', $createdAt);
-
         return $this;
     }
 
     /**
-     * @return CarrierInterface
+     * {@inheritdoc}
+     */
+    public function getUuid(): string
+    {
+        return $this->getData('uuid');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUuid(string $uuid): PackageInterface
+    {
+        $this->setData('uuid', $uuid);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getCarrier(): ?CarrierInterface
     {
@@ -70,18 +77,16 @@ class Package extends AbstractModel implements
     }
 
     /**
-     * @param CarrierInterface $carrier
-     * @return PackageInterface
+     * {@inheritdoc}
      */
     public function setCarrier(CarrierInterface $carrier): PackageInterface
     {
         $this->setData('carrier', $carrier);
-
         return $this;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getCarrierCode(): string
     {
@@ -89,18 +94,16 @@ class Package extends AbstractModel implements
     }
 
     /**
-     * @param string $code
-     * @return PackageInterface
+     * {@inheritdoc}
      */
     public function setCarrierCode(string $code): PackageInterface
     {
         $this->setData('carrier_code', $code);
-
         return $this;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getContainerType(): string
     {
@@ -108,18 +111,16 @@ class Package extends AbstractModel implements
     }
 
     /**
-     * @param string $type
-     * @return PackageInterface
+     * {@inheritdoc}
      */
     public function setContainerType(string $type): PackageInterface
     {
         $this->setData('container_type', $type);
-
         return $this;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getDescription(): string
     {
@@ -127,18 +128,16 @@ class Package extends AbstractModel implements
     }
 
     /**
-     * @param string $description
-     * @return PackageInterface
+     * {@inheritdoc}
      */
     public function setDescription(string $description): PackageInterface
     {
         $this->setData('description', $description);
-
         return $this;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getDimensionUnits(): string
     {
@@ -146,18 +145,16 @@ class Package extends AbstractModel implements
     }
 
     /**
-     * @param string $units
-     * @return PackageInterface
+     * {@inheritdoc}
      */
     public function setDimensionUnits(string $units): PackageInterface
     {
         $this->setData('dimension_units', $units);
-
         return $this;
     }
 
     /**
-     * @return LabelInterface
+     * {@inheritdoc}
      */
     public function getLabel(): LabelInterface
     {
@@ -165,18 +162,16 @@ class Package extends AbstractModel implements
     }
 
     /**
-     * @param LabelInterface $label
-     * @return PackageInterface
+     * {@inheritdoc}
      */
     public function setLabel(LabelInterface $label): PackageInterface
     {
         $this->setData('label', $label);
-
         return $this;
     }
 
     /**
-     * @return float
+     * {@inheritdoc}
      */
     public function getWeight(): float
     {
@@ -184,18 +179,16 @@ class Package extends AbstractModel implements
     }
 
     /**
-     * @param float $weight
-     * @return PackageInterface
+     * {@inheritdoc}
      */
     public function setWeight(float $weight): PackageInterface
     {
         $this->setData('weight', $weight);
-
         return $this;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getWeightUnits(): string
     {
@@ -203,13 +196,11 @@ class Package extends AbstractModel implements
     }
 
     /**
-     * @param string $units
-     * @return PackageInterface
+     * {@inheritdoc}
      */
     public function setWeightUnits(string $units): PackageInterface
     {
         $this->setData('weight_units', $units);
-
         return $this;
     }
 }
