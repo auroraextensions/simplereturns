@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ResourceModel\Label;
 
 use AuroraExtensions\ModuleComponents\Api\AbstractCollectionInterface;
-use AuroraExtensions\SimpleReturns\Model\DataModel\Label;
+use AuroraExtensions\SimpleReturns\Model\Data\Label;
 use AuroraExtensions\SimpleReturns\Model\ResourceModel\Label as LabelResource;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
