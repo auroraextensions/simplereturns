@@ -4,53 +4,55 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Setup\Patch\Data
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Setup\Patch\Data;
 
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
-use Magento\{
-    Catalog\Model\Product,
-    Eav\Model\Entity\Attribute\ScopedAttributeInterface,
-    Eav\Model\Entity\Attribute\Source\Boolean as SourceBoolean,
-    Eav\Setup\EavSetupFactory,
-    Framework\Setup\ModuleDataSetupInterface,
-    Framework\Setup\Patch\DataPatchInterface,
-    Framework\Setup\Patch\PatchRevertableInterface
-};
+use AuroraExtensions\ModuleComponents\Model\Eav\Setup\AbstractEavSetup;
+use Magento\Catalog\Model\Product;
+use Magento\Eav\Setup\EavSetupFactory;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Setup\Patch\DataPatchInterface;
+use Magento\Framework\Setup\Patch\PatchRevertableInterface;
+use Psr\Log\LoggerInterface;
 
-class CreateSimpleReturnProductAttribute implements
+class CreateSimpleReturnProductAttribute extends AbstractEavSetup implements
     DataPatchInterface,
-    PatchRevertableInterface,
-    ModuleComponentInterface
+    PatchRevertableInterface
 {
-    /** @property EavSetupFactory $eavSetupFactory */
-    protected $eavSetupFactory;
+    private const ATTR_CODE = 'simple_return';
 
-    /** @property ModuleDataSetupInterface $moduleDataSetup */
-    protected $moduleDataSetup;
+    /** @var mixed[] $eavConfig */
+    private $eavConfig;
 
     /**
      * @param EavSetupFactory $eavSetupFactory
      * @param ModuleDataSetupInterface $moduleDataSetup
+     * @param LoggerInterface $logger
+     * @param mixed[] $eavConfig
      * @return void
      */
     public function __construct(
         EavSetupFactory $eavSetupFactory,
-        ModuleDataSetupInterface $moduleDataSetup
+        ModuleDataSetupInterface $moduleDataSetup,
+        LoggerInterface $logger,
+        array $eavConfig = []
     ) {
-        $this->eavSetupFactory = $eavSetupFactory;
-        $this->moduleDataSetup = $moduleDataSetup;
+        parent::__construct(
+            $eavSetupFactory->create(['setup' => $moduleDataSetup]),
+            $logger
+        );
+        $this->eavConfig = $eavConfig;
     }
 
     /**
@@ -74,30 +76,10 @@ class CreateSimpleReturnProductAttribute implements
      */
     public function apply()
     {
-        /** @var EavSetup $eavSetup */
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
-
-        $eavSetup->addAttribute(
+        $this->addAttribute(
             Product::ENTITY,
-            static::ATTRIBUTE_CODE_SIMPLE_RETURN,
-            [
-                'type'             => 'int',
-                'input'            => 'boolean',
-                'label'            => static::ATTRIBUTE_LABEL_SIMPLE_RETURN,
-                'global'           => ScopedAttributeInterface::SCOPE_GLOBAL,
-                'frontend'         => '',
-                'source'           => SourceBoolean::class,
-                'visible'          => true,
-                'required'         => false,
-                'user_defined'     => true,
-                'default'          => 0,
-                'searchable'       => false,
-                'filterable'       => false,
-                'comparable'       => false,
-                'visible_on_front' => false,
-                'unique'           => false,
-                'apply_to'         => '',
-            ]
+            self::ATTR_CODE,
+            $this->eavConfig
         );
     }
 
@@ -106,12 +88,9 @@ class CreateSimpleReturnProductAttribute implements
      */
     public function revert()
     {
-        /** @var EavSetup $eavSetup */
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
-
-        $eavSetup->removeAttribute(
+        $this->removeAttribute(
             Product::ENTITY,
-            static::ATTRIBUTE_CODE_SIMPLE_RETURN
+            self::ATTR_CODE
         );
     }
 }
