@@ -15,6 +15,7 @@
   "require": {
     "php": "^7.2||^8.1",
     "ext-gd": "*",
+    "ramsey/uuid": "^4.0",
     "magento/framework": "*",
     "magento/module-catalog": "^103||^104||^105",
     "magento/module-customer": "^102||^103||^104",
@@ -33,6 +34,9 @@
     ],
     "psr-4": {
       "AuroraExtensions\\SimpleReturns\\": ""
-    }
+    },
+    "exclude-from-classmap": [
+      "/Test/"
+    ]
   }
 }

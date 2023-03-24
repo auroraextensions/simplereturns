@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ResourceModel\Attachment;
 
 use AuroraExtensions\ModuleComponents\Api\AbstractCollectionInterface;
-use AuroraExtensions\SimpleReturns\Model\DataModel\Attachment;
+use AuroraExtensions\SimpleReturns\Model\Data\Attachment;
 use AuroraExtensions\SimpleReturns\Model\ResourceModel\Attachment as AttachmentResource;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 

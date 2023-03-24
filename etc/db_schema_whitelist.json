@@ -2,6 +2,7 @@
     "simplereturns_rma": {
         "column": {
             "rma_id": true,
+            "uuid": true,
             "store_id": true,
             "order_id": true,
             "pkg_id": true,
@@ -46,6 +47,7 @@
     "simplereturns_package": {
         "column": {
             "pkg_id": true,
+            "uuid": true,
             "rma_id": true,
             "label_id": true,
             "carrier_code": true,

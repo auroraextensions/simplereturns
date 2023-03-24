@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn;
 
 use AuroraExtensions\ModuleComponents\Api\AbstractCollectionInterface;
-use AuroraExtensions\SimpleReturns\Model\DataModel\SimpleReturn;
+use AuroraExtensions\SimpleReturns\Model\Data\SimpleReturn;
 use AuroraExtensions\SimpleReturns\Model\ResourceModel\SimpleReturn as SimpleReturnResource;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 

@@ -21,6 +21,7 @@
     <table name="simplereturns_rma" resource="default" engine="innodb" comment="Simple Returns RMAs">
         <column xsi:type="int" name="rma_id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="RMA ID"/>
+        <column xsi:type="varchar" name="uuid" nullable="false" length="36" comment="UUID"/>
         <column xsi:type="int" name="store_id" padding="10" unsigned="true" nullable="false" comment="Store ID"/>
         <column xsi:type="int" name="order_id" padding="10" unsigned="true" nullable="false" comment="Order ID"/>
         <column xsi:type="int" name="pkg_id" padding="10" unsigned="true" nullable="true" comment="Package ID"/>
@@ -71,6 +72,7 @@
     <table name="simplereturns_package" resource="default" engine="innodb" comment="Simple Returns Packages">
         <column xsi:type="int" name="pkg_id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="Package ID"/>
+        <column xsi:type="varchar" name="uuid" nullable="false" length="36" comment="UUID"/>
         <column xsi:type="int" name="rma_id" padding="10" unsigned="true" nullable="false" comment="RMA ID"/>
         <column xsi:type="int" name="label_id" padding="10" unsigned="true" nullable="true" comment="Label ID"/>
         <column xsi:type="varchar" name="carrier_code" nullable="true" length="32" comment="Carrier Code"/>

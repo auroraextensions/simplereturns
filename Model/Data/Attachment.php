@@ -4,52 +4,36 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\Data
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\DataModel;
+namespace AuroraExtensions\SimpleReturns\Model\Data;
 
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\AttachmentInterface,
-    Model\ResourceModel\Attachment as AttachmentResourceModel,
-    Shared\ModuleComponentInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Attachment as AttachmentResource;
 use Magento\Framework\Model\AbstractModel;
 
-class Attachment extends AbstractModel implements
-    AttachmentInterface,
-    ModuleComponentInterface
+class Attachment extends AbstractModel implements AttachmentInterface
 {
     /**
      * @return void
      */
     public function _construct()
     {
-        $this->_init(AttachmentResourceModel::class);
+        $this->_init(AttachmentResource::class);
     }
 
     /**
-     * @return string
-     */
-    public function getFrontId(): string
-    {
-        return sprintf(
-            self::FORMAT_FRONT_ID,
-            $this->getId()
-        );
-    }
-
-    /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getCreatedAt(): string
     {
@@ -57,40 +41,35 @@ class Attachment extends AbstractModel implements
     }
 
     /**
-     * @param string $createdAt
-     * @return $this
+     * {@inheritdoc}
      */
     public function setCreatedAt($createdAt): AttachmentInterface
     {
         $this->setData('created_at', $createdAt);
-
         return $this;
     }
 
     /**
-     * @return int|null
+     * {@inheritdoc}
      */
     public function getRmaId(): ?int
     {
         /** @var int|string|null $rmaId */
         $rmaId = $this->getData('rma_id');
-
         return $rmaId !== null ? (int) $rmaId : null;
     }
 
     /**
-     * @param int $rmaId
-     * @return AttachmentInterface
+     * {@inheritdoc}
      */
     public function setRmaId(int $rmaId): AttachmentInterface
     {
         $this->setData('rma_id', $rmaId);
-
         return $this;
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getFilename(): ?string
     {
@@ -98,40 +77,35 @@ class Attachment extends AbstractModel implements
     }
 
     /**
-     * @param string $filename
-     * @return AttachmentInterface
+     * {@inheritdoc}
      */
     public function setFilename(string $filename): AttachmentInterface
     {
         $this->setData('filename', $filename);
-
         return $this;
     }
 
     /**
-     * @return int|null
+     * {@inheritdoc}
      */
     public function getFilesize(): ?int
     {
         /** @var int|string|null $filesize */
         $filesize = $this->getData('filesize');
-
         return $filesize !== null ? (int) $filesize : null;
     }
 
     /**
-     * @param int $filesize
-     * @return AttachmentInterface
+     * {@inheritdoc}
      */
     public function setFilesize(int $filesize): AttachmentInterface
     {
         $this->setData('filesize', $filesize);
-
         return $this;
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getFilePath(): ?string
     {
@@ -139,18 +113,16 @@ class Attachment extends AbstractModel implements
     }
 
     /**
-     * @param string $filePath
-     * @return AttachmentInterface
+     * {@inheritdoc}
      */
     public function setFilePath(string $filePath): AttachmentInterface
     {
         $this->setData('filepath', $filePath);
-
         return $this;
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getMimeType(): ?string
     {
@@ -158,18 +130,16 @@ class Attachment extends AbstractModel implements
     }
 
     /**
-     * @param string $mimeType
-     * @return AttachmentInterface
+     * {@inheritdoc}
      */
     public function setMimeType(string $mimeType): AttachmentInterface
     {
         $this->setData('mimetype', $mimeType);
-
         return $this;
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getThumbnail(): ?string
     {
@@ -177,18 +147,16 @@ class Attachment extends AbstractModel implements
     }
 
     /**
-     * @param string $filePath
-     * @return AttachmentInterface
+     * {@inheritdoc}
      */
     public function setThumbnail(string $filePath): AttachmentInterface
     {
         $this->setData('thumbnail', $filePath);
-
         return $this;
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getToken(): ?string
     {
@@ -196,13 +164,11 @@ class Attachment extends AbstractModel implements
     }
 
     /**
-     * @param string $token
-     * @return AttachmentInterface
+     * {@inheritdoc}
      */
     public function setToken(string $token): AttachmentInterface
     {
         $this->setData('token', $token);
-
         return $this;
     }
 }

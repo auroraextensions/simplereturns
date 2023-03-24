@@ -22,7 +22,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface"
-                type="AuroraExtensions\SimpleReturns\Model\DataModel\SimpleReturn"/>
+                type="AuroraExtensions\SimpleReturns\Model\Data\SimpleReturn"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface"
                 type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageManagementInterface"
@@ -30,7 +30,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\PackageRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageInterface"
-                type="AuroraExtensions\SimpleReturns\Model\DataModel\Package"/>
+                type="AuroraExtensions\SimpleReturns\Model\Data\Package"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterface"
                 type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelManagementInterface"
@@ -38,7 +38,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\LabelRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface"
-                type="AuroraExtensions\SimpleReturns\Model\DataModel\Label"/>
+                type="AuroraExtensions\SimpleReturns\Model\Data\Label"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface"
                 type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentManagementInterface"
@@ -46,12 +46,34 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AttachmentRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface"
-                type="AuroraExtensions\SimpleReturns\Model\DataModel\Attachment"/>
+                type="AuroraExtensions\SimpleReturns\Model\Data\Attachment"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentSearchResultsInterface"
                 type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface"
                 type="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config"/>
 
+    <type name="AuroraExtensions\SimpleReturns\Setup\Patch\Data\CreateSimpleReturnProductAttribute">
+        <arguments>
+            <argument name="eavConfig" xsi:type="array">
+                <item name="type" xsi:type="const">Magento\Framework\Reflection\TypeProcessor::NORMALIZED_INT_TYPE</item>
+                <item name="input" xsi:type="const">Magento\Framework\Reflection\TypeProcessor::NORMALIZED_BOOLEAN_TYPE</item>
+                <item name="label" xsi:type="string" translate="true">Returnable</item>
+                <item name="global" xsi:type="const">Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL</item>
+                <item name="frontend" xsi:type="null"/>
+                <item name="source" xsi:type="string">Magento\Eav\Model\Entity\Attribute\Source\Boolean</item>
+                <item name="visible" xsi:type="boolean">true</item>
+                <item name="required" xsi:type="boolean">false</item>
+                <item name="user_defined" xsi:type="boolean">true</item>
+                <item name="default" xsi:type="number">0</item>
+                <item name="searchable" xsi:type="boolean">false</item>
+                <item name="filterable" xsi:type="boolean">false</item>
+                <item name="comparable" xsi:type="boolean">false</item>
+                <item name="visible_on_front" xsi:type="boolean">false</item>
+                <item name="unique" xsi:type="boolean">false</item>
+                <item name="apply_to" xsi:type="null"/>
+            </argument>
+        </arguments>
+    </type>
     <type name="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config">
         <arguments>
             <argument name="data" xsi:type="array">

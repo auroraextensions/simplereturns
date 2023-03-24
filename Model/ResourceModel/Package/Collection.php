@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ResourceModel\Package;
 
 use AuroraExtensions\ModuleComponents\Api\AbstractCollectionInterface;
-use AuroraExtensions\SimpleReturns\Model\DataModel\Package;
+use AuroraExtensions\SimpleReturns\Model\Data\Package;
 use AuroraExtensions\SimpleReturns\Model\ResourceModel\Package as PackageResource;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 

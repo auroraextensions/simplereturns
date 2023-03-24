@@ -4,44 +4,36 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\Data
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\DataModel;
+namespace AuroraExtensions\SimpleReturns\Model\Data;
 
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\LabelInterface,
-    Model\ResourceModel\Label as LabelResourceModel,
-    Shared\Component\FormatterTrait,
-    Shared\ModuleComponentInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface;
+use AuroraExtensions\SimpleReturns\Model\ResourceModel\Label as LabelResource;
 use Magento\Framework\Model\AbstractModel;
 
-class Label extends AbstractModel implements
-    LabelInterface,
-    ModuleComponentInterface
+class Label extends AbstractModel implements LabelInterface
 {
-    use FormatterTrait;
-
     /**
      * @return void
      */
     public function _construct()
     {
-        $this->_init(LabelResourceModel::class);
+        $this->_init(LabelResource::class);
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getCreatedAt(): string
     {
@@ -49,18 +41,16 @@ class Label extends AbstractModel implements
     }
 
     /**
-     * @param string $createdAt
-     * @return $this
+     * {@inheritdoc}
      */
     public function setCreatedAt($createdAt): LabelInterface
     {
         $this->setData('created_at', $createdAt);
-
         return $this;
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getImage(): ?string
     {
@@ -68,18 +58,16 @@ class Label extends AbstractModel implements
     }
 
     /**
-     * @param string|null $image
-     * @return $this
+     * {@inheritdoc}
      */
     public function setImage(?string $image): LabelInterface
     {
         $this->setData('image', $image);
-
         return $this;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getTrackingNumber(): string
     {
@@ -87,13 +75,11 @@ class Label extends AbstractModel implements
     }
 
     /**
-     * @param string $trackingNumber
-     * @return $this
+     * {@inheritdoc}
      */
     public function setTrackingNumber(string $trackingNumber): LabelInterface
     {
         $this->setData('tracking_number', $trackingNumber);
-
         return $this;
     }
 }
