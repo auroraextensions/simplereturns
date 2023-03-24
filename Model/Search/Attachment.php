@@ -10,43 +10,38 @@
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package     AuroraExtensions\SimpleReturns\Model\SearchModel
+ * @package     AuroraExtensions\SimpleReturns\Model\Search
  * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
  * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\SearchModel;
+namespace AuroraExtensions\SimpleReturns\Model\Search;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\AttachmentRepositoryInterface,
-    Api\Data\AttachmentInterface,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\FilterBuilder,
-    Api\SearchCriteriaBuilder,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException
-};
+use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Exception\LocalizedException;
+use Throwable;
 
 use function __;
 use function array_values;
 
-class Attachment implements ModuleComponentInterface
+class Attachment
 {
     /** @var AttachmentRepositoryInterface $attachmentRepository */
-    protected $attachmentRepository;
+    private $attachmentRepository;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var FilterBuilder $filterBuilder */
-    protected $filterBuilder;
+    private $filterBuilder;
 
     /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
-    protected $searchCriteriaBuilder;
+    private $searchCriteriaBuilder;
 
     /**
      * @param AttachmentRepositoryInterface $attachmentRepository
@@ -89,21 +84,19 @@ class Attachment implements ModuleComponentInterface
             /** @var AttachmentInterface[] $attachments */
             $attachments = $this->getRecordsByFilters($filters);
 
-            if (!empty($attachments)) {
-                return $attachments;
+            if (empty($attachments)) {
+                /** @var LocalizedException $exception */
+                $exception = $this->exceptionFactory->create(
+                    LocalizedException::class,
+                    __('Unable to locate any matching attachments.')
+                );
+                throw $exception;
             }
 
-            /** @var NoSuchEntityException $exception */
-            $exception = $this->exceptionFactory->create(
-                LocalizedException::class,
-                __('Unable to locate any matching attachments.')
-            );
-            throw $exception;
-        } catch (NoSuchEntityException | LocalizedException $e) {
-            /* No action required. */
+            return $attachments;
+        } catch (Throwable $e) {
+            return [];
         }
-
-        return [];
     }
 
     /**

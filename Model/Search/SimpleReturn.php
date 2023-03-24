@@ -10,43 +10,38 @@
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package     AuroraExtensions\SimpleReturns\Model\SearchModel
+ * @package     AuroraExtensions\SimpleReturns\Model\Search
  * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
  * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\SearchModel;
+namespace AuroraExtensions\SimpleReturns\Model\Search;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\SimpleReturnInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\FilterBuilder,
-    Api\SearchCriteriaBuilder,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException
-};
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Exception\LocalizedException;
+use Throwable;
 
 use function __;
 use function array_values;
 
-class SimpleReturn implements ModuleComponentInterface
+class SimpleReturn
 {
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var FilterBuilder $filterBuilder */
-    protected $filterBuilder;
+    private $filterBuilder;
 
     /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
-    protected $searchCriteriaBuilder;
+    private $searchCriteriaBuilder;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /**
      * @param ExceptionFactory $exceptionFactory
@@ -89,21 +84,19 @@ class SimpleReturn implements ModuleComponentInterface
             /** @var SimpleReturnInterface[] $rmas */
             $rmas = $this->getSimpleReturnsByFilters($filters);
 
-            if (!empty($rmas)) {
-                return $rmas;
+            if (empty($rmas)) {
+                /** @var LocalizedException $exception */
+                $exception = $this->exceptionFactory->create(
+                    LocalizedException::class,
+                    __('Unable to locate any matching RMAs.')
+                );
+                throw $exception;
             }
 
-            /** @var NoSuchEntityException $exception */
-            $exception = $this->exceptionFactory->create(
-                LocalizedException::class,
-                __('Unable to locate any matching RMAs.')
-            );
-            throw $exception;
-        } catch (NoSuchEntityException | LocalizedException $e) {
-            /* No action required. */
+            return $rmas;
+        } catch (Throwable $e) {
+            return [];
         }
-
-        return [];
     }
 
     /**
