@@ -52,6 +52,28 @@
     <preference for="AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface"
                 type="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config"/>
 
+    <type name="AuroraExtensions\SimpleReturns\Setup\Patch\Data\CreateSimpleReturnProductAttribute">
+        <arguments>
+            <argument name="eavConfig" xsi:type="array">
+                <item name="type" xsi:type="const">Magento\Framework\Reflection\TypeProcessor::NORMALIZED_INT_TYPE</item>
+                <item name="input" xsi:type="const">Magento\Framework\Reflection\TypeProcessor::NORMALIZED_BOOLEAN_TYPE</item>
+                <item name="label" xsi:type="string" translate="true">Returnable</item>
+                <item name="global" xsi:type="const">Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL</item>
+                <item name="frontend" xsi:type="null"/>
+                <item name="source" xsi:type="string">Magento\Eav\Model\Entity\Attribute\Source\Boolean</item>
+                <item name="visible" xsi:type="boolean">true</item>
+                <item name="required" xsi:type="boolean">false</item>
+                <item name="user_defined" xsi:type="boolean">true</item>
+                <item name="default" xsi:type="number">0</item>
+                <item name="searchable" xsi:type="boolean">false</item>
+                <item name="filterable" xsi:type="boolean">false</item>
+                <item name="comparable" xsi:type="boolean">false</item>
+                <item name="visible_on_front" xsi:type="boolean">false</item>
+                <item name="unique" xsi:type="boolean">false</item>
+                <item name="apply_to" xsi:type="null"/>
+            </argument>
+        </arguments>
+    </type>
     <type name="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config">
         <arguments>
             <argument name="data" xsi:type="array">
