@@ -4,58 +4,62 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\Management
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ManagementModel;
+namespace AuroraExtensions\SimpleReturns\Model\Management;
 
-use AuroraExtensions\SimpleReturns\{
-    Api\SimpleReturnManagementInterface,
-    Api\Data\SimpleReturnInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    HTTP\PhpEnvironment\RemoteAddress
-};
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnManagementInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
-class SimpleReturnManagement implements SimpleReturnManagementInterface, ModuleComponentInterface
+use function is_numeric;
+
+class SimpleReturnManagement implements SimpleReturnManagementInterface
 {
-    /** @property OrderRepositoryInterface $orderRepository */
-    protected $orderRepository;
+    /** @var LoggerInterface $logger */
+    private $logger;
 
-    /** @property RemoteAddress $remoteAddress */
-    protected $remoteAddress;
+    /** @var OrderRepositoryInterface $orderRepository */
+    private $orderRepository;
 
-    /** @property SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    /** @var RemoteAddress $remoteAddress */
+    private $remoteAddress;
+
+    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
+    private $simpleReturnRepository;
 
     /**
      * @param OrderRepositoryInterface $orderRepository
      * @param RemoteAddress $remoteAddress
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param LoggerInterface $logger
      * @return void
      */
     public function __construct(
         OrderRepositoryInterface $orderRepository,
         RemoteAddress $remoteAddress,
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        LoggerInterface $logger
     ) {
         $this->orderRepository = $orderRepository;
         $this->remoteAddress = $remoteAddress;
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -68,40 +72,34 @@ class SimpleReturnManagement implements SimpleReturnManagementInterface, ModuleC
     public function addOrderComment(
         SimpleReturnInterface $rma,
         string $comment
-    ): bool
-    {
+    ): bool {
         /** @var int|string|null $orderId */
         $orderId = $rma->getOrderId();
-        $orderId = $orderId !== null && is_numeric($orderId)
-            ? (int) $orderId
-            : null;
+        $orderId = is_numeric($orderId) ? (int) $orderId : null;
 
-        if ($orderId !== null) {
-            try {
-                /** @var OrderInterface $order */
-                $order = $this->orderRepository->get($orderId);
+        if ($orderId === null) {
+            return false;
+        }
 
-                if ($order->getId()) {
-                    /* Insert comment and update order. */
-                    $order->addStatusHistoryComment($comment);
-                    $this->orderRepository->save($order);
+        try {
+            /** @var OrderInterface $order */
+            $order = $this->orderRepository->get($orderId);
 
-                    return true;
-                }
-
+            if (!$order->getId()) {
                 /** @var LocalizedException $exception */
                 $exception = $this->exceptionFactory->create(
                     LocalizedException::class
                 );
-
                 throw $exception;
-            } catch (NoSuchEntityException $e) {
-                /* No action required. */
-            } catch (LocalizedException $e) {
-                /* No action required. */
             }
-        }
 
-        return false;
+            /* Insert comment and update order. */
+            $order->addStatusHistoryComment($comment);
+            $this->orderRepository->save($order);
+            return true;
+        } catch (Throwable $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
     }
 }

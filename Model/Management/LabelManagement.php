@@ -4,29 +4,29 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\Management
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ManagementModel;
+namespace AuroraExtensions\SimpleReturns\Model\Management;
 
-use AuroraExtensions\SimpleReturns\{
-    Api\LabelManagementInterface,
-    Api\Data\LabelInterface,
-    Api\Data\LabelInterfaceFactory,
-    Shared\ModuleComponentInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface;
+use AuroraExtensions\SimpleReturns\Api\LabelManagementInterface;
 
-class LabelManagement implements LabelManagementInterface, ModuleComponentInterface
+use function base64_encode;
+
+class LabelManagement implements LabelManagementInterface
 {
+    private const PREFIX_DATAURI = 'data:image/jpeg;base64,';
+
     /**
      * Get image as data URI.
      *

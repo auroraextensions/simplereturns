@@ -10,50 +10,40 @@
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package     AuroraExtensions\SimpleReturns\Model\ManagementModel
+ * @package     AuroraExtensions\SimpleReturns\Model\Management
  * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
  * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ManagementModel;
+namespace AuroraExtensions\SimpleReturns\Model\Management;
 
 use AuroraExtensions\ModuleComponents\Component\Log\LoggerTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\PackageManagementInterface,
-    Api\PackageRepositoryInterface,
-    Api\Data\LabelInterface,
-    Api\Data\LabelInterfaceFactory,
-    Api\Data\PackageInterface,
-    Api\Data\SimpleReturnInterface,
-    Api\LabelRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Model\Security\Token as Tokenizer,
-    Model\AdapterModel\Shipping\Carrier\CarrierFactory,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\ModuleComponentInterface
-};
-use Magento\Directory\{
-    Helper\Data as DirectoryHelper,
-    Model\ResourceModel\Region\CollectionFactory as RegionCollectionFactory
-};
-use Magento\Framework\{
-    DataObject,
-    DataObject\Factory as DataObjectFactory,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    HTTP\PhpEnvironment\RemoteAddress,
-    Message\ManagerInterface as MessageManagerInterface
-};
-use Magento\Sales\{
-    Api\Data\OrderInterface,
-    Api\OrderRepositoryInterface
-};
-use Magento\Shipping\{
-    Model\Shipment\RequestFactory as ShipmentRequestFactory,
-    Model\Shipment\ReturnShipment
-};
+use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\LabelInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageManagementInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Shipping\Carrier\CarrierFactory;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use Magento\Directory\Helper\Data as DirectoryHelper;
+use Magento\Directory\Model\ResourceModel\Region\CollectionFactory as RegionCollectionFactory;
+use Magento\Framework\DataObject;
+use Magento\Framework\DataObject\Factory as DataObjectFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Shipping\Model\Shipment\RequestFactory as ShipmentRequestFactory;
+use Magento\Shipping\Model\Shipment\ReturnShipment;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -66,54 +56,62 @@ use function is_array;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PackageManagement implements PackageManagementInterface, ModuleComponentInterface
+class PackageManagement implements PackageManagementInterface
 {
+    /**
+     * @var LoggerInterface $logger
+     * @method LoggerInterface getLogger()
+     */
     use LoggerTrait;
 
+    private const ADDRESS_FIELD_DELIMITER = ',';
+    private const FORMAT_RMA_ORDER_COMMENT = 'RMA for Order #%1';
+    private const FORMAT_RMA_REQUEST_COMMENT = 'A return label was generated from [%1] with tracking number %2';
+
     /** @var CarrierFactory $carrierFactory */
-    protected $carrierFactory;
+    private $carrierFactory;
 
     /** @var DataObjectFactory $dataObjectFactory */
-    protected $dataObjectFactory;
+    private $dataObjectFactory;
 
     /** @var DirectoryHelper $directoryHelper */
-    protected $directoryHelper;
+    private $directoryHelper;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var LabelInterfaceFactory $labelFactory */
-    protected $labelFactory;
+    private $labelFactory;
 
     /** @var LabelRepositoryInterface $labelRepository */
-    protected $labelRepository;
+    private $labelRepository;
 
     /** @var MessageManagerInterface $messageManager */
-    protected $messageManager;
+    private $messageManager;
 
     /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var OrderRepositoryInterface $orderRepository */
-    protected $orderRepository;
+    private $orderRepository;
 
     /** @var PackageRepositoryInterface $packageRepository */
-    protected $packageRepository;
+    private $packageRepository;
 
     /** @var RegionCollectionFactory $regionCollectionFactory */
-    protected $regionCollectionFactory;
+    private $regionCollectionFactory;
 
     /** @var RemoteAddress $remoteAddress */
-    protected $remoteAddress;
+    private $remoteAddress;
 
     /** @var ShipmentRequestFactory $shipmentRequestFactory */
-    protected $shipmentRequestFactory;
+    private $shipmentRequestFactory;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var StoreManagerInterface $storeManager */
-    protected $storeManager;
+    private $storeManager;
 
     /**
      * @param CarrierFactory $carrierFactory
@@ -343,8 +341,7 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
                 /** @var string|null $companyName */
                 $companyName = $shipperAddress->getCompany();
                 $companyName = !empty($companyName)
-                    ? $companyName
-                    : $order->getCustomerName();
+                    ? $companyName : $order->getCustomerName();
 
                 /** @var ShipmentRequest $shipmentRequest */
                 $shipmentRequest = $this->shipmentRequestFactory->create();
@@ -474,8 +471,10 @@ class PackageManagement implements PackageManagementInterface, ModuleComponentIn
      * @param int $store
      * @return float
      */
-    public function getPackageWeight(OrderInterface $order, int $store): float
-    {
+    public function getPackageWeight(
+        OrderInterface $order,
+        int $store = Store::DEFAULT_STORE_ID
+    ): float {
         /** @var float $weight */
         $weight = (float)(
             $order->getWeight()

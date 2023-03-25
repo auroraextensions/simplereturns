@@ -18,7 +18,7 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnManagementInterface"
-                type="AuroraExtensions\SimpleReturns\Model\ManagementModel\SimpleReturnManagement"/>
+                type="AuroraExtensions\SimpleReturns\Model\Management\SimpleReturnManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface"
@@ -26,7 +26,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface"
                 type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageManagementInterface"
-                type="AuroraExtensions\SimpleReturns\Model\ManagementModel\PackageManagement"/>
+                type="AuroraExtensions\SimpleReturns\Model\Management\PackageManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\PackageRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageInterface"
@@ -34,7 +34,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterface"
                 type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelManagementInterface"
-                type="AuroraExtensions\SimpleReturns\Model\ManagementModel\LabelManagement"/>
+                type="AuroraExtensions\SimpleReturns\Model\Management\LabelManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\LabelRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface"
@@ -42,7 +42,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface"
                 type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentManagementInterface"
-                type="AuroraExtensions\SimpleReturns\Model\ManagementModel\AttachmentManagement"/>
+                type="AuroraExtensions\SimpleReturns\Model\Management\AttachmentManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface"
                 type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AttachmentRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface"
