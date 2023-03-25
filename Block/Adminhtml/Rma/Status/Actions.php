@@ -4,41 +4,44 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma\Status
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma\Status;
 
-use AuroraExtensions\SimpleReturns\{
-    Model\Security\Token as Tokenizer,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\ModuleComponentInterface
-};
-use Magento\Backend\{
-    Block\Widget\Button\SplitButton,
-    Block\Widget\Context,
-    Block\Widget\Container
-};
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use Magento\Backend\Block\Widget\Button\SplitButton;
+use Magento\Backend\Block\Widget\Container;
+use Magento\Backend\Block\Widget\Context;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Form\FormKey;
 
-class Actions extends Container implements ModuleComponentInterface
+use function __;
+use function is_numeric;
+
+class Actions extends Container
 {
-    /** @property string $_blockGroup */
+    private const FORM_KEY = 'form_key';
+    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_TOKEN = 'token';
+
+    /** @var string $_blockGroup */
     protected $_blockGroup = 'AuroraExtensions_SimpleReturns';
 
-    /** @property FormKey $formKey */
+    /** @var FormKey $formKey */
     protected $formKey;
 
-    /** @property ModuleConfig $moduleConfig */
+    /** @var ModuleConfig $moduleConfig */
     protected $moduleConfig;
 
     /**
@@ -71,7 +74,6 @@ class Actions extends Container implements ModuleComponentInterface
         $this->_objectId = 'simplereturns_rma_status_actions';
         $this->_controller = 'adminhtml_rma_status';
         $this->setId('simplereturns_rma_status_actions');
-
         $this->buttonList->add(
             'simplereturns_rma_status_actions',
             [
@@ -87,19 +89,17 @@ class Actions extends Container implements ModuleComponentInterface
     /**
      * @return array
      */
-    protected function getStatusOptions(): array
+    private function getStatusOptions(): array
     {
         /** @var array $options */
         $options = [];
 
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
         /** @var int|string|null $rmaId */
         $rmaId = $request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
         /** @var array $statuses */
         $statuses = $this->moduleConfig->getStatuses();
@@ -130,30 +130,26 @@ class Actions extends Container implements ModuleComponentInterface
      */
     protected function getActionUrl(): ?string
     {
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
         /** @var int|string|null $rmaId */
         $rmaId = $request->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
-        if ($rmaId !== null) {
-            /** @var string|null $token */
-            $token = $request->getParam(self::PARAM_TOKEN);
-            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
+        /** @var string|null $token */
+        $token = $request->getParam(self::PARAM_TOKEN);
+        $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
-            if ($token !== null) {
-                return $this->getUrl(
-                    'simplereturns/rma_status/editPost',
-                    [
-                        'form_key' => $this->formKey->getFormKey(),
-                        'rma_id' => $rmaId,
-                        'token' => $token,
-                    ]
-                );
-            }
+        if ($rmaId !== null && $token !== null) {
+            return $this->getUrl(
+                'simplereturns/rma_status/editPost',
+                [
+                    self::FORM_KEY => $this->formKey->getFormKey(),
+                    self::PARAM_RMA_ID => $rmaId,
+                    self::PARAM_TOKEN => $token,
+                ]
+            );
         }
 
         return null;

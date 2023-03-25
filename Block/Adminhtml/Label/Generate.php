@@ -19,26 +19,22 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Block\Adminhtml\Label;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\PackageInterface,
-    Api\PackageRepositoryInterface,
-    Model\Security\Token as Tokenizer,
-    Shared\ModuleComponentInterface
-};
-use Magento\Backend\{
-    Block\Widget\Context,
-    Block\Widget\Container
-};
-use Magento\Framework\{
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException
-};
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use Magento\Backend\Block\Widget\Container;
+use Magento\Backend\Block\Widget\Context;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 use function __;
 use function is_numeric;
 
-class Generate extends Container implements ModuleComponentInterface
+class Generate extends Container
 {
+    private const PARAM_PKG_ID = 'pkg_id';
+    private const PARAM_TOKEN = 'token';
+
     /** @var string $_blockGroup */
     protected $_blockGroup = 'AuroraExtensions_SimpleReturns';
 
@@ -158,8 +154,8 @@ class Generate extends Container implements ModuleComponentInterface
             $targetUrl = $this->getUrl(
                 'simplereturns/label/generate',
                 [
-                    'pkg_id' => $pkgId,
-                    'token' => $token,
+                    self::PARAM_PKG_ID => $pkgId,
+                    self::PARAM_TOKEN => $token,
                 ]
             );
             return "(function(){window.location.href='{$targetUrl}';})();";
