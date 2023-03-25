@@ -52,6 +52,23 @@ class SimpleReturn extends AbstractModel implements SimpleReturnInterface
     /**
      * {@inheritdoc}
      */
+    public function getUuid(): string
+    {
+        return $this->getData('uuid');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUuid(string $uuid): SimpleReturnInterface
+    {
+        $this->setData('uuid', $uuid);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPackageId(): ?int
     {
         return (int) $this->getData('pkg_id') ?: null;
