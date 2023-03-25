@@ -4,32 +4,33 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Aurora Extensions EULA,
- * which is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the MIT license, which
+ * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       Aurora Extensions EULA
+ * @package     AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma;
 
-use AuroraExtensions\SimpleReturns\{
-    Model\Security\Token as Tokenizer,
-    Shared\ModuleComponentInterface
-};
-use Magento\Backend\{
-    Block\Widget\Context,
-    Block\Widget\Container
-};
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use Magento\Backend\Block\Widget\Container;
+use Magento\Backend\Block\Widget\Context;
 
-class Edit extends Container implements ModuleComponentInterface
+use function __;
+use function is_numeric;
+
+class Edit extends Container
 {
-    /** @property string $_blockGroup */
+    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_TOKEN = 'token';
+
+    /** @var string $_blockGroup */
     protected $_blockGroup = 'AuroraExtensions_SimpleReturns';
 
     /**
@@ -56,7 +57,6 @@ class Edit extends Container implements ModuleComponentInterface
         $this->_objectId = 'simplereturns_rma_edit';
         $this->_controller = 'adminhtml_rma';
         $this->setId('simplereturns_rma_edit');
-
         $this->addButton(
             'simplereturns_rma_edit',
             [
@@ -75,27 +75,22 @@ class Edit extends Container implements ModuleComponentInterface
     {
         /** @var int|string|null $rmaId */
         $rmaId = $this->getRequest()->getParam(self::PARAM_RMA_ID);
-        $rmaId = $rmaId !== null && is_numeric($rmaId)
-            ? (int) $rmaId
-            : null;
+        $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
-        if ($rmaId !== null) {
-            /** @var string|null $token */
-            $token = $this->getRequest()->getParam(self::PARAM_TOKEN);
-            $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
+        /** @var string|null $token */
+        $token = $this->getRequest()->getParam(self::PARAM_TOKEN);
+        $token = $token !== null && Tokenizer::isHex($token) ? $token : null;
 
-            if ($token !== null) {
-                /** @var string $targetUrl */
-                $targetUrl = $this->getUrl(
-                    'simplereturns/rma/edit',
-                    [
-                        'rma_id' => $rmaId,
-                        'token' => $token,
-                    ]
-                );
-
-                return "(function(){window.location='{$targetUrl}';})();";
-            }
+        if ($rmaId !== null && $token !== null) {
+            /** @var string $targetUrl */
+            $targetUrl = $this->getUrl(
+                'simplereturns/rma/edit',
+                [
+                    self::PARAM_RMA_ID => $rmaId,
+                    self::PARAM_TOKEN => $token,
+                ]
+            );
+            return "(function(){window.location.href='{$targetUrl}';})();";
         }
 
         return null;

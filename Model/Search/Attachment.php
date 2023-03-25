@@ -1,6 +1,6 @@
 <?php
 /**
- * SimpleReturn.php
+ * Attachment.php
  *
  * NOTICE OF LICENSE
  *
@@ -10,68 +10,63 @@
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package     AuroraExtensions\SimpleReturns\Model\SearchModel
+ * @package     AuroraExtensions\SimpleReturns\Model\Search
  * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
  * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\SearchModel;
+namespace AuroraExtensions\SimpleReturns\Model\Search;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\SimpleReturnInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    Api\FilterBuilder,
-    Api\SearchCriteriaBuilder,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException
-};
+use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Exception\LocalizedException;
+use Throwable;
 
 use function __;
 use function array_values;
 
-class SimpleReturn implements ModuleComponentInterface
+class Attachment
 {
+    /** @var AttachmentRepositoryInterface $attachmentRepository */
+    private $attachmentRepository;
+
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var FilterBuilder $filterBuilder */
-    protected $filterBuilder;
+    private $filterBuilder;
 
     /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
-    protected $searchCriteriaBuilder;
-
-    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $searchCriteriaBuilder;
 
     /**
+     * @param AttachmentRepositoryInterface $attachmentRepository
      * @param ExceptionFactory $exceptionFactory
      * @param FilterBuilder $filterBuilder
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @return void
      */
     public function __construct(
+        AttachmentRepositoryInterface $attachmentRepository,
         ExceptionFactory $exceptionFactory,
         FilterBuilder $filterBuilder,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        SimpleReturnRepositoryInterface $simpleReturnRepository
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
+        $this->attachmentRepository = $attachmentRepository;
         $this->exceptionFactory = $exceptionFactory;
         $this->filterBuilder = $filterBuilder;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->simpleReturnRepository = $simpleReturnRepository;
     }
 
     /**
      * @param array $fields
-     * @return SimpleReturnInterface[]
+     * @return AttachmentInterface[]
      */
-    public function getSimpleReturnsByFields(array $fields = []): array
+    public function getRecordsByFields(array $fields = []): array
     {
         /** @var array $filters */
         $filters = [];
@@ -86,39 +81,37 @@ class SimpleReturn implements ModuleComponentInterface
         }
 
         try {
-            /** @var SimpleReturnInterface[] $rmas */
-            $rmas = $this->getSimpleReturnsByFilters($filters);
+            /** @var AttachmentInterface[] $attachments */
+            $attachments = $this->getRecordsByFilters($filters);
 
-            if (!empty($rmas)) {
-                return $rmas;
+            if (empty($attachments)) {
+                /** @var LocalizedException $exception */
+                $exception = $this->exceptionFactory->create(
+                    LocalizedException::class,
+                    __('Unable to locate any matching attachments.')
+                );
+                throw $exception;
             }
 
-            /** @var NoSuchEntityException $exception */
-            $exception = $this->exceptionFactory->create(
-                LocalizedException::class,
-                __('Unable to locate any matching RMAs.')
-            );
-            throw $exception;
-        } catch (NoSuchEntityException | LocalizedException $e) {
-            /* No action required. */
+            return $attachments;
+        } catch (Throwable $e) {
+            return [];
         }
-
-        return [];
     }
 
     /**
      * @param array $filters
      * @return array
      */
-    public function getSimpleReturnsByFilters(array $filters = []): array
+    public function getRecordsByFilters(array $filters = []): array
     {
         /** @var SearchCriteria $criteria */
         $criteria = $this->searchCriteriaBuilder
             ->addFilters($filters)
             ->create();
 
-        /** @var SimpleReturnInterface[] $items */
-        $items = $this->simpleReturnRepository
+        /** @var AttachmentInterface[] $items */
+        $items = $this->attachmentRepository
             ->getList($criteria)
             ->getItems();
 

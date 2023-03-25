@@ -4,58 +4,58 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\Management
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ManagementModel;
+namespace AuroraExtensions\SimpleReturns\Model\Management;
 
-use AuroraExtensions\SimpleReturns\{
-    Api\AttachmentManagementInterface,
-    Api\Data\AttachmentInterface,
-    Api\Data\AttachmentInterfaceFactory,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Filesystem\DirectoryList,
-    Filesystem,
-    Filesystem\Io\File as FileHandler,
-    UrlInterface
-};
+use AuroraExtensions\SimpleReturns\Api\AttachmentManagementInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterfaceFactory;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Io\File;
+use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
-class AttachmentManagement implements AttachmentManagementInterface, ModuleComponentInterface
+use function base64_encode;
+use function rtrim;
+
+class AttachmentManagement implements AttachmentManagementInterface
 {
-    /** @property Filesystem $filesystem */
-    protected $filesystem;
+    private const SAVE_PATH = '/simplereturns/';
 
-    /** @property FileHandler $fileHandler */
-    protected $fileHandler;
+    /** @var Filesystem $filesystem */
+    private $filesystem;
 
-    /** @property StoreManagerInterface $storeManager */
-    protected $storeManager;
+    /** @var File $file */
+    private $file;
+
+    /** @var StoreManagerInterface $storeManager */
+    private $storeManager;
 
     /**
+     * @param File $file
      * @param Filesystem $filesystem
-     * @param FileHandler $fileHandler
      * @param StoreManagerInterface $storeManager
      * @return void
      */
     public function __construct(
+        File $file,
         Filesystem $filesystem,
-        FileHandler $fileHandler,
         StoreManagerInterface $storeManager
     ) {
+        $this->file = $file;
         $this->filesystem = $filesystem;
-        $this->fileHandler = $fileHandler;
         $this->storeManager = $storeManager;
     }
 
@@ -75,9 +75,8 @@ class AttachmentManagement implements AttachmentManagementInterface, ModuleCompo
         $realPath = $this->getSavePath() . $filePath;
 
         /** @var string|bool $fileData */
-        $fileData = $this->fileHandler->read($realPath);
+        $fileData = $this->file->read($realPath);
         $fileData = $fileData !== false ? base64_encode($fileData) : '';
-
         return 'data:' . $attachment->getMimeType() . ';base64,' . $fileData;
     }
 
@@ -98,7 +97,6 @@ class AttachmentManagement implements AttachmentManagementInterface, ModuleCompo
         /** @var string $mediaUrl */
         $mediaUrl = $baseUrl . self::SAVE_PATH;
         $mediaUrl = rtrim($mediaUrl, '/');
-
         return ($mediaUrl . $attachment->getFilePath());
     }
 
@@ -112,7 +110,6 @@ class AttachmentManagement implements AttachmentManagementInterface, ModuleCompo
             ->getDirectoryRead(DirectoryList::MEDIA)
             ->getAbsolutePath();
         $mediaPath = rtrim($mediaPath, '/');
-
         return $mediaPath;
     }
 
@@ -127,7 +124,6 @@ class AttachmentManagement implements AttachmentManagementInterface, ModuleCompo
         /** @var string $savePath */
         $savePath = $mediaPath . self::SAVE_PATH;
         $savePath = rtrim($savePath, '/');
-
         return $savePath;
     }
 }
