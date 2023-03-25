@@ -4,44 +4,36 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package        AuroraExtensions_SimpleReturns
- * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license        MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\Email\Transport
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\Email\Transport;
 
-use AuroraExtensions\SimpleReturns\{
-    Model\SystemModel\Config\Module as ModuleConfig,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Area,
-    App\Config\ScopeConfigInterface,
-    Mail\Template\TransportBuilder
-};
-use Magento\Store\{
-    Model\ScopeInterface,
-    Model\StoreManagerInterface
-};
+use Magento\Framework\App\Area;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Mail\Template\TransportBuilder;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
-class Customer implements ModuleComponentInterface
+class Customer
 {
-    /** @property ScopeConfigInterface $scopeConfig */
-    protected $scopeConfig;
+    /** @var ScopeConfigInterface $scopeConfig */
+    private $scopeConfig;
 
-    /** @property StoreManagerInterface $storeManager */
-    protected $storeManager;
+    /** @var StoreManagerInterface $storeManager */
+    private $storeManager;
 
-    /** @property TransportBuilder $transportBuilder */
-    protected $transportBuilder;
+    /** @var TransportBuilder $transportBuilder */
+    private $transportBuilder;
 
     /**
      * @param ScopeConfigInterface $scopeConfig
@@ -65,7 +57,7 @@ class Customer implements ModuleComponentInterface
      * @param array $params
      * @param int $storeId
      * @return $this
-     * @see Magento\Customer\Model\Customer::_sendEmailTemplate()
+     * @see \Magento\Customer\Model\Customer::_sendEmailTemplate()
      */
     public function send(
         string $template,
