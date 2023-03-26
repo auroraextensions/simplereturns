@@ -20,96 +20,94 @@ namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Package;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\PackageInterface,
-    Api\Data\PackageInterfaceFactory,
-    Api\Data\SimpleReturnInterface,
-    Api\Data\SimpleReturnInterfaceFactory,
-    Api\PackageManagementInterface,
-    Api\PackageRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Component\System\ModuleConfigTrait,
-    Model\Security\Token as Tokenizer,
-    Model\Email\Transport\Customer as EmailTransport,
-    Shared\ModuleComponentInterface,
-    Csi\System\Module\ConfigInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\PackageManagementInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use DateTime;
 use DateTimeFactory;
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpPostActionInterface,
-    App\Filesystem\DirectoryList,
-    Controller\Result\JsonFactory as ResultJsonFactory,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Escaper,
-    Exception\AlreadyExistsException,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Filesystem,
-    HTTP\PhpEnvironment\RemoteAddress,
-    Serialize\Serializer\Json,
-    Stdlib\DateTime as StdlibDateTime,
-    UrlInterface
-};
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Json as ResultJson;
+use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
+use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
+use Magento\Framework\Escaper;
+use Magento\Framework\Exception\AlreadyExistsException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Filesystem;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
+use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Model\File\UploaderFactory;
+use Throwable;
 
 use function __;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreatePost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class CreatePost extends Action implements HttpPostActionInterface
 {
     use ModuleConfigTrait, RedirectTrait;
 
+    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_TOKEN = 'token';
+
     /** @var DateTimeFactory $dateTimeFactory */
-    protected $dateTimeFactory;
+    private $dateTimeFactory;
 
     /** @var EmailTransport $emailTransport */
-    protected $emailTransport;
+    private $emailTransport;
 
     /** @var Escaper $escaper */
-    protected $escaper;
+    private $escaper;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
+    private $formKeyValidator;
 
     /** @var ConfigInterface $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var PackageInterfaceFactory $packageFactory */
-    protected $packageFactory;
+    private $packageFactory;
 
     /** @var PackageManagementInterface $packageManagement */
-    protected $packageManagement;
+    private $packageManagement;
 
     /** @var PackageRepositoryInterface $packageRepository */
-    protected $packageRepository;
+    private $packageRepository;
 
     /** @var RemoteAddress $remoteAddress */
-    protected $remoteAddress;
+    private $remoteAddress;
 
     /** @var ResultJsonFactory $resultJsonFactory */
-    protected $resultJsonFactory;
+    private $resultJsonFactory;
 
     /** @var Json $serializer */
-    protected $serializer;
+    private $serializer;
 
     /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
-    protected $simpleReturnFactory;
+    private $simpleReturnFactory;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param Context $context
@@ -173,13 +171,13 @@ class CreatePost extends Action implements
      */
     public function execute()
     {
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
         /** @var array $response */
         $response = [];
 
-        /** @var Magento\Framework\Controller\Result\Json $resultJson */
+        /** @var ResultJson $resultJson */
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
@@ -295,7 +293,7 @@ class CreatePost extends Action implements
                 'message' => __('Successfully created package for return shipment.'),
                 'viewUrl' => $viewUrl,
             ]);
-        } catch (AlreadyExistsException | LocalizedException $e) {
+        } catch (Throwable $e) {
             $response = [
                 'error' => true,
                 'message' => $e->getMessage(),
