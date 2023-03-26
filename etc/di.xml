@@ -20,7 +20,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnManagementInterface"
                 type="AuroraExtensions\SimpleReturns\Model\Management\SimpleReturnManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface"
-                type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\SimpleReturnRepository"/>
+                type="AuroraExtensions\SimpleReturns\Model\Repository\SimpleReturnRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface"
                 type="AuroraExtensions\SimpleReturns\Model\Data\SimpleReturn"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnSearchResultsInterface"
@@ -28,7 +28,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageManagementInterface"
                 type="AuroraExtensions\SimpleReturns\Model\Management\PackageManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface"
-                type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\PackageRepository"/>
+                type="AuroraExtensions\SimpleReturns\Model\Repository\PackageRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageInterface"
                 type="AuroraExtensions\SimpleReturns\Model\Data\Package"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\PackageSearchResultsInterface"
@@ -36,7 +36,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelManagementInterface"
                 type="AuroraExtensions\SimpleReturns\Model\Management\LabelManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\LabelRepositoryInterface"
-                type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\LabelRepository"/>
+                type="AuroraExtensions\SimpleReturns\Model\Repository\LabelRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelInterface"
                 type="AuroraExtensions\SimpleReturns\Model\Data\Label"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\LabelSearchResultsInterface"
@@ -44,7 +44,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentManagementInterface"
                 type="AuroraExtensions\SimpleReturns\Model\Management\AttachmentManagement"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface"
-                type="AuroraExtensions\SimpleReturns\Model\RepositoryModel\AttachmentRepository"/>
+                type="AuroraExtensions\SimpleReturns\Model\Repository\AttachmentRepository"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface"
                 type="AuroraExtensions\SimpleReturns\Model\Data\Attachment"/>
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentSearchResultsInterface"
