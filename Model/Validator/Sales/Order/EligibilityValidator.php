@@ -10,13 +10,13 @@
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package     AuroraExtensions\SimpleReturns\Model\ValidatorModel\Sales\Order
+ * @package     AuroraExtensions\SimpleReturns\Model\Validator\Sales\Order
  * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
  * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\ValidatorModel\Sales\Order;
+namespace AuroraExtensions\SimpleReturns\Model\Validator\Sales\Order;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
