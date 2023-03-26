@@ -20,33 +20,28 @@ namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\AttachmentInterface,
-    Api\Data\SimpleReturnInterface,
-    Api\AttachmentRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\Security\Token as Tokenizer,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpPostActionInterface,
-    App\Filesystem\DirectoryList,
-    Controller\Result\JsonFactory as ResultJsonFactory,
-    Controller\Result\Redirect as ResultRedirect,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Exception\AlreadyExistsException,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Filesystem,
-    HTTP\PhpEnvironment\RemoteAddress,
-    Serialize\Serializer\Json,
-    UrlInterface
-};
+use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Json as ResultJson;
+use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
+use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
+use Magento\Framework\Filesystem;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Model\File\UploaderFactory;
+use Throwable;
 
 use function __;
 use function is_numeric;
@@ -55,44 +50,47 @@ use function trim;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class DeletePost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class DeletePost extends Action implements HttpPostActionInterface
 {
+    /**
+     * @method Redirect getRedirect()
+     * @method Redirect getRedirectToPath()
+     * @method Redirect getRedirectToUrl()
+     */
     use RedirectTrait;
 
     /** @var AttachmentRepositoryInterface $attachmentRepository */
-    protected $attachmentRepository;
+    private $attachmentRepository;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var Filesystem $filesystem */
-    protected $filesystem;
+    private $filesystem;
 
     /** @var FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
+    private $formKeyValidator;
 
     /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var RemoteAddress $remoteAddress */
-    protected $remoteAddress;
+    private $remoteAddress;
 
     /** @var ResultJsonFactory $resultJsonFactory */
-    protected $resultJsonFactory;
+    private $resultJsonFactory;
 
     /** @var Json $serializer */
-    protected $serializer;
+    private $serializer;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param Context $context
@@ -143,9 +141,7 @@ class DeletePost extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_attachment_deletePost action.
-     *
-     * @return Magento\Framework\Controller\Result\Json
+     * @return ResultJson
      */
     public function execute()
     {
@@ -158,10 +154,10 @@ class DeletePost extends Action implements
         /** @var array $response */
         $response = [];
 
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
-        /** @var Magento\Framework\Controller\Result\Json $resultJson */
+        /** @var ResultJson $resultJson */
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
@@ -188,21 +184,28 @@ class DeletePost extends Action implements
         $token = $data['token'] ?? null;
         $token = !empty($token) ? $token : null;
 
-        if ($rmaId !== null && $token !== null) {
-            /** @var string|null $fileKey */
-            $fileKey = $data['file_key'] ?? null;
-            $fileKey = $fileKey !== null && Tokenizer::isHex($fileKey)
-                ? trim($fileKey) : null;
+        /** @var string $content */
+        $content = $request->getContent()
+            ?? $this->serializer->serialize([]);
 
-            if ($fileKey !== null) {
-                try {
-                    /** @var AttachmentInterface $attachment */
-                    $attachment = $this->attachmentRepository->get($fileKey);
-                    $this->attachmentRepository->delete($attachment);
-                } catch (NoSuchEntityException | LocalizedException $e) {
-                    $error = true;
-                    $message = (string) __($e->getMessage());
-                }
+        /** @var array $data */
+        $data = (array) $this->serializer->unserialize($content);
+
+        /** @var string|null $fileKey */
+        $fileKey = $data['file_key'] ?? null;
+        $fileKey = $fileKey !== null && Tokenizer::isHex($fileKey)
+            ? trim($fileKey) : null;
+
+        if ($rmaId !== null && $token !== null
+            && $fileKey !== null
+        ) {
+            try {
+                /** @var AttachmentInterface $attachment */
+                $attachment = $this->attachmentRepository->get($fileKey);
+                $this->attachmentRepository->delete($attachment);
+            } catch (Throwable $e) {
+                $error = true;
+                $message = (string) __($e->getMessage());
             }
         }
 
