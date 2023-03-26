@@ -20,74 +20,54 @@ namespace AuroraExtensions\SimpleReturns\Controller\Label;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\PackageInterface,
-    Api\Data\PackageInterfaceFactory,
-    Api\Data\SimpleReturnInterface,
-    Api\Data\SimpleReturnInterfaceFactory,
-    Api\PackageManagementInterface,
-    Api\PackageRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Exception\Http\Request\InvalidTokenException,
-    Model\Security\Token as Tokenizer,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpGetActionInterface,
-    Controller\Result\Redirect as ResultRedirect,
-    Exception\AlreadyExistsException,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    HTTP\PhpEnvironment\RemoteAddress,
-    UrlInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageManagementInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Exception\Http\Request\InvalidTokenException;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Redirect as ResultRedirect;
+use Magento\Framework\UrlInterface;
+use Throwable;
 
 use function is_numeric;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Generate extends Action implements
-    HttpGetActionInterface,
-    ModuleComponentInterface
+class Generate extends Action implements HttpGetActionInterface
 {
+    /**
+     * @method ResultRedirect getRedirect()
+     * @method ResultRedirect getRedirectToPath()
+     * @method ResultRedirect getRedirectToUrl()
+     */
     use RedirectTrait;
 
-    /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private const PARAM_PKG_ID = 'pkg_id';
+    private const PARAM_TOKEN = 'token';
+    private const ROUTE_PATH = 'simplereturns/package/view';
 
-    /** @var PackageInterfaceFactory $packageFactory */
-    protected $packageFactory;
+    /** @var ExceptionFactory $exceptionFactory */
+    private $exceptionFactory;
 
     /** @var PackageManagementInterface $packageManagement */
-    protected $packageManagement;
+    private $packageManagement;
 
     /** @var PackageRepositoryInterface $packageRepository */
-    protected $packageRepository;
-
-    /** @var RemoteAddress $remoteAddress */
-    protected $remoteAddress;
-
-    /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
-    protected $simpleReturnFactory;
-
-    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $packageRepository;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param Context $context
      * @param ExceptionFactory $exceptionFactory
-     * @param PackageInterfaceFactory $packageFactory
      * @param PackageManagementInterface $packageManagement
      * @param PackageRepositoryInterface $packageRepository
-     * @param RemoteAddress $remoteAddress
-     * @param SimpleReturnInterfaceFactory $simpleReturnFactory
-     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
      *
@@ -96,22 +76,14 @@ class Generate extends Action implements
     public function __construct(
         Context $context,
         ExceptionFactory $exceptionFactory,
-        PackageInterfaceFactory $packageFactory,
         PackageManagementInterface $packageManagement,
         PackageRepositoryInterface $packageRepository,
-        RemoteAddress $remoteAddress,
-        SimpleReturnInterfaceFactory $simpleReturnFactory,
-        SimpleReturnRepositoryInterface $simpleReturnRepository,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
         $this->exceptionFactory = $exceptionFactory;
-        $this->packageFactory = $packageFactory;
         $this->packageManagement = $packageManagement;
         $this->packageRepository = $packageRepository;
-        $this->remoteAddress = $remoteAddress;
-        $this->simpleReturnFactory = $simpleReturnFactory;
-        $this->simpleReturnRepository = $simpleReturnRepository;
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -120,11 +92,11 @@ class Generate extends Action implements
      */
     public function execute()
     {
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
         if (!$request->isGet()) {
-            return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_PKG_VIEW);
+            return $this->getRedirectToPath(self::ROUTE_PATH);
         }
 
         /** @var int|string|null $pkgId */
@@ -161,15 +133,15 @@ class Generate extends Action implements
 
                 /** @var string $viewUrl */
                 $viewUrl = $this->urlBuilder->getUrl(
-                    'simplereturns/package/view',
+                    self::ROUTE_PATH,
                     $params
                 );
                 return $this->getRedirectToUrl($viewUrl);
-            } catch (InvalidTokenException | NoSuchEntityException | LocalizedException $e) {
+            } catch (Throwable $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_PKG_VIEW);
+        return $this->getRedirectToPath(self::ROUTE_PATH);
     }
 }
