@@ -28,25 +28,23 @@ use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
 use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
-use AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
-use Magento\Framework\Controller\Result\Redirect as ResultRedirect;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
-use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\UrlInterface;
+use Throwable;
 
 use function array_shift;
 use function is_numeric;
@@ -54,55 +52,70 @@ use function is_numeric;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class EditPost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class EditPost extends Action implements HttpPostActionInterface
 {
+    /**
+     * @var EventManagerInterface $eventManager
+     * @method void dispatchEvent()
+     * @method void dispatchEvents()
+     * ---
+     * @var ConfigInterface $moduleConfig
+     * @method ConfigInterface getConfig()
+     * ---
+     * @method Redirect getRedirect()
+     * @method Redirect getRedirectToPath()
+     * @method Redirect getRedirectToUrl()
+     */
     use EventManagerTrait,
         ModuleConfigTrait,
         RedirectTrait;
 
+    private const DATA_GROUP_KEY = 'simplereturns_group_key';
+    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_TOKEN = 'token';
+    private const ROUTE_PATH = 'sales/guest/view';
+
     /** @var AttachmentRepositoryInterface $attachmentRepository */
-    protected $attachmentRepository;
+    private $attachmentRepository;
 
     /** @var DataPersistorInterface $dataPersistor */
-    protected $dataPersistor;
+    private $dataPersistor;
 
     /** @var EmailTransport $emailTransport */
-    protected $emailTransport;
+    private $emailTransport;
 
     /** @var Escaper $escaper */
-    protected $escaper;
+    private $escaper;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
+    private $formKeyValidator;
 
     /** @var LabelManager $labelManager */
-    protected $labelManager;
+    private $labelManager;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var RemoteAddress $remoteAddress */
-    protected $remoteAddress;
+    private $remoteAddress;
 
     /** @var Json $serializer */
-    protected $serializer;
+    private $serializer;
 
     /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
-    protected $simpleReturnFactory;
+    private $simpleReturnFactory;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var Tokenizer $tokenizer */
-    protected $tokenizer;
+    private $tokenizer;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param Context $context
@@ -173,15 +186,17 @@ class EditPost extends Action implements
      */
     public function execute()
     {
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
-        if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            return $this->getRedirectToPath(static::ROUTE_SALES_GUEST_VIEW);
+        if (!$request->isPost()
+            || !$this->formKeyValidator->validate($request)
+        ) {
+            return $this->getRedirectToPath(self::ROUTE_PATH);
         }
 
         /** @var int|string|null $rmaId */
-        $rmaId = $request->getParam(static::PARAM_RMA_ID);
+        $rmaId = $request->getParam(self::PARAM_RMA_ID);
         $rmaId = is_numeric($rmaId) ? (int) $rmaId : null;
 
         if ($rmaId !== null) {
@@ -201,7 +216,7 @@ class EditPost extends Action implements
             $comments = !empty($comments) ? $comments : null;
 
             /** @var string|null $token */
-            $token = $request->getParam(static::PARAM_TOKEN);
+            $token = $request->getParam(self::PARAM_TOKEN);
             $token = !empty($token) ? $token : null;
 
             /** @var string $remoteIp */
@@ -216,7 +231,6 @@ class EditPost extends Action implements
                     $exception = $this->exceptionFactory->create(
                         LocalizedException::class
                     );
-
                     throw $exception;
                 }
 
@@ -237,18 +251,22 @@ class EditPost extends Action implements
                     'token' => $token,
                 ];
 
-                $this->dispatchEvent('simplereturns_rma_edit_save_before', $data);
+                $this->dispatchEvent(
+                    'simplereturns_rma_edit_save_before',
+                    $data
+                );
 
                 $this->simpleReturnRepository->save(
                     $rma->setData($data)
                 );
 
-                $this->dispatchEvent('simplereturns_rma_edit_save_after', [
-                    'rma' => $rma,
-                ]);
+                $this->dispatchEvent(
+                    'simplereturns_rma_edit_save_after',
+                    ['rma' => $rma]
+                );
 
                 /** @var string|null $groupKey */
-                $groupKey = $this->dataPersistor->get(static::DATA_GROUP_KEY);
+                $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
 
                 /* Update attachments with new RMA ID. */
                 if ($groupKey !== null) {
@@ -262,7 +280,8 @@ class EditPost extends Action implements
                     foreach ($metadata as $metadatum) {
                         /** @var int|string|null $attachmentId */
                         $attachmentId = $metadatum['attachment_id'] ?? null;
-                        $attachmentId = is_numeric($attachmentId) ? (int) $attachmentId : null;
+                        $attachmentId = is_numeric($attachmentId)
+                            ? (int) $attachmentId : null;
 
                         if ($attachmentId !== null) {
                             /** @var AttachmentInterface $attachment */
@@ -277,7 +296,7 @@ class EditPost extends Action implements
 
                     /* Clear attachment metadata, group key from session. */
                     $this->dataPersistor->clear($groupKey);
-                    $this->dataPersistor->clear(static::DATA_GROUP_KEY);
+                    $this->dataPersistor->clear(self::DATA_GROUP_KEY);
                 }
 
                 /** @var OrderInterface[] $orders */
@@ -313,13 +332,12 @@ class EditPost extends Action implements
                         '_secure' => true,
                     ]
                 );
-
                 return $this->getRedirectToUrl($redirectUrl);
-            } catch (NoSuchEntityException | LocalizedException $e) {
+            } catch (Throwable $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             }
         }
 
-        return $this->getRedirectToPath(static::ROUTE_SALES_GUEST_VIEW);
+        return $this->getRedirectToPath(self::ROUTE_PATH);
     }
 }
