@@ -4,15 +4,15 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\SystemModel\Module
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
@@ -21,59 +21,30 @@ namespace AuroraExtensions\SimpleReturns\Model\SystemModel\Module;
 use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use Magento\Dhl\Model\Carrier as DHL;
 use Magento\Fedex\Model\Carrier as Fedex;
-use Magento\Framework\{
-    App\Config\ScopeConfigInterface,
-    DataObject,
-    DataObject\Factory as DataObjectFactory
-};
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\DataObject;
+use Magento\Framework\DataObject\Factory as DataObjectFactory;
 use Magento\Shipping\Model\Config as ShippingConfig;
-use Magento\Store\{
-    Model\Information as StoreInformation,
-    Model\ScopeInterface as StoreScopeInterface,
-    Model\Store
-};
-use Magento\Ups\{
-    Helper\Config as UpsHelper,
-    Model\Carrier as UPS
-};
+use Magento\Store\Model\Information as StoreInformation;
+use Magento\Store\Model\ScopeInterface as StoreScopeInterface;
+use Magento\Store\Model\Store;
+use Magento\Ups\Helper\Config as UpsHelper;
+use Magento\Ups\Model\Carrier as UPS;
 use Magento\Usps\Model\Carrier as USPS;
 
 class Config implements ConfigInterface
 {
-    /** @constant string DEFAULT_RETURNS_RECIPIENT_FIRST_NAME */
     public const DEFAULT_RETURNS_RECIPIENT_FIRST_NAME = 'Customer';
-
-    /** @constant string DEFAULT_RETURNS_RECIPIENT_LAST_NAME */
     public const DEFAULT_RETURNS_RECIPIENT_LAST_NAME = 'Service';
-
-    /** @constant int DEFAULT_RETURNS_ORDER_AGE_MAXIMUM */
     public const DEFAULT_RETURNS_ORDER_AGE_MAXIMUM = 30;
-
-    /** @constant float DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM */
     public const DEFAULT_RETURNS_ORDER_AMOUNT_MAXIMUM = 1000.00;
-
-    /** @constant float DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM */
     public const DEFAULT_RETURNS_ORDER_AMOUNT_MINIMUM = 50.00;
-
-    /** @constant float DEFAULT_PACKAGE_WEIGHT */
     public const DEFAULT_PACKAGE_WEIGHT = 5.00;
-
-    /** @constant string DEFAULT_RMA_STATUS_CODE */
     public const DEFAULT_RMA_STATUS_CODE = 'pending';
-
-    /** @constant string DEFAULT_FEDEX_CONTAINER_CODE */
     public const DEFAULT_FEDEX_CONTAINER_CODE = 'YOUR_PACKAGING';
-
-    /** @constant string DEFAULT_FEDEX_METHOD_CODE */
     public const DEFAULT_FEDEX_METHOD_CODE = 'FEDEX_GROUND';
-
-    /** @constant string DEFAULT_UPS_CONTAINER_CODE */
     public const DEFAULT_UPS_CONTAINER_CODE = 'CP';
-
-    /** @constant string DEFAULT_UPS_CONTAINER_TYPE */
     public const DEFAULT_UPS_CONTAINER_TYPE = '00';
-
-    /** @constant string DEFAULT_UPS_METHOD_CODE */
     public const DEFAULT_UPS_METHOD_CODE = '03';
 
     /** @var array $containerCodeMethods */
@@ -92,16 +63,16 @@ class Config implements ConfigInterface
         USPS::CODE  => 'getUspsContainerType',
     ];
 
-    /** @property DataObjectFactory $dataObjectFactory */
+    /** @var DataObjectFactory $dataObjectFactory */
     protected $dataObjectFactory;
 
-    /** @property ScopeConfigInterface $scopeConfig */
+    /** @var ScopeConfigInterface $scopeConfig */
     protected $scopeConfig;
 
-    /** @property DataObject $settings */
+    /** @var DataObject $settings */
     protected $settings;
 
-    /** @property UpsHelper $upsHelper */
+    /** @var UpsHelper $upsHelper */
     protected $upsHelper;
 
     /**

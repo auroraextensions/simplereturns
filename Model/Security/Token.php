@@ -4,23 +4,28 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package        AuroraExtensions_SimpleReturns
- * @copyright      Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license        MIT License
+ * @package     AuroraExtensions\SimpleReturns\Model\Security
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\Security;
 
+use function bin2hex;
+use function hash;
+use function hash_equals;
+use function preg_match;
+use function random_bytes;
+
 class Token
 {
-    /** @constant string HASH_ALGO */
     public const HASH_ALGO = 'sha512';
 
     /**
