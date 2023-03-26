@@ -15,94 +15,61 @@
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package     AuroraExtensions\SimpleReturns\Model\AdapterModel\Shipping\Carrier
+ * @package     AuroraExtensions\SimpleReturns\Model\Adapter\Shipping\Carrier
  * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
  * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Shipping\Carrier;
+namespace AuroraExtensions\SimpleReturns\Model\Adapter\Shipping\Carrier;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Component\System\ModuleConfigTrait,
-    Exception\InvalidCarrierException,
-    Shared\ModuleComponentInterface,
-    Csi\System\Module\ConfigInterface
-};
-use Magento\Dhl\Model\Carrier as DHL;
-use Magento\Fedex\Model\Carrier as Fedex;
-use Magento\Framework\{
-    DataObject,
-    DataObject\Factory as DataObjectFactory,
-    ObjectManagerInterface
-};
+use AuroraExtensions\SimpleReturns\Exception\InvalidCarrierException;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
-use Magento\Ups\Model\Carrier as UPS;
-use Magento\Usps\Model\Carrier as USPS;
 
 use function __;
-use function array_keys;
-use function in_array;
 
-class CarrierFactory implements ModuleComponentInterface
+class CarrierFactory
 {
-    use ModuleConfigTrait;
-
-    /** @var array $carriers */
-    protected $carriers = [
-        DHL::CODE   => DHL::class,
-        Fedex::CODE => Fedex::class,
-        UPS::CODE   => UPS::class,
-        USPS::CODE  => USPS::class,
-    ];
-
-    /** @var DataObjectFactory $dataObjectFactory */
-    protected $dataObjectFactory;
+    /** @var string[] $carriers */
+    private $carriers;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var ObjectManagerInterface $objectManager */
-    protected $objectManager;
+    private $objectManager;
 
     /**
-     * @param DataObjectFactory $dataObjectFactory
      * @param ExceptionFactory $exceptionFactory
-     * @param ConfigInterface $moduleConfig
      * @param ObjectManagerInterface $objectManager
+     * @param string[] $carriers
      * @return void
      */
     public function __construct(
-        DataObjectFactory $dataObjectFactory,
         ExceptionFactory $exceptionFactory,
-        ConfigInterface $moduleConfig,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        array $carriers = []
     ) {
-        $this->dataObjectFactory = $dataObjectFactory;
         $this->exceptionFactory = $exceptionFactory;
-        $this->moduleConfig = $moduleConfig;
         $this->objectManager = $objectManager;
+        $this->carriers = $carriers;
     }
 
     /**
-     * Create carrier model via ObjectManager.
-     *
      * @param string $code The carrier code.
      * @return CarrierInterface
      * @throws InvalidCarrierException
      */
     public function create(string $code): CarrierInterface
     {
-        /** @var array $codes */
-        $codes = array_keys($this->getConfig()->getCarriers());
-
-        if (!in_array($code, $codes)) {
+        if (!isset($this->carriers[$code])) {
             /** @var InvalidCarrierException $exception */
             $exception = $this->exceptionFactory->create(
                 InvalidCarrierException::class,
                 __(
-                    self::ERROR_INVALID_CARRIER_CODE,
+                    '"%1" is not a valid carrier code.',
                     $code
                 )
             );
