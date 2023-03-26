@@ -19,30 +19,32 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
-use AuroraExtensions\SimpleReturns\{
-    Model\ViewModel\Rma\EditView as ViewModel,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpGetActionInterface,
-    View\Result\PageFactory
-};
+use AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\EditView as ViewModel;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Result\PageFactory;
 
 use function __;
 
-class Edit extends Action implements
-    HttpGetActionInterface,
-    ModuleComponentInterface
+class Edit extends Action implements HttpGetActionInterface
 {
+    /**
+     * @method Redirect getRedirect()
+     * @method Redirect getRedirectToPath()
+     * @method Redirect getRedirectToUrl()
+     */
     use RedirectTrait;
 
+    private const ROUTE_PATH = 'sales/guest/view';
+
     /** @var PageFactory $resultPageFactory */
-    protected $resultPageFactory;
+    private $resultPageFactory;
 
     /** @var ViewModel $viewModel */
-    protected $viewModel;
+    private $viewModel;
 
     /**
      * @param Context $context
@@ -56,7 +58,6 @@ class Edit extends Action implements
         ViewModel $viewModel
     ) {
         parent::__construct($context);
-        $this->__initialize();
         $this->resultPageFactory = $resultPageFactory;
         $this->viewModel = $viewModel;
     }
@@ -78,6 +79,6 @@ class Edit extends Action implements
             return $resultPage;
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+        return $this->getRedirectToPath(self::ROUTE_PATH);
     }
 }

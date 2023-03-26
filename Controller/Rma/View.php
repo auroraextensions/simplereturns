@@ -19,30 +19,32 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
-use AuroraExtensions\SimpleReturns\{
-    Model\ViewModel\Rma\ViewView as ViewModel,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpGetActionInterface,
-    View\Result\PageFactory
-};
+use AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ViewView as ViewModel;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Result\PageFactory;
 
 use function __;
 
-class View extends Action implements
-    HttpGetActionInterface,
-    ModuleComponentInterface
+class View extends Action implements HttpGetActionInterface
 {
+    /**
+     * @method Redirect getRedirect()
+     * @method Redirect getRedirectToPath()
+     * @method Redirect getRedirectToUrl()
+     */
     use RedirectTrait;
 
+    private const ROUTE_PATH = 'sales/guest/view';
+
     /** @var PageFactory $resultPageFactory */
-    protected $resultPageFactory;
+    private $resultPageFactory;
 
     /** @var ViewModel $viewModel */
-    protected $viewModel;
+    private $viewModel;
 
     /**
      * @param Context $context
@@ -61,22 +63,20 @@ class View extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_view action.
-     *
      * @return Page|Redirect
      */
     public function execute()
     {
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->getConfig()->getTitle()->set(
-            __('View RMA Details')
-        );
+        $resultPage->getConfig()
+            ->getTitle()
+            ->set(__('View RMA Details'));
 
         if ($this->viewModel->hasSimpleReturn()) {
             return $resultPage;
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SALES_GUEST_VIEW);
+        return $this->getRedirectToPath(self::ROUTE_PATH);
     }
 }

@@ -19,21 +19,16 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Orders;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Helper\Config as ConfigHelper,
-    Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\RequestInterface,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 
-class SearchView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+class SearchView extends AbstractView implements ArgumentInterface
 {
+    private const ROUTE_PATH = 'simplereturns/orders/searchPost';
+
     /** @var string $route */
     private $route;
 
@@ -52,7 +47,7 @@ class SearchView extends AbstractView implements
         RequestInterface $request,
         UrlInterface $urlBuilder,
         array $data = [],
-        string $route = self::ROUTE_SIMPLERETURNS_ORDERS_SEARCHPOST
+        string $route = self::ROUTE_PATH
     ) {
         parent::__construct(
             $configHelper,

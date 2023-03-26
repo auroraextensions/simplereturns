@@ -23,15 +23,16 @@ use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
 use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
 use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 
-class ListView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+class ListView extends AbstractView implements ArgumentInterface
 {
+    /**
+     * @var ConfigInterface $moduleConfig
+     * @method ConfigInterface getConfig()
+     */
     use ModuleConfigTrait;
 
     /**

@@ -4,49 +4,48 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Orders
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Orders;
 
-use AuroraExtensions\SimpleReturns\{
-    Helper\Action as ActionHelper,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\ViewModel\Rma\ListView as ViewModel,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpGetActionInterface,
-    App\Request\DataPersistorInterface,
-    View\Result\PageFactory
-};
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ListView as ViewModel;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\View\Element\AbstractBlock;
+use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Result\PageFactory;
 
-class Results extends Action implements
-    HttpGetActionInterface,
-    ModuleComponentInterface
+use function trim;
+
+class Results extends Action implements HttpGetActionInterface
 {
-    /** @property DataPersistorInterface $dataPersistor */
-    protected $dataPersistor;
+    private const BLOCK_ID = 'simplereturns_orders_results';
+    private const DATA_PERSISTOR_KEY = 'simplereturns_data';
 
-    /** @property OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    /** @var DataPersistorInterface $dataPersistor */
+    private $dataPersistor;
 
-    /** @property PageFactory $resultPageFactory */
-    protected $resultPageFactory;
+    /** @var OrderAdapter $orderAdapter */
+    private $orderAdapter;
 
-    /** @property ViewModel $viewModel */
-    protected $viewModel;
+    /** @var PageFactory $resultPageFactory */
+    private $resultPageFactory;
+
+    /** @var ViewModel $viewModel */
+    private $viewModel;
 
     /**
      * @param Context $context
@@ -71,8 +70,6 @@ class Results extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_overview action.
-     *
      * @return Page
      */
     public function execute()
@@ -97,21 +94,22 @@ class Results extends Action implements
         $orderId = !empty($orderId) ? trim($orderId) : $orderId;
 
         if ($zipCode !== null) {
+            /** @var OrderInterface[] $orders */
+            $orders = [];
+
             if ($email !== null) {
-                /** @var OrderInterface[] $orders */
-                $orders = $this->orderAdapter->getOrdersByCustomerEmailAndZipCode($email, $zipCode);
-
-                $this->viewModel->setData('orders', $orders);
+                $orders = $this->orderAdapter
+                    ->getOrdersByCustomerEmailAndZipCode($email, $zipCode);
             } elseif ($orderId !== null) {
-                /** @var OrderInterface[] $orders */
-                $orders = $this->orderAdapter->getOrdersByIncrementIdAndZipCode($orderId, $zipCode);
-
-                $this->viewModel->setData('orders', $orders);
+                $orders = $this->orderAdapter
+                    ->getOrdersByIncrementIdAndZipCode($orderId, $zipCode);
             }
+
+            $this->viewModel->setData('orders', $orders);
         }
 
-        /** @var Magento\Framework\View\Element\AbstractBlock|bool $block */
-        $block = $resultPage->getLayout()->getBlock(self::BLOCK_SIMPLERETURNS_ORDERS_RESULTS);
+        /** @var AbstractBlock|bool $block */
+        $block = $resultPage->getLayout()->getBlock(self::BLOCK_ID);
 
         if ($block) {
             $block->setData('view_model', $this->viewModel);

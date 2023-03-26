@@ -19,31 +19,28 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
 use AuroraExtensions\ImageProcessor\Api\ImageManagementInterface;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\AttachmentInterface,
-    Api\Data\AttachmentInterfaceFactory,
-    Api\Data\SimpleReturnInterface,
-    Api\AttachmentRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\Security\Token as Tokenizer,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpPostActionInterface,
-    App\Filesystem\DirectoryList,
-    App\Request\DataPersistorInterface,
-    Controller\Result\JsonFactory as ResultJsonFactory,
-    Controller\Result\Redirect as ResultRedirect,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Filesystem,
-    HTTP\PhpEnvironment\RemoteAddress,
-    Serialize\Serializer\Json,
-    UrlInterface
-};
+use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\Controller\Result\Json as ResultJson;
+use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
+use Magento\Framework\Controller\Result\Redirect as ResultRedirect;
+use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
+use Magento\Framework\Filesystem;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Model\File\UploaderFactory;
 use Throwable;
 
@@ -54,10 +51,11 @@ use function str_replace;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreatePost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class CreatePost extends Action implements HttpPostActionInterface
 {
+    private const DATA_GROUP_KEY = 'simplereturns_group_key';
+    private const SAVE_PATH = '/simplereturns/';
+
     /** @var AttachmentInterfaceFactory $attachmentFactory */
     protected $attachmentFactory;
 
@@ -152,16 +150,14 @@ class CreatePost extends Action implements
     }
 
     /**
-     * Execute simplereturns_rma_attachment_createPost action.
-     *
      * @return Magento\Framework\Controller\Result\Json
      */
     public function execute()
     {
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
-        /** @var Magento\Framework\Controller\Result\Json $resultJson */
+        /** @var ResultJson $resultJson */
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {

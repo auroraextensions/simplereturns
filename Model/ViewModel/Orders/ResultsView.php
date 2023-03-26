@@ -19,26 +19,23 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Orders;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Helper\Config as ConfigHelper,
-    Model\ValidatorModel\Sales\Order\EligibilityValidator,
-    Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\RequestInterface,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use AuroraExtensions\SimpleReturns\Model\Validator\Sales\Order\EligibilityValidator;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 
 use function count;
 
-class ResultsView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+class ResultsView extends AbstractView implements ArgumentInterface
 {
+    private const PARAM_ORDER_ID = 'order_id';
+    private const PARAM_PROTECT_CODE = 'code';
+    private const ROUTE_PATH = 'simplereturns/label/index';
+
     /** @var EligibilityValidator $validator */
-    protected $validator;
+    private $validator;
 
     /**
      * @param ConfigHelper $configHelper
@@ -74,7 +71,7 @@ class ResultsView extends AbstractView implements
     public function getReturnLabelUrl(OrderInterface $order): string
     {
         return $this->urlBuilder->getUrl(
-            self::ROUTE_SIMPLERETURNS_LABEL_INDEX,
+            self::ROUTE_PATH,
             [
                 self::PARAM_ORDER_ID => $order->getRealOrderId(),
                 self::PARAM_PROTECT_CODE => $order->getProtectCode(),

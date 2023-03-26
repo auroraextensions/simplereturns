@@ -4,15 +4,15 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Helper
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
@@ -22,7 +22,6 @@ use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConf
 
 /**
  * @deprecated Avoid use. Will be removed in future release.
- * @see AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config
  */
 class Config extends ModuleConfig
 {

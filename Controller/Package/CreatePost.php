@@ -20,31 +20,28 @@ namespace AuroraExtensions\SimpleReturns\Controller\Package;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\PackageInterface,
-    Api\Data\PackageInterfaceFactory,
-    Api\Data\SimpleReturnInterface,
-    Api\Data\SimpleReturnInterfaceFactory,
-    Api\PackageManagementInterface,
-    Api\PackageRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Component\System\ModuleConfigTrait,
-    Model\Security\Token as Tokenizer,
-    Shared\ModuleComponentInterface,
-    Csi\System\Module\ConfigInterface
-};
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpPostActionInterface,
-    Controller\Result\Redirect as ResultRedirect,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Exception\AlreadyExistsException,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    HTTP\PhpEnvironment\RemoteAddress,
-    UrlInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\PackageInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
+use AuroraExtensions\SimpleReturns\Api\PackageManagementInterface;
+use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Redirect as ResultRedirect;
+use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
+use Magento\Framework\Exception\AlreadyExistsException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\UrlInterface;
+use Throwable;
 
 use function __;
 use function is_numeric;
@@ -53,38 +50,48 @@ use function strtolower;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreatePost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class CreatePost extends Action implements HttpPostActionInterface
 {
+    /**
+     * @var ConfigInterface $moduleConfig
+     * @method ConfigInterface getConfig()
+     * ---
+     * @method Redirect getRedirect()
+     * @method Redirect getRedirectToPath()
+     * @method Redirect getRedirectToUrl()
+     */
     use ModuleConfigTrait, RedirectTrait;
 
+    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_TOKEN = 'token';
+    private const ROUTE_PATH = 'simplereturns/rma/view';
+
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
+    private $formKeyValidator;
 
     /** @var PackageInterfaceFactory $packageFactory */
-    protected $packageFactory;
+    private $packageFactory;
 
     /** @var PackageManagementInterface $packageManagement */
-    protected $packageManagement;
+    private $packageManagement;
 
     /** @var PackageRepositoryInterface $packageRepository */
-    protected $packageRepository;
+    private $packageRepository;
 
     /** @var RemoteAddress $remoteAddress */
-    protected $remoteAddress;
+    private $remoteAddress;
 
     /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
-    protected $simpleReturnFactory;
+    private $simpleReturnFactory;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param Context $context
@@ -137,11 +144,11 @@ class CreatePost extends Action implements
      */
     public function execute()
     {
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
         if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_VIEW);
+            return $this->getRedirectToPath(self::ROUTE_PATH);
         }
 
         /** @var int|string|null $rmaId */
@@ -184,7 +191,8 @@ class CreatePost extends Action implements
                         $package = $this->packageFactory->create();
 
                         /** @var string $remoteIp */
-                        $remoteIp = $this->remoteAddress->getRemoteAddress();
+                        $remoteIp = $this->remoteAddress
+                            ->getRemoteAddress();
 
                         /** @var string $token */
                         $token = Tokenizer::createToken();
@@ -239,9 +247,8 @@ class CreatePost extends Action implements
                                 '_secure' => true,
                             ]
                         );
-
                         return $this->getRedirectToUrl($viewUrl);
-                    } catch (AlreadyExistsException | LocalizedException $e) {
+                    } catch (Throwable $e) {
                         throw $e;
                     }
                 }
@@ -251,13 +258,12 @@ class CreatePost extends Action implements
                     LocalizedException::class,
                     __('Unable to create package for return shipment.')
                 );
-
                 throw $exception;
-            } catch (NoSuchEntityException | LocalizedException $e) {
+            } catch (Throwable $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_RMA_VIEW);
+        return $this->getRedirectToPath(self::ROUTE_PATH);
     }
 }

@@ -19,22 +19,15 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Helper\Config as ConfigHelper,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\RequestInterface,
-    DataObject,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\DataObject;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 
 use function array_replace;
 
-abstract class AbstractView extends DataObject implements
-    ArgumentInterface,
-    ModuleComponentInterface
+abstract class AbstractView extends DataObject implements ArgumentInterface
 {
     /** @var ConfigHelper $configHelper */
     protected $configHelper;

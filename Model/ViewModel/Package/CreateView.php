@@ -23,13 +23,11 @@ use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
 use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
-use AuroraExtensions\SimpleReturns\Helper\Action as ActionHelper;
 use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
-use AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -45,26 +43,28 @@ use function is_array;
 use function is_numeric;
 use function number_format;
 
-class CreateView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+class CreateView extends AbstractView implements ArgumentInterface
 {
     use ModuleConfigTrait;
 
+    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_TOKEN = 'token';
+    private const ROUTE_PATH = 'simplereturns/package/createPost';
+
     /** @var DirectoryHelper $directoryHelper */
-    protected $directoryHelper;
+    private $directoryHelper;
 
     /** @var LabelManager $labelManager */
-    protected $labelManager;
+    private $labelManager;
 
     /** @var MessageManagerInterface $messageManager */
-    protected $messageManager;
+    private $messageManager;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var string $route */
     private $route;
@@ -96,7 +96,7 @@ class CreateView extends AbstractView implements
         OrderAdapter $orderAdapter,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         array $data = [],
-        string $route = self::ROUTE_SIMPLERETURNS_PKG_CREATEPOST
+        string $route = self::ROUTE_PATH
     ) {
         parent::__construct(
             $configHelper,

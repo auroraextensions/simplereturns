@@ -26,19 +26,19 @@ use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\UrlInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Throwable;
 
 use function __;
 use function is_numeric;
@@ -47,44 +47,45 @@ use function trim;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class EditPost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class EditPost extends Action implements HttpPostActionInterface
 {
     use ModuleConfigTrait;
 
+    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_TOKEN = 'token';
+
     /** @var EmailTransport $emailTransport */
-    protected $emailTransport;
+    private $emailTransport;
 
     /** @var Escaper $escaper */
-    protected $escaper;
+    private $escaper;
 
     /** @var EventManagerInterface $eventManager */
-    protected $eventManager;
+    private $eventManager;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
+    private $formKeyValidator;
 
     /** @var LabelManager $labelManager */
-    protected $labelManager;
+    private $labelManager;
 
     /** @var OrderRepositoryInterface $orderRepository */
-    protected $orderRepository;
+    private $orderRepository;
 
     /** @var ResultJsonFactory $resultJsonFactory */
-    protected $resultJsonFactory;
+    private $resultJsonFactory;
 
-    /** @var JsonSerializer $serializer */
-    protected $serializer;
+    /** @var Json $serializer */
+    private $serializer;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param Context $context
@@ -97,7 +98,7 @@ class EditPost extends Action implements
      * @param ConfigInterface $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
      * @param ResultJsonFactory $resultJsonFactory
-     * @param JsonSerializer $serializer
+     * @param Json $serializer
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
@@ -113,7 +114,7 @@ class EditPost extends Action implements
         ConfigInterface $moduleConfig,
         OrderRepositoryInterface $orderRepository,
         ResultJsonFactory $resultJsonFactory,
-        JsonSerializer $serializer,
+        Json $serializer,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         UrlInterface $urlBuilder
     ) {
@@ -140,10 +141,10 @@ class EditPost extends Action implements
         /** @var array $response */
         $response = [];
 
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
-        /** @var Json $resultJson */
+        /** @var ResultJson $resultJson */
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
@@ -215,9 +216,7 @@ class EditPost extends Action implements
 
                     $this->eventManager->dispatch(
                         'simplereturns_adminhtml_rma_edit_save_after',
-                        [
-                            'rma' => $rma,
-                        ]
+                        ['rma' => $rma]
                     );
 
                     /** @var OrderInterface $order */
@@ -255,7 +254,7 @@ class EditPost extends Action implements
                     ]);
                     return $resultJson;
                 }
-            } catch (NoSuchEntityException | LocalizedException $e) {
+            } catch (Throwable $e) {
                 $response = [
                     'error' => true,
                     'message' => $e->getMessage(),

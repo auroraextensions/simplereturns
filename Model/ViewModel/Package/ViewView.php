@@ -29,11 +29,10 @@ use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
 use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
-use AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -45,51 +44,55 @@ use Magento\Sales\Api\Data\OrderInterface;
 
 use function __;
 use function array_shift;
-use function is_array;
 use function is_numeric;
 use function number_format;
 
-class ViewView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+class ViewView extends AbstractView implements ArgumentInterface
 {
+    /**
+     * @var ConfigInterface $moduleConfig
+     * @method ConfigInterface getConfig()
+     */
     use ModuleConfigTrait;
 
+    private const PARAM_PKG_ID = 'pkg_id';
+    private const PARAM_TOKEN = 'token';
+
     /** @var DirectoryHelper $directoryHelper */
-    protected $directoryHelper;
+    private $directoryHelper;
 
     /** @var LabelInterface $label */
-    protected $label;
+    private $label;
 
     /** @var LabelManagementInterface $labelManagement */
-    protected $labelManagement;
+    private $labelManagement;
 
     /** @var LabelManager $labelManager */
-    protected $labelManager;
+    private $labelManager;
 
     /** @var LabelRepositoryInterface $labelRepository */
-    protected $labelRepository;
+    private $labelRepository;
 
     /** @var MessageManagerInterface $messageManager */
-    protected $messageManager;
+    private $messageManager;
 
     /** @var OrderInterface $order */
-    protected $order;
+    private $order;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var PackageInterface $package */
-    protected $package;
+    private $package;
 
     /** @var PackageRepositoryInterface $packageRepository */
-    protected $packageRepository;
+    private $packageRepository;
 
     /** @var SimpleReturnInterface $rma */
-    protected $rma;
+    private $rma;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /**
      * @param ConfigHelper $configHelper
@@ -323,25 +326,24 @@ class ViewView extends AbstractView implements
 
         if ($rma !== null) {
             /** @var array $fields */
-            $fields = [
-                'entity_id' => $rma->getOrderId(),
-            ];
+            $fields = ['entity_id' => $rma->getOrderId()];
 
             try {
                 /** @var OrderInterface[] $orders */
-                $orders = $this->orderAdapter->getOrdersByFields($fields);
+                $orders = $this->orderAdapter
+                    ->getOrdersByFields($fields);
 
-                if (!empty($orders)) {
-                    $this->order = array_shift($orders);
-                    return $this->order;
+                if (empty($orders)) {
+                    /** @var NoSuchEntityException $exception */
+                    $exception = $this->exceptionFactory->create(
+                        NoSuchEntityException::class,
+                        __('Unable to locate any matching orders.')
+                    );
+                    throw $exception;
                 }
 
-                /** @var NoSuchEntityException $exception */
-                $exception = $this->exceptionFactory->create(
-                    NoSuchEntityException::class,
-                    __('Unable to locate any matching orders.')
-                );
-                throw $exception;
+                $this->order = array_shift($orders);
+                return $this->order;
             } catch (NoSuchEntityException | LocalizedException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             }

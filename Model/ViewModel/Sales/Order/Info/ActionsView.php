@@ -19,31 +19,24 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Sales\Order\Info;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\SimpleReturnInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Helper\Config as ConfigHelper,
-    Model\ValidatorModel\Sales\Order\EligibilityValidator,
-    Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\RequestInterface,
-    Exception\NoSuchEntityException,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use AuroraExtensions\SimpleReturns\Model\Validator\Sales\Order\EligibilityValidator;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
-class ActionsView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+class ActionsView extends AbstractView implements ArgumentInterface
 {
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var EligibilityValidator $validator */
-    protected $validator;
+    private $validator;
 
     /**
      * @param ConfigHelper $configHelper

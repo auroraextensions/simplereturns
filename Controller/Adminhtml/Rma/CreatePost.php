@@ -26,18 +26,19 @@ use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
-use AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use DateTime;
 use DateTimeFactory;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Escaper;
@@ -51,6 +52,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
 use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Model\File\UploaderFactory;
+use Throwable;
 
 use function __;
 use function array_shift;
@@ -58,62 +60,65 @@ use function array_shift;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreatePost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class CreatePost extends Action implements HttpPostActionInterface
 {
     use ModuleConfigTrait, RedirectTrait;
 
+    private const FIELD_INCREMENT_ID = 'increment_id';
+    private const FIELD_PROTECT_CODE = 'protect_code';
+    private const PARAM_ORDER_ID = 'order_id';
+    private const PARAM_PROTECT_CODE = 'code';
+
     /** @var AttachmentRepositoryInterface $attachmentRepository */
-    protected $attachmentRepository;
+    private $attachmentRepository;
 
     /** @var DateTimeFactory $dateTimeFactory */
-    protected $dateTimeFactory;
+    private $dateTimeFactory;
 
     /** @var EmailTransport $emailTransport */
-    protected $emailTransport;
+    private $emailTransport;
 
     /** @var Escaper $escaper */
-    protected $escaper;
+    private $escaper;
 
     /** @var EventManagerInterface $eventManager */
-    protected $eventManager;
+    private $eventManager;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var Filesystem $filesystem */
-    protected $filesystem;
+    private $filesystem;
 
     /** @var FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
+    private $formKeyValidator;
 
     /** @var LabelManager $labelManager */
-    protected $labelManager;
+    private $labelManager;
 
     /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var RemoteAddress $remoteAddress */
-    protected $remoteAddress;
+    private $remoteAddress;
 
     /** @var ResultJsonFactory $resultJsonFactory */
-    protected $resultJsonFactory;
+    private $resultJsonFactory;
 
     /** @var Json $serializer */
-    protected $serializer;
+    private $serializer;
 
     /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
-    protected $simpleReturnFactory;
+    private $simpleReturnFactory;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param Context $context
@@ -190,13 +195,13 @@ class CreatePost extends Action implements
      */
     public function execute()
     {
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
         /** @var array $response */
         $response = [];
 
-        /** @var Magento\Framework\Controller\Result\Json $resultJson */
+        /** @var ResultJson $resultJson */
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
@@ -223,19 +228,23 @@ class CreatePost extends Action implements
 
         /** @var string|null $status */
         $status = $request->getPostValue('status');
-        $status = !empty($status) ? $this->escaper->escapeHtml($status) : null;
+        $status = !empty($status)
+            ? $this->escaper->escapeHtml($status) : null;
 
         /** @var string|null $reason */
         $reason = $request->getPostValue('reason');
-        $reason = !empty($reason) ? $this->escaper->escapeHtml($reason) : null;
+        $reason = !empty($reason)
+            ? $this->escaper->escapeHtml($reason) : null;
 
         /** @var string|null $resolution */
         $resolution = $request->getPostValue('resolution');
-        $resolution = !empty($resolution) ? $this->escaper->escapeHtml($resolution) : null;
+        $resolution = !empty($resolution)
+            ? $this->escaper->escapeHtml($resolution) : null;
 
         /** @var string|null $comments */
         $comments = $request->getPostValue('comments');
-        $comments = !empty($comments) ? $this->escaper->escapeHtml($comments) : null;
+        $comments = !empty($comments)
+            ? $this->escaper->escapeHtml($comments) : null;
 
         /** @var array $fields */
         $fields = [
@@ -334,7 +343,7 @@ class CreatePost extends Action implements
                         'message' => __('Successfully created RMA.'),
                         'viewUrl' => $viewUrl,
                     ]);
-                } catch (AlreadyExistsException | LocalizedException $e) {
+                } catch (Throwable $e) {
                     throw $e;
                 }
             }
@@ -345,7 +354,7 @@ class CreatePost extends Action implements
                 __('Unable to create RMA request.')
             );
             throw $exception;
-        } catch (NoSuchEntityException | LocalizedException $e) {
+        } catch (Throwable $e) {
             $response = [
                 'error' => true,
                 'messages' => [$e->getMessage()],

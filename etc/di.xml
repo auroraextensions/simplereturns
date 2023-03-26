@@ -118,6 +118,16 @@
             </argument>
         </arguments>
     </type>
+    <type name="AuroraExtensions\SimpleReturns\Model\Adapter\Shipping\Carrier\CarrierFactory">
+        <arguments>
+            <argument name="carriers" xsi:type="array">
+                <item name="dhl" xsi:type="const">Magento\Dhl\Model\Carrier::CODE</item>
+                <item name="fedex" xsi:type="const">Magento\Fedex\Model\Carrier::CODE</item>
+                <item name="ups" xsi:type="const">Magento\Ups\Model\Carrier::CODE</item>
+                <item name="usps" xsi:type="const">Magento\Usps\Model\Carrier::CODE</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="AuroraExtensions\SimpleReturns\Model\Display\LabelManager">
         <arguments>
             <argument name="fieldMap" xsi:type="array">

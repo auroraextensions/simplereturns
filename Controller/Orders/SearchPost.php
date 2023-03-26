@@ -20,50 +20,53 @@ namespace AuroraExtensions\SimpleReturns\Controller\Orders;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\ViewModel\Rma\ListView as ViewModel,
-    Shared\ModuleComponentInterface
-};
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\Rma\ListView as ViewModel;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpPostActionInterface,
-    App\Request\DataPersistorInterface,
-    Controller\Result\Redirect as ResultRedirect,
-    Data\Form\FormKey\Validator as FormKeyValidator,
-    Exception\LocalizedException
-};
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
+use Magento\Framework\Exception\LocalizedException;
+use Throwable;
 
 use function __;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SearchPost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class SearchPost extends Action implements HttpPostActionInterface
 {
+    /**
+     * @method Redirect getRedirect()
+     * @method Redirect getRedirectToPath()
+     * @method Redirect getRedirectToUrl()
+     */
     use RedirectTrait;
 
+    private const DATA_PERSISTOR_KEY = 'simplereturns_data';
+    private const ROUTE_PATH = 'simplereturns/orders/results';
+
     /** @var CustomerRepositoryInterface $customerRepository */
-    protected $customerRepository;
+    private $customerRepository;
 
     /** @var DataPersistorInterface $dataPersistor */
-    protected $dataPersistor;
+    private $dataPersistor;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
+    private $formKeyValidator;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var ViewModel $viewModel */
-    protected $viewModel;
+    private $viewModel;
 
     /**
      * @param Context $context
@@ -98,7 +101,7 @@ class SearchPost extends Action implements
      */
     public function execute()
     {
-        /** @var Magento\Framework\App\RequestInterface $request */
+        /** @var RequestInterface $request */
         $request = $this->getRequest();
 
         if ($request->isPost() && $this->formKeyValidator->validate($request)) {
@@ -107,19 +110,22 @@ class SearchPost extends Action implements
 
             if ($params !== null) {
                 /** @var string|null $email */
-                $email = !empty($params['email']) ? $params['email'] : null;
+                $email = !empty($params['email'])
+                    ? $params['email'] : null;
 
                 /** @var int|string|null $orderId */
-                $orderId = !empty($params['order_id']) ? $params['order_id'] : null;
+                $orderId = !empty($params['order_id'])
+                    ? $params['order_id'] : null;
 
                 /** @var int|string|null $zipCode */
-                $zipCode = !empty($params['zip_code']) ? $params['zip_code'] : null;
+                $zipCode = !empty($params['zip_code'])
+                    ? $params['zip_code'] : null;
 
                 try {
                     /** @var LocalizedException $exception */
                     $exception = $this->exceptionFactory->create(
                         LocalizedException::class,
-                        __(self::ERROR_MISSING_URL_PARAMS)
+                        __('Please provide an email or order ID and billing/shipping zip code.')
                     );
 
                     if ($zipCode === null) {
@@ -140,13 +146,16 @@ class SearchPost extends Action implements
                         throw $exception;
                     }
 
-                    $this->dataPersistor->set(self::DATA_PERSISTOR_KEY, $data);
-                } catch (LocalizedException $e) {
+                    $this->dataPersistor->set(
+                        self::DATA_PERSISTOR_KEY,
+                        $data
+                    );
+                } catch (Throwable $e) {
                     $this->messageManager->addError($e->getMessage());
                 }
             }
         }
 
-        return $this->getRedirectToPath(self::ROUTE_SIMPLERETURNS_ORDERS_RESULTS);
+        return $this->getRedirectToPath(self::ROUTE_PATH);
     }
 }

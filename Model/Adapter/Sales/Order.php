@@ -10,48 +10,53 @@
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package     AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales
+ * @package     AuroraExtensions\SimpleReturns\Model\Adapter\Sales
  * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
  * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales;
+namespace AuroraExtensions\SimpleReturns\Model\Adapter\Sales;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Framework\{
-    Api\FilterBuilder,
-    Api\SearchCriteriaBuilder,
-    Exception\NoSuchEntityException,
-    Message\ManagerInterface as MessageManagerInterface
-};
+use Magento\Framework\Api\Filter;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 
 use function __;
 use function array_values;
 use function substr;
 
-class Order implements ModuleComponentInterface
+class Order
 {
+    private const FIELD_CUSTOMER_ID = 'customer_id';
+    private const FIELD_INCREMENT_ID = 'increment_id';
+    private const FIELD_PROTECT_CODE = 'protect_code';
+    private const ZIP_CODE_INDEX = 0;
+    private const ZIP_CODE_LENGTH = 5;
+
     /** @var CustomerRepositoryInterface $customerRepository */
-    protected $customerRepository;
+    private $customerRepository;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var FilterBuilder $filterBuilder */
-    protected $filterBuilder;
+    private $filterBuilder;
 
     /** @var MessageManagerInterface $messageManager */
-    protected $messageManager;
+    private $messageManager;
 
     /** @var OrderRepositoryInterface $orderRepository */
-    protected $orderRepository;
+    private $orderRepository;
 
     /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
-    protected $searchCriteriaBuilder;
+    private $searchCriteriaBuilder;
 
     /**
      * @param CustomerRepositoryInterface $customerRepository
@@ -84,7 +89,6 @@ class Order implements ModuleComponentInterface
      * @param string $email
      * @param string $zipCode
      * @return OrderInterface[]
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getOrdersByCustomerEmailAndZipCode(
         string $email,
@@ -107,7 +111,7 @@ class Order implements ModuleComponentInterface
         } catch (NoSuchEntityException $e) {
             $this->messageManager->addError(
                 __(
-                    self::ERROR_NO_SUCH_ENTITY_FOUND_FOR_EMAIL,
+                    'Could not find any orders associated with email: %1',
                     $email
                 )
             );
@@ -147,7 +151,7 @@ class Order implements ModuleComponentInterface
                 $exception = $this->exceptionFactory->create(
                     NoSuchEntityException::class,
                     __(
-                        self::ERROR_NO_SUCH_ENTITY_FOUND_FOR_ORDER_ID_ZIP_CODE,
+                        'Could not find an order #%1 with billing or shipping zip code: %2',
                         $incrementId,
                         $zipCode
                     )
@@ -178,10 +182,12 @@ class Order implements ModuleComponentInterface
         try {
             /** @var array $filters */
             $filters = [
-                $this->filterBuilder->setField(self::FIELD_INCREMENT_ID)
+                $this->filterBuilder
+                     ->setField(self::FIELD_INCREMENT_ID)
                      ->setValue($incrementId)
                      ->create(),
-                $this->filterBuilder->setField(self::FIELD_PROTECT_CODE)
+                $this->filterBuilder
+                     ->setField(self::FIELD_PROTECT_CODE)
                      ->setValue($protectCode)
                      ->create(),
             ];
@@ -199,7 +205,7 @@ class Order implements ModuleComponentInterface
                 /** @var NoSuchEntityException $exception */
                 $exception = $this->exceptionFactory->create(
                     NoSuchEntityException::class,
-                    __(self::ERROR_INVALID_RETURN_LABEL_URL)
+                    __('The requested return label URL was invalid. Please verify and try again.')
                 );
                 throw $exception;
             }
@@ -262,9 +268,13 @@ class Order implements ModuleComponentInterface
      */
     public function getOrdersByFilters(array $filters = []): array
     {
-        /** @var SearchCriteria $criteria */
-        $criteria = $this->searchCriteriaBuilder->addFilters($filters)->create();
-        return $this->orderRepository->getList($criteria)->getItems();
+        /** @var SearchCriteriaInterface $criteria */
+        $criteria = $this->searchCriteriaBuilder
+            ->addFilters($filters)
+            ->create();
+        return $this->orderRepository
+            ->getList($criteria)
+            ->getItems();
     }
 
     /**
