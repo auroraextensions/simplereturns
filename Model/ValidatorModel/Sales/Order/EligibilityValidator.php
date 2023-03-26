@@ -20,33 +20,33 @@ namespace AuroraExtensions\SimpleReturns\Model\ValidatorModel\Sales\Order;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use DateTime;
 use DateTimeFactory;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
-class EligibilityValidator implements ModuleComponentInterface
+class EligibilityValidator
 {
     /** @var PriceCurrencyInterface $currency */
-    protected $currency;
+    private $currency;
 
     /** @var DateTimeFactory $dateTimeFactory */
-    protected $dateTimeFactory;
+    private $dateTimeFactory;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var MessageManagerInterface $messageManager */
-    protected $messageManager;
+    private $messageManager;
 
     /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var ProductRepositoryInterface $productRepository */
-    protected $productRepository;
+    private $productRepository;
 
     /**
      * @param PriceCurrencyInterface $currency
@@ -135,7 +135,7 @@ class EligibilityValidator implements ModuleComponentInterface
 
         /** @var Item $item */
         foreach ($items as $item) {
-            /** @var Magento\Catalog\Api\Data\ProductInterface $product */
+            /** @var ProductInterface $product */
             $product = $this->productRepository->getById($item->getProductId());
 
             /** @var bool $allowed */
