@@ -19,30 +19,27 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Model\SearchModel\Attachment as AttachmentAdapter,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\Action\Action,
-    App\Action\Context,
-    App\Action\HttpPostActionInterface,
-    Controller\Result\JsonFactory as ResultJsonFactory,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Serialize\Serializer\Json,
-    UrlInterface,
-    View\Result\PageFactory
-};
+use AuroraExtensions\SimpleReturns\Model\Search\Attachment as AttachmentAdapter;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\Controller\Result\Json as ResultJson;
+use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Result\PageFactory;
 use Magento\Store\Model\StoreManagerInterface;
 
 use function is_numeric;
 use function rtrim;
 
-class SearchPost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class SearchPost extends Action implements HttpPostActionInterface
 {
+    private const SAVE_PATH = '/simplereturns/';
+
     /** @var AttachmentAdapter $attachmentAdapter */
     protected $attachmentAdapter;
 
