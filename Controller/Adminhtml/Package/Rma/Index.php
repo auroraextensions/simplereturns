@@ -4,40 +4,34 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License, which
+ * This source file is subject to the MIT license, which
  * is bundled with this package in the file LICENSE.txt.
  *
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package       AuroraExtensions_SimpleReturns
- * @copyright     Copyright (C) 2019 Aurora Extensions <support@auroraextensions.com>
- * @license       MIT License
+ * @package     AuroraExtensions\SimpleReturns\Controller\Adminhtml\Package\Rma
+ * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
+ * @license     MIT
  */
 declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Package\Rma;
 
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
-use Magento\Backend\{
-    App\Action,
-    App\Action\Context
-};
-use Magento\Framework\{
-    App\Action\HttpGetActionInterface,
-    App\Action\HttpPostActionInterface,
-    View\Result\PageFactory
-};
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Result\PageFactory;
 
-class Index extends Action implements
-    HttpGetActionInterface,
-    ModuleComponentInterface
+use function __;
+
+class Index extends Action implements HttpGetActionInterface
 {
-    /** @constant string ADMIN_RESOURCE */
     public const ADMIN_RESOURCE = 'AuroraExtensions_SimpleReturns::rma';
 
-    /** @property PageFactory $resultPageFactory */
-    protected $resultPageFactory;
+    /** @var PageFactory $resultPageFactory */
+    private $resultPageFactory;
 
     /**
      * @param Context $context
@@ -59,7 +53,9 @@ class Index extends Action implements
     {
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->getConfig()->getTitle()->prepend(__('Select RMA for Package'));
+        $resultPage->getConfig()
+            ->getTitle()
+            ->prepend(__('Select RMA for Package'));
 
         return $resultPage;
     }
