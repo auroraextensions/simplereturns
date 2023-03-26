@@ -23,7 +23,7 @@ use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
 use AuroraExtensions\SimpleReturns\Api\PackageManagementInterface;
 use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
-use AuroraExtensions\SimpleReturns\Exception\Http\Request\InvalidTokenException;
+use AuroraExtensions\SimpleReturns\Exception\InvalidTokenException;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
