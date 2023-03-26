@@ -27,11 +27,10 @@ use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
-use AuroraExtensions\SimpleReturns\Model\AdapterModel\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
 use DateTime;
 use DateTimeFactory;
@@ -39,8 +38,9 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
-use Magento\Framework\Controller\Result\Redirect as ResultRedirect;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
@@ -53,68 +53,87 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
 use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Model\File\UploaderFactory;
+use Throwable;
 
 use function __;
+use function array_shift;
 use function is_numeric;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreatePost extends Action implements
-    HttpPostActionInterface,
-    ModuleComponentInterface
+class CreatePost extends Action implements HttpPostActionInterface
 {
+    /**
+     * @var EventManagerInterface $eventManager
+     * @method void dispatchEvent()
+     * @method void dispatchEvents()
+     * ---
+     * @var ConfigInterface $moduleConfig
+     * @method ConfigInterface getConfig()
+     * ---
+     * @method Redirect getRedirect()
+     * @method Redirect getRedirectToPath()
+     * @method Redirect getRedirectToUrl()
+     */
     use EventManagerTrait,
         ModuleConfigTrait,
         RedirectTrait;
 
+    private const DATA_GROUP_KEY = 'simplereturns_group_key';
+    private const FIELD_INCREMENT_ID = 'increment_id';
+    private const FIELD_PROTECT_CODE = 'protect_code';
+    private const PARAM_ORDER_ID = 'order_id';
+    private const PARAM_PROTECT_CODE = 'code';
+    private const ROUTE_PATH = 'sales/guest/view';
+
     /** @var AttachmentRepositoryInterface $attachmentRepository */
-    protected $attachmentRepository;
+    private $attachmentRepository;
 
     /** @var DataPersistorInterface $dataPersistor */
-    protected $dataPersistor;
+    private $dataPersistor;
 
     /** @var DateTimeFactory $dateTimeFactory */
-    protected $dateTimeFactory;
+    private $dateTimeFactory;
 
     /** @var EmailTransport $emailTransport */
-    protected $emailTransport;
+    private $emailTransport;
 
     /** @var Escaper $escaper */
-    protected $escaper;
+    private $escaper;
 
     /** @var ExceptionFactory $exceptionFactory */
-    protected $exceptionFactory;
+    private $exceptionFactory;
 
     /** @var Filesystem $filesystem */
-    protected $filesystem;
+    private $filesystem;
 
     /** @var FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
+    private $formKeyValidator;
 
     /** @var LabelManager $labelManager */
-    protected $labelManager;
+    private $labelManager;
 
     /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var RemoteAddress $remoteAddress */
-    protected $remoteAddress;
+    private $remoteAddress;
 
     /** @var Json $serializer */
-    protected $serializer;
+    private $serializer;
 
     /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
-    protected $simpleReturnFactory;
+    private $simpleReturnFactory;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param Context $context
@@ -194,8 +213,10 @@ class CreatePost extends Action implements
         /** @var RequestInterface $request */
         $request = $this->getRequest();
 
-        if (!$request->isPost() || !$this->formKeyValidator->validate($request)) {
-            return $this->getRedirectToPath(static::ROUTE_SALES_GUEST_VIEW);
+        if (!$request->isPost()
+            || !$this->formKeyValidator->validate($request)
+        ) {
+            return $this->getRedirectToPath(self::ROUTE_PATH);
         }
 
         /** @var array|null $params */
@@ -203,35 +224,32 @@ class CreatePost extends Action implements
 
         if ($params !== null) {
             /** @var int|string|null $orderId */
-            $orderId = $request->getParam(static::PARAM_ORDER_ID);
+            $orderId = $request->getParam(self::PARAM_ORDER_ID);
             $orderId = !empty($orderId) ? $orderId : null;
 
             /** @var string|null $protectCode */
-            $protectCode = $request->getParam(static::PARAM_PROTECT_CODE);
+            $protectCode = $request->getParam(self::PARAM_PROTECT_CODE);
             $protectCode = !empty($protectCode) ? $protectCode : null;
 
             /** @var string|null $reason */
             $reason = $params['reason'] ?? null;
             $reason = $reason !== null && !empty($reason)
-                ? $this->escaper->escapeHtml($reason)
-                : null;
+                ? $this->escaper->escapeHtml($reason) : null;
 
             /** @var string|null $resolution */
             $resolution = $params['resolution'] ?? null;
             $resolution = $resolution !== null && !empty($resolution)
-                ? $this->escaper->escapeHtml($resolution)
-                : null;
+                ? $this->escaper->escapeHtml($resolution) : null;
 
             /** @var string|null $comments */
             $comments = $params['comments'] ?? null;
             $comments = $comments !== null && !empty($comments)
-                ? $this->escaper->escapeHtml($comments)
-                : null;
+                ? $this->escaper->escapeHtml($comments) : null;
 
             /** @var array $fields */
             $fields = [
-                static::FIELD_INCREMENT_ID => $orderId,
-                static::FIELD_PROTECT_CODE => $protectCode,
+                self::FIELD_INCREMENT_ID => $orderId,
+                self::FIELD_PROTECT_CODE => $protectCode,
             ];
 
             try {
@@ -241,7 +259,7 @@ class CreatePost extends Action implements
 
                 if (!empty($orders)) {
                     /** @var OrderInterface $order */
-                    $order = $orders[0];
+                    $order = array_shift($orders);
 
                     try {
                         /** @var SimpleReturn $rma */
@@ -283,19 +301,23 @@ class CreatePost extends Action implements
                             'created_at' => $createdTime,
                         ];
 
-                        $this->dispatchEvent('simplereturns_rma_create_save_before', $data);
+                        $this->dispatchEvent(
+                            'simplereturns_rma_create_save_before',
+                            $data
+                        );
 
                         /** @var int $rmaId */
                         $rmaId = $this->simpleReturnRepository->save(
                             $rma->addData($data)
                         );
 
-                        $this->dispatchEvent('simplereturns_rma_create_save_after', [
-                            'rma' => $rma,
-                        ]);
+                        $this->dispatchEvent(
+                            'simplereturns_rma_create_save_after',
+                            ['rma' => $rma]
+                        );
 
                         /** @var string|null $groupKey */
-                        $groupKey = $this->dataPersistor->get(static::DATA_GROUP_KEY);
+                        $groupKey = $this->dataPersistor->get(self::DATA_GROUP_KEY);
 
                         /* Update attachments with new RMA ID. */
                         if ($groupKey !== null) {
@@ -309,9 +331,8 @@ class CreatePost extends Action implements
                             foreach ($metadata as $metadatum) {
                                 /** @var int|string|null $attachmentId */
                                 $attachmentId = $metadatum['attachment_id'] ?? null;
-                                $attachmentId = $attachmentId !== null && is_numeric($attachmentId)
-                                    ? (int) $attachmentId
-                                    : null;
+                                $attachmentId = is_numeric($attachmentId)
+                                    ? (int) $attachmentId : null;
 
                                 if ($attachmentId !== null) {
                                     /** @var AttachmentInterface $attachment */
@@ -325,7 +346,7 @@ class CreatePost extends Action implements
 
                             /* Clear attachment metadata, group key from session. */
                             $this->dataPersistor->clear($groupKey);
-                            $this->dataPersistor->clear(static::DATA_GROUP_KEY);
+                            $this->dataPersistor->clear(self::DATA_GROUP_KEY);
                         }
 
                         /* Send New RMA Request email */
@@ -355,9 +376,7 @@ class CreatePost extends Action implements
                             ]
                         );
                         return $this->getRedirectToUrl($redirectUrl);
-                    } catch (AlreadyExistsException $e) {
-                        throw $e;
-                    } catch (LocalizedException $e) {
+                    } catch (Throwable $e) {
                         throw $e;
                     }
                 }
@@ -367,15 +386,12 @@ class CreatePost extends Action implements
                     LocalizedException::class,
                     __('Unable to create RMA request.')
                 );
-
                 throw $exception;
-            } catch (NoSuchEntityException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
-            } catch (LocalizedException $e) {
+            } catch (Throwable $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             }
         }
 
-        return $this->getRedirectToPath(static::ROUTE_SALES_GUEST_VIEW);
+        return $this->getRedirectToPath(self::ROUTE_PATH);
     }
 }
