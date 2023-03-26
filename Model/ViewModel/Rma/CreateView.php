@@ -19,41 +19,42 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Helper\Action as ActionHelper,
-    Helper\Config as ConfigHelper,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\RequestInterface,
-    Exception\NoSuchEntityException,
-    Message\ManagerInterface as MessageManagerInterface,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
 use function __;
 use function array_shift;
 
-class CreateView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class CreateView extends AbstractView implements ArgumentInterface
 {
+    private const FIELD_INCREMENT_ID = 'increment_id';
+    private const FIELD_PROTECT_CODE = 'protect_code';
+    private const PARAM_ORDER_ID = 'order_id';
+    private const PARAM_PROTECT_CODE = 'code';
+    private const ROUTE_PATH = 'simplereturns/rma/createPost';
+
     /** @var MessageManagerInterface $messageManager */
-    protected $messageManager;
+    private $messageManager;
 
     /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var OrderInterface $order */
-    protected $order;
+    private $order;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var string $route */
     private $route;
@@ -79,7 +80,7 @@ class CreateView extends AbstractView implements
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
         array $data = [],
-        string $route = self::ROUTE_SIMPLERETURNS_RMA_CREATEPOST
+        string $route = self::ROUTE_PATH
     ) {
         parent::__construct(
             $configHelper,
@@ -121,17 +122,17 @@ class CreateView extends AbstractView implements
                 /** @var OrderInterface[] $orders */
                 $orders = $this->orderAdapter->getOrdersByFields($fields);
 
-                if (!empty($orders)) {
-                    $this->order = array_shift($orders);
-                    return $this->order;
+                if (empty($orders)) {
+                    /** @var NoSuchEntityException $exception */
+                    $exception = $this->exceptionFactory->create(
+                        NoSuchEntityException::class,
+                        __('Unable to locate any matching orders.')
+                    );
+                    throw $exception;
                 }
 
-                /** @var NoSuchEntityException $exception */
-                $exception = $this->exceptionFactory->create(
-                    NoSuchEntityException::class,
-                    __('Unable to locate any matching orders.')
-                );
-                throw $exception;
+                $this->order = array_shift($orders);
+                return $this->order;
             } catch (NoSuchEntityException $e) {
                 $this->messageManager->addError($e->getMessage());
             }
@@ -145,11 +146,14 @@ class CreateView extends AbstractView implements
      */
     public function getViewOrderUrl(): ?string
     {
-        /** @var OrderInterface $order */
+        /** @var string|null $targetUrl */
+        $targetUrl = null;
+
+        /** @var OrderInterface|null $order */
         $order = $this->getOrder();
 
         if ($order !== null) {
-            return $this->urlBuilder->getUrl(
+            $targetUrl = $this->urlBuilder->getUrl(
                 'sales/order/view',
                 [
                     'order_id' => $order->getId(),
@@ -158,7 +162,7 @@ class CreateView extends AbstractView implements
             );
         }
 
-        return null;
+        return $targetUrl;
     }
 
     /**

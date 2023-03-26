@@ -19,81 +19,75 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\{
-    Api\Data\AttachmentInterface,
-    Api\Data\SimpleReturnInterface,
-    Api\AttachmentManagementInterface,
-    Api\AttachmentRepositoryInterface,
-    Api\SimpleReturnRepositoryInterface,
-    Helper\Action as ActionHelper,
-    Helper\Config as ConfigHelper,
-    Model\AdapterModel\Sales\Order as OrderAdapter,
-    Model\Security\Token as Tokenizer,
-    Model\SearchModel\Attachment as AttachmentAdapter,
-    Model\SystemModel\Module\Config as ModuleConfig,
-    Model\ViewModel\AbstractView,
-    Shared\ModuleComponentInterface
-};
-use Magento\Framework\{
-    App\RequestInterface,
-    Data\Form\FormKey,
-    Exception\LocalizedException,
-    Exception\NoSuchEntityException,
-    Message\ManagerInterface as MessageManagerInterface,
-    Serialize\Serializer\Json,
-    UrlInterface,
-    View\Element\Block\ArgumentInterface
-};
-use Magento\Sales\{
-    Api\Data\OrderInterface,
-    Api\OrderRepositoryInterface
-};
+use AuroraExtensions\SimpleReturns\Api\AttachmentManagementInterface;
+use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
+use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
+use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
+use AuroraExtensions\SimpleReturns\Model\Search\Attachment as AttachmentAdapter;
+use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
+use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Data\Form\FormKey;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 use function is_numeric;
 
-class EditView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+class EditView extends AbstractView implements ArgumentInterface
 {
+    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_TOKEN = 'token';
+    private const ROUTE_PATH = 'simplereturns/rma/editPost';
+
     /** @var AttachmentAdapter $attachmentAdapter */
-    protected $attachmentAdapter;
+    private $attachmentAdapter;
 
     /** @var AttachmentManagementInterface $attachmentManagement */
-    protected $attachmentManagement;
+    private $attachmentManagement;
 
     /** @var AttachmentRepositoryInterface $attachmentRepository */
-    protected $attachmentRepository;
+    private $attachmentRepository;
 
     /** @var FormKey $formKey */
-    protected $formKey;
+    private $formKey;
 
     /** @var MessageManagerInterface $messageManager */
-    protected $messageManager;
+    private $messageManager;
 
     /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var OrderInterface $order */
-    protected $order;
+    private $order;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var OrderRepositoryInterface $orderRepository */
-    protected $orderRepository;
+    private $orderRepository;
 
     /** @var SimpleReturnInterface $rma */
-    protected $rma;
+    private $rma;
 
     /** @var Json $serializer */
-    protected $serializer;
+    private $serializer;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var StoreManagerInterface $storeManager */
-    protected $storeManager;
+    private $storeManager;
 
     /** @var string $route */
     private $route;
@@ -135,7 +129,7 @@ class EditView extends AbstractView implements
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         StoreManagerInterface $storeManager,
         array $data = [],
-        string $route = self::ROUTE_SIMPLERETURNS_RMA_EDITPOST
+        string $route = self::ROUTE_PATH
     ) {
         parent::__construct(
             $configHelper,
@@ -261,7 +255,7 @@ class EditView extends AbstractView implements
             return $this->order;
         }
 
-        /** @var SimpleReturnInterface $rma */
+        /** @var SimpleReturnInterface|null $rma */
         $rma = $this->getSimpleReturn();
 
         if ($rma !== null) {
@@ -289,7 +283,7 @@ class EditView extends AbstractView implements
         /** @var array $files */
         $files = [];
 
-        /** @var SimpleReturnInterface $rma */
+        /** @var SimpleReturnInterface|null $rma */
         $rma = $this->getSimpleReturn();
 
         if ($rma !== null) {

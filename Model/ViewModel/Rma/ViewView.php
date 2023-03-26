@@ -27,11 +27,10 @@ use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
+use AuroraExtensions\SimpleReturns\Model\Search\Attachment as AttachmentAdapter;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Model\SearchModel\Attachment as AttachmentAdapter;
 use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
 use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -50,51 +49,52 @@ use function rtrim;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ViewView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+class ViewView extends AbstractView implements ArgumentInterface
 {
+    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_TOKEN = 'token';
+
     /** @var AttachmentAdapter $attachmentAdapter */
-    protected $attachmentAdapter;
+    private $attachmentAdapter;
 
     /** @var LabelInterface $label */
-    protected $label;
+    private $label;
 
     /** @var LabelManager $labelManager */
-    protected $labelManager;
+    private $labelManager;
 
     /** @var LabelRepositoryInterface $labelRepository */
-    protected $labelRepository;
+    private $labelRepository;
 
     /** @var MessageManagerInterface $messageManager */
-    protected $messageManager;
+    private $messageManager;
 
     /** @var OrderInterface $order */
-    protected $order;
+    private $order;
 
     /** @var OrderRepositoryInterface $orderRepository */
-    protected $orderRepository;
+    private $orderRepository;
 
     /** @var PackageInterface $package */
-    protected $package;
+    private $package;
 
     /** @var PackageRepositoryInterface $packageRepository */
-    protected $packageRepository;
+    private $packageRepository;
 
     /** @var SimpleReturnInterface $rma */
-    protected $rma;
+    private $rma;
 
     /** @var Json $serializer */
-    protected $serializer;
+    private $serializer;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var StoreManagerInterface $storeManager */
-    protected $storeManager;
+    private $storeManager;
 
     /** @var Tokenizer $tokenizer */
-    protected $tokenizer;
+    private $tokenizer;
 
     /**
      * @param ConfigHelper $configHelper

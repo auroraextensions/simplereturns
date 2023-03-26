@@ -23,9 +23,8 @@ use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
-use AuroraExtensions\SimpleReturns\Model\ValidatorModel\Sales\Order\EligibilityValidator;
+use AuroraExtensions\SimpleReturns\Model\Validator\Sales\Order\EligibilityValidator;
 use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
-use AuroraExtensions\SimpleReturns\Shared\ModuleComponentInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -35,18 +34,16 @@ use Magento\Sales\Api\Data\OrderInterface;
 
 use function count;
 
-class ListView extends AbstractView implements
-    ArgumentInterface,
-    ModuleComponentInterface
+class ListView extends AbstractView implements ArgumentInterface
 {
     /** @var LabelManager $labelManager */
-    protected $labelManager;
+    private $labelManager;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var EligibilityValidator $validator */
-    protected $validator;
+    private $validator;
 
     /**
      * @param ConfigHelper $configHelper
