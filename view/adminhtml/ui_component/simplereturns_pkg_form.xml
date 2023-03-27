@@ -60,7 +60,7 @@
         </argument>
         <block class="Magento\Framework\View\Element\Template"
                name="simplereturns_pkg_form_before"
-               template="AuroraExtensions_SimpleReturns::container/empty.phtml"/>
+               template="AuroraExtensions_ModuleComponents::element/container.phtml"/>
     </htmlContent>
     <fieldset name="simplereturns">
         <settings>
@@ -119,6 +119,6 @@
         </argument>
         <block class="Magento\Framework\View\Element\Template"
                name="simplereturns_pkg_form_after"
-               template="AuroraExtensions_SimpleReturns::container/empty.phtml"/>
+               template="AuroraExtensions_ModuleComponents::element/container.phtml"/>
     </htmlContent>
 </form>

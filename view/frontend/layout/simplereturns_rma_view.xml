@@ -28,7 +28,7 @@
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template"
                    name="simplereturns_rma_view"
-                   template="AuroraExtensions_SimpleReturns::container/empty.phtml"
+                   template="AuroraExtensions_ModuleComponents::element/container.phtml"
                    cacheable="false">
                 <container name="simplereturns_rma_view_container" htmlTag="div" htmlClass="block simplereturns">
                     <block class="Magento\Framework\View\Element\Template"
