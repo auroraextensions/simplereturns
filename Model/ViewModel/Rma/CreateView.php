@@ -21,7 +21,7 @@ namespace AuroraExtensions\SimpleReturns\Model\ViewModel\Rma;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
 use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
 use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;

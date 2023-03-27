@@ -31,7 +31,7 @@ use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 use DateTime;
 use DateTimeFactory;
 use Magento\Framework\App\Action\Action;

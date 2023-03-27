@@ -50,7 +50,7 @@
     <preference for="AuroraExtensions\SimpleReturns\Api\Data\AttachmentSearchResultsInterface"
                 type="Magento\Framework\Api\SearchResults"/>
     <preference for="AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface"
-                type="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config"/>
+                type="AuroraExtensions\SimpleReturns\Model\System\Module\Config"/>
 
     <type name="AuroraExtensions\SimpleReturns\Setup\Patch\Data\CreateSimpleReturnProductAttribute">
         <arguments>
@@ -74,7 +74,7 @@
             </argument>
         </arguments>
     </type>
-    <type name="AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config">
+    <type name="AuroraExtensions\SimpleReturns\Model\System\Module\Config">
         <arguments>
             <argument name="data" xsi:type="array">
                 <item name="carriers" xsi:type="array">

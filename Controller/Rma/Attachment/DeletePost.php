@@ -24,9 +24,10 @@ use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
+use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -53,11 +54,14 @@ use function trim;
 class DeletePost extends Action implements HttpPostActionInterface
 {
     /**
+     * @var ConfigInterface $moduleConfig
+     * @method ConfigInterface getConfig()
+     * ---
      * @method Redirect getRedirect()
      * @method Redirect getRedirectToPath()
      * @method Redirect getRedirectToUrl()
      */
-    use RedirectTrait;
+    use ModuleConfigTrait, RedirectTrait;
 
     /** @var AttachmentRepositoryInterface $attachmentRepository */
     private $attachmentRepository;
@@ -70,9 +74,6 @@ class DeletePost extends Action implements HttpPostActionInterface
 
     /** @var FormKeyValidator $formKeyValidator */
     private $formKeyValidator;
-
-    /** @var ModuleConfig $moduleConfig */
-    private $moduleConfig;
 
     /** @var OrderAdapter $orderAdapter */
     private $orderAdapter;
@@ -99,7 +100,7 @@ class DeletePost extends Action implements HttpPostActionInterface
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
      * @param FormKeyValidator $formKeyValidator
-     * @param ModuleConfig $moduleConfig
+     * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
      * @param Json $serializer
@@ -117,7 +118,7 @@ class DeletePost extends Action implements HttpPostActionInterface
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
         FormKeyValidator $formKeyValidator,
-        ModuleConfig $moduleConfig,
+        ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
         Json $serializer,

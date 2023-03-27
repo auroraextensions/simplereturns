@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Block\Adminhtml\Rma\Status;
 
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 use Magento\Backend\Block\Widget\Button\SplitButton;
 use Magento\Backend\Block\Widget\Container;
 use Magento\Backend\Block\Widget\Context;
