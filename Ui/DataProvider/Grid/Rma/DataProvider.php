@@ -29,8 +29,8 @@ use Magento\Ui\DataProvider\AddFieldToCollectionInterface;
 use Magento\Ui\DataProvider\AddFilterToCollectionInterface;
 
 class DataProvider extends AbstractDataProvider implements
-    Countable,
-    DataProviderInterface
+    DataProviderInterface,
+    Countable
 {
     /** @var AddFieldToCollectionInterface[] $addFieldStrategies */
     private $addFieldStrategies;
@@ -45,24 +45,24 @@ class DataProvider extends AbstractDataProvider implements
      * @param string $name
      * @param string $primaryFieldName
      * @param string $requestFieldName
-     * @param array $meta
-     * @param array $data
-     * @param AddFieldToCollectionInterface[] $addFieldStrategies
-     * @param AddFilterToCollectionInterface[] $addFilterStrategies
      * @param CollectionFactory $collectionFactory
      * @param LabelManager $labelManager
+     * @param AddFieldToCollectionInterface[] $addFieldStrategies
+     * @param AddFilterToCollectionInterface[] $addFilterStrategies
+     * @param array $meta
+     * @param array $data
      * @return void
      */
     public function __construct(
         $name,
         $primaryFieldName,
         $requestFieldName,
-        array $meta = [],
-        array $data = [],
+        CollectionFactory $collectionFactory,
+        LabelManager $labelManager,
         array $addFieldStrategies = [],
         array $addFilterStrategies = [],
-        CollectionFactory $collectionFactory,
-        LabelManager $labelManager
+        array $meta = [],
+        array $data = []
     ) {
         parent::__construct(
             $name,
@@ -71,11 +71,10 @@ class DataProvider extends AbstractDataProvider implements
             $meta,
             $data
         );
+        $this->collection = $collectionFactory->create();
+        $this->labelManager = $labelManager;
         $this->addFieldStrategies = $addFieldStrategies;
         $this->addFilterStrategies = $addFilterStrategies;
-        $this->collection = $collectionFactory->create();
-        $this->viewModel = $viewModel;
-        $this->labelManager = $labelManager;
     }
 
     /**
