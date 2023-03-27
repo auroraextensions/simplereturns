@@ -27,8 +27,8 @@ use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterfac
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
 class DataProvider extends AbstractDataProvider implements
-    Countable,
-    DataProviderInterface
+    DataProviderInterface,
+    Countable
 {
     /** @var array $mapKeys */
     private $mapKeys = [
@@ -43,19 +43,20 @@ class DataProvider extends AbstractDataProvider implements
      * @param string $name
      * @param string $primaryFieldName
      * @param string $requestFieldName
-     * @param array $meta
-     * @param array $data
      * @param CollectionFactory $collectionFactory
      * @param LabelManager $labelManager
+     * @param array $meta
+     * @param array $data
      * @return void
      */
     public function __construct(
         $name,
         $primaryFieldName,
         $requestFieldName,
+        CollectionFactory $collectionFactory,
+        LabelManager $labelManager,
         array $meta = [],
-        array $data = [],
-        CollectionFactory $collectionFactory
+        array $data = []
     ) {
         parent::__construct(
             $name,

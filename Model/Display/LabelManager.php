@@ -21,6 +21,7 @@ namespace AuroraExtensions\SimpleReturns\Model\Display;
 use AuroraExtensions\ModuleComponents\Model\Utils\ArrayUtils;
 use Iterator;
 use IteratorAggregate;
+use Magento\Framework\Phrase;
 use Traversable;
 
 use function __;
@@ -85,12 +86,14 @@ class LabelManager
             /** @var array $values */
             $values = is_array($value) ? $value : [];
 
-            /** @var string $key */
+            /** @var string|Phrase $key */
             /** @var mixed $val */
             foreach ($values as [
                 'label' => $key,
                 'value' => $val,
             ]) {
+                $key = (string) $key;
+
                 if (is_array($val)) {
                     /** @var array $squash */
                     $squash = $this->arrayUtils->squash($val, $key);

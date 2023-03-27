@@ -77,7 +77,7 @@ class SimpleReturn extends AbstractModel implements SimpleReturnInterface
     /**
      * {@inheritdoc}
      */
-    public function setPackageId(int $pkgId): SimpleReturnInterface
+    public function setPackageId(?int $pkgId): SimpleReturnInterface
     {
         $this->setData('pkg_id', $pkgId);
         return $this;
