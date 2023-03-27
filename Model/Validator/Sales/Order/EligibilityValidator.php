@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Model\Validator\Sales\Order;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 use DateTime;
 use DateTimeFactory;
 use Magento\Catalog\Api\Data\ProductInterface;

@@ -10,13 +10,13 @@
  * It is also available on the Internet at the following URL:
  * https://docs.auroraextensions.com/magento/extensions/2.x/simplereturns/LICENSE.txt
  *
- * @package     AuroraExtensions\SimpleReturns\Model\SystemModel\Module
+ * @package     AuroraExtensions\SimpleReturns\Model\System\Module
  * @copyright   Copyright (C) 2023 Aurora Extensions <support@auroraextensions.com>
  * @license     MIT
  */
 declare(strict_types=1);
 
-namespace AuroraExtensions\SimpleReturns\Model\SystemModel\Module;
+namespace AuroraExtensions\SimpleReturns\Model\System\Module;
 
 use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use Magento\Dhl\Model\Carrier as DHL;

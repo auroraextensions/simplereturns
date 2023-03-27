@@ -26,7 +26,7 @@ use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -35,7 +35,6 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
-use Magento\Framework\Controller\Result\Redirect as ResultRedirect;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Filesystem;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
@@ -57,43 +56,43 @@ class CreatePost extends Action implements HttpPostActionInterface
     private const SAVE_PATH = '/simplereturns/';
 
     /** @var AttachmentInterfaceFactory $attachmentFactory */
-    protected $attachmentFactory;
+    private $attachmentFactory;
 
     /** @var AttachmentRepositoryInterface $attachmentRepository */
-    protected $attachmentRepository;
+    private $attachmentRepository;
 
     /** @var DataPersistorInterface $dataPersistor */
-    protected $dataPersistor;
+    private $dataPersistor;
 
     /** @var Filesystem $filesystem */
-    protected $filesystem;
+    private $filesystem;
 
     /** @var FormKeyValidator $formKeyValidator */
-    protected $formKeyValidator;
+    private $formKeyValidator;
 
     /** @var ImageManagementInterface $imageManagement */
-    protected $imageManagement;
+    private $imageManagement;
 
     /** @var ModuleConfig $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var OrderAdapter $orderAdapter */
-    protected $orderAdapter;
+    private $orderAdapter;
 
     /** @var RemoteAddress $remoteAddress */
-    protected $remoteAddress;
+    private $remoteAddress;
 
     /** @var ResultJsonFactory $resultJsonFactory */
-    protected $resultJsonFactory;
+    private $resultJsonFactory;
 
     /** @var Json $serializer */
-    protected $serializer;
+    private $serializer;
 
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $simpleReturnRepository;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param Context $context
@@ -150,7 +149,7 @@ class CreatePost extends Action implements HttpPostActionInterface
     }
 
     /**
-     * @return Magento\Framework\Controller\Result\Json
+     * @return ResultJson
      */
     public function execute()
     {
@@ -195,7 +194,10 @@ class CreatePost extends Action implements HttpPostActionInterface
              * a user to upload files and store them before an
              * associated RMA record has been created.
              */
-            $this->dataPersistor->set(self::DATA_GROUP_KEY, $groupKey);
+            $this->dataPersistor->set(
+                self::DATA_GROUP_KEY,
+                $groupKey
+            );
         }
 
         /** @var string|array|null $metadata */
@@ -248,13 +250,13 @@ class CreatePost extends Action implements HttpPostActionInterface
                     $entity->addData($entityData)
                 );
 
-                $metadata[] = [
-                    'attachment_id' => $attachmentId,
-                ];
-
+                $metadata[] = ['attachment_id' => $attachmentId];
                 $response[] = [
                     'success' => true,
-                    'message' => __('Successfully uploaded RMA attachment: %1', $result['name']),
+                    'message' => __(
+                        'Successfully uploaded RMA attachment: %1',
+                        $result['name']
+                    ),
                 ];
             } catch (Throwable $e) {
                 $response[] = [

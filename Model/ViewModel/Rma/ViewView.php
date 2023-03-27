@@ -29,7 +29,7 @@ use AuroraExtensions\SimpleReturns\Helper\Config as ConfigHelper;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Search\Attachment as AttachmentAdapter;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 use AuroraExtensions\SimpleReturns\Model\ViewModel\AbstractView;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;

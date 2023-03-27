@@ -26,11 +26,11 @@ use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
+use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
 use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
 use DateTime;
 use DateTimeFactory;
 use Magento\Backend\App\Action;
@@ -40,6 +40,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
@@ -62,6 +63,14 @@ use function array_shift;
  */
 class CreatePost extends Action implements HttpPostActionInterface
 {
+    /**
+     * @var ConfigInterface $moduleConfig
+     * @method ConfigInterface getConfig()
+     * ---
+     * @method Redirect getRedirect()
+     * @method Redirect getRedirectToPath()
+     * @method Redirect getRedirectToUrl()
+     */
     use ModuleConfigTrait, RedirectTrait;
 
     private const FIELD_INCREMENT_ID = 'increment_id';
@@ -96,9 +105,6 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var LabelManager $labelManager */
     private $labelManager;
 
-    /** @var ModuleConfig $moduleConfig */
-    private $moduleConfig;
-
     /** @var OrderAdapter $orderAdapter */
     private $orderAdapter;
 
@@ -132,7 +138,7 @@ class CreatePost extends Action implements HttpPostActionInterface
      * @param UploaderFactory $fileUploaderFactory
      * @param FormKeyValidator $formKeyValidator
      * @param LabelManager $labelManager
-     * @param ModuleConfig $moduleConfig
+     * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
      * @param ResultJsonFactory $resultJsonFactory
@@ -156,7 +162,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         UploaderFactory $fileUploaderFactory,
         FormKeyValidator $formKeyValidator,
         LabelManager $labelManager,
-        ModuleConfig $moduleConfig,
+        ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
         ResultJsonFactory $resultJsonFactory,

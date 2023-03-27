@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Helper;
 
-use AuroraExtensions\SimpleReturns\Model\SystemModel\Module\Config as ModuleConfig;
+use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 
 /**
  * @deprecated Avoid use. Will be removed in future release.
