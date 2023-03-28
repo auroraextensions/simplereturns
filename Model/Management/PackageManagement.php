@@ -337,128 +337,123 @@ class PackageManagement implements PackageManagementInterface
                 return false;
             }
 
-            try {
-                /** @var string|null $companyName */
-                $companyName = $shipperAddress->getCompany();
-                $companyName = !empty($companyName)
-                    ? $companyName : $order->getCustomerName();
+            /** @var string|null $companyName */
+            $companyName = $shipperAddress->getCompany();
+            $companyName = !empty($companyName)
+                ? $companyName : $order->getCustomerName();
 
-                /** @var ShipmentRequest $shipmentRequest */
-                $shipmentRequest = $this->shipmentRequestFactory->create();
+            /** @var ShipmentRequest $shipmentRequest */
+            $shipmentRequest = $this->shipmentRequestFactory->create();
 
-                /** @var array|string $shipperStreet */
-                $shipperStreet = $shipperAddress->getStreet();
-                $shipperStreet = is_array($shipperStreet)
-                    ? implode(
-                        self::ADDRESS_FIELD_DELIMITER,
-                        $shipperStreet
-                    ) : $shipperStreet;
+            /** @var array|string $shipperStreet */
+            $shipperStreet = $shipperAddress->getStreet();
+            $shipperStreet = is_array($shipperStreet)
+                ? implode(
+                    self::ADDRESS_FIELD_DELIMITER,
+                    $shipperStreet
+                ) : $shipperStreet;
 
-                /** @var array|string $returnsStreet */
-                $returnsStreet = $returnsAddress->getStreet();
-                $returnsStreet = is_array($returnsStreet)
-                    ? implode(
-                        self::ADDRESS_FIELD_DELIMITER,
-                        $returnsStreet
-                    ) : $returnsStreet;
+            /** @var array|string $returnsStreet */
+            $returnsStreet = $returnsAddress->getStreet();
+            $returnsStreet = is_array($returnsStreet)
+                ? implode(
+                    self::ADDRESS_FIELD_DELIMITER,
+                    $returnsStreet
+                ) : $returnsStreet;
 
-                /** @var array $shipmentDetails */
-                $shipmentDetails = [
-                    'order_shipment'                           => $originShipment,
-                    'shipper_contact_person_name'              => $order->getCustomerName(),
-                    'shipper_contact_person_first_name'        => $order->getCustomerFirstname(),
-                    'shipper_contact_person_last_name'         => $order->getCustomerLastname(),
-                    'shipper_contact_company_name'             => $companyName,
-                    'shipper_contact_phone_number'             => $shipperAddress->getTelephone(),
-                    'shipper_email'                            => $shipperAddress->getEmail(),
-                    'shipper_address_street'                   => $shipperStreet,
-                    'shipper_address_street_1'                 => $shipperStreet,
-                    'shipper_address_street_2'                 => $shipperAddress->getStreet2(),
-                    'shipper_address_city'                     => $shipperAddress->getCity(),
-                    'shipper_address_state_or_province_code'   => $shipperRegionCode,
-                    'shipper_address_postal_code'              => $shipperAddress->getPostcode(),
-                    'shipper_address_country_code'             => $shipperAddress->getCountryId(),
-                    'recipient_contact_person_name'            => $returnsRecipient->getFullName(),
-                    'recipient_contact_person_first_name'      => $returnsRecipient->getFirstName(),
-                    'recipient_contact_person_last_name'       => $returnsRecipient->getLastName(),
-                    'recipient_contact_company_name'           => $returnsAddress->getCompany(),
-                    'recipient_contact_phone_number'           => $storeInfo->getPhone(),
-                    'recipient_email'                          => $returnsAddress->getEmail(),
-                    'recipient_address_street'                 => $returnsStreet,
-                    'recipient_address_street_1'               => $returnsStreet,
-                    'recipient_address_street_2'               => $returnsAddress->getStreet2(),
-                    'recipient_address_city'                   => $returnsAddress->getCity(),
-                    'recipient_address_state_or_province_code' => $returnsRegionCode,
-                    'recipient_address_region_code'            => $returnsRegionCode,
-                    'recipient_address_postal_code'            => $returnsAddress->getPostcode(),
-                    'recipient_address_country_code'           => $returnsAddress->getCountryId(),
-                    'shipping_method'                          => $this->moduleConfig->getShippingMethod($storeId),
-                    'package_weight'                           => $this->getPackageWeight($order, $storeId),
-                    'packages'                                 => $this->createShipmentPackages($package),
-                    'base_currency_code'                       => $currencyCode,
-                    'store_id'                                 => $storeId,
-                    'reference_data'                           => $this->getOrderComment($order),
-                ];
+            /** @var array $shipmentDetails */
+            $shipmentDetails = [
+                'order_shipment'                           => $originShipment,
+                'shipper_contact_person_name'              => $order->getCustomerName(),
+                'shipper_contact_person_first_name'        => $order->getCustomerFirstname(),
+                'shipper_contact_person_last_name'         => $order->getCustomerLastname(),
+                'shipper_contact_company_name'             => $companyName,
+                'shipper_contact_phone_number'             => $shipperAddress->getTelephone(),
+                'shipper_email'                            => $shipperAddress->getEmail(),
+                'shipper_address_street'                   => $shipperStreet,
+                'shipper_address_street_1'                 => $shipperStreet,
+                'shipper_address_street_2'                 => $shipperAddress->getStreet2(),
+                'shipper_address_city'                     => $shipperAddress->getCity(),
+                'shipper_address_state_or_province_code'   => $shipperRegionCode,
+                'shipper_address_postal_code'              => $shipperAddress->getPostcode(),
+                'shipper_address_country_code'             => $shipperAddress->getCountryId(),
+                'recipient_contact_person_name'            => $returnsRecipient->getFullName(),
+                'recipient_contact_person_first_name'      => $returnsRecipient->getFirstName(),
+                'recipient_contact_person_last_name'       => $returnsRecipient->getLastName(),
+                'recipient_contact_company_name'           => $returnsAddress->getCompany(),
+                'recipient_contact_phone_number'           => $storeInfo->getPhone(),
+                'recipient_email'                          => $returnsAddress->getEmail(),
+                'recipient_address_street'                 => $returnsStreet,
+                'recipient_address_street_1'               => $returnsStreet,
+                'recipient_address_street_2'               => $returnsAddress->getStreet2(),
+                'recipient_address_city'                   => $returnsAddress->getCity(),
+                'recipient_address_state_or_province_code' => $returnsRegionCode,
+                'recipient_address_region_code'            => $returnsRegionCode,
+                'recipient_address_postal_code'            => $returnsAddress->getPostcode(),
+                'recipient_address_country_code'           => $returnsAddress->getCountryId(),
+                'shipping_method'                          => $this->moduleConfig->getShippingMethod($storeId),
+                'package_weight'                           => $this->getPackageWeight($order, $storeId),
+                'packages'                                 => $this->createShipmentPackages($package),
+                'base_currency_code'                       => $currencyCode,
+                'store_id'                                 => $storeId,
+                'reference_data'                           => $this->getOrderComment($order),
+            ];
 
-                /** @var DataObject $carrierResponse */
-                $carrierResponse = $carrierModel->returnOfShipment(
-                    $shipmentRequest->addData($shipmentDetails)
+            /** @var DataObject $carrierResponse */
+            $carrierResponse = $carrierModel->returnOfShipment(
+                $shipmentRequest->addData($shipmentDetails)
+            );
+
+            if ($carrierResponse->getErrors()) {
+                /** @var LocalizedException $exception */
+                $exception = $this->exceptionFactory->create(
+                    LocalizedException::class,
+                    __($carrierResponse->getErrors())
                 );
-
-                if ($carrierResponse->getErrors()) {
-                    /** @var LocalizedException $exception */
-                    $exception = $this->exceptionFactory->create(
-                        LocalizedException::class,
-                        __($carrierResponse->getErrors())
-                    );
-                    throw $exception;
-                }
-
-                /** @var array $responseDetails */
-                $responseDetails = $carrierResponse->getInfo();
-
-                if (!empty($responseDetails)) {
-                    /** @var array|null $shipmentInfo */
-                    $shipmentInfo = $responseDetails[0] ?? null;
-
-                    if ($shipmentInfo !== null) {
-                        /** @var LabelInterface $label */
-                        $label = $this->labelFactory->create();
-
-                        /** @var string|null $labelImage */
-                        $labelImage = $shipmentInfo['label_content'] ?? null;
-
-                        /** @var string|null $trackingNumber */
-                        $trackingNumber = $shipmentInfo['tracking_number'] ?? null;
-
-                        /** @var string $token */
-                        $token = Tokenizer::createToken();
-
-                        /** @var int $labelId */
-                        $labelId = $this->labelRepository->save(
-                            $label->addData([
-                                'pkg_id'          => $package->getId(),
-                                'image'           => $labelImage,
-                                'tracking_number' => $trackingNumber,
-                                'remote_ip'       => $this->remoteAddress->getRemoteAddress(),
-                                'token'           => $token,
-                            ])
-                        );
-                        $package->setLabelId($labelId);
-                        $this->packageRepository->save($package);
-
-                        /* Add RMA comment to order. */
-                        $order->addStatusHistoryComment(
-                            $this->getRmaComment($trackingNumber)
-                        );
-                        $this->orderRepository->save($order);
-                    }
-                }
-
-                return true;
-            } catch (Throwable $e) {
-                throw $e;
+                throw $exception;
             }
+
+            /** @var array $responseDetails */
+            $responseDetails = $carrierResponse->getInfo();
+
+            if (!empty($responseDetails)) {
+                /** @var array|null $shipmentInfo */
+                $shipmentInfo = $responseDetails[0] ?? null;
+
+                if ($shipmentInfo !== null) {
+                    /** @var string|null $labelImage */
+                    $labelImage = $shipmentInfo['label_content'] ?? null;
+
+                    /** @var string|null $trackingNumber */
+                    $trackingNumber = $shipmentInfo['tracking_number'] ?? null;
+
+                    /** @var string $token */
+                    $token = Tokenizer::createToken();
+
+                    /** @var LabelInterface $label */
+                    $label = $this->labelFactory->create();
+                    $label->addData([
+                        'pkg_id' => $package->getId(),
+                        'image' => $labelImage,
+                        'tracking_number' => $trackingNumber,
+                        'remote_ip' => $this->remoteAddress->getRemoteAddress(),
+                        'token' => $token,
+                    ]);
+
+                    /** @var int $labelId */
+                    $labelId = $this->labelRepository->save($label);
+                    $package->setLabelId($labelId);
+                    $this->packageRepository->save($package);
+
+                    /* Add RMA comment to order. */
+                    $order->addStatusHistoryComment(
+                        $this->getRmaComment($trackingNumber)
+                    );
+                    $this->orderRepository->save($order);
+                }
+            }
+
+            return true;
         } catch (Throwable $e) {
             /* No action required. */
         }
