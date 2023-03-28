@@ -173,9 +173,6 @@ class LabelManager
      */
     public function replace(array $item): array
     {
-        /** @var array $result */
-        $result = [];
-
         /** @var array $values */
         $values = $this->arrayUtils->kslice(
             $item,
@@ -185,11 +182,11 @@ class LabelManager
         /** @var string $field */
         /** @var mixed $value */
         foreach ($values as $field => $value) {
-            /** @var string|null $label */
-            $label = $this->data[$field][$value] ?? null;
-            $result[$field][$value] = $label;
+            /** @var string|Phrase|null $label */
+            $label = $this->data[$field][$value] ?? $value;
+            $item[$field] = $label;
         }
 
-        return $result;
+        return $item;
     }
 }
