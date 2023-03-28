@@ -53,11 +53,13 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
 use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Model\File\UploaderFactory;
+use Magento\Store\Model\StoreManagerInterface;
 use Throwable;
 
 use function __;
 use function array_shift;
 use function is_numeric;
+use Ramsey\Uuid\v4;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -132,6 +134,9 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     private $simpleReturnRepository;
 
+    /** @var StoreManagerInterface $storeManager */
+    private $storeManager;
+
     /** @var UrlInterface $urlBuilder */
     private $urlBuilder;
 
@@ -154,6 +159,7 @@ class CreatePost extends Action implements HttpPostActionInterface
      * @param Json $serializer
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param StoreManagerInterface $storeManager
      * @param UrlInterface $urlBuilder
      * @return void
      *
@@ -178,6 +184,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         Json $serializer,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
+        StoreManagerInterface $storeManager,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
@@ -198,6 +205,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         $this->serializer = $serializer;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->storeManager = $storeManager;
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -272,16 +280,13 @@ class CreatePost extends Action implements HttpPostActionInterface
                                 AlreadyExistsException::class,
                                 __('An RMA request already exists for this order.')
                             );
-
                             throw $exception;
                         }
                     /* RMA doesn't exist, continue processing. */
                     } catch (NoSuchEntityException $e) {
-                        /** @var SimpleReturn $rma */
-                        $rma = $this->simpleReturnFactory->create();
-
                         /** @var string $remoteIp */
-                        $remoteIp = $this->remoteAddress->getRemoteAddress();
+                        $remoteIp = $this->remoteAddress
+                            ->getRemoteAddress();
 
                         /** @var string $token */
                         $token = Tokenizer::createToken();
@@ -289,28 +294,33 @@ class CreatePost extends Action implements HttpPostActionInterface
                         /** @var DateTime $createdTime */
                         $createdTime = $this->dateTimeFactory->create();
 
-                        /** @var array $data */
-                        $data = [
-                            'order_id'   => $orderId,
-                            'status'     => ModuleConfig::DEFAULT_RMA_STATUS_CODE,
-                            'reason'     => $reason,
+                        /** @var int $storeId */
+                        $storeId = (int) $this->storeManager
+                            ->getStore()
+                            ->getId();
+
+                        /** @var SimpleReturnInterface $rma */
+                        $rma = $this->simpleReturnFactory->create();
+                        $rma->addData([
+                            'uuid' => v4(),
+                            'store_id' => $storeId,
+                            'order_id' => $orderId,
+                            'status' => ModuleConfig::DEFAULT_RMA_STATUS_CODE,
+                            'reason' => $reason,
                             'resolution' => $resolution,
-                            'comments'   => $comments,
-                            'remote_ip'  => $remoteIp,
-                            'token'      => $token,
+                            'comments' => $comments,
+                            'remote_ip' => $remoteIp,
+                            'token' => $token,
                             'created_at' => $createdTime,
-                        ];
+                        ]);
 
                         $this->dispatchEvent(
                             'simplereturns_rma_create_save_before',
-                            $data
+                            $rma->getData()
                         );
 
                         /** @var int $rmaId */
-                        $rmaId = $this->simpleReturnRepository->save(
-                            $rma->addData($data)
-                        );
-
+                        $rmaId = $this->simpleReturnRepository->save($rma);
                         $this->dispatchEvent(
                             'simplereturns_rma_create_save_after',
                             ['rma' => $rma]
