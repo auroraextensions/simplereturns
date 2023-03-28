@@ -90,7 +90,9 @@ $order = $viewModel->getOrder();
                     <tr>
                         <th><?= $block->escapeHtml(__('Comments')) ?></th>
                         <td>
-                            <span id="rma_comments"><?= $block->escapeHtml(__('%1', $rma->getComments())) ?></span>
+                            <span id="rma_comments">
+                                <?= $block->escapeHtml($rma->getComments()) ?>
+                            </span>
                         </td>
                     </tr>
                 </table>
