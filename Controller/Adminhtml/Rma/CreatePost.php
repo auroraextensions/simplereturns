@@ -341,7 +341,7 @@ class CreatePost extends Action implements HttpPostActionInterface
                         'simplereturns/customer/rma_request_new_email_identity',
                         [
                             'orderId' => $order->getRealOrderId(),
-                            'frontId' => $rma->getFrontId(),
+                            'uuid' => $rma->getUuid(),
                             'reason' => $this->labelManager->getLabel('reason', $rma->getReason()),
                             'resolution' => $this->labelManager->getLabel('resolution', $rma->getResolution()),
                             'status' => $this->labelManager->getLabel('status', $rma->getStatus()),
