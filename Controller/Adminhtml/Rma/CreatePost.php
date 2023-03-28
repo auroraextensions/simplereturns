@@ -53,10 +53,12 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
 use Magento\Framework\UrlInterface;
 use Magento\MediaStorage\Model\File\UploaderFactory;
+use Magento\Store\Model\StoreManagerInterface;
 use Throwable;
 
 use function __;
 use function array_shift;
+use function Ramsey\Uuid\v4;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -123,6 +125,9 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     private $simpleReturnRepository;
 
+    /** @var StoreManagerInterface $storeManager */
+    private $storeManager;
+
     /** @var UrlInterface $urlBuilder */
     private $urlBuilder;
 
@@ -145,6 +150,7 @@ class CreatePost extends Action implements HttpPostActionInterface
      * @param Json $serializer
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param StoreManagerInterface $storeManager
      * @param UrlInterface $urlBuilder
      * @return void
      *
@@ -169,6 +175,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         Json $serializer,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
+        StoreManagerInterface $storeManager,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
@@ -189,6 +196,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         $this->serializer = $serializer;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->storeManager = $storeManager;
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -260,7 +268,8 @@ class CreatePost extends Action implements HttpPostActionInterface
 
         try {
             /** @var OrderInterface[] $orders */
-            $orders = $this->orderAdapter->getOrdersByFields($fields);
+            $orders = $this->orderAdapter
+                ->getOrdersByFields($fields);
 
             if (!empty($orders)) {
                 /** @var OrderInterface $order */
@@ -287,6 +296,11 @@ class CreatePost extends Action implements HttpPostActionInterface
                     /** @var string $remoteIp */
                     $remoteIp = $this->remoteAddress->getRemoteAddress();
 
+                    /** @var int $storeId */
+                    $storeId = (int) $this->storeManager
+                        ->getStore()
+                        ->getId();
+
                     /** @var string $token */
                     $token = Tokenizer::createToken();
 
@@ -295,13 +309,15 @@ class CreatePost extends Action implements HttpPostActionInterface
 
                     /** @var array $data */
                     $data = [
-                        'order_id'   => $orderId,
-                        'status'     => $status,
-                        'reason'     => $reason,
+                        'uuid' => v4(),
+                        'store_id' => $storeId,
+                        'order_id' => $orderId,
+                        'status' => $status,
+                        'reason' => $reason,
                         'resolution' => $resolution,
-                        'comments'   => $comments,
-                        'remote_ip'  => $remoteIp,
-                        'token'      => $token,
+                        'comments' => $comments,
+                        'remote_ip' => $remoteIp,
+                        'token' => $token,
                         'created_at' => $createdTime,
                     ];
 
@@ -310,8 +326,10 @@ class CreatePost extends Action implements HttpPostActionInterface
                         $data
                     );
 
+                    $rma->addData($data);
+
                     /** @var int $rmaId */
-                    $rmaId = $this->simpleReturnRepository->save($rma->addData($data));
+                    $rmaId = $this->simpleReturnRepository->save($rma);
                     $this->eventManager->dispatch(
                         'simplereturns_adminhtml_rma_create_save_after',
                         ['rma' => $rma]

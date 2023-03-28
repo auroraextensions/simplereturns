@@ -53,6 +53,7 @@ use Magento\MediaStorage\Model\File\UploaderFactory;
 use Throwable;
 
 use function __;
+use function Ramsey\Uuid\v4;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -230,11 +231,8 @@ class CreatePost extends Action implements HttpPostActionInterface
                 );
                 throw $exception;
             }
-        /* RMA doesn't exist, continue processing. */
+        /* Package doesn't exist, continue processing. */
         } catch (NoSuchEntityException $e) {
-            /** @var PackageInterface $package */
-            $package = $this->packageFactory->create();
-
             /** @var string $remoteIp */
             $remoteIp = $this->remoteAddress
                 ->getRemoteAddress();
@@ -246,37 +244,25 @@ class CreatePost extends Action implements HttpPostActionInterface
             /** @var string $pkgToken */
             $pkgToken = Tokenizer::createToken();
 
-            /** @var array $pkgData */
-            $pkgData = [
-                'rma_id'       => $rmaId,
+            /** @var PackageInterface $package */
+            $package = $this->packageFactory->create();
+            $package->addData([
+                'uuid' => v4(),
+                'rma_id' => $rmaId,
                 'carrier_code' => $carrierCode,
-                'remote_ip'    => $remoteIp,
-                'token'        => $pkgToken,
-            ];
+                'remote_ip' => $remoteIp,
+                'token' => $pkgToken,
+            ]);
 
             /** @var int $pkgId */
-            $pkgId = $this->packageRepository->save(
-                $package->addData($pkgData)
-            );
+            $pkgId = $this->packageRepository->save($package);
+            $rma->setPackageId($pkgId);
+            $this->simpleReturnRepository->save($rma);
 
             if ($requestLabel) {
                 $this->packageManagement
                      ->requestToReturnShipment($package);
             }
-
-            /** @var SimpleReturnInterface $rma */
-            $rma = $this->simpleReturnFactory->create();
-
-            /** @var array $rmaData */
-            $rmaData = [
-                'rma_id' => $rmaId,
-                'pkg_id' => $pkgId,
-            ];
-
-            /* Update RMA with newly created package ID. */
-            $this->simpleReturnRepository->save(
-                $rma->addData($rmaData)
-            );
 
             /** @var string $viewUrl */
             $viewUrl = $this->urlBuilder->getUrl(
