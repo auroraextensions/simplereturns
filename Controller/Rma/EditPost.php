@@ -312,7 +312,7 @@ class EditPost extends Action implements HttpPostActionInterface
                     'simplereturns/customer/rma_request_update_email_identity',
                     [
                         'orderId' => $order->getRealOrderId(),
-                        'frontId' => $rma->getFrontId(),
+                        'uuid' => $rma->getUuid(),
                         'reason' => $this->labelManager->getLabel('reason', $reason),
                         'resolution' => $this->labelManager->getLabel('resolution', $resolution),
                         'status' => $this->labelManager->getLabel('status', $status),
