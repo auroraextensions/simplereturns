@@ -94,37 +94,38 @@ class LabelManager
             ]) {
                 $key = (string) $key;
 
-                if (is_array($val)) {
-                    /** @var array $squash */
-                    $squash = $this->arrayUtils->squash($val, $key);
-
-                    /** @var array $flatten */
-                    $flatten = array_values($squash);
-                    $result[$field] += $this->arrayUtils->umerge(
-                        null,
-                        ...array_map(
-                            function ($k, $v) {
-                                return [$k => $v];
-                            },
-                            array_filter(
-                                $flatten,
-                                function ($k) {
-                                    return (bool)($k & 1);
-                                },
-                                ARRAY_FILTER_USE_KEY
-                            ),
-                            array_filter(
-                                $flatten,
-                                function ($k) {
-                                    return !($k % 2);
-                                },
-                                ARRAY_FILTER_USE_KEY
-                            )
-                        )
-                    );
-                } else {
-                    $list[$field][$val] = $key;
+                if (!is_array($val)) {
+                    $val = (string) $val;
+                    $result[$field][$val] = $key;
+                    continue;
                 }
+
+                /** @var array $squash */
+                $squash = array_values(
+                    $this->arrayUtils->squash($val, $key)
+                );
+                $result[$field] += $this->arrayUtils->umerge(
+                    null,
+                    ...array_map(
+                        function ($k, $v) {
+                            return [$k => $v];
+                        },
+                        array_filter(
+                            $squash,
+                            function ($k) {
+                                return (bool)($k & 1);
+                            },
+                            ARRAY_FILTER_USE_KEY
+                        ),
+                        array_filter(
+                            $squash,
+                            function ($k) {
+                                return !($k % 2);
+                            },
+                            ARRAY_FILTER_USE_KEY
+                        )
+                    )
+                );
             }
         }
 
@@ -157,8 +158,11 @@ class LabelManager
         string $group,
         string $value
     ): ?string {
+        /** @var string $field */
+        $field = $this->fieldMap[$group] ?? $group;
+
         /** @var mixed $label */
-        $label = $this->data[$group][$value] ?? null;
+        $label = $this->data[$field][$value] ?? null;
         return $label !== null
             ? (string) __($label) : null;
     }
