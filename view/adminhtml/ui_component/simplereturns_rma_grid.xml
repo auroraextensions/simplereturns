@@ -79,7 +79,7 @@
                 sortOrder="300">
             <settings>
                 <filter>text</filter>
-                <label translate="true">Order</label>
+                <label translate="true">Order #</label>
                 <sortable>false</sortable>
             </settings>
         </column>
