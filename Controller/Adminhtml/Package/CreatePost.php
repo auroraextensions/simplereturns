@@ -40,6 +40,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Escaper;
 use Magento\Framework\Exception\AlreadyExistsException;
@@ -60,6 +61,14 @@ use function Ramsey\Uuid\v4;
  */
 class CreatePost extends Action implements HttpPostActionInterface
 {
+    /**
+     * @var ConfigInterface $moduleConfig
+     * @method ConfigInterface getConfig()
+     * ---
+     * @method Redirect getRedirect()
+     * @method Redirect getRedirectToPath()
+     * @method Redirect getRedirectToUrl()
+     */
     use ModuleConfigTrait, RedirectTrait;
 
     private const PARAM_RMA_ID = 'rma_id';
@@ -79,9 +88,6 @@ class CreatePost extends Action implements HttpPostActionInterface
 
     /** @var FormKeyValidator $formKeyValidator */
     private $formKeyValidator;
-
-    /** @var ConfigInterface $moduleConfig */
-    private $moduleConfig;
 
     /** @var PackageInterfaceFactory $packageFactory */
     private $packageFactory;
