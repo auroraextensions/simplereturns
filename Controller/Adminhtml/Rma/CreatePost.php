@@ -18,10 +18,10 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma;
 
-use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
-use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContext;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContextFactory;
+use AuroraExtensions\ModuleComponents\Reflection\EventListener\ObservableEvent;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
@@ -30,29 +30,22 @@ use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
-use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use DateTime;
 use DateTimeFactory;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
-use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Filesystem;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
 use Magento\Framework\UrlInterface;
-use Magento\MediaStorage\Model\File\UploaderFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Throwable;
 
@@ -68,20 +61,13 @@ class CreatePost extends Action implements HttpPostActionInterface
     /**
      * @var ConfigInterface $moduleConfig
      * @method ConfigInterface getConfig()
-     * ---
-     * @method Redirect getRedirect()
-     * @method Redirect getRedirectToPath()
-     * @method Redirect getRedirectToUrl()
      */
-    use ModuleConfigTrait, RedirectTrait;
+    use ModuleConfigTrait;
 
     private const FIELD_INCREMENT_ID = 'increment_id';
     private const FIELD_PROTECT_CODE = 'protect_code';
     private const PARAM_ORDER_ID = 'order_id';
     private const PARAM_PROTECT_CODE = 'code';
-
-    /** @var AttachmentRepositoryInterface $attachmentRepository */
-    private $attachmentRepository;
 
     /** @var DateTimeFactory $dateTimeFactory */
     private $dateTimeFactory;
@@ -98,11 +84,11 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var ExceptionFactory $exceptionFactory */
     private $exceptionFactory;
 
-    /** @var Filesystem $filesystem */
-    private $filesystem;
-
     /** @var FormKeyValidator $formKeyValidator */
     private $formKeyValidator;
+
+    /** @var HashContextFactory $hashContextFactory */
+    private $hashContextFactory;
 
     /** @var LabelManager $labelManager */
     private $labelManager;
@@ -115,9 +101,6 @@ class CreatePost extends Action implements HttpPostActionInterface
 
     /** @var ResultJsonFactory $resultJsonFactory */
     private $resultJsonFactory;
-
-    /** @var Json $serializer */
-    private $serializer;
 
     /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
     private $simpleReturnFactory;
@@ -133,21 +116,18 @@ class CreatePost extends Action implements HttpPostActionInterface
 
     /**
      * @param Context $context
-     * @param AttachmentRepositoryInterface $attachmentRepository
      * @param DateTimeFactory $dateTimeFactory
      * @param EmailTransport $emailTransport
      * @param Escaper $escaper
      * @param EventManagerInterface $eventManager
      * @param ExceptionFactory $exceptionFactory
-     * @param Filesystem $filesystem
-     * @param UploaderFactory $fileUploaderFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param HashContextFactory $hashContextFactory
      * @param LabelManager $labelManager
      * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
      * @param RemoteAddress $remoteAddress
      * @param ResultJsonFactory $resultJsonFactory
-     * @param Json $serializer
      * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param StoreManagerInterface $storeManager
@@ -158,42 +138,36 @@ class CreatePost extends Action implements HttpPostActionInterface
      */
     public function __construct(
         Context $context,
-        AttachmentRepositoryInterface $attachmentRepository,
         DateTimeFactory $dateTimeFactory,
         EmailTransport $emailTransport,
         Escaper $escaper,
         EventManagerInterface $eventManager,
         ExceptionFactory $exceptionFactory,
-        Filesystem $filesystem,
-        UploaderFactory $fileUploaderFactory,
         FormKeyValidator $formKeyValidator,
+        HashContextFactory $hashContextFactory,
         LabelManager $labelManager,
         ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
         RemoteAddress $remoteAddress,
         ResultJsonFactory $resultJsonFactory,
-        Json $serializer,
         SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         StoreManagerInterface $storeManager,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
-        $this->attachmentRepository = $attachmentRepository;
         $this->dateTimeFactory = $dateTimeFactory;
         $this->emailTransport = $emailTransport;
         $this->escaper = $escaper;
         $this->eventManager = $eventManager;
         $this->exceptionFactory = $exceptionFactory;
-        $this->filesystem = $filesystem;
-        $this->fileUploaderFactory = $fileUploaderFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->hashContextFactory = $hashContextFactory;
         $this->labelManager = $labelManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
         $this->remoteAddress = $remoteAddress;
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->serializer = $serializer;
         $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->storeManager = $storeManager;
@@ -201,7 +175,7 @@ class CreatePost extends Action implements HttpPostActionInterface
     }
 
     /**
-     * @return Redirect
+     * @return ResultJson
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -211,9 +185,6 @@ class CreatePost extends Action implements HttpPostActionInterface
     {
         /** @var RequestInterface $request */
         $request = $this->getRequest();
-
-        /** @var array $response */
-        $response = [];
 
         /** @var ResultJson $resultJson */
         $resultJson = $this->resultJsonFactory->create();
@@ -260,6 +231,11 @@ class CreatePost extends Action implements HttpPostActionInterface
         $comments = !empty($comments)
             ? $this->escaper->escapeHtml($comments) : null;
 
+        /** @var bool $notifyCustomer */
+        $notifyCustomer = $request->getPostValue('notify_customer');
+        $notifyCustomer = $notifyCustomer !== null
+            ? (bool) $notifyCustomer : false;
+
         /** @var array $fields */
         $fields = [
             self::FIELD_INCREMENT_ID => $orderId,
@@ -271,120 +247,133 @@ class CreatePost extends Action implements HttpPostActionInterface
             $orders = $this->orderAdapter
                 ->getOrdersByFields($fields);
 
-            if (!empty($orders)) {
-                /** @var OrderInterface $order */
-                $order = array_shift($orders);
-
-                try {
-                    /** @var SimpleReturnInterface $rma */
-                    $rma = $this->simpleReturnRepository->get($order);
-
-                    /** @note Consider possible redirect to RMA view page. */
-                    if ($rma->getId()) {
-                        /** @var AlreadyExistsException $exception */
-                        $exception = $this->exceptionFactory->create(
-                            AlreadyExistsException::class,
-                            __('An RMA request already exists for this order.')
-                        );
-                        throw $exception;
-                    }
-                /* RMA doesn't exist, continue processing. */
-                } catch (NoSuchEntityException $e) {
-                    /** @var SimpleReturnInterface $rma */
-                    $rma = $this->simpleReturnFactory->create();
-
-                    /** @var string $remoteIp */
-                    $remoteIp = $this->remoteAddress->getRemoteAddress();
-
-                    /** @var int $storeId */
-                    $storeId = (int) $this->storeManager
-                        ->getStore()
-                        ->getId();
-
-                    /** @var string $token */
-                    $token = Tokenizer::createToken();
-
-                    /** @var DateTime $createdTime */
-                    $createdTime = $this->dateTimeFactory->create();
-
-                    /** @var array $data */
-                    $data = [
-                        'uuid' => v4(),
-                        'store_id' => $storeId,
-                        'order_id' => $orderId,
-                        'status' => $status,
-                        'reason' => $reason,
-                        'resolution' => $resolution,
-                        'comments' => $comments,
-                        'remote_ip' => $remoteIp,
-                        'token' => $token,
-                        'created_at' => $createdTime,
-                    ];
-
-                    $this->eventManager->dispatch(
-                        'simplereturns_adminhtml_rma_create_save_before',
-                        $data
-                    );
-
-                    $rma->addData($data);
-
-                    /** @var int $rmaId */
-                    $rmaId = $this->simpleReturnRepository->save($rma);
-                    $this->eventManager->dispatch(
-                        'simplereturns_adminhtml_rma_create_save_after',
-                        ['rma' => $rma]
-                    );
-
-                    /* Send New RMA Request email */
-                    $this->emailTransport->send(
-                        'simplereturns/customer/rma_request_new_email_template',
-                        'simplereturns/customer/rma_request_new_email_identity',
-                        [
-                            'orderId' => $order->getRealOrderId(),
-                            'uuid' => $rma->getUuid(),
-                            'reason' => $this->labelManager->getLabel('reason', $rma->getReason()),
-                            'resolution' => $this->labelManager->getLabel('resolution', $rma->getResolution()),
-                            'status' => $this->labelManager->getLabel('status', $rma->getStatus()),
-                            'comments' => $this->escaper->escapeHtml($rma->getComments()),
-                        ],
-                        $order->getCustomerEmail(),
-                        $order->getCustomerName(),
-                        (int) $order->getStoreId()
-                    );
-
-                    /** @var string $viewUrl */
-                    $viewUrl = $this->urlBuilder->getUrl(
-                        'simplereturns/rma/view',
-                        [
-                            'rma_id'  => $rmaId,
-                            'token'   => $token,
-                            '_secure' => true,
-                        ]
-                    );
-                    return $resultJson->setData([
-                        'success' => true,
-                        'isSimpleReturnsAjax' => true,
-                        'message' => __('Successfully created RMA.'),
-                        'viewUrl' => $viewUrl,
-                    ]);
-                } catch (Throwable $e) {
-                    throw $e;
-                }
+            if (empty($orders)) {
+                /** @var LocalizedException $exception */
+                $exception = $this->exceptionFactory->create(
+                    LocalizedException::class,
+                    __('Unable to create RMA request.')
+                );
+                throw $exception;
             }
-
-            /** @var LocalizedException $exception */
-            $exception = $this->exceptionFactory->create(
-                LocalizedException::class,
-                __('Unable to create RMA request.')
-            );
-            throw $exception;
         } catch (Throwable $e) {
-            $response = [
+            return $resultJson->setData([
                 'error' => true,
-                'messages' => [$e->getMessage()],
-            ];
+                'message' => $e->getMessage(),
+            ]);
         }
 
-        return $resultJson->setData($response);
+        /** @var OrderInterface $order */
+        $order = array_shift($orders);
+
+        try {
+            /** @var SimpleReturnInterface $rma */
+            $rma = $this->simpleReturnRepository->get($order);
+
+            if ($rma->getId()) {
+                /** @var AlreadyExistsException $exception */
+                $exception = $this->exceptionFactory->create(
+                    AlreadyExistsException::class,
+                    __('An RMA request already exists for this order.')
+                );
+                throw $exception;
+            }
+        /* RMA doesn't exist, continue processing. */
+        } catch (NoSuchEntityException $e) {
+            /** @var SimpleReturnInterface $rma */
+            $rma = $this->simpleReturnFactory->create();
+
+            /** @var string $remoteIp */
+            $remoteIp = $this->remoteAddress->getRemoteAddress();
+
+            /** @var int $storeId */
+            $storeId = (int) $this->storeManager
+                ->getStore()
+                ->getId();
+
+            /** @var HashContext $hashContext */
+            $hashContext = $this->hashContextFactory->create([
+                'data' => null,
+                'algo' => 'crc32b',
+            ]);
+
+            /** @var string $token */
+            $token = (string) $hashContext;
+
+            /** @var DateTime $dateTime */
+            $dateTime = $this->dateTimeFactory->create();
+
+            /** @var array $data */
+            $data = [
+                'uuid' => v4(),
+                'store_id' => $storeId,
+                'order_id' => $orderId,
+                'status' => $status,
+                'reason' => $reason,
+                'resolution' => $resolution,
+                'comments' => $comments,
+                'remote_ip' => $remoteIp,
+                'token' => $token,
+                'created_at' => $dateTime,
+            ];
+
+            #[ObservableEvent('simplereturns_adminhtml_rma_create_save_before')]
+            $this->eventManager->dispatch(
+                'simplereturns_adminhtml_rma_create_save_before',
+                $data
+            );
+
+            $rma->addData($data);
+
+            /** @var int $rmaId */
+            $rmaId = $this->simpleReturnRepository->save($rma);
+
+            #[ObservableEvent('simplereturns_adminhtml_rma_create_save_after')]
+            $this->eventManager->dispatch(
+                'simplereturns_adminhtml_rma_create_save_after',
+                ['rma' => $rma]
+            );
+
+            if ($notifyCustomer) {
+                /* Send New RMA Request email */
+                $this->emailTransport->send(
+                    'simplereturns/customer/rma_request_new_email_template',
+                    'simplereturns/customer/rma_request_new_email_identity',
+                    [
+                        'orderId' => $order->getRealOrderId(),
+                        'uuid' => $rma->getUuid(),
+                        'reason' => $this->labelManager->getLabel('reason', $rma->getReason()),
+                        'resolution' => $this->labelManager->getLabel('resolution', $rma->getResolution()),
+                        'status' => $this->labelManager->getLabel('status', $rma->getStatus()),
+                        'comments' => $this->escaper->escapeHtml($rma->getComments()),
+                    ],
+                    $order->getCustomerEmail(),
+                    $order->getCustomerName(),
+                    (int) $order->getStoreId()
+                );
+            }
+
+            /** @var string $viewUrl */
+            $viewUrl = $this->urlBuilder->getUrl(
+                'simplereturns/rma/view',
+                [
+                    'rma_id'  => $rmaId,
+                    'token'   => $token,
+                    '_secure' => true,
+                ]
+            );
+            $resultJson->setData([
+                'success' => true,
+                'isSimpleReturnsAjax' => true,
+                'message' => __('Successfully created RMA.'),
+                'viewUrl' => $viewUrl,
+            ]);
+        } catch (Throwable $e) {
+            $resultJson->setData([
+                'error' => true,
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+        return $resultJson;
     }
 }

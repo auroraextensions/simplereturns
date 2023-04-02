@@ -134,6 +134,25 @@
                 <visible>true</visible>
             </settings>
         </field>
+        <field name="notify_customer" formElement="checkbox">
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Notify Customer</label>
+                <tooltip>
+                    <description>Send an email to the customer about this change to their RMA request.</description>
+                </tooltip>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
     </fieldset>
     <htmlContent name="simplereturns_rma_form_after_html_content">
         <argument name="data" xsi:type="array">

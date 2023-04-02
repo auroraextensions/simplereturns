@@ -18,7 +18,6 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Model\Data;
 
-use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
 use AuroraExtensions\SimpleReturns\Model\ResourceModel\Package as PackageResource;
 use Magento\Framework\Model\AbstractModel;
@@ -156,17 +155,17 @@ class Package extends AbstractModel implements PackageInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabel(): LabelInterface
+    public function getLabelId(): ?int
     {
-        return $this->getData('label');
+        return (int) $this->getData('label_id') ?: null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setLabel(LabelInterface $label): PackageInterface
+    public function setLabelId(?int $labelId): PackageInterface
     {
-        $this->setData('label', $label);
+        $this->setData('label_id', $labelId);
         return $this;
     }
 

@@ -111,15 +111,15 @@ interface PackageInterface
     public function setDimensionUnits(string $units): PackageInterface;
 
     /**
-     * @return LabelInterface
+     * @return int|null
      */
-    public function getLabel(): LabelInterface;
+    public function getLabelId(): ?int;
 
     /**
-     * @param LabelInterface $label
+     * @param int|null $labelId
      * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      */
-    public function setLabel(LabelInterface $label): PackageInterface;
+    public function setLabelId(?int $labelId): PackageInterface;
 
     /**
      * @return float

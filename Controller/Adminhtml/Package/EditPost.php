@@ -1,6 +1,6 @@
 <?php
 /**
- * CreatePost.php
+ * EditPost.php
  *
  * NOTICE OF LICENSE
  *
@@ -18,18 +18,11 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Package;
 
-use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
-use AuroraExtensions\ModuleComponents\Model\Security\HashContext;
-use AuroraExtensions\ModuleComponents\Model\Security\HashContextFactory;
 use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
-use AuroraExtensions\SimpleReturns\Api\Data\PackageInterfaceFactory;
-use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\PackageManagementInterface;
 use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
-use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
-use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
 use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use DateTime;
 use DateTimeFactory;
@@ -39,33 +32,26 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
-use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Exception\AlreadyExistsException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\UrlInterface;
 use Throwable;
 
 use function __;
-use function Ramsey\Uuid\v4;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CreatePost extends Action implements HttpPostActionInterface
+class EditPost extends Action implements HttpPostActionInterface
 {
     /**
      * @var ConfigInterface $moduleConfig
      * @method ConfigInterface getConfig()
-     * ---
-     * @method Redirect getRedirect()
-     * @method Redirect getRedirectToPath()
-     * @method Redirect getRedirectToUrl()
      */
-    use ModuleConfigTrait, RedirectTrait;
+    use ModuleConfigTrait;
 
-    private const PARAM_RMA_ID = 'rma_id';
+    private const PARAM_PKG_ID = 'pkg_id';
+    private const PARAM_TOKEN = 'token';
 
     /** @var DateTimeFactory $dateTimeFactory */
     private $dateTimeFactory;
@@ -76,26 +62,14 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var FormKeyValidator $formKeyValidator */
     private $formKeyValidator;
 
-    /** @var HashContextFactory $hashContextFactory */
-    private $hashContextFactory;
-
-    /** @var PackageInterfaceFactory $packageFactory */
-    private $packageFactory;
-
     /** @var PackageManagementInterface $packageManagement */
     private $packageManagement;
 
     /** @var PackageRepositoryInterface $packageRepository */
     private $packageRepository;
 
-    /** @var RemoteAddress $remoteAddress */
-    private $remoteAddress;
-
     /** @var ResultJsonFactory $resultJsonFactory */
     private $resultJsonFactory;
-
-    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    private $simpleReturnRepository;
 
     /** @var UrlInterface $urlBuilder */
     private $urlBuilder;
@@ -105,14 +79,10 @@ class CreatePost extends Action implements HttpPostActionInterface
      * @param DateTimeFactory $dateTimeFactory
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
-     * @param HashContextFactory $hashContextFactory
      * @param ConfigInterface $moduleConfig
-     * @param PackageInterfaceFactory $packageFactory
      * @param PackageManagementInterface $packageManagement
      * @param PackageRepositoryInterface $packageRepository
-     * @param RemoteAddress $remoteAddress
      * @param ResultJsonFactory $resultJsonFactory
-     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
      *
@@ -123,33 +93,25 @@ class CreatePost extends Action implements HttpPostActionInterface
         DateTimeFactory $dateTimeFactory,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
-        HashContextFactory $hashContextFactory,
         ConfigInterface $moduleConfig,
-        PackageInterfaceFactory $packageFactory,
         PackageManagementInterface $packageManagement,
         PackageRepositoryInterface $packageRepository,
-        RemoteAddress $remoteAddress,
         ResultJsonFactory $resultJsonFactory,
-        SimpleReturnRepositoryInterface $simpleReturnRepository,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
         $this->dateTimeFactory = $dateTimeFactory;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
-        $this->hashContextFactory = $hashContextFactory;
         $this->moduleConfig = $moduleConfig;
-        $this->packageFactory = $packageFactory;
         $this->packageManagement = $packageManagement;
         $this->packageRepository = $packageRepository;
-        $this->remoteAddress = $remoteAddress;
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->simpleReturnRepository = $simpleReturnRepository;
         $this->urlBuilder = $urlBuilder;
     }
 
     /**
-     * @return Redirect
+     * @return ResultJson
      */
     public function execute()
     {
@@ -160,83 +122,49 @@ class CreatePost extends Action implements HttpPostActionInterface
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
-            return $resultJson->setData([
+            $resultJson->setData([
                 'error' => true,
                 'message' => __('Invalid request type. Must be POST request.'),
             ]);
+            return $resultJson;
         }
 
         if (!$this->formKeyValidator->validate($request)) {
-            return $resultJson->setData([
+            $resultJson->setData([
                 'error' => true,
                 'message' => __('Invalid form key.'),
             ]);
+            return $resultJson;
         }
 
-        /** @var int|string|null $rmaId */
-        $rmaId = $request->getParam(self::PARAM_RMA_ID);
-        $rmaId = !empty($rmaId) ? (int) $rmaId : null;
+        /** @var int|string|null $pkgId */
+        $pkgId = $request->getParam(self::PARAM_PKG_ID);
+        $pkgId = !empty($pkgId) ? (int) $pkgId : null;
+
+        /** @var string|null $token */
+        $token = $request->getParam(self::PARAM_TOKEN);
+        $token = !empty($token) ? $token : null;
 
         /** @var bool $requestLabel */
         $requestLabel = (bool) $request->getPostValue('request_label');
 
         try {
-            /** @var SimpleReturnInterface $rma */
-            $rma = $this->simpleReturnRepository->getById($rmaId);
-        } catch (NoSuchEntityException $e) {
-            return $resultJson->setData([
-                'error' => true,
-                'message' => $e->getMessage(),
-            ]);
-        }
-
-        try {
             /** @var PackageInterface $package */
-            $package = $this->packageRepository->get($rma);
-
-            if ($package->getId()) {
-                /** @var AlreadyExistsException $exception */
-                $exception = $this->exceptionFactory->create(
-                    AlreadyExistsException::class,
-                    __('There is already a package for this return.')
-                );
-                throw $exception;
-            }
-        /* Package doesn't exist, continue processing. */
-        } catch (NoSuchEntityException $e) {
-            /** @var string $remoteIp */
-            $remoteIp = $this->remoteAddress
-                ->getRemoteAddress();
-
-            /** @var string $carrierCode */
-            $carrierCode = $this->getConfig()
-                ->getShippingCarrier();
-
-            /** @var HashContext $hashContext */
-            $hashContext = $this->hashContextFactory->create([
-                'data' => null,
-                'algo' => 'crc32b',
-            ]);
-
-            /** @var string $token */
-            $token = (string) $hashContext;
-
-            /** @var PackageInterface $package */
-            $package = $this->packageFactory->create();
-            $package->addData([
-                'uuid' => v4(),
-                'rma_id' => $rmaId,
-                'carrier_code' => $carrierCode,
-                'remote_ip' => $remoteIp,
-                'token' => $token,
-            ]);
-
-            /** @var int $pkgId */
-            $pkgId = $this->packageRepository->save($package);
-            $rma->setPackageId($pkgId);
-            $this->simpleReturnRepository->save($rma);
+            $package = $this->packageRepository->getById($pkgId);
 
             if ($requestLabel) {
+                if ($package->getLabelId()) {
+                    /** @var AlreadyExistsException $exception */
+                    $exception = $this->exceptionFactory->create(
+                        AlreadyExistsException::class,
+                        __('There is already a label for this package.')
+                    );
+                    throw $exception;
+                }
+
+                /** @var DateTime $dateTime */
+                $dateTime = $this->dateTimeFactory->create();
+                $package->setUpdatedAt((string) $dateTime);
                 $this->packageManagement->requestToReturnShipment($package);
             }
 
@@ -252,7 +180,7 @@ class CreatePost extends Action implements HttpPostActionInterface
             $resultJson->setData([
                 'success' => true,
                 'isSimpleReturnsAjax' => true,
-                'message' => __('Successfully created package for return shipment.'),
+                'message' => __('Successfully updated package for return shipment.'),
                 'viewUrl' => $viewUrl,
             ]);
         } catch (Throwable $e) {
