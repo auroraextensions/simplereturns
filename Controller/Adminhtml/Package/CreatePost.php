@@ -20,37 +20,31 @@ namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Package;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContext;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContextFactory;
 use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\PackageInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
-use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\PackageManagementInterface;
 use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
 use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
-use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use DateTime;
 use DateTimeFactory;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
-use Magento\Framework\Escaper;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Filesystem;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\Stdlib\DateTime as StdlibDateTime;
 use Magento\Framework\UrlInterface;
-use Magento\MediaStorage\Model\File\UploaderFactory;
 use Throwable;
 
 use function __;
@@ -72,22 +66,18 @@ class CreatePost extends Action implements HttpPostActionInterface
     use ModuleConfigTrait, RedirectTrait;
 
     private const PARAM_RMA_ID = 'rma_id';
-    private const PARAM_TOKEN = 'token';
 
     /** @var DateTimeFactory $dateTimeFactory */
     private $dateTimeFactory;
-
-    /** @var EmailTransport $emailTransport */
-    private $emailTransport;
-
-    /** @var Escaper $escaper */
-    private $escaper;
 
     /** @var ExceptionFactory $exceptionFactory */
     private $exceptionFactory;
 
     /** @var FormKeyValidator $formKeyValidator */
     private $formKeyValidator;
+
+    /** @var HashContextFactory $hashContextFactory */
+    private $hashContextFactory;
 
     /** @var PackageInterfaceFactory $packageFactory */
     private $packageFactory;
@@ -104,12 +94,6 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var ResultJsonFactory $resultJsonFactory */
     private $resultJsonFactory;
 
-    /** @var Json $serializer */
-    private $serializer;
-
-    /** @var SimpleReturnInterfaceFactory $simpleReturnFactory */
-    private $simpleReturnFactory;
-
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     private $simpleReturnRepository;
 
@@ -119,18 +103,15 @@ class CreatePost extends Action implements HttpPostActionInterface
     /**
      * @param Context $context
      * @param DateTimeFactory $dateTimeFactory
-     * @param EmailTransport $emailTransport
-     * @param Escaper $escaper
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param HashContextFactory $hashContextFactory
      * @param ConfigInterface $moduleConfig
      * @param PackageInterfaceFactory $packageFactory
      * @param PackageManagementInterface $packageManagement
      * @param PackageRepositoryInterface $packageRepository
      * @param RemoteAddress $remoteAddress
      * @param ResultJsonFactory $resultJsonFactory
-     * @param Json $serializer
-     * @param SimpleReturnInterfaceFactory $simpleReturnFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
@@ -140,35 +121,29 @@ class CreatePost extends Action implements HttpPostActionInterface
     public function __construct(
         Context $context,
         DateTimeFactory $dateTimeFactory,
-        EmailTransport $emailTransport,
-        Escaper $escaper,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
+        HashContextFactory $hashContextFactory,
         ConfigInterface $moduleConfig,
         PackageInterfaceFactory $packageFactory,
         PackageManagementInterface $packageManagement,
         PackageRepositoryInterface $packageRepository,
         RemoteAddress $remoteAddress,
         ResultJsonFactory $resultJsonFactory,
-        Json $serializer,
-        SimpleReturnInterfaceFactory $simpleReturnFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         UrlInterface $urlBuilder
     ) {
         parent::__construct($context);
         $this->dateTimeFactory = $dateTimeFactory;
-        $this->emailTransport = $emailTransport;
-        $this->escaper = $escaper;
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->hashContextFactory = $hashContextFactory;
         $this->moduleConfig = $moduleConfig;
         $this->packageFactory = $packageFactory;
         $this->packageManagement = $packageManagement;
         $this->packageRepository = $packageRepository;
         $this->remoteAddress = $remoteAddress;
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->serializer = $serializer;
-        $this->simpleReturnFactory = $simpleReturnFactory;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->urlBuilder = $urlBuilder;
     }
@@ -181,35 +156,26 @@ class CreatePost extends Action implements HttpPostActionInterface
         /** @var RequestInterface $request */
         $request = $this->getRequest();
 
-        /** @var array $response */
-        $response = [];
-
         /** @var ResultJson $resultJson */
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
-            $resultJson->setData([
+            return $resultJson->setData([
                 'error' => true,
                 'message' => __('Invalid request type. Must be POST request.'),
             ]);
-            return $resultJson;
         }
 
         if (!$this->formKeyValidator->validate($request)) {
-            $resultJson->setData([
+            return $resultJson->setData([
                 'error' => true,
                 'message' => __('Invalid form key.'),
             ]);
-            return $resultJson;
         }
 
         /** @var int|string|null $rmaId */
         $rmaId = $request->getParam(self::PARAM_RMA_ID);
         $rmaId = !empty($rmaId) ? (int) $rmaId : null;
-
-        /** @var string|null $token */
-        $token = $request->getParam(self::PARAM_TOKEN);
-        $token = !empty($token) ? $token : null;
 
         /** @var bool $requestLabel */
         $requestLabel = (bool) $request->getPostValue('request_label');
@@ -218,11 +184,10 @@ class CreatePost extends Action implements HttpPostActionInterface
             /** @var SimpleReturnInterface $rma */
             $rma = $this->simpleReturnRepository->getById($rmaId);
         } catch (NoSuchEntityException $e) {
-            $resultJson->setData([
+            return $resultJson->setData([
                 'error' => true,
                 'message' => $e->getMessage(),
             ]);
-            return $resultJson;
         }
 
         try {
@@ -247,8 +212,14 @@ class CreatePost extends Action implements HttpPostActionInterface
             $carrierCode = $this->getConfig()
                 ->getShippingCarrier();
 
-            /** @var string $pkgToken */
-            $pkgToken = Tokenizer::createToken();
+            /** @var HashContext $hashContext */
+            $hashContext = $this->hashContextFactory->create([
+                'data' => null,
+                'algo' => 'crc32b',
+            ]);
+
+            /** @var string $token */
+            $token = (string) $hashContext;
 
             /** @var PackageInterface $package */
             $package = $this->packageFactory->create();
@@ -257,7 +228,7 @@ class CreatePost extends Action implements HttpPostActionInterface
                 'rma_id' => $rmaId,
                 'carrier_code' => $carrierCode,
                 'remote_ip' => $remoteIp,
-                'token' => $pkgToken,
+                'token' => $token,
             ]);
 
             /** @var int $pkgId */
@@ -266,8 +237,7 @@ class CreatePost extends Action implements HttpPostActionInterface
             $this->simpleReturnRepository->save($rma);
 
             if ($requestLabel) {
-                $this->packageManagement
-                     ->requestToReturnShipment($package);
+                $this->packageManagement->requestToReturnShipment($package);
             }
 
             /** @var string $viewUrl */
@@ -275,24 +245,23 @@ class CreatePost extends Action implements HttpPostActionInterface
                 'simplereturns/package/view',
                 [
                     'pkg_id'  => $pkgId,
-                    'token'   => $pkgToken,
+                    'token'   => $token,
                     '_secure' => true,
                 ]
             );
-            return $resultJson->setData([
+            $resultJson->setData([
                 'success' => true,
                 'isSimpleReturnsAjax' => true,
                 'message' => __('Successfully created package for return shipment.'),
                 'viewUrl' => $viewUrl,
             ]);
         } catch (Throwable $e) {
-            $response = [
+            $resultJson->setData([
                 'error' => true,
                 'message' => $e->getMessage(),
-            ];
+            ]);
         }
 
-        $resultJson->setData($response);
         return $resultJson;
     }
 }
