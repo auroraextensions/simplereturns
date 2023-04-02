@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Adminhtml\Rma;
 
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
+use AuroraExtensions\ModuleComponents\Reflection\EventListener\ObservableEvent;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
@@ -35,7 +36,6 @@ use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\UrlInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Throwable;
@@ -78,9 +78,6 @@ class EditPost extends Action implements HttpPostActionInterface
     /** @var ResultJsonFactory $resultJsonFactory */
     private $resultJsonFactory;
 
-    /** @var Json $serializer */
-    private $serializer;
-
     /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
     private $simpleReturnRepository;
 
@@ -98,7 +95,6 @@ class EditPost extends Action implements HttpPostActionInterface
      * @param ConfigInterface $moduleConfig
      * @param OrderRepositoryInterface $orderRepository
      * @param ResultJsonFactory $resultJsonFactory
-     * @param Json $serializer
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
      * @return void
@@ -114,7 +110,6 @@ class EditPost extends Action implements HttpPostActionInterface
         ConfigInterface $moduleConfig,
         OrderRepositoryInterface $orderRepository,
         ResultJsonFactory $resultJsonFactory,
-        Json $serializer,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
         UrlInterface $urlBuilder
     ) {
@@ -128,7 +123,6 @@ class EditPost extends Action implements HttpPostActionInterface
         $this->moduleConfig = $moduleConfig;
         $this->orderRepository = $orderRepository;
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->serializer = $serializer;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->urlBuilder = $urlBuilder;
     }
@@ -138,9 +132,6 @@ class EditPost extends Action implements HttpPostActionInterface
      */
     public function execute()
     {
-        /** @var array $response */
-        $response = [];
-
         /** @var RequestInterface $request */
         $request = $this->getRequest();
 
@@ -148,19 +139,17 @@ class EditPost extends Action implements HttpPostActionInterface
         $resultJson = $this->resultJsonFactory->create();
 
         if (!$request->isPost()) {
-            $resultJson->setData([
+            return $resultJson->setData([
                 'error' => true,
                 'message' => __('Invalid method: Must be POST request.'),
             ]);
-            return $resultJson;
         }
 
         if (!$this->formKeyValidator->validate($request)) {
-            $resultJson->setData([
+            return $resultJson->setData([
                 'error' => true,
                 'message' => __('Invalid form key.'),
             ]);
-            return $resultJson;
         }
 
         /** @var int|string|null $rmaId */
@@ -189,36 +178,42 @@ class EditPost extends Action implements HttpPostActionInterface
             $comments = $resolution !== null && !empty($comments)
                 ? $this->escaper->escapeHtml($comments) : null;
 
+            /** @var bool $notifyCustomer */
+            $notifyCustomer = $request->getPostValue('notify_customer');
+            $notifyCustomer = $notifyCustomer !== null
+                ? (bool) $notifyCustomer : false;
+
             try {
                 /** @var SimpleReturnInterface $rma */
                 $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                if ($rma->getId()) {
-                    $this->eventManager->dispatch(
-                        'simplereturns_adminhtml_rma_edit_save_before',
-                        [
-                            'rma' => $rma,
-                            'status' => $status,
-                            'reason' => $reason,
-                            'resolution' => $resolution,
-                            'comments' => $comments,
-                        ]
-                    );
+                #[ObservableEvent('simplereturns_adminhtml_rma_edit_save_before')]
+                $this->eventManager->dispatch(
+                    'simplereturns_adminhtml_rma_edit_save_before',
+                    [
+                        'rma' => $rma,
+                        'status' => $status,
+                        'reason' => $reason,
+                        'resolution' => $resolution,
+                        'comments' => $comments,
+                    ]
+                );
 
-                    $this->simpleReturnRepository->save(
-                        $rma->addData([
-                            'status' => $status,
-                            'reason' => $reason,
-                            'resolution' => $resolution,
-                            'comments' => $comments,
-                        ])
-                    );
+                $rma->addData([
+                    'status' => $status,
+                    'reason' => $reason,
+                    'resolution' => $resolution,
+                    'comments' => $comments,
+                ]);
+                $this->simpleReturnRepository->save($rma);
 
-                    $this->eventManager->dispatch(
-                        'simplereturns_adminhtml_rma_edit_save_after',
-                        ['rma' => $rma]
-                    );
+                #[ObservableEvent('simplereturns_adminhtml_rma_edit_save_after')]
+                $this->eventManager->dispatch(
+                    'simplereturns_adminhtml_rma_edit_save_after',
+                    ['rma' => $rma]
+                );
 
+                if ($notifyCustomer) {
                     /** @var OrderInterface $order */
                     $order = $this->orderRepository->get($rma->getOrderId());
                     $this->emailTransport->send(
@@ -235,34 +230,31 @@ class EditPost extends Action implements HttpPostActionInterface
                         $order->getCustomerName(),
                         (int) $order->getStoreId()
                     );
-
-                    /** @var string $viewUrl */
-                    $viewUrl = $this->urlBuilder->getUrl(
-                        'simplereturns/rma/view',
-                        [
-                            'rma_id' => $rmaId,
-                            'token' => $token,
-                            '_secure' => true,
-                        ]
-                    );
-
-                    $resultJson->setData([
-                        'success' => true,
-                        'isSimpleReturnsAjax' => true,
-                        'message' => __('Successfully updated RMA.'),
-                        'viewUrl' => $viewUrl,
-                    ]);
-                    return $resultJson;
                 }
+
+                /** @var string $viewUrl */
+                $viewUrl = $this->urlBuilder->getUrl(
+                    'simplereturns/rma/view',
+                    [
+                        'rma_id' => $rmaId,
+                        'token' => $token,
+                        '_secure' => true,
+                    ]
+                );
+                $resultJson->setData([
+                    'success' => true,
+                    'isSimpleReturnsAjax' => true,
+                    'message' => __('Successfully updated RMA.'),
+                    'viewUrl' => $viewUrl,
+                ]);
             } catch (Throwable $e) {
-                $response = [
+                $resultJson->setData([
                     'error' => true,
                     'message' => $e->getMessage(),
-                ];
+                ]);
             }
         }
 
-        $resultJson->setData($response);
         return $resultJson;
     }
 }
