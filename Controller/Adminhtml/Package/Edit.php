@@ -47,6 +47,12 @@ class Edit extends Action implements HttpGetActionInterface
      */
     public function execute()
     {
-        return $this->resultPageFactory->create();
+        /** @var Page $resultPage */
+        $resultPage = $this->resultPageFactory->create();
+        $resultPage->getConfig()
+            ->getTitle()
+            ->prepend(__('Edit Package Details'));
+
+        return $resultPage;
     }
 }
