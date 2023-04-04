@@ -181,6 +181,8 @@ class CreatePost extends Action implements HttpPostActionInterface
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
+    #[ObservableEvent('simplereturns_adminhtml_rma_create_save_before')]
+    #[ObservableEvent('simplereturns_adminhtml_rma_create_save_after')]
     public function execute()
     {
         /** @var RequestInterface $request */
@@ -316,7 +318,6 @@ class CreatePost extends Action implements HttpPostActionInterface
                 'created_at' => $dateTime,
             ];
 
-            #[ObservableEvent('simplereturns_adminhtml_rma_create_save_before')]
             $this->eventManager->dispatch(
                 'simplereturns_adminhtml_rma_create_save_before',
                 $data
@@ -327,7 +328,6 @@ class CreatePost extends Action implements HttpPostActionInterface
             /** @var int $rmaId */
             $rmaId = $this->simpleReturnRepository->save($rma);
 
-            #[ObservableEvent('simplereturns_adminhtml_rma_create_save_after')]
             $this->eventManager->dispatch(
                 'simplereturns_adminhtml_rma_create_save_after',
                 ['rma' => $rma]
