@@ -130,6 +130,8 @@ class EditPost extends Action implements HttpPostActionInterface
     /**
      * @return Json
      */
+    #[ObservableEvent('simplereturns_adminhtml_rma_edit_save_before')]
+    #[ObservableEvent('simplereturns_adminhtml_rma_edit_save_after')]
     public function execute()
     {
         /** @var RequestInterface $request */
@@ -187,7 +189,6 @@ class EditPost extends Action implements HttpPostActionInterface
                 /** @var SimpleReturnInterface $rma */
                 $rma = $this->simpleReturnRepository->getById($rmaId);
 
-                #[ObservableEvent('simplereturns_adminhtml_rma_edit_save_before')]
                 $this->eventManager->dispatch(
                     'simplereturns_adminhtml_rma_edit_save_before',
                     [
@@ -207,7 +208,6 @@ class EditPost extends Action implements HttpPostActionInterface
                 ]);
                 $this->simpleReturnRepository->save($rma);
 
-                #[ObservableEvent('simplereturns_adminhtml_rma_edit_save_after')]
                 $this->eventManager->dispatch(
                     'simplereturns_adminhtml_rma_edit_save_after',
                     ['rma' => $rma]
