@@ -20,8 +20,8 @@ namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column;
 
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use Magento\Framework\UrlInterface;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 use Throwable;
 
@@ -36,24 +36,24 @@ class Rma extends Column
     public const TOKEN_KEY = 'token';
 
     /** @var string $entityKey */
-    protected $entityKey;
-
-    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    protected $simpleReturnRepository;
+    private $entityKey;
 
     /** @var string $paramKey */
-    protected $paramKey;
+    private $paramKey;
+
+    /** @var SimpleReturnRepositoryInterface $rmaRepository */
+    private $rmaRepository;
 
     /** @var string $tokenKey */
-    protected $tokenKey;
+    private $tokenKey;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory,
-     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param SimpleReturnRepositoryInterface $rmaRepository
      * @param UrlInterface $urlBuilder
      * @param string|null $entityKey
      * @param string|null $paramKey
@@ -65,7 +65,7 @@ class Rma extends Column
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
-        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        SimpleReturnRepositoryInterface $rmaRepository,
         UrlInterface $urlBuilder,
         string $entityKey = null,
         string $paramKey = null,
@@ -79,7 +79,7 @@ class Rma extends Column
             $components,
             $data
         );
-        $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->rmaRepository = $rmaRepository;
         $this->urlBuilder = $urlBuilder;
         $this->entityKey = $entityKey ?? static::ENTITY_KEY;
         $this->paramKey = $paramKey ?? static::PARAM_KEY;
@@ -134,11 +134,11 @@ class Rma extends Column
      * @param int $rmaId
      * @return string|null
      */
-    protected function getSecret(int $rmaId): ?string
+    private function getSecret(int $rmaId): ?string
     {
         try {
             /** @var SimpleReturnInterface $rma */
-            $rma = $this->simpleReturnRepository->getById($rmaId);
+            $rma = $this->rmaRepository->getById($rmaId);
             return $rma->getToken();
         } catch (Throwable $e) {
             return null;

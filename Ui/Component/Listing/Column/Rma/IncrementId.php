@@ -21,8 +21,8 @@ namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use Magento\Framework\UrlInterface;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 use Throwable;
 
@@ -34,7 +34,7 @@ class IncrementId extends Column
     public const ENTITY_KEY = 'rma_id';
 
     /** @var SimpleReturnRepositoryInterface $rmaRepository */
-    protected $rmaRepository;
+    private $rmaRepository;
 
     /**
      * @param ContextInterface $context

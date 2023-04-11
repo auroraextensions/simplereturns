@@ -18,8 +18,8 @@ declare(strict_types=1);
 
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Product;
 
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 
 class SimpleReturn extends Column

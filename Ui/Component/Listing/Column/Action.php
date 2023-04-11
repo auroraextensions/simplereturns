@@ -19,8 +19,8 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column;
 
 use Magento\Framework\UrlInterface;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 
 use function __;
@@ -33,19 +33,19 @@ class Action extends Column
     public const TOKEN_KEY = 'token';
 
     /** @var string $actionKey */
-    protected $actionKey;
+    private $actionKey;
 
     /** @var string $actionLabel */
-    protected $actionLabel;
+    private $actionLabel;
 
     /** @var string $paramKey */
-    protected $paramKey;
+    private $paramKey;
 
     /** @var string $tokenKey */
-    protected $tokenKey;
+    private $tokenKey;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param ContextInterface $context

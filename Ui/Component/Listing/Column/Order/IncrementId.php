@@ -19,8 +19,8 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Order;
 
 use Magento\Framework\UrlInterface;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
@@ -32,7 +32,7 @@ class IncrementId extends Column
     public const ENTITY_KEY = 'order_id';
 
     /** @var OrderRepositoryInterface $orderRepository */
-    protected $orderRepository;
+    private $orderRepository;
 
     /**
      * @param ContextInterface $context
