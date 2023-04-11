@@ -24,6 +24,8 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 
+use function __;
+
 class Edit extends Action implements HttpGetActionInterface
 {
     /** @var PageFactory $resultPageFactory */

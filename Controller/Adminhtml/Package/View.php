@@ -24,6 +24,8 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 
+use function __;
+
 class View extends Action implements HttpGetActionInterface
 {
     /** @property PageFactory $resultPageFactory */
@@ -47,6 +49,12 @@ class View extends Action implements HttpGetActionInterface
      */
     public function execute()
     {
-        return $this->resultPageFactory->create();
+        /** @var Page $resultPage */
+        $resultPage = $this->resultPageFactory->create();
+        $resultPage->getConfig()
+            ->getTitle()
+            ->prepend(__('View Package Details'));
+
+        return $resultPage;
     }
 }

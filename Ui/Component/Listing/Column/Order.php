@@ -19,8 +19,8 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column;
 
 use Magento\Framework\UrlInterface;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
@@ -37,19 +37,19 @@ class Order extends Column
     public const TOKEN_KEY = 'code';
 
     /** @var string $entityKey */
-    protected $entityKey;
+    private $entityKey;
 
     /** @var OrderRepositoryInterface $orderRepository */
-    protected $orderRepository;
+    private $orderRepository;
 
     /** @var string $paramKey */
-    protected $paramKey;
+    private $paramKey;
 
     /** @var string $tokenKey */
-    protected $tokenKey;
+    private $tokenKey;
 
     /** @var UrlInterface $urlBuilder */
-    protected $urlBuilder;
+    private $urlBuilder;
 
     /**
      * @param ContextInterface $context
@@ -135,7 +135,7 @@ class Order extends Column
      * @param int $orderId
      * @return string|null
      */
-    protected function getSecret(int $orderId): ?string
+    private function getSecret(int $orderId): ?string
     {
         try {
             /** @var OrderInterface $order */

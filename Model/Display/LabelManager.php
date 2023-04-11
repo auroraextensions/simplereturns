@@ -42,22 +42,22 @@ class LabelManager
     /** @var mixed[] $data */
     private $data;
 
-    /** @var string[] $fieldMap */
-    private $fieldMap;
+    /** @var mixed[] $meta */
+    private $meta;
 
     /**
      * @param ArrayUtils $arrayUtils
-     * @param string[] $fieldMap
+     * @param mixed[] $meta
      * @param mixed[] $data
      * @return void
      */
     public function __construct(
         ArrayUtils $arrayUtils,
-        array $fieldMap = [],
+        array $meta = [],
         array $data = []
     ) {
         $this->arrayUtils = $arrayUtils;
-        $this->fieldMap = $fieldMap;
+        $this->meta = $meta;
         $this->data = $data;
         $this->initialize();
     }
@@ -135,7 +135,7 @@ class LabelManager
     /**
      * @return array
      */
-    private function getFields(): array
+    private function getColumns(): array
     {
         /** @var string[] $keys */
         $keys = array_keys($this->data);
@@ -143,7 +143,9 @@ class LabelManager
         /** @var int $index */
         /** @var int|string $value */
         foreach ($keys as $index => $value) {
-            $keys[$index] = $this->fieldMap[$value] ?? $value;
+            /** @var string $field */
+            $field = $this->meta['alias_to_field'][$value] ?? $value;
+            $keys[$index] = $this->meta['field_to_column'][$field] ?? $field;
         }
 
         return $keys;
@@ -154,12 +156,10 @@ class LabelManager
      * @param string $value
      * @return string|null
      */
-    public function getLabel(
-        string $group,
-        string $value
-    ): ?string {
+    public function getLabel(string $group, string $value): ?string
+    {
         /** @var string $field */
-        $field = $this->fieldMap[$group] ?? $group;
+        $field = $this->meta['alias_to_field'][$group] ?? $group;
 
         /** @var mixed $label */
         $label = $this->data[$field][$value] ?? null;
@@ -176,15 +176,18 @@ class LabelManager
         /** @var array $values */
         $values = $this->arrayUtils->kslice(
             $item,
-            $this->getFields()
+            $this->getColumns()
         );
 
-        /** @var string $field */
+        /** @var string $column */
         /** @var mixed $value */
-        foreach ($values as $field => $value) {
+        foreach ($values as $column => $value) {
+            /** @var string $field */
+            $field = $this->meta['column_to_field'][$column] ?? $column;
+
             /** @var string|Phrase|null $label */
             $label = $this->data[$field][$value] ?? $value;
-            $item[$field] = $label;
+            $item[$column] = $label ?? '-';
         }
 
         return $item;

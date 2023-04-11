@@ -130,12 +130,28 @@
     </type>
     <type name="AuroraExtensions\SimpleReturns\Model\Display\LabelManager">
         <arguments>
-            <argument name="fieldMap" xsi:type="array">
-                <item name="statuses" xsi:type="string">status</item>
-                <item name="reasons" xsi:type="string">reason</item>
-                <item name="resolutions" xsi:type="string">resolution</item>
-                <item name="carriers" xsi:type="string">carrier_code</item>
-                <item name="methods" xsi:type="string">method_code</item>
+            <argument name="meta" xsi:type="array">
+                <item name="alias_to_field" xsi:type="array">
+                    <item name="statuses" xsi:type="string">status</item>
+                    <item name="reasons" xsi:type="string">reason</item>
+                    <item name="resolutions" xsi:type="string">resolution</item>
+                    <item name="carriers" xsi:type="string">carrier</item>
+                    <item name="methods" xsi:type="string">method</item>
+                </item>
+                <item name="column_to_field" xsi:type="array">
+                    <item name="status" xsi:type="null"/>
+                    <item name="reason" xsi:type="null"/>
+                    <item name="resolution" xsi:type="null"/>
+                    <item name="carrier_code" xsi:type="string">carrier</item>
+                    <item name="method_code" xsi:type="string">method</item>
+                </item>
+                <item name="field_to_column" xsi:type="array">
+                    <item name="status" xsi:type="null"/>
+                    <item name="reason" xsi:type="null"/>
+                    <item name="resolution" xsi:type="null"/>
+                    <item name="carrier" xsi:type="string">carrier_code</item>
+                    <item name="method" xsi:type="string">method_code</item>
+                </item>
             </argument>
             <argument name="data" xsi:type="array">
                 <item name="status" xsi:type="object">AuroraExtensions\SimpleReturns\Model\Config\Source\Select\Rma\StatusList</item>
@@ -217,6 +233,7 @@
             <argument name="routePath" xsi:type="string">simplereturns/rma/view</argument>
             <argument name="paramList" xsi:type="array">
                 <item name="rma_id" xsi:type="null"/>
+                <item name="token" xsi:type="null"/>
             </argument>
             <argument name="sortOrder" xsi:type="number">30</argument>
         </arguments>
@@ -239,6 +256,7 @@
             <argument name="routePath" xsi:type="string">simplereturns/package/view</argument>
             <argument name="paramList" xsi:type="array">
                 <item name="pkg_id" xsi:type="null"/>
+                <item name="token" xsi:type="null"/>
             </argument>
             <argument name="sortOrder" xsi:type="number">30</argument>
         </arguments>
