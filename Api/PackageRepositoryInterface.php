@@ -30,11 +30,11 @@ interface PackageRepositoryInterface extends AbstractRepositoryInterface
     public function get(Data\SimpleReturnInterface $rma): Data\PackageInterface;
 
     /**
-     * @param int $id
+     * @param int $pkgId
      * @return \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getById(int $id): Data\PackageInterface;
+    public function getById(int $pkgId): Data\PackageInterface;
 
     /**
      * @param \AuroraExtensions\SimpleReturns\Api\Data\PackageInterface $package

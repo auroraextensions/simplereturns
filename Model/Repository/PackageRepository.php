@@ -77,9 +77,7 @@ class PackageRepository implements PackageRepositoryInterface
     }
 
     /**
-     * @param SimpleReturnInterface $rma
-     * @return PackageInterface
-     * @throws NoSuchEntityException
+     * {@inheritdoc}
      */
     public function get(SimpleReturnInterface $rma): PackageInterface
     {
@@ -104,15 +102,13 @@ class PackageRepository implements PackageRepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @return PackageInterface
-     * @throws NoSuchEntityException
+     * {@inheritdoc}
      */
-    public function getById(int $id): PackageInterface
+    public function getById(int $pkgId): PackageInterface
     {
         /** @var PackageInterface $package */
         $package = $this->packageFactory->create();
-        $this->packageResource->load($package, $id);
+        $this->packageResource->load($package, $pkgId);
 
         if (!$package->getId()) {
             /** @var NoSuchEntityException $exception */
@@ -127,8 +123,7 @@ class PackageRepository implements PackageRepositoryInterface
     }
 
     /**
-     * @param PackageInterface $package
-     * @return int
+     * {@inheritdoc}
      */
     public function save(PackageInterface $package): int
     {
@@ -137,8 +132,7 @@ class PackageRepository implements PackageRepositoryInterface
     }
 
     /**
-     * @param PackageInterface $package
-     * @return bool
+     * {@inheritdoc}
      */
     public function delete(PackageInterface $package): bool
     {
@@ -146,14 +140,13 @@ class PackageRepository implements PackageRepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @return bool
+     * {@inheritdoc}
      */
-    public function deleteById(int $id): bool
+    public function deleteById(int $pkgId): bool
     {
         /** @var PackageInterface $package */
         $package = $this->packageFactory->create();
-        $package->setId($id);
+        $package->setId($pkgId);
         return (bool) $this->packageResource->delete($package);
     }
 }

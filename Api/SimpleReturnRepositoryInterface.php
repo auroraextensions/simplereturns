@@ -31,11 +31,11 @@ interface SimpleReturnRepositoryInterface extends AbstractRepositoryInterface
     public function get(OrderInterface $order): Data\SimpleReturnInterface;
 
     /**
-     * @param int $id
+     * @param int $rmaId
      * @return \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getById(int $id): Data\SimpleReturnInterface;
+    public function getById(int $rmaId): Data\SimpleReturnInterface;
 
     /**
      * @param \AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface $rma
@@ -50,8 +50,8 @@ interface SimpleReturnRepositoryInterface extends AbstractRepositoryInterface
     public function delete(Data\SimpleReturnInterface $rma): bool;
 
     /**
-     * @param int $id
+     * @param int $rmaId
      * @return bool
      */
-    public function deleteById(int $id): bool;
+    public function deleteById(int $rmaId): bool;
 }
