@@ -78,9 +78,7 @@ class SimpleReturnRepository implements SimpleReturnRepositoryInterface
     }
 
     /**
-     * @param OrderInterface $order
-     * @return SimpleReturnInterface
-     * @throws NoSuchEntityException
+     * {@inheritdoc}
      */
     public function get(OrderInterface $order): SimpleReturnInterface
     {
@@ -105,15 +103,13 @@ class SimpleReturnRepository implements SimpleReturnRepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @return SimpleReturnInterface
-     * @throws NoSuchEntityException
+     * {@inheritdoc}
      */
-    public function getById(int $id): SimpleReturnInterface
+    public function getById(int $rmaId): SimpleReturnInterface
     {
         /** @var SimpleReturnInterface $rma */
         $rma = $this->simpleReturnFactory->create();
-        $this->simpleReturnResource->load($rma, $id);
+        $this->simpleReturnResource->load($rma, $rmaId);
 
         if (!$rma->getId()) {
             /** @var NoSuchEntityException $exception */
@@ -128,8 +124,7 @@ class SimpleReturnRepository implements SimpleReturnRepositoryInterface
     }
 
     /**
-     * @param SimpleReturnInterface $rma
-     * @return int
+     * {@inheritdoc}
      */
     public function save(SimpleReturnInterface $rma): int
     {
@@ -138,8 +133,7 @@ class SimpleReturnRepository implements SimpleReturnRepositoryInterface
     }
 
     /**
-     * @param SimpleReturnInterface $rma
-     * @return bool
+     * {@inheritdoc}
      */
     public function delete(SimpleReturnInterface $rma): bool
     {
@@ -147,14 +141,13 @@ class SimpleReturnRepository implements SimpleReturnRepositoryInterface
     }
 
     /**
-     * @param int $id
-     * @return bool
+     * {@inheritdoc}
      */
-    public function deleteById(int $id): bool
+    public function deleteById(int $rmaId): bool
     {
         /** @var SimpleReturnInterface $rma */
         $rma = $this->simpleReturnFactory->create();
-        $rma->setId($id);
+        $rma->setId($rmaId);
         return (bool) $this->simpleReturnResource->delete($rma);
     }
 }

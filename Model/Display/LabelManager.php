@@ -64,7 +64,6 @@ class LabelManager
 
     /**
      * @return void
-     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     private function initialize(): void
     {
