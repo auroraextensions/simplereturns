@@ -107,7 +107,7 @@ class LabelManager
                     null,
                     ...array_map(
                         function ($k, $v) {
-                            return [$k => $v];
+                            return [$k => (string) $v];
                         },
                         array_filter(
                             $squash,
