@@ -73,7 +73,7 @@
                 <indexField>rma_id</indexField>
             </settings>
         </selectionsColumn>
-        <column name="rma_id"
+        <column name="increment_id"
                 class="AuroraExtensions\SimpleReturns\Ui\Component\Listing\Column\Rma\IncrementId"
                 sortOrder="200">
             <settings>
