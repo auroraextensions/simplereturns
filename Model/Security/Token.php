@@ -24,6 +24,9 @@ use function hash_equals;
 use function preg_match;
 use function random_bytes;
 
+/**
+ * @deprecated Avoid use. Will be removed in future release.
+ */
 class Token
 {
     public const HASH_ALGO = 'sha512';

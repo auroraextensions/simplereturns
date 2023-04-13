@@ -20,6 +20,8 @@ namespace AuroraExtensions\SimpleReturns\Controller\Package;
 
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContext;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContextFactory;
 use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\PackageInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
@@ -28,7 +30,6 @@ use AuroraExtensions\SimpleReturns\Api\PackageManagementInterface;
 use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
-use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use AuroraExtensions\SimpleReturns\Csi\System\Module\ConfigInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
@@ -72,6 +73,9 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var FormKeyValidator $formKeyValidator */
     private $formKeyValidator;
 
+    /** @var HashContextFactory $hashContextFactory */
+    private $hashContextFactory;
+
     /** @var PackageInterfaceFactory $packageFactory */
     private $packageFactory;
 
@@ -97,6 +101,7 @@ class CreatePost extends Action implements HttpPostActionInterface
      * @param Context $context
      * @param ExceptionFactory $exceptionFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param HashContextFactory $hashContextFactory
      * @param ConfigInterface $moduleConfig
      * @param PackageInterfaceFactory $packageFactory
      * @param PackageManagementInterface $packageManagement
@@ -113,6 +118,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         Context $context,
         ExceptionFactory $exceptionFactory,
         FormKeyValidator $formKeyValidator,
+        HashContextFactory $hashContextFactory,
         ConfigInterface $moduleConfig,
         PackageInterfaceFactory $packageFactory,
         PackageManagementInterface $packageManagement,
@@ -125,6 +131,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         parent::__construct($context);
         $this->exceptionFactory = $exceptionFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->hashContextFactory = $hashContextFactory;
         $this->moduleConfig = $moduleConfig;
         $this->packageFactory = $packageFactory;
         $this->packageManagement = $packageManagement;
@@ -194,8 +201,11 @@ class CreatePost extends Action implements HttpPostActionInterface
                         $remoteIp = $this->remoteAddress
                             ->getRemoteAddress();
 
+                        /** @var HashContext $hashContext */
+                        $hashContext = $this->hashContextFactory->create(['algo' => 'crc32b']);
+
                         /** @var string $token */
-                        $token = Tokenizer::createToken();
+                        $token = (string) $hashContext;
 
                         /** @var string $carrierCode */
                         $carrierCode = $this->getConfig()

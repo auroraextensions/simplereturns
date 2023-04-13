@@ -293,10 +293,7 @@ class CreatePost extends Action implements HttpPostActionInterface
                 ->getId();
 
             /** @var HashContext $hashContext */
-            $hashContext = $this->hashContextFactory->create([
-                'data' => null,
-                'algo' => 'crc32b',
-            ]);
+            $hashContext = $this->hashContextFactory->create(['algo' => 'crc32b']);
 
             /** @var string $token */
             $token = (string) $hashContext;
