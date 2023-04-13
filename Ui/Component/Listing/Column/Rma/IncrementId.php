@@ -73,7 +73,7 @@ class IncrementId extends Column
                 $rmaId = $item[static::ENTITY_KEY] ?? null;
 
                 if ($rmaId !== null) {
-                    $item[static::ENTITY_KEY] = $this->getIncrementId((int) $rmaId);
+                    $item[static::COLUMN_KEY] = $this->getIncrementId((int) $rmaId);
                 }
             }
         }
@@ -90,7 +90,7 @@ class IncrementId extends Column
         try {
             /** @var SimpleReturnInterface $rma */
             $rma = $this->rmaRepository->getById($rmaId);
-            return sprintf('%09d', $rma->getId());
+            return sprintf('#%09d', $rma->getId());
         } catch (Throwable $e) {
             return null;
         }

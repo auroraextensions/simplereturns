@@ -71,8 +71,8 @@ class InfoView extends AbstractView implements ArgumentInterface
     /** @var SimpleReturnInterface $rma */
     private $rma;
 
-    /** @var SimpleReturnRepositoryInterface $simpleReturnRepository */
-    private $simpleReturnRepository;
+    /** @var SimpleReturnRepositoryInterface $rmaRepository */
+    private $rmaRepository;
 
     /**
      * @param ConfigHelper $configHelper
@@ -84,7 +84,7 @@ class InfoView extends AbstractView implements ArgumentInterface
      * @param MessageManagerInterface $messageManager
      * @param ConfigInterface $moduleConfig
      * @param OrderAdapter $orderAdapter
-     * @param SimpleReturnRepositoryInterface $simpleReturnRepository
+     * @param SimpleReturnRepositoryInterface $rmaRepository
      * @param array $data
      * @return void
      */
@@ -98,7 +98,7 @@ class InfoView extends AbstractView implements ArgumentInterface
         MessageManagerInterface $messageManager,
         ConfigInterface $moduleConfig,
         OrderAdapter $orderAdapter,
-        SimpleReturnRepositoryInterface $simpleReturnRepository,
+        SimpleReturnRepositoryInterface $rmaRepository,
         array $data = []
     ) {
         parent::__construct(
@@ -113,7 +113,7 @@ class InfoView extends AbstractView implements ArgumentInterface
         $this->messageManager = $messageManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
-        $this->simpleReturnRepository = $simpleReturnRepository;
+        $this->rmaRepository = $rmaRepository;
     }
 
     /**
@@ -167,7 +167,7 @@ class InfoView extends AbstractView implements ArgumentInterface
         if ($rmaId !== null && $token !== null) {
             try {
                 /** @var SimpleReturnInterface $rma */
-                $rma = $this->simpleReturnRepository->getById($rmaId);
+                $rma = $this->rmaRepository->getById($rmaId);
 
                 if (!Tokenizer::isEqual($token, $rma->getToken())) {
                     /** @var LocalizedException $exception */

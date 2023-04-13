@@ -26,6 +26,8 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 use Throwable;
 
+use function sprintf;
+
 class IncrementId extends Column
 {
     public const COLUMN_KEY = 'increment_id';
@@ -88,7 +90,7 @@ class IncrementId extends Column
         try {
             /** @var OrderInterface $order */
             $order = $this->orderRepository->get($orderId);
-            return (string) $order->getRealOrderId();
+            return sprintf('#%s', $order->getRealOrderId());
         } catch (Throwable $e) {
             return null;
         }
