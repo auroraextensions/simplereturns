@@ -20,6 +20,8 @@ namespace AuroraExtensions\SimpleReturns\Model\Management;
 
 use AuroraExtensions\ModuleComponents\Component\Log\LoggerTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContext;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContextFactory;
 use AuroraExtensions\SimpleReturns\Api\Data\LabelInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\LabelInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\Data\PackageInterface;
@@ -29,7 +31,6 @@ use AuroraExtensions\SimpleReturns\Api\PackageManagementInterface;
 use AuroraExtensions\SimpleReturns\Api\PackageRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Model\Adapter\Shipping\Carrier\CarrierFactory;
-use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Directory\Model\ResourceModel\Region\CollectionFactory as RegionCollectionFactory;
@@ -80,6 +81,9 @@ class PackageManagement implements PackageManagementInterface
     /** @var ExceptionFactory $exceptionFactory */
     private $exceptionFactory;
 
+    /** @var HashContextFactory $hashContextFactory */
+    private $hashContextFactory;
+
     /** @var LabelInterfaceFactory $labelFactory */
     private $labelFactory;
 
@@ -118,6 +122,7 @@ class PackageManagement implements PackageManagementInterface
      * @param DataObjectFactory $dataObjectFactory
      * @param DirectoryHelper $directoryHelper
      * @param ExceptionFactory $exceptionFactory
+     * @param HashContextFactory $hashContextFactory
      * @param LabelInterfaceFactory $labelFactory
      * @param LabelRepositoryInterface $labelRepository
      * @param LoggerInterface $logger
@@ -139,6 +144,7 @@ class PackageManagement implements PackageManagementInterface
         DataObjectFactory $dataObjectFactory,
         DirectoryHelper $directoryHelper,
         ExceptionFactory $exceptionFactory,
+        HashContextFactory $hashContextFactory,
         LabelInterfaceFactory $labelFactory,
         LabelRepositoryInterface $labelRepository,
         LoggerInterface $logger,
@@ -156,6 +162,7 @@ class PackageManagement implements PackageManagementInterface
         $this->dataObjectFactory = $dataObjectFactory;
         $this->directoryHelper = $directoryHelper;
         $this->exceptionFactory = $exceptionFactory;
+        $this->hashContextFactory = $hashContextFactory;
         $this->labelFactory = $labelFactory;
         $this->labelRepository = $labelRepository;
         $this->logger = $logger;
@@ -427,8 +434,11 @@ class PackageManagement implements PackageManagementInterface
                     /** @var string|null $trackingNumber */
                     $trackingNumber = $shipmentInfo['tracking_number'] ?? null;
 
+                    /** @var HashContext $hashContext */
+                    $hashContext = $this->hashContextFactory->create(['algo' => 'crc32b']);
+
                     /** @var string $token */
-                    $token = Tokenizer::createToken();
+                    $token = (string) $hashContext;
 
                     /** @var LabelInterface $label */
                     $label = $this->labelFactory->create();

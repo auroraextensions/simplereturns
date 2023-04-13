@@ -21,6 +21,8 @@ namespace AuroraExtensions\SimpleReturns\Controller\Rma;
 use AuroraExtensions\ModuleComponents\Component\Event\EventManagerTrait;
 use AuroraExtensions\ModuleComponents\Component\Http\Request\RedirectTrait;
 use AuroraExtensions\ModuleComponents\Exception\ExceptionFactory;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContext;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContextFactory;
 use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
@@ -30,7 +32,6 @@ use AuroraExtensions\SimpleReturns\Component\System\ModuleConfigTrait;
 use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
 use AuroraExtensions\SimpleReturns\Model\Display\LabelManager;
 use AuroraExtensions\SimpleReturns\Model\Email\Transport\Customer as EmailTransport;
-use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 use DateTime;
 use DateTimeFactory;
@@ -59,7 +60,7 @@ use Throwable;
 use function __;
 use function array_shift;
 use function is_numeric;
-use Ramsey\Uuid\v4;
+use function Ramsey\Uuid\v4;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -113,6 +114,9 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var FormKeyValidator $formKeyValidator */
     private $formKeyValidator;
 
+    /** @var HashContextFactory $hashContextFactory */
+    private $hashContextFactory;
+
     /** @var LabelManager $labelManager */
     private $labelManager;
 
@@ -152,6 +156,7 @@ class CreatePost extends Action implements HttpPostActionInterface
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param HashContextFactory $hashContextFactory
      * @param LabelManager $labelManager
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
@@ -177,6 +182,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
         FormKeyValidator $formKeyValidator,
+        HashContextFactory $hashContextFactory,
         LabelManager $labelManager,
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
@@ -198,6 +204,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->hashContextFactory = $hashContextFactory;
         $this->labelManager = $labelManager;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
@@ -288,8 +295,11 @@ class CreatePost extends Action implements HttpPostActionInterface
                         $remoteIp = $this->remoteAddress
                             ->getRemoteAddress();
 
+                        /** @var HashContext $hashContext */
+                        $hashContext = $this->hashContextFactory->create(['algo' => 'crc32b']);
+
                         /** @var string $token */
-                        $token = Tokenizer::createToken();
+                        $token = (string) $hashContext;
 
                         /** @var DateTime $createdTime */
                         $createdTime = $this->dateTimeFactory->create();

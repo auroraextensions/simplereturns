@@ -19,13 +19,14 @@ declare(strict_types=1);
 namespace AuroraExtensions\SimpleReturns\Controller\Rma\Attachment;
 
 use AuroraExtensions\ImageProcessor\Api\ImageManagementInterface;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContext;
+use AuroraExtensions\ModuleComponents\Model\Security\HashContextFactory;
 use AuroraExtensions\SimpleReturns\Api\AttachmentRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterface;
 use AuroraExtensions\SimpleReturns\Api\Data\AttachmentInterfaceFactory;
 use AuroraExtensions\SimpleReturns\Api\Data\SimpleReturnInterface;
 use AuroraExtensions\SimpleReturns\Api\SimpleReturnRepositoryInterface;
 use AuroraExtensions\SimpleReturns\Model\Adapter\Sales\Order as OrderAdapter;
-use AuroraExtensions\SimpleReturns\Model\Security\Token as Tokenizer;
 use AuroraExtensions\SimpleReturns\Model\System\Module\Config as ModuleConfig;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
@@ -40,12 +41,13 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\UrlInterface;
+use Magento\MediaStorage\Model\File\Uploader;
 use Magento\MediaStorage\Model\File\UploaderFactory;
 use Throwable;
 
 use function __;
+use function preg_replace;
 use function rtrim;
-use function str_replace;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -53,7 +55,10 @@ use function str_replace;
 class CreatePost extends Action implements HttpPostActionInterface
 {
     private const DATA_GROUP_KEY = 'simplereturns_group_key';
+    private const FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    private const REPLACE_CHARS = '-';
     private const SAVE_PATH = '/simplereturns/';
+    private const SEARCH_REGEX = '@[^a-zA-Z0-9\.]+@';
 
     /** @var AttachmentInterfaceFactory $attachmentFactory */
     private $attachmentFactory;
@@ -67,8 +72,14 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var Filesystem $filesystem */
     private $filesystem;
 
+    /** @var string[] $fileTypes */
+    private $fileTypes;
+
     /** @var FormKeyValidator $formKeyValidator */
     private $formKeyValidator;
+
+    /** @var HashContextFactory $hashContextFactory */
+    private $hashContextFactory;
 
     /** @var ImageManagementInterface $imageManagement */
     private $imageManagement;
@@ -82,8 +93,14 @@ class CreatePost extends Action implements HttpPostActionInterface
     /** @var RemoteAddress $remoteAddress */
     private $remoteAddress;
 
+    /** @var string|string[] $replaceChars */
+    private $replaceChars;
+
     /** @var ResultJsonFactory $resultJsonFactory */
     private $resultJsonFactory;
+
+    /** @var string $searchRegex */
+    private $searchRegex;
 
     /** @var Json $serializer */
     private $serializer;
@@ -102,6 +119,7 @@ class CreatePost extends Action implements HttpPostActionInterface
      * @param Filesystem $filesystem
      * @param UploaderFactory $fileUploaderFactory
      * @param FormKeyValidator $formKeyValidator
+     * @param HashContextFactory $hashContextFactory
      * @param ImageManagementInterface $imageManagement
      * @param ModuleConfig $moduleConfig
      * @param OrderAdapter $orderAdapter
@@ -110,6 +128,9 @@ class CreatePost extends Action implements HttpPostActionInterface
      * @param ResultJsonFactory $resultJsonFactory
      * @param SimpleReturnRepositoryInterface $simpleReturnRepository
      * @param UrlInterface $urlBuilder
+     * @param string[] $fileTypes
+     * @param string $searchRegex
+     * @param string|string[] $replaceChars
      * @return void
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -122,6 +143,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         Filesystem $filesystem,
         UploaderFactory $fileUploaderFactory,
         FormKeyValidator $formKeyValidator,
+        HashContextFactory $hashContextFactory,
         ImageManagementInterface $imageManagement,
         ModuleConfig $moduleConfig,
         OrderAdapter $orderAdapter,
@@ -129,7 +151,10 @@ class CreatePost extends Action implements HttpPostActionInterface
         Json $serializer,
         ResultJsonFactory $resultJsonFactory,
         SimpleReturnRepositoryInterface $simpleReturnRepository,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        array $fileTypes = self::FILE_TYPES,
+        string $searchRegex = self::SEARCH_REGEX,
+        $replaceChars = self::REPLACE_CHARS
     ) {
         parent::__construct($context);
         $this->attachmentFactory = $attachmentFactory;
@@ -138,6 +163,7 @@ class CreatePost extends Action implements HttpPostActionInterface
         $this->filesystem = $filesystem;
         $this->fileUploaderFactory = $fileUploaderFactory;
         $this->formKeyValidator = $formKeyValidator;
+        $this->hashContextFactory = $hashContextFactory;
         $this->imageManagement = $imageManagement;
         $this->moduleConfig = $moduleConfig;
         $this->orderAdapter = $orderAdapter;
@@ -146,6 +172,9 @@ class CreatePost extends Action implements HttpPostActionInterface
         $this->serializer = $serializer;
         $this->simpleReturnRepository = $simpleReturnRepository;
         $this->urlBuilder = $urlBuilder;
+        $this->fileTypes = $fileTypes;
+        $this->searchRegex = $searchRegex;
+        $this->replaceChars = $replaceChars;
     }
 
     /**
@@ -187,20 +216,18 @@ class CreatePost extends Action implements HttpPostActionInterface
 
         if (!$groupKey) {
             /* Generate new key for metadata lookup. */
-            $groupKey = Tokenizer::createToken();
+            $groupKey = $this->hashContextFactory->create(['algo' => 'crc32b']);
+            $groupKey = (string) $groupKey;
 
             /**
              * By storing the key in the session, we can allow
              * a user to upload files and store them before an
              * associated RMA record has been created.
              */
-            $this->dataPersistor->set(
-                self::DATA_GROUP_KEY,
-                $groupKey
-            );
+            $this->dataPersistor->set(self::DATA_GROUP_KEY, $groupKey);
         }
 
-        /** @var string|array|null $metadata */
+        /** @var string|null $metadata */
         $metadata = $this->dataPersistor->get($groupKey);
         $metadata = $metadata !== null
             ? $this->serializer->unserialize($metadata) : [];
@@ -208,17 +235,17 @@ class CreatePost extends Action implements HttpPostActionInterface
         /** @var array $attachment */
         foreach ($attachments as $attachment) {
             /** @var string $filename */
-            $filename = str_replace(
-                ' ',
-                '_',
+            $filename = preg_replace(
+                $this->searchRegex,
+                $this->replaceChars,
                 $attachment['name']
             );
 
             try {
-                /** @var Magento\MediaStorage\Model\File\Uploader $uploader */
+                /** @var Uploader $uploader */
                 $uploader = $this->fileUploaderFactory
                     ->create(['fileId' => $attachment])
-                    ->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']) /** @todo: Pull file extensions dynamically. */
+                    ->setAllowedExtensions($this->fileTypes)
                     ->setAllowCreateFolders(true)
                     ->setAllowRenameFiles(true)
                     ->setFilesDispersion(true);
@@ -235,6 +262,12 @@ class CreatePost extends Action implements HttpPostActionInterface
                 /** @var string $thumbnail */
                 $thumbnail = $this->imageManagement->resize($imageFile);
 
+                /** @var HashContext $hashContext */
+                $hashContext = $this->hashContextFactory->create(['algo' => 'crc32b']);
+
+                /** @var string $token */
+                $token = (string) $hashContext;
+
                 /** @var array $entityData */
                 $entityData = [
                     'filename'  => $result['name'],
@@ -242,7 +275,7 @@ class CreatePost extends Action implements HttpPostActionInterface
                     'filesize'  => $result['size'],
                     'mimetype'  => $result['type'],
                     'thumbnail' => $thumbnail,
-                    'token'     => Tokenizer::createToken(),
+                    'token'     => $token,
                 ];
 
                 /** @var int $attachmentId */
