@@ -34,7 +34,7 @@ Simple Returns is available via Composer.
 
 .. code-block:: sh
 
-   composer require auroraextensions/simplereturns:~1.0
+   composer require auroraextensions/simplereturns:^1.0
 
 Documentation
 -------------
